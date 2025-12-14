@@ -97,18 +97,18 @@ export default function TalentSolutionsReport() {
                 <span className={`${styles.keywordTag} ${styles.partial}`}>פיתוח מנהלים (8,924 חשיפות, פוז׳ 36)</span>
                 <span className={`${styles.keywordTag} ${styles.partial}`}>מיקור חוץ (8,400 חשיפות, פוז׳ 13)</span>
                 <span className={`${styles.keywordTag} ${styles.partial}`}>הדרכות לעובדים (1,219 חשיפות, פוז׳ 56)</span>
-                <span className={`${styles.keywordTag} ${styles.partial}`}>גיוס טאלנטים (1,410 חשיפות, פוז׳ 15)</span>
               </div>
             </div>
 
             <div className={styles.keywordGroup}>
               <div className={styles.keywordGroupTitle}>מילות מפתח חזקות - מדורגות היטב</div>
               <div className={styles.keywordsFlex}>
-                <span className={`${styles.keywordTag} ${styles.found}`}>טאלנט סולושנס (פוז׳ 1.0)</span>
-                <span className={`${styles.keywordTag} ${styles.found}`}>talent solutions (פוז׳ 1.5)</span>
-                <span className={`${styles.keywordTag} ${styles.found}`}>גיוס במיקור חוץ (פוז׳ 1.2)</span>
-                <span className={`${styles.keywordTag} ${styles.found}`}>סורסינג (פוז׳ 4.8)</span>
-                <span className={`${styles.keywordTag} ${styles.found}`}>RPO (פוז׳ 6.3)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>טאלנט סולושנס (פוז׳ 1)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>talent solutions (פוז׳ 1)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>גיוס במיקור חוץ (פוז׳ 1)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>גיוס טאלנטים (פוז׳ 1)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>סורסינג (פוז׳ 4)</span>
+                <span className={`${styles.keywordTag} ${styles.found}`}>RPO (פוז׳ 6)</span>
               </div>
             </div>
           </div>
