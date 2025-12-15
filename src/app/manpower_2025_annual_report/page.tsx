@@ -742,7 +742,7 @@ const reportHTML = `
                 <div class="logo-badge">
                     <span>🏢 Manpower Israel</span>
                 </div>
-                <h1>דוח שנתי מתוקן</h1>
+                <h1>דוח שנתי</h1>
                 <p class="subtitle">2025 לעומת 2024 | נתונים מאומתים ומדויקים</p>
                 <div class="date-badge">📅 1 בינואר - 12 בדצמבר | V2</div>
             </div>
