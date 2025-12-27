@@ -63,6 +63,28 @@
             color: var(--accent);
         }
 
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 5px 15px;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .nav-logo {
+            display: none;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
         /* Hero Section */
         .hero {
             background: linear-gradient(135deg, var(--primary-dark) 0%, var(--dark) 100%);
@@ -574,26 +596,50 @@
 
         /* Responsive - Mobile */
         @media (max-width: 768px) {
-            /* Navigation */
-            .nav { padding: 10px 0; }
-            .nav-container {
-                gap: 8px;
-                justify-content: flex-end;
-                overflow-x: auto;
-                padding: 0 15px;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                flex-wrap: nowrap;
-                direction: rtl;
+            /* Navigation - Mobile */
+            .nav {
+                padding: 12px 0;
+                position: fixed;
             }
-            .nav-container::-webkit-scrollbar { display: none; }
+            .nav-container {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                left: 0;
+                background: rgba(26, 26, 46, 0.98);
+                padding: 20px;
+                gap: 0;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            }
+            .nav-container.active {
+                display: flex;
+            }
             .nav a {
-                font-size: 0.75em;
-                white-space: nowrap;
-                padding: 6px 12px;
-                background: rgba(255,255,255,0.1);
-                border-radius: 20px;
-                flex-shrink: 0;
+                font-size: 1em;
+                padding: 15px 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                text-align: right;
+                background: none;
+                border-radius: 0;
+            }
+            .nav a:last-child {
+                border-bottom: none;
+            }
+            .nav a:hover {
+                background: rgba(255,255,255,0.05);
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-logo {
+                display: block;
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
             }
 
             /* Hero */
@@ -760,14 +806,14 @@
 <body>
     <!-- Navigation -->
     <nav class="nav">
-        <div class="nav-container">
-            <a href="#current">המצב הנוכחי</a>
-            <a href="#opportunities">הזדמנויות</a>
-            <a href="#geo">נראות ב-AI</a>
-            <a href="#how">תוכנית פעולה</a>
-            <a href="#solutions">הפתרונות</a>
-            <a href="#geo-deep">GEO לעומק</a>
-            <a href="#why-us">למה אנחנו</a>
+        <span class="nav-logo">MANPOWER</span>
+        <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="תפריט">☰</button>
+        <div class="nav-container" id="navMenu">
+            <a href="#geo" onclick="closeMenu()">נראות ב-AI</a>
+            <a href="#how" onclick="closeMenu()">תוכנית פעולה</a>
+            <a href="#solutions" onclick="closeMenu()">הפתרונות</a>
+            <a href="#geo-deep" onclick="closeMenu()">GEO לעומק</a>
+            <a href="#why-us" onclick="closeMenu()">למה אנחנו</a>
         </div>
     </nav>
 
@@ -2206,5 +2252,31 @@
             </p>
         </div>
     </footer>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('navMenu');
+            const btn = document.querySelector('.mobile-menu-btn');
+            menu.classList.toggle('active');
+            btn.textContent = menu.classList.contains('active') ? '✕' : '☰';
+        }
+
+        function closeMenu() {
+            const menu = document.getElementById('navMenu');
+            const btn = document.querySelector('.mobile-menu-btn');
+            menu.classList.remove('active');
+            btn.textContent = '☰';
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.querySelector('.nav');
+            const menu = document.getElementById('navMenu');
+            if (!nav.contains(e.target) && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    </script>
 </body>
 </html>
