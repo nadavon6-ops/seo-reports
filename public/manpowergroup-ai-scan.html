@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManpowerGroup Israel - AI Accessibility Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0066cc;
+            --primary-dark: #004999;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            padding: 8px 16px;
+            text-decoration: none;
+            color: var(--dark);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Slides */
+        .slide {
+            min-height: 100vh;
+            padding: 100px 60px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide:nth-child(even) {
+            background: white;
+        }
+
+        /* Hero Slide */
+        .hero {
+            background: linear-gradient(135deg, #0066cc 0%, #004999 50%, #003366 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: pulse 15s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .hero .date {
+            font-size: 1.1rem;
+            opacity: 0.7;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 50px;
+        }
+
+        /* Status Cards */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        .status-card.success {
+            border-color: var(--success);
+        }
+
+        .status-card.danger {
+            border-color: var(--danger);
+            background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .status-icon.success {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .status-icon.danger {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .status-card h3 {
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .status-card .url {
+            font-size: 0.85rem;
+            color: var(--gray);
+            direction: ltr;
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-badge.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Problem Slide */
+        .problem-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .problem-highlight {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            margin-bottom: 50px;
+            border: 3px solid var(--danger);
+        }
+
+        .problem-highlight .big-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .problem-highlight h2 {
+            font-size: 2rem;
+            color: #991b1b;
+            margin-bottom: 15px;
+        }
+
+        .problem-highlight p {
+            font-size: 1.2rem;
+            color: #7f1d1d;
+        }
+
+        .error-code {
+            display: inline-block;
+            background: #991b1b;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+
+        /* Impact Cards */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .impact-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .impact-card:hover {
+            transform: scale(1.03);
+        }
+
+        .impact-card .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .impact-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+
+        .impact-card p {
+            color: var(--gray);
+            font-size: 1rem;
+        }
+
+        .impact-card.critical {
+            border-top: 4px solid var(--danger);
+        }
+
+        .impact-card.warning {
+            border-top: 4px solid var(--warning);
+        }
+
+        /* Causes Section */
+        .causes-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .cause-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 25px;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .cause-item:hover {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transform: translateX(-5px);
+        }
+
+        .cause-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .cause-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .cause-content p {
+            color: var(--gray);
+        }
+
+        .likelihood {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .likelihood.high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .likelihood.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Solutions Section */
+        .solutions-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .solution-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .solution-tab {
+            padding: 12px 28px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.3s;
+        }
+
+        .solution-tab:hover, .solution-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .solution-panel {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .solution-panel.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .solution-panel h3 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .step-content p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        .code-block .comment {
+            color: #94a3b8;
+        }
+
+        .code-block .keyword {
+            color: #f472b6;
+        }
+
+        .code-block .string {
+            color: #a5f3fc;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .comparison-table .check {
+            color: var(--success);
+            font-size: 1.3rem;
+        }
+
+        .comparison-table .cross {
+            color: var(--danger);
+            font-size: 1.3rem;
+        }
+
+        /* AI Bots Section */
+        .bots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 40px auto;
+        }
+
+        .bot-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .bot-card .logo {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .bot-card h4 {
+            margin-bottom: 5px;
+        }
+
+        .bot-card .agent {
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-family: monospace;
+            background: var(--light);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        /* CTA Section */
+        .cta-slide {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-content p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+
+        .cta-steps {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cta-step {
+            background: rgba(255,255,255,0.2);
+            padding: 30px;
+            border-radius: 16px;
+            min-width: 200px;
+        }
+
+        .cta-step .number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.7;
+        }
+
+        /* Responsive - Tablet */
+        @media (max-width: 1024px) {
+            .slide {
+                padding: 90px 40px 50px;
+            }
+
+            .status-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+
+            .impact-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        /* Responsive - Mobile */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 80px 20px 40px;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+                line-height: 1.3;
+            }
+
+            .hero .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .nav {
+                padding: 12px 15px;
+            }
+
+            .nav-logo {
+                font-size: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .status-card {
+                padding: 20px;
+            }
+
+            .status-header {
+                gap: 12px;
+            }
+
+            .status-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .status-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .problem-highlight {
+                padding: 30px 20px;
+            }
+
+            .problem-highlight h2 {
+                font-size: 1.4rem;
+            }
+
+            .problem-highlight p {
+                font-size: 1rem;
+            }
+
+            .error-code {
+                font-size: 1.2rem;
+                padding: 8px 16px;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .impact-card {
+                padding: 25px 20px;
+            }
+
+            .impact-card .icon {
+                font-size: 2.5rem;
+            }
+
+            .impact-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .causes-container {
+                padding: 0;
+            }
+
+            .cause-item {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .cause-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .cause-content h3 {
+                font-size: 1.1rem;
+            }
+
+            .bots-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .bot-card {
+                padding: 20px 15px;
+            }
+
+            .bot-card .logo {
+                font-size: 2rem;
+            }
+
+            .bot-card h4 {
+                font-size: 0.95rem;
+            }
+
+            .bot-card .agent {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
+
+            .solution-tabs {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .solution-tab {
+                width: 100%;
+                text-align: center;
+                padding: 14px 20px;
+            }
+
+            .solution-panel {
+                padding: 25px 20px;
+            }
+
+            .solution-panel h3 {
+                font-size: 1.2rem;
+                flex-wrap: wrap;
+            }
+
+            .step {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+            }
+
+            .step-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .step-content h4 {
+                font-size: 1rem;
+            }
+
+            .step-content p {
+                font-size: 0.9rem;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 0.75rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .cta-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .cta-content p {
+                font-size: 1.1rem;
+            }
+
+            .cta-steps {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cta-step {
+                min-width: unset;
+                width: 100%;
+                padding: 25px 20px;
+            }
+
+            .cta-step .number {
+                font-size: 1.5rem;
+            }
+
+            .footer {
+                padding: 30px 20px;
+            }
+
+            .footer p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Responsive - Small Mobile */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+
+            .bots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 8px;
+            }
+        }
+
+        /* Touch-friendly adjustments */
+        @media (hover: none) and (pointer: coarse) {
+            .status-card:hover,
+            .impact-card:hover,
+            .cause-item:hover {
+                transform: none;
+            }
+
+            .solution-tab {
+                padding: 16px 24px;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            height: 4px;
+            background: var(--primary);
+            z-index: 1001;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <nav class="nav">
+        <div class="nav-logo">ManpowerGroup Israel | AI Report</div>
+        <div class="nav-links">
+            <a href="#overview" class="active">סקירה</a>
+            <a href="#problem">הבעיה</a>
+            <a href="#impact">השפעות</a>
+            <a href="#causes">סיבות</a>
+            <a href="#solutions">פתרונות</a>
+        </div>
+    </nav>
+
+    <!-- Slide 1: Hero -->
+    <section class="slide hero" id="overview">
+        <div class="hero-content">
+            <h1>דוח נגישות AI לאתרי ManpowerGroup</h1>
+            <p class="subtitle">סריקת יכולת גישה של מנועי AI לאתרי הקבוצה</p>
+            <p class="date">דצמבר 2025 | Nadav Digital</p>
+        </div>
+    </section>
+
+    <!-- Slide 2: Status Overview -->
+    <section class="slide" id="status">
+        <h2 class="section-title fade-in">סטטוס נגישות AI - כל האתרים</h2>
+        <p class="section-subtitle fade-in">בדיקת יכולת סריקה על ידי Claude, ChatGPT, Gemini ומנועי AI נוספים</p>
+
+        <div class="status-grid">
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>Experis</h3>
+                        <p class="url">experis.co.il</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>Experis Cyber</h3>
+                        <p class="url">experis.co.il/cyber/en/</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>Experis Academy</h3>
+                        <p class="url">experis.co.il/academy/</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>Talent Solutions</h3>
+                        <p class="url">talentsolutions.manpowergroup.co.il</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>Manpower</h3>
+                        <p class="url">www.manpower.co.il</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card success fade-in">
+                <div class="status-header">
+                    <div class="status-icon success">&#10003;</div>
+                    <div>
+                        <h3>ManpowerGroup</h3>
+                        <p class="url">manpowergroup.co.il</p>
+                    </div>
+                </div>
+                <span class="status-badge success">נגיש לסריקת AI</span>
+            </div>
+
+            <div class="status-card danger fade-in">
+                <div class="status-header">
+                    <div class="status-icon danger">&#10007;</div>
+                    <div>
+                        <h3>ManpowerCare</h3>
+                        <p class="url">manpowercare.co.il</p>
+                    </div>
+                </div>
+                <span class="status-badge danger">חסום לסריקת AI</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 3: The Problem -->
+    <section class="slide" id="problem">
+        <div class="problem-container">
+            <div class="problem-highlight fade-in">
+                <div class="big-icon">&#9888;</div>
+                <h2>manpowercare.co.il חסום לגישת AI</h2>
+                <p>כאשר מנועי AI מנסים לסרוק את האתר, הם מקבלים שגיאה:</p>
+                <div class="error-code">HTTP 403 Forbidden</div>
+            </div>
+
+            <h3 class="section-title fade-in">מה זה אומר בפועל?</h3>
+
+            <table class="comparison-table fade-in">
+                <thead>
+                    <tr>
+                        <th>כלי AI</th>
+                        <th>6 אתרים פתוחים</th>
+                        <th>ManpowerCare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Claude (Anthropic)</strong></td>
+                        <td><span class="check">&#10003;</span> יכול לסרוק</td>
+                        <td><span class="cross">&#10007;</span> חסום</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ChatGPT (OpenAI)</strong></td>
+                        <td><span class="check">&#10003;</span> יכול לסרוק</td>
+                        <td><span class="cross">&#10007;</span> חסום</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gemini (Google)</strong></td>
+                        <td><span class="check">&#10003;</span> יכול לסרוק</td>
+                        <td><span class="cross">&#10007;</span> חסום</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Perplexity AI</strong></td>
+                        <td><span class="check">&#10003;</span> יכול לסרוק</td>
+                        <td><span class="cross">&#10007;</span> חסום</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bing Copilot</strong></td>
+                        <td><span class="check">&#10003;</span> יכול לסרוק</td>
+                        <td><span class="cross">&#10007;</span> חסום</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Slide 4: Impact -->
+    <section class="slide" id="impact">
+        <h2 class="section-title fade-in">השפעות של חסימת AI על האתר</h2>
+        <p class="section-subtitle fade-in">למה זה משנה? מה אתם מפסידים?</p>
+
+        <div class="impact-grid">
+            <div class="impact-card critical fade-in">
+                <div class="icon">&#128269;</div>
+                <h3>נעלמים מחיפוש AI</h3>
+                <p>כאשר משתמשים שואלים ChatGPT, Perplexity או Google AI Overviews על שירותי סיעוד - ManpowerCare לא יופיע בתשובות.</p>
+            </div>
+
+            <div class="impact-card critical fade-in">
+                <div class="icon">&#128200;</div>
+                <h3>אובדן תנועה עתידית</h3>
+                <p>חיפוש באמצעות AI גדל ב-40% בשנה האחרונה. חסימה = אובדן מבקרים פוטנציאליים שמחפשים דרך AI.</p>
+            </div>
+
+            <div class="impact-card critical fade-in">
+                <div class="icon">&#127942;</div>
+                <h3>יתרון למתחרים</h3>
+                <p>מתחרים שניתן לסרוק אותם יופיעו בתוצאות AI במקומכם. הם יקבלו את ההמלצות - לא אתם.</p>
+            </div>
+
+            <div class="impact-card warning fade-in">
+                <div class="icon">&#128736;</div>
+                <h3>הגבלת כלי SEO</h3>
+                <p>כלי ניתוח SEO מבוססי AI לא יכולים לנתח את התוכן באתר, מה שמקשה על אופטימיזציה.</p>
+            </div>
+
+            <div class="impact-card warning fade-in">
+                <div class="icon">&#128302;</div>
+                <h3>פספוס GEO</h3>
+                <p>Generative Engine Optimization (GEO) - האופטימיזציה החדשה למנועי AI - בלתי אפשרית כשהאתר חסום.</p>
+            </div>
+
+            <div class="impact-card warning fade-in">
+                <div class="icon">&#128337;</div>
+                <h3>בעיה שרק תחמיר</h3>
+                <p>ככל שחיפוש AI יהפוך לנפוץ יותר, הנזק מחסימה רק ילך ויגדל. חשוב לפתור עכשיו.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 5: Causes -->
+    <section class="slide" id="causes">
+        <h2 class="section-title fade-in">מה גורם לחסימה?</h2>
+        <p class="section-subtitle fade-in">הסיבות האפשריות לשגיאת 403 Forbidden</p>
+
+        <div class="causes-container">
+            <div class="cause-item fade-in">
+                <div class="cause-number">1</div>
+                <div class="cause-content">
+                    <h3>Cloudflare Bot Fight Mode</h3>
+                    <p>מצב הגנה אגרסיבי של Cloudflare שחוסם אוטומטית כל תנועה שנראית כמו בוט, כולל בוטים לגיטימיים של AI.</p>
+                    <span class="likelihood high">סבירות גבוהה</span>
+                </div>
+            </div>
+
+            <div class="cause-item fade-in">
+                <div class="cause-number">2</div>
+                <div class="cause-content">
+                    <h3>Security Level גבוה מדי</h3>
+                    <p>הגדרת Security Level ב-Cloudflare על "I'm Under Attack" או "High" חוסמת גישה לבוטים.</p>
+                    <span class="likelihood high">סבירות גבוהה</span>
+                </div>
+            </div>
+
+            <div class="cause-item fade-in">
+                <div class="cause-number">3</div>
+                <div class="cause-content">
+                    <h3>תוסף אבטחה ב-WordPress</h3>
+                    <p>תוספי אבטחה כמו Wordfence, Sucuri, All In One Security עשויים לחסום User-Agents של AI.</p>
+                    <span class="likelihood medium">סבירות בינונית</span>
+                </div>
+            </div>
+
+            <div class="cause-item fade-in">
+                <div class="cause-number">4</div>
+                <div class="cause-content">
+                    <h3>חוקי WAF (Web Application Firewall)</h3>
+                    <p>חוקי Firewall ברמת השרת או Cloudflare שחוסמים User-Agents מסוימים או תבניות בקשה.</p>
+                    <span class="likelihood medium">סבירות בינונית</span>
+                </div>
+            </div>
+
+            <div class="cause-item fade-in">
+                <div class="cause-number">5</div>
+                <div class="cause-content">
+                    <h3>הגדרות .htaccess</h3>
+                    <p>חוקים בקובץ .htaccess שחוסמים גישה על בסיס User-Agent או כתובות IP.</p>
+                    <span class="likelihood medium">סבירות בינונית</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 6: AI Bots to Whitelist -->
+    <section class="slide">
+        <h2 class="section-title fade-in">בוטים של AI שצריך לאפשר</h2>
+        <p class="section-subtitle fade-in">אלו ה-User-Agents שכדאי להוסיף ל-Whitelist</p>
+
+        <div class="bots-grid">
+            <div class="bot-card fade-in">
+                <div class="logo">&#129302;</div>
+                <h4>ChatGPT</h4>
+                <p>OpenAI</p>
+                <span class="agent">GPTBot</span>
+            </div>
+
+            <div class="bot-card fade-in">
+                <div class="logo">&#127760;</div>
+                <h4>Claude</h4>
+                <p>Anthropic</p>
+                <span class="agent">ClaudeBot</span>
+            </div>
+
+            <div class="bot-card fade-in">
+                <div class="logo">&#11088;</div>
+                <h4>Gemini</h4>
+                <p>Google</p>
+                <span class="agent">Google-Extended</span>
+            </div>
+
+            <div class="bot-card fade-in">
+                <div class="logo">&#128270;</div>
+                <h4>Perplexity</h4>
+                <p>Perplexity AI</p>
+                <span class="agent">PerplexityBot</span>
+            </div>
+
+            <div class="bot-card fade-in">
+                <div class="logo">&#128421;</div>
+                <h4>Bing Copilot</h4>
+                <p>Microsoft</p>
+                <span class="agent">Bingbot</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 7: Solutions -->
+    <section class="slide" id="solutions">
+        <h2 class="section-title fade-in">פתרונות - איך לפתוח את האתר ל-AI</h2>
+        <p class="section-subtitle fade-in">בחרו את הפתרון המתאים לפי הסיבה לחסימה</p>
+
+        <div class="solutions-container">
+            <div class="solution-tabs">
+                <button class="solution-tab active" onclick="showSolution('cloudflare')">Cloudflare</button>
+                <button class="solution-tab" onclick="showSolution('wordpress')">WordPress Plugins</button>
+                <button class="solution-tab" onclick="showSolution('robots')">robots.txt</button>
+                <button class="solution-tab" onclick="showSolution('htaccess')">.htaccess</button>
+            </div>
+
+            <div class="solution-panel active" id="cloudflare">
+                <h3>&#9729; הגדרות Cloudflare</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>כבו את Bot Fight Mode</h4>
+                        <p>Security → Bots → Bot Fight Mode → OFF</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>הורידו את Security Level</h4>
+                        <p>Security → Settings → Security Level → Medium (או Low)</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>צרו Firewall Rules לאפשר בוטי AI</h4>
+                        <p>Security → WAF → Custom Rules → Create Rule</p>
+                        <div class="code-block">
+<span class="comment"># Rule Name: Allow AI Bots</span>
+<span class="comment"># Expression:</span>
+(http.user_agent contains <span class="string">"GPTBot"</span>) or
+(http.user_agent contains <span class="string">"ClaudeBot"</span>) or
+(http.user_agent contains <span class="string">"Claude-Web"</span>) or
+(http.user_agent contains <span class="string">"Google-Extended"</span>) or
+(http.user_agent contains <span class="string">"PerplexityBot"</span>) or
+(http.user_agent contains <span class="string">"Amazonbot"</span>)
+
+<span class="comment"># Action: Skip (all remaining rules)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="solution-panel" id="wordpress">
+                <h3>&#128274; תוספי אבטחה ב-WordPress</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Wordfence</h4>
+                        <p>Wordfence → Firewall → Blocking → Whitelist AI User-Agents</p>
+                        <div class="code-block">
+<span class="comment"># Add to Whitelist patterns:</span>
+GPTBot
+ClaudeBot
+Claude-Web
+Google-Extended
+PerplexityBot
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Sucuri</h4>
+                        <p>Sucuri → Firewall (WAF) → Whitelist → Add User-Agents</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>All In One WP Security</h4>
+                        <p>WP Security → Firewall → Blacklist → וודאו שבוטי AI לא חסומים</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="solution-panel" id="robots">
+                <h3>&#128221; קובץ robots.txt</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>וודאו שאין חסימה של בוטי AI</h4>
+                        <p>בדקו את הקובץ ב: manpowercare.co.il/robots.txt</p>
+                        <div class="code-block">
+<span class="comment"># robots.txt מומלץ - מאפשר גישה לבוטי AI</span>
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: *
+Allow: /
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="solution-panel" id="htaccess">
+                <h3>&#128196; קובץ .htaccess</h3>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>בדקו אם יש חוקי חסימה</h4>
+                        <p>חפשו שורות שחוסמות User-Agents והסירו או עדכנו אותן</p>
+                        <div class="code-block">
+<span class="comment"># אם יש חוקי חסימה כאלה - הסירו אותם:</span>
+RewriteCond %{HTTP_USER_AGENT} (bot|crawl|spider) [NC]
+RewriteRule .* - [F,L]
+
+<span class="comment"># או הוסיפו חריגים לבוטי AI:</span>
+RewriteCond %{HTTP_USER_AGENT} !GPTBot [NC]
+RewriteCond %{HTTP_USER_AGENT} !ClaudeBot [NC]
+RewriteCond %{HTTP_USER_AGENT} !Google-Extended [NC]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 8: Action Plan -->
+    <section class="slide cta-slide">
+        <div class="cta-content fade-in">
+            <h2>תוכנית פעולה מומלצת</h2>
+            <p>3 צעדים לפתיחת ManpowerCare לסריקת AI</p>
+
+            <div class="cta-steps">
+                <div class="cta-step">
+                    <div class="number">1</div>
+                    <p><strong>בדקו</strong><br>היכנסו ל-Cloudflare ובדקו את הגדרות Bot Protection</p>
+                </div>
+
+                <div class="cta-step">
+                    <div class="number">2</div>
+                    <p><strong>עדכנו</strong><br>צרו Firewall Rule שמאפשר בוטי AI (ראו קוד למעלה)</p>
+                </div>
+
+                <div class="cta-step">
+                    <div class="number">3</div>
+                    <p><strong>בדקו</strong><br>צרו קשר עם Nadav Digital לוודא שהתיקון עבד</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>דוח זה הופק על ידי Nadav Digital | דצמבר 2025</p>
+        <p style="margin-top: 10px;">לשאלות ותמיכה: nadav@n-c.digital</p>
+    </footer>
+
+    <script>
+        // Solution tabs
+        function showSolution(id) {
+            // Hide all panels
+            document.querySelectorAll('.solution-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // Deactivate all tabs
+            document.querySelectorAll('.solution-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected panel
+            document.getElementById(id).classList.add('active');
+            // Activate clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Intersection Observer for fade-in animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Navigation active state
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-links a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
