@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manpower Schema Implementation Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00a8cc;
+            --bg-dark: #0f0f1a;
+            --bg-section: #1a1a2e;
+            --text: #e0e0e0;
+            --text-muted: #888;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1a 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .hero-meta {
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-green { background: var(--primary); color: #000; }
+        .badge-blue { background: #0d6efd; color: #fff; }
+        .badge-yellow { background: #ffc107; color: #000; }
+        .badge-red { background: #dc3545; color: #fff; }
+        .badge-purple { background: #6f42c1; color: #fff; }
+        .badge-orange { background: #fd7e14; color: #000; }
+
+        /* Sections */
+        .section {
+            padding: 80px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-alt {
+            background: var(--bg-section);
+        }
+
+        .section-header {
+            margin-bottom: 40px;
+        }
+
+        .section-number {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .section h2 {
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .section h3 {
+            font-size: clamp(18px, 3vw, 24px);
+            color: var(--primary-dark);
+            margin: 30px 0 15px;
+        }
+
+        .section h4 {
+            font-size: 18px;
+            color: #fff;
+            margin: 20px 0 10px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card.highlight {
+            border-color: var(--primary);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .card.warning {
+            border-color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .card.danger {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .card.recommended {
+            border-color: var(--primary);
+            border-width: 2px;
+            position: relative;
+        }
+
+        .card.recommended::before {
+            content: 'מומלץ';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--primary);
+            color: #000;
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card.option-b { border-color: #0d6efd; background: rgba(13, 110, 253, 0.1); }
+        .card.option-c { border-color: #6f42c1; background: rgba(111, 66, 193, 0.1); }
+        .card.option-d { border-color: #fd7e14; background: rgba(253, 126, 20, 0.1); }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px 0;
+            padding-right: 25px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            right: 0;
+            color: var(--primary);
+        }
+
+        li.pro::before { content: '✓'; color: var(--primary); }
+        li.con::before { content: '✗'; color: #dc3545; }
+
+        /* Code Blocks */
+        .code-block {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            direction: ltr;
+            text-align: left;
+            max-height: 500px;
+            overflow-y: auto;
+            color: #c9d1d9;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .code-block.small {
+            font-size: 12px;
+            padding: 15px;
+            max-height: 350px;
+        }
+
+        .code-block .string { color: #a5d6ff; }
+        .code-block .key { color: #7ee787; }
+        .code-block .comment { color: #8b949e; }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Question/Answer Cards */
+        .question-card {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .question-card h4 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .answer-card {
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .answer-card h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Solution Headers */
+        .solution-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .solution-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .solution-letter.a { background: var(--primary); color: #000; }
+        .solution-letter.b { background: #0d6efd; color: #fff; }
+        .solution-letter.c { background: #6f42c1; color: #fff; }
+        .solution-letter.d { background: #fd7e14; color: #000; }
+
+        /* Schema Visual */
+        .schema-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .schema-box {
+            background: rgba(0, 212, 170, 0.2);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .schema-arrow {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        /* File Section */
+        .file-section {
+            background: var(--bg-section);
+            border-radius: 12px;
+            margin: 30px 0;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .file-header {
+            background: #252540;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .file-name {
+            font-family: 'Courier New', monospace;
+            color: var(--primary);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #00e8bb;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        /* Steps */
+        .steps {
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: #000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content strong {
+            color: #fff;
+        }
+
+        /* Highlight Box */
+        .highlight-box {
+            background: rgba(0, 212, 170, 0.1);
+            border-right: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: rgba(255, 193, 7, 0.1);
+            border-right: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box strong {
+            color: #ffc107;
+        }
+
+        /* Checklist */
+        .checklist li::before {
+            content: '☐';
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        /* File Location */
+        .file-location {
+            background: #0d1117;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: var(--primary);
+            display: inline-block;
+            margin-top: 10px;
+            direction: ltr;
+            font-size: 14px;
+        }
+
+        /* Contact Box */
+        .contact-box {
+            background: #252540;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        /* Toast */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--primary);
+            color: #000;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .scroll-top.visible {
+            display: flex;
+        }
+
+        .scroll-top:hover {
+            transform: scale(1.1);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 60px;
+            right: 0;
+            left: 0;
+            background: rgba(15, 15, 26, 0.98);
+            padding: 20px;
+            border-bottom: 1px solid #333;
+            z-index: 999;
+        }
+
+        .mobile-nav.open {
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mobile-nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: block;
+            }
+
+            .hero {
+                padding: 80px 20px 40px;
+            }
+
+            .hero-icon {
+                font-size: 60px;
+            }
+
+            .section {
+                padding: 50px 15px;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .schema-visual {
+                flex-direction: column;
+            }
+
+            .schema-arrow {
+                transform: rotate(90deg);
+            }
+
+            .file-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .file-buttons {
+                width: 100%;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .code-block {
+                font-size: 11px;
+                padding: 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">Manpower Schema</div>
+            <div class="nav-links">
+                <a href="#overview" class="nav-link">סקירה</a>
+                <a href="#organization" class="nav-link">Organization</a>
+                <a href="#breadcrumbs" class="nav-link">Breadcrumbs</a>
+                <a href="#searchaction" class="nav-link">SearchAction</a>
+                <a href="#downloads" class="nav-link">קבצים</a>
+            </div>
+            <button class="nav-toggle" onclick="toggleMobileNav()">☰</button>
+        </div>
+    </nav>
+
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#overview" onclick="closeMobileNav()">סקירה כללית</a>
+        <a href="#organization" onclick="closeMobileNav()">Organization Schema</a>
+        <a href="#breadcrumbs" onclick="closeMobileNav()">Breadcrumbs</a>
+        <a href="#searchaction" onclick="closeMobileNav()">SearchAction</a>
+        <a href="#downloads" onclick="closeMobileNav()">קבצים להורדה</a>
+    </div>
+
+    <!-- Hero Section (Slide 1) -->
+    <section class="hero" id="top">
+        <div class="hero-content">
+            <div class="hero-icon">📋</div>
+            <h1>הנחיות להטמעת Schema</h1>
+            <p class="hero-subtitle">manpower.co.il</p>
+            <p class="hero-meta">נדב כהן | SEO | דצמבר 2024</p>
+            <div class="badges">
+                <span class="badge badge-green">Organization</span>
+                <span class="badge badge-blue">BreadcrumbList</span>
+                <span class="badge badge-yellow">SearchAction</span>
+            </div>
+            <p style="margin-top: 40px; color: #666;">כולל מספר פתרונות חלופיים לכל סכמה</p>
+        </div>
+    </section>
+
+    <!-- Overview Section (Slides 2-3) -->
+    <section class="section section-alt" id="overview">
+        <div class="section-header">
+            <div class="section-number">סקירה כללית</div>
+            <h2>מה זה Schema ולמה זה חשוב?</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3>🤖 מה זה?</h3>
+                <ul>
+                    <li>קוד JSON-LD שמוסיפים ל-HTML</li>
+                    <li>עוזר לגוגל להבין את תוכן העמוד</li>
+                    <li>לא משפיע על מה שהגולש רואה</li>
+                    <li>רק גוגל "קורא" את זה</li>
+                </ul>
+            </div>
+            <div class="card highlight">
+                <h3>🎯 למה זה חשוב?</h3>
+                <ul>
+                    <li>תוצאות עשירות יותר בגוגל</li>
+                    <li>לוגו ופרטי חברה ב-Knowledge Panel</li>
+                    <li>פירורי לחם בתוצאות החיפוש</li>
+                    <li>אמינות מוגברת בעיני גוגל</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="schema-visual">
+            <div class="schema-box">
+                <div style="font-size: 30px;">📄</div>
+                <div>HTML + Schema</div>
+            </div>
+            <div class="schema-arrow">→</div>
+            <div class="schema-box">
+                <div style="font-size: 30px;">🤖</div>
+                <div>Google Bot</div>
+            </div>
+            <div class="schema-arrow">→</div>
+            <div class="schema-box">
+                <div style="font-size: 30px;">✨</div>
+                <div>Rich Results</div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 50px;">3 סכמות להטמעה</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>סכמה</th>
+                        <th>מטרה</th>
+                        <th>מיקום</th>
+                        <th>סטטוס</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Organization</strong></td>
+                        <td>פרטי החברה, לוגו, יצירת קשר</td>
+                        <td>Layout ראשי (פעם אחת)</td>
+                        <td><span class="badge badge-green">להטמיע</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>BreadcrumbList</strong></td>
+                        <td>פירורי לחם / נתיבי ניווט</td>
+                        <td>כל עמוד פנימי</td>
+                        <td><span class="badge badge-green">להטמיע</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>WebSite + SearchAction</strong></td>
+                        <td>תיבת חיפוש בגוגל</td>
+                        <td>-</td>
+                        <td><span class="badge badge-yellow">אופציונלי</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Organization Schema Section (Slides 4-6) -->
+    <section class="section" id="organization">
+        <div class="section-header">
+            <div class="section-number">סכמה #1</div>
+            <h2>Organization Schema</h2>
+        </div>
+
+        <h3>הקוד המקורי</h3>
+        <div class="code-block" id="org-schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-563-9999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 110",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/"
+  ]
+}
+&lt;/script&gt;</div>
+
+        <h3>שאלה #1: קבוע בקוד או מנוהל?</h3>
+        <div class="question-card">
+            <h4>❓ השאלה מצוות הפיתוח:</h4>
+            <p>"האם את רוצה שכל הנתונים יהיו קבועים בקוד? או לתת לך אזור חדש בוורדפרס לניהול של כל הערכים?"</p>
+        </div>
+
+        <h4>4 פתרונות אפשריים:</h4>
+        <div class="grid-4">
+            <div class="card recommended">
+                <div class="solution-header">
+                    <div class="solution-letter a">A</div>
+                    <h4>Hardcoded בקוד</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">פשוט ומהיר להטמעה</li>
+                    <li class="pro">אין תלות חיצונית</li>
+                    <li class="pro">ביצועים מקסימליים</li>
+                    <li class="con">דורש deploy לשינוי</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(0,212,170,0.2); border-radius: 8px; font-size: 12px;">
+                    <strong>מורכבות:</strong> קלה
+                </div>
+            </div>
+
+            <div class="card option-b">
+                <div class="solution-header">
+                    <div class="solution-letter b">B</div>
+                    <h4>Environment Variables</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">שינוי בלי קוד</li>
+                    <li class="pro">הפרדה בין סביבות</li>
+                    <li class="con">עדיין צריך deploy</li>
+                    <li class="con">יותר מורכב</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(13,110,253,0.2); border-radius: 8px; font-size: 12px;">
+                    <strong>מורכבות:</strong> בינונית
+                </div>
+            </div>
+
+            <div class="card option-c">
+                <div class="solution-header">
+                    <div class="solution-letter c">C</div>
+                    <h4>קובץ Config חיצוני</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">קל לעריכה</li>
+                    <li class="pro">גמישות גבוהה</li>
+                    <li class="con">קובץ נוסף לנהל</li>
+                    <li class="con">אפשרות לשגיאות JSON</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(111,66,193,0.2); border-radius: 8px; font-size: 12px;">
+                    <strong>מורכבות:</strong> בינונית
+                </div>
+            </div>
+
+            <div class="card option-d">
+                <div class="solution-header">
+                    <div class="solution-letter d">D</div>
+                    <h4>ממשק ניהול (CMS)</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">עריכה ללא מתכנת</li>
+                    <li class="pro">ממשק נוח</li>
+                    <li class="con">פיתוח משמעותי</li>
+                    <li class="con">Overkill לנתונים קבועים</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(253,126,20,0.2); border-radius: 8px; font-size: 12px;">
+                    <strong>מורכבות:</strong> גבוהה
+                </div>
+            </div>
+        </div>
+
+        <div class="answer-card" style="margin-top: 25px;">
+            <h4>✅ ההמלצה שלי: פתרון A - Hardcoded</h4>
+            <p>הנתונים האלה משתנים אולי פעם בשנה. לא שווה להשקיע בממשק ניהול.</p>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 30px;">
+            <strong>📍 מיקום:</strong> להוסיף ב-<code>layout.tsx</code> או <code>_app.tsx</code> בתוך <code>&lt;Head&gt;</code> - פעם אחת בלבד
+        </div>
+    </section>
+
+    <!-- Breadcrumbs Section (Slides 7-11) -->
+    <section class="section section-alt" id="breadcrumbs">
+        <div class="section-header">
+            <div class="section-number">סכמה #2</div>
+            <h2>BreadcrumbList Schema</h2>
+        </div>
+
+        <h3>התבנית המקורית</h3>
+        <div class="grid-2">
+            <div>
+                <h4>תבנית כללית:</h4>
+                <div class="code-block small">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{HOME_NAME}",
+      "item": "{HOME_URL}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{LEVEL_2_NAME}",
+      "item": "{LEVEL_2_URL}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{CURRENT_PAGE_NAME}"
+    }
+  ]
+}
+&lt;/script&gt;</div>
+            </div>
+            <div>
+                <h4>דוגמה - עמוד השמת בכירים:</h4>
+                <div class="code-block small">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org/",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "פתרונות למעסיקים",
+      "item": "https://www.manpower.co.il/employers-solutions/employers-solutions"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "השמת בכירים"
+    }
+  ]
+}
+&lt;/script&gt;</div>
+            </div>
+        </div>
+
+        <h3>שאלה #2: בעיית ההיררכיה</h3>
+        <div class="question-card">
+            <h4>❓ הבעיה מצוות הפיתוח:</h4>
+            <p>"אין לנו אפשרות לבנות את ההיררכיה לפי התפריט. התפריט הוא סתם 'תצוגה' - הוא לא היררכיה אמיתית של העמוד."</p>
+            <p style="margin-top: 10px; font-size: 14px; color: #ffc107;">דוגמה: שני עמודים עם אותו מבנה URL אבל במיקום שונה בתפריט</p>
+        </div>
+
+        <h4>4 פתרונות אפשריים:</h4>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>פתרון</th>
+                        <th>תיאור</th>
+                        <th>יתרונות</th>
+                        <th>חסרונות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(0,212,170,0.1);">
+                        <td><span class="badge badge-green">A</span> <strong>מיפוי קבוע</strong></td>
+                        <td>Config file עם מיפוי לכל עמוד</td>
+                        <td>שליטה מלאה, מדויק</td>
+                        <td>צריך לעדכן ידנית</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">B</span> <strong>שדה Parent ב-CMS</strong></td>
+                        <td>כל עמוד בוחר את ה"אבא" שלו</td>
+                        <td>גמישות מקסימלית</td>
+                        <td>עבודה על כל עמוד</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-purple">C</span> <strong>אוטומטי מ-URL</strong></td>
+                        <td>פיצול URL לרמות</td>
+                        <td>אוטומטי לגמרי</td>
+                        <td>שמות לא סמנטיים</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-orange">D</span> <strong>היברידי</strong></td>
+                        <td>אוטומטי + override ידני</td>
+                        <td>הטוב משני העולמות</td>
+                        <td>מורכבות גבוהה</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="answer-card" style="margin-top: 25px;">
+            <h4>✅ ההמלצה שלי: פתרון A - מיפוי קבוע</h4>
+            <p>נותן שליטה מלאה על הטקסט שמופיע, ומאפשר היררכיה שונה מזו שב-URL. אני אכין את קובץ המיפוי המלא.</p>
+        </div>
+
+        <h3>קוד מלא להעתקה</h3>
+        <div class="code-block" id="breadcrumb-code" style="max-height: 450px;"><span style="color: #8b949e;">// lib/breadcrumbConfig.ts</span>
+
+export const BREADCRUMB_MAP: Record&lt;string, { parent: { name: string; url: string } | null; current: string }&gt; = {
+  <span style="color: #8b949e;">// פתרונות למעסיקים</span>
+  <span style="color: #a5d6ff;">'/employers-solutions/c-level-candidates'</span>: {
+    parent: { name: <span style="color: #a5d6ff;">'פתרונות למעסיקים'</span>, url: <span style="color: #a5d6ff;">'/employers-solutions/employers-solutions'</span> },
+    current: <span style="color: #a5d6ff;">'מועמדי C-Level'</span>
+  },
+  <span style="color: #a5d6ff;">'/employers-solutions/flexibility'</span>: {
+    parent: { name: <span style="color: #a5d6ff;">'פתרונות למעסיקים'</span>, url: <span style="color: #a5d6ff;">'/employers-solutions/employers-solutions'</span> },
+    current: <span style="color: #a5d6ff;">'גמישות תעסוקתית'</span>
+  },
+  <span style="color: #8b949e;">// ... שאר העמודים - ראו קבצים להורדה</span>
+};
+
+export function generateBreadcrumbSchema(pathname: string) {
+  const config = BREADCRUMB_MAP[pathname];
+  if (!config) return null;
+
+  const items: any[] = [
+    { "@type": "ListItem", "position": 1, "name": "בית", "item": "https://www.manpower.co.il/" }
+  ];
+
+  if (config.parent) {
+    items.push({
+      "@type": "ListItem", "position": 2,
+      "name": config.parent.name, "item": `https://www.manpower.co.il${config.parent.url}`
+    });
+    items.push({ "@type": "ListItem", "position": 3, "name": config.current });
+  } else {
+    items.push({ "@type": "ListItem", "position": 2, "name": config.current });
+  }
+
+  return { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items };
+}</div>
+
+        <div class="highlight-box">
+            <strong>💡 שימו לב:</strong> העמוד האחרון (הנוכחי) לא מקבל "item" - זה תקין לפי התקן של schema.org
+        </div>
+    </section>
+
+    <!-- SearchAction Section (Slides 12-14) -->
+    <section class="section" id="searchaction">
+        <div class="section-header">
+            <div class="section-number">סכמה #3</div>
+            <h2>WebSite + SearchAction</h2>
+        </div>
+
+        <h3>הקוד המקורי (אופציונלי)</h3>
+        <div class="code-block">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.manpower.co.il/",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.manpower.co.il/search?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+&lt;/script&gt;</div>
+
+        <div class="question-card" style="margin-top: 30px;">
+            <h4>❓ השאלה מצוות הפיתוח:</h4>
+            <p>"אשמח להסבר על הסכמה הזו, לא ממש הבנתי מהי"</p>
+        </div>
+
+        <h3>מה זה עושה?</h3>
+        <div class="grid-2">
+            <div class="card">
+                <h4>🔍 מה זה?</h4>
+                <p style="margin: 15px 0;">מאפשר להציג <strong>תיבת חיפוש</strong> ישירות בתוצאות גוגל (Sitelinks Searchbox):</p>
+                <div style="background: #fff; color: #000; padding: 20px; border-radius: 8px; direction: ltr;">
+                    <div style="font-size: 18px; color: #1a0dab; margin-bottom: 5px;">Manpower Israel - מנפאואר</div>
+                    <div style="font-size: 14px; color: #006621; margin-bottom: 10px;">https://www.manpower.co.il</div>
+                    <div style="display: flex; align-items: center; background: #f1f3f4; padding: 10px; border-radius: 20px;">
+                        <span style="flex: 1; color: #5f6368;">חפש משרות ב-Manpower...</span>
+                        <span>🔍</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card warning">
+                <h4>⚠️ הבעיה באתר שלכם</h4>
+                <p style="margin: 15px 0;">החיפוש באתר עובד עם <strong>פילטרים</strong>, לא טקסט חופשי:</p>
+                <div class="code-block small" style="margin-top: 10px;"><span style="color: #8b949e;">// איך החיפוש באתר עובד היום:</span>
+/search?JOBAREA=4114
+/search?JOBEXPERTISE=4142
+
+<span style="color: #8b949e;">// מה הסכמה מצפה:</span>
+/search?search=מזכירה
+/search?q=הנהלת חשבונות</div>
+                <p style="margin-top: 15px; font-size: 14px; color: #ffc107;">⚠️ אין תמיכה בחיפוש טקסט חופשי = הסכמה לא תעבוד</p>
+            </div>
+        </div>
+
+        <h3>3 אפשרויות</h3>
+        <div class="grid-3">
+            <div class="card recommended">
+                <div class="solution-header">
+                    <div class="solution-letter a">A</div>
+                    <h4>לא להטמיע כרגע</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">אין סיכון</li>
+                    <li class="pro">אין עבודה מיותרת</li>
+                    <li class="pro">אפשר להוסיף בעתיד</li>
+                    <li class="con">מפספסים את הפיצ'ר</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(0,212,170,0.2); border-radius: 8px;">
+                    <strong>המלצה:</strong> זו האופציה הבטוחה ביותר
+                </div>
+            </div>
+
+            <div class="card option-b">
+                <div class="solution-header">
+                    <div class="solution-letter b">B</div>
+                    <h4>להוסיף תמיכה בחיפוש טקסט</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="pro">פיצ'ר שימושי לאתר</li>
+                    <li class="pro">מאפשר את הסכמה</li>
+                    <li class="con">דורש פיתוח</li>
+                    <li class="con">לא בסקופ הנוכחי</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(13,110,253,0.2); border-radius: 8px;">
+                    <strong>אם יש תקציב:</strong> אפשר לשקול בעתיד
+                </div>
+            </div>
+
+            <div class="card danger">
+                <div class="solution-header">
+                    <div class="solution-letter c">C</div>
+                    <h4>להטמיע בכל זאת</h4>
+                </div>
+                <ul style="font-size: 14px;">
+                    <li class="con">גוגל יבדוק ויגלה שלא עובד</li>
+                    <li class="con">לא יציג את תיבת החיפוש</li>
+                    <li class="con">עלול לפגוע באמינות</li>
+                    <li class="con">בזבוז זמן</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background: rgba(220,53,69,0.2); border-radius: 8px;">
+                    <strong>לא מומלץ!</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="answer-card" style="margin-top: 25px;">
+            <h4>✅ ההמלצה שלי: פתרון A - לא להטמיע כרגע</h4>
+            <p>אין טעם להטמיע סכמה שלא תעבוד. אם בעתיד תוסיפו חיפוש טקסט חופשי באתר, נוכל להוסיף את הסכמה.</p>
+        </div>
+    </section>
+
+    <!-- Summary Section (Slide 15) -->
+    <section class="section section-alt" id="summary">
+        <div class="section-header">
+            <div class="section-number">סיכום</div>
+            <h2>משימות לפיתוח</h2>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>סכמה</th>
+                        <th>פתרון נבחר</th>
+                        <th>פעולה</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Organization</strong></td>
+                        <td><span class="badge badge-green">A</span> Hardcoded</td>
+                        <td>Copy-Paste ל-layout.tsx</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>BreadcrumbList</strong></td>
+                        <td><span class="badge badge-green">A</span> מיפוי קבוע</td>
+                        <td>יצירת config + פונקציה + שימוש בעמודים</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>SearchAction</strong></td>
+                        <td><span class="badge badge-red">A</span> לא להטמיע</td>
+                        <td>לדחות לעתיד</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid-2">
+            <div class="card highlight">
+                <h3>📁 מה אני אספק</h3>
+                <ul style="font-size: 15px;">
+                    <li>קובץ מיפוי מלא לכל העמודים (Breadcrumbs)</li>
+                    <li>קובץ TypeScript מוכן להעתקה</li>
+                    <li>רשימת כל ה-URLs והשמות בעברית</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>🧪 בדיקת תקינות</h3>
+                <p style="margin: 10px 0;">אחרי ההטמעה, בדקו כאן:</p>
+                <div class="file-location" style="word-break: break-all; font-size: 12px;">
+                    https://search.google.com/test/rich-results
+                </div>
+                <p style="margin-top: 10px; font-size: 14px; color: #888;">הכניסו URL ובדקו שאין שגיאות</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloads Section -->
+    <section class="section" id="downloads">
+        <div class="section-header">
+            <div class="section-number">קבצים להורדה</div>
+            <h2>קבצים לצוות הפיתוח</h2>
+        </div>
+
+        <!-- Quick Start Steps -->
+        <div class="steps">
+            <h3 style="margin-top: 0;">🚀 מדריך מהיר - 3 צעדים להטמעה</h3>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Organization Schema</strong> - העתיקו את הקוד ל-<code>layout.tsx</code> או <code>_app.tsx</code><br>
+                    <span style="color: #888;">פעם אחת בלבד, מופיע בכל העמודים</span>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Breadcrumb Config</strong> - שמרו את הקובץ ב-<code>lib/breadcrumbConfig.ts</code><br>
+                    <span style="color: #888;">כולל את כל המיפויים והפונקציות</span>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <strong>Usage בעמודים</strong> - השתמשו בפונקציה בכל עמוד או ב-_app.tsx<br>
+                    <span style="color: #888;">ראו דוגמאות בקובץ Usage</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- File 1: Organization Schema -->
+        <h3>1. Organization Schema</h3>
+        <p>סכמה זו מופיעה <strong>פעם אחת בלבד</strong> באתר, ב-layout הראשי.</p>
+
+        <div class="file-section">
+            <div class="file-header">
+                <div class="file-name">
+                    <span>📄</span>
+                    organization_schema.json
+                </div>
+                <div class="file-buttons">
+                    <button class="btn btn-secondary" onclick="copyCode('org-schema')">📋 העתק</button>
+                </div>
+            </div>
+            <div style="max-height: 400px; overflow: auto;">
+                <div class="code-block" id="org-schema">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-563-9999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 110",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/"
+  ]
+}
+&lt;/script&gt;</div>
+            </div>
+        </div>
+
+        <!-- File 2: Breadcrumb Config -->
+        <h3>2. Breadcrumb Configuration</h3>
+        <p>קובץ TypeScript מלא עם כל המיפויים והפונקציות. <strong>להעתיק ל-<code>lib/breadcrumbConfig.ts</code></strong></p>
+
+        <div class="file-section">
+            <div class="file-header">
+                <div class="file-name">
+                    <span>📘</span>
+                    lib/breadcrumbConfig.ts
+                    <span class="badge badge-green">חובה</span>
+                </div>
+                <div class="file-buttons">
+                    <button class="btn btn-secondary" onclick="copyCode('breadcrumb-config')">📋 העתק</button>
+                    <button class="btn btn-primary" onclick="downloadFile('breadcrumbConfig.ts', 'breadcrumb-config')">⬇️ הורד</button>
+                </div>
+            </div>
+            <div style="max-height: 500px; overflow: auto;">
+                <div class="code-block" id="breadcrumb-config">/**
+ * Manpower.co.il - Breadcrumb Configuration
+ * Generated: December 2024
+ */
+
+// ============================================
+// TYPE DEFINITIONS
+// ============================================
+
+interface BreadcrumbConfig {
+  parent: { name: string; url: string } | null;
+  current: string;
+}
+
+interface BreadcrumbItem {
+  "@type": "ListItem";
+  position: number;
+  name: string;
+  item?: string;
+}
+
+interface BreadcrumbSchema {
+  "@context": "https://schema.org";
+  "@type": "BreadcrumbList";
+  itemListElement: BreadcrumbItem[];
+}
+
+// ============================================
+// BREADCRUMB MAPPING - ALL PAGES
+// ============================================
+
+export const BREADCRUMB_MAP: Record&lt;string, BreadcrumbConfig&gt; = {
+  // אודות - About
+  '/about-us/about-us': {
+    parent: null,
+    current: 'אודות מנפאואר'
+  },
+
+  // צור קשר - Contact
+  '/contact-us/contact-us': {
+    parent: null,
+    current: 'צור קשר'
+  },
+  '/contact-us/contact-us-employers': {
+    parent: { name: 'צור קשר', url: '/contact-us/contact-us' },
+    current: 'צור קשר - מעסיקים'
+  },
+
+  // מחפשי עבודה - Job Seekers
+  '/job-seekers/job-seekers': {
+    parent: null,
+    current: 'מחפשי עבודה'
+  },
+
+  // מעסיקים - Employers
+  '/employers/employers': {
+    parent: null,
+    current: 'מעסיקים'
+  },
+  '/employers/tbo': {
+    parent: { name: 'מעסיקים', url: '/employers/employers' },
+    current: 'Talent Based Outsourcing'
+  },
+
+  // פתרונות למעסיקים - Employer Solutions
+  '/employers-solutions/employers-solutions': {
+    parent: null,
+    current: 'פתרונות למעסיקים'
+  },
+  '/employers-solutions/bchirim': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'השמת בכירים'
+  },
+  '/employers-solutions/payroll': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'שירותי Payroll'
+  },
+  '/employers-solutions/service-center': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'מרכזי שירות'
+  },
+  '/employers-solutions/cleanrooms': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'חדרים נקיים'
+  },
+  '/employers-solutions/technology-industry': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'תעשיית הטכנולוגיה'
+  },
+  '/employers-solutions/on-site': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'On Site'
+  },
+  '/employers-solutions/logistics': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'לוגיסטיקה'
+  },
+  '/employers-solutions/perm': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'השמה קבועה'
+  },
+  '/employers-solutions/experts': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'מומחים'
+  },
+  '/employers-solutions/c-level-candidates': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'מועמדי C-Level'
+  },
+  '/employers-solutions/flexibility': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'גמישות תעסוקתית'
+  },
+  '/employers-solutions/outsourcing': {
+    parent: { name: 'פתרונות למעסיקים', url: '/employers-solutions/employers-solutions' },
+    current: 'מיקור חוץ'
+  },
+
+  // תחומים - Domains
+  '/domain/industry-and-management': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'תעשייה וניהול'
+  },
+  '/domain/operations-managers': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'מנהלי תפעול'
+  },
+  '/domain/insurance': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'ביטוח'
+  },
+  '/domain/logistics': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'לוגיסטיקה'
+  },
+  '/domain/employees-needed-technical': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'עובדים טכניים'
+  },
+  '/domain/human-resources': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'משאבי אנוש'
+  },
+
+  // הנהלה - Leadership
+  '/leadership/leadreship-manpower': {
+    parent: { name: 'אודות מנפאואר', url: '/about-us/about-us' },
+    current: 'הנהלת מנפאואר'
+  },
+  '/leadership/tbo_team': {
+    parent: { name: 'אודות מנפאואר', url: '/about-us/about-us' },
+    current: 'צוות TBO'
+  },
+
+  // כלים - Tools
+  '/salary-tables': {
+    parent: null,
+    current: 'טבלאות שכר'
+  },
+  '/salary-calculator': {
+    parent: null,
+    current: 'מחשבון שכר'
+  },
+  '/resume-generator': {
+    parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+    current: 'יצירת קורות חיים'
+  },
+  '/search': {
+    parent: null,
+    current: 'חיפוש משרות'
+  },
+
+  // מקצועות - Professions
+  '/professions/professions': {
+    parent: null,
+    current: 'מקצועות'
+  },
+
+  // עבודה אצלנו - Work With Us
+  '/work-in-our-company/work-in-our-company': {
+    parent: { name: 'אודות מנפאואר', url: '/about-us/about-us' },
+    current: 'עבודה במנפאואר'
+  },
+
+  // משפטי - Legal
+  '/terms-of-use': {
+    parent: null,
+    current: 'תנאי שימוש'
+  },
+  '/privacy-policy': {
+    parent: null,
+    current: 'מדיניות פרטיות'
+  },
+
+  // התחברות - Login
+  '/my/login': {
+    parent: null,
+    current: 'התחברות'
+  },
+};
+
+// ============================================
+// ARTICLE TITLES (Hebrew from URL slug)
+// ============================================
+
+const ARTICLE_TITLES: Record&lt;string, string&gt; = {
+  'ראיון-עבודה': 'ראיון עבודה',
+  'קורות-חיים': 'קורות חיים',
+  'חוזה-עבודה': 'חוזה עבודה',
+  'חיפוש-עבודה': 'חיפוש עבודה',
+  'עבודה-מהבית': 'עבודה מהבית',
+  'עבודה-זמנית': 'עבודה זמנית',
+  'עבודה-ראשונה': 'עבודה ראשונה',
+  'ניהול-קריירה': 'ניהול קריירה',
+};
+
+// ============================================
+// MAIN FUNCTION
+// ============================================
+
+export function generateBreadcrumbSchema(pathname: string): BreadcrumbSchema | null {
+  const BASE_URL = 'https://www.manpower.co.il';
+  const normalizedPath = pathname.replace(/\/$/, '') || '/';
+
+  // Skip homepage
+  if (normalizedPath === '/') return null;
+
+  // Check static mapping
+  let config = BREADCRUMB_MAP[normalizedPath];
+
+  // Handle dynamic routes
+  if (!config) {
+    // Articles: /article/{slug}
+    if (normalizedPath.startsWith('/article/')) {
+      const slug = normalizedPath.replace('/article/', '');
+      const decodedSlug = decodeURIComponent(slug);
+      const title = ARTICLE_TITLES[decodedSlug] || formatSlugToTitle(decodedSlug);
+      config = {
+        parent: { name: 'מאמרים', url: '/article' },
+        current: title
+      };
+    }
+    // Jobs: /job/{id}
+    else if (normalizedPath.startsWith('/job/')) {
+      const jobId = normalizedPath.replace('/job/', '');
+      config = {
+        parent: { name: 'חיפוש משרות', url: '/search' },
+        current: `משרה ${jobId}`
+      };
+    }
+    // Domain pages
+    else if (normalizedPath.startsWith('/domain/')) {
+      const slug = normalizedPath.replace('/domain/', '').replace('/', '');
+      config = {
+        parent: { name: 'מחפשי עבודה', url: '/job-seekers/job-seekers' },
+        current: formatSlugToTitle(slug)
+      };
+    }
+  }
+
+  if (!config) return null;
+
+  // Build breadcrumb items
+  const items: BreadcrumbItem[] = [
+    { "@type": "ListItem", position: 1, name: "בית", item: BASE_URL + "/" }
+  ];
+
+  if (config.parent) {
+    items.push({
+      "@type": "ListItem",
+      position: 2,
+      name: config.parent.name,
+      item: BASE_URL + config.parent.url
+    });
+    items.push({
+      "@type": "ListItem",
+      position: 3,
+      name: config.current
+    });
+  } else {
+    items.push({
+      "@type": "ListItem",
+      position: 2,
+      name: config.current
+    });
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items
+  };
+}
+
+// Helper function
+function formatSlugToTitle(slug: string): string {
+  return slug.replace(/-/g, ' ').replace(/_/g, ' ')
+    .split(' ').map(w =&gt; w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}</div>
+            </div>
+        </div>
+
+        <!-- File 3: Usage Examples -->
+        <h3>3. דוגמאות שימוש</h3>
+        <p>דוגמאות קוד לשימוש ב-Next.js (Pages Router ו-App Router)</p>
+
+        <div class="file-section">
+            <div class="file-header">
+                <div class="file-name">
+                    <span>📗</span>
+                    usage_examples.tsx
+                    <span class="badge badge-purple">עזר</span>
+                </div>
+                <div class="file-buttons">
+                    <button class="btn btn-secondary" onclick="copyCode('usage-examples')">📋 העתק</button>
+                    <button class="btn btn-primary" onclick="downloadFile('usage_examples.tsx', 'usage-examples')">⬇️ הורד</button>
+                </div>
+            </div>
+            <div style="max-height: 500px; overflow: auto;">
+                <div class="code-block" id="usage-examples">// ============================================
+// OPTION 1: Use in _app.tsx (Recommended)
+// ============================================
+
+// pages/_app.tsx
+import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { generateBreadcrumbSchema } from '@/lib/breadcrumbConfig';
+
+function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const breadcrumbSchema = generateBreadcrumbSchema(router.pathname);
+
+  return (
+    &lt;&gt;
+      &lt;Head&gt;
+        {/* Organization Schema - all pages */}
+        &lt;script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Manpower",
+              "alternateName": "מנפאואר ישראל",
+              "url": "https://www.manpower.co.il/",
+              "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+972-3-563-9999",
+                "contactType": "customer service",
+                "areaServed": "IL",
+                "availableLanguage": ["he", "en"]
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "יגאל אלון 110",
+                "addressLocality": "תל אביב-יפו",
+                "postalCode": "6789149",
+                "addressCountry": "IL"
+              },
+              "sameAs": [
+                "https://www.facebook.com/ManpowerIL",
+                "https://www.instagram.com/manpower_israel/",
+                "https://www.linkedin.com/company/manpower-israel/"
+              ]
+            })
+          }}
+        /&gt;
+
+        {/* Breadcrumb Schema - dynamic per page */}
+        {breadcrumbSchema && (
+          &lt;script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(breadcrumbSchema)
+            }}
+          /&gt;
+        )}
+      &lt;/Head&gt;
+
+      &lt;Component {...pageProps} /&gt;
+    &lt;/&gt;
+  );
+}
+
+export default MyApp;
+
+
+// ============================================
+// OPTION 2: Reusable Component
+// ============================================
+
+// components/BreadcrumbSchema.tsx
+import { useRouter } from 'next/router';
+import Head from 'next/head';
+import { generateBreadcrumbSchema } from '@/lib/breadcrumbConfig';
+
+export function BreadcrumbSchema() {
+  const router = useRouter();
+  const schema = generateBreadcrumbSchema(router.pathname);
+
+  if (!schema) return null;
+
+  return (
+    &lt;Head&gt;
+      &lt;script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      /&gt;
+    &lt;/Head&gt;
+  );
+}
+
+// Usage: import { BreadcrumbSchema } from '@/components/BreadcrumbSchema';
+// Then add &lt;BreadcrumbSchema /&gt; in any page
+
+
+// ============================================
+// OPTION 3: For App Router (Next.js 13+)
+// ============================================
+
+// components/BreadcrumbSchema.tsx
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { generateBreadcrumbSchema } from '@/lib/breadcrumbConfig';
+
+export function BreadcrumbSchema() {
+  const pathname = usePathname();
+  const schema = generateBreadcrumbSchema(pathname);
+
+  if (!schema) return null;
+
+  return (
+    &lt;script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    /&gt;
+  );
+}</div>
+            </div>
+        </div>
+
+        <!-- URL Tables -->
+        <h3>4. רשימת URLs מלאה</h3>
+
+        <h4>עמודים ראשיים (Level 1)</h4>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>שם בעברית</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>/about-us/about-us</code></td><td>אודות מנפאואר</td></tr>
+                    <tr><td><code>/job-seekers/job-seekers</code></td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/employers/employers</code></td><td>מעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/employers-solutions</code></td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/professions/professions</code></td><td>מקצועות</td></tr>
+                    <tr><td><code>/contact-us/contact-us</code></td><td>צור קשר</td></tr>
+                    <tr><td><code>/search</code></td><td>חיפוש משרות</td></tr>
+                    <tr><td><code>/salary-tables</code></td><td>טבלאות שכר</td></tr>
+                    <tr><td><code>/salary-calculator</code></td><td>מחשבון שכר</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>פתרונות למעסיקים (Level 2)</h4>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>שם בעברית</th>
+                        <th>Parent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>/employers-solutions/bchirim</code></td><td>השמת בכירים</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/payroll</code></td><td>שירותי Payroll</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/service-center</code></td><td>מרכזי שירות</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/cleanrooms</code></td><td>חדרים נקיים</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/technology-industry</code></td><td>תעשיית הטכנולוגיה</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/on-site</code></td><td>On Site</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/logistics</code></td><td>לוגיסטיקה</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/perm</code></td><td>השמה קבועה</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/experts</code></td><td>מומחים</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/c-level-candidates</code></td><td>מועמדי C-Level</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/flexibility</code></td><td>גמישות תעסוקתית</td><td>פתרונות למעסיקים</td></tr>
+                    <tr><td><code>/employers-solutions/outsourcing</code></td><td>מיקור חוץ</td><td>פתרונות למעסיקים</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h4>תחומים (Level 2)</h4>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>שם בעברית</th>
+                        <th>Parent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>/domain/industry-and-management</code></td><td>תעשייה וניהול</td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/domain/operations-managers</code></td><td>מנהלי תפעול</td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/domain/insurance</code></td><td>ביטוח</td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/domain/logistics</code></td><td>לוגיסטיקה</td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/domain/employees-needed-technical</code></td><td>עובדים טכניים</td><td>מחפשי עבודה</td></tr>
+                    <tr><td><code>/domain/human-resources</code></td><td>משאבי אנוש</td><td>מחפשי עבודה</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Testing -->
+        <h3>5. בדיקת תקינות</h3>
+
+        <div class="warning-box">
+            <strong>⚠️ חשוב!</strong> אחרי ההטמעה, בדקו את התקינות בכלי של גוגל
+        </div>
+
+        <div class="highlight-box">
+            <strong>🔗 Rich Results Test:</strong><br>
+            <a href="https://search.google.com/test/rich-results" target="_blank" style="color: var(--primary);">
+                https://search.google.com/test/rich-results
+            </a>
+        </div>
+
+        <h4>Checklist לבדיקה</h4>
+        <ul class="checklist">
+            <li>Organization Schema מופיע בכל העמודים</li>
+            <li>Breadcrumb Schema מופיע בעמודים פנימיים (לא בדף הבית)</li>
+            <li>אין שגיאות JSON</li>
+            <li>השמות בעברית מוצגים נכון</li>
+            <li>ה-URLs מלאים ותקינים</li>
+        </ul>
+
+        <!-- Contact -->
+        <div class="contact-box">
+            <h3 style="margin-top: 0;">❓ שאלות?</h3>
+            <p>נדב כהן | SEO</p>
+            <p style="color: var(--primary); font-size: 18px;">nadav@n-c.digital</p>
+            <div style="margin-top: 20px;">
+                <span class="badge badge-green">Organization ✓</span>
+                <span class="badge badge-blue">BreadcrumbList ✓</span>
+                <span class="badge badge-red">SearchAction ✗</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>Manpower Schema Implementation Guide | December 2024</p>
+        <p style="margin-top: 10px; font-size: 14px;">Created by Nadav Cohen | SEO</p>
+    </footer>
+
+    <!-- Toast notification -->
+    <div class="copy-toast" id="copyToast">✓ הועתק ללוח</div>
+
+    <!-- Scroll to top button -->
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Mobile Navigation
+        function toggleMobileNav() {
+            document.getElementById('mobileNav').classList.toggle('open');
+        }
+
+        function closeMobileNav() {
+            document.getElementById('mobileNav').classList.remove('open');
+        }
+
+        // Copy to clipboard
+        function copyCode(elementId) {
+            const codeBlock = document.getElementById(elementId);
+            const text = codeBlock.innerText;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast();
+            });
+        }
+
+        // Download file
+        function downloadFile(filename, elementId) {
+            const codeBlock = document.getElementById(elementId);
+            const text = codeBlock.innerText;
+
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Show toast
+        function showToast() {
+            const toast = document.getElementById('copyToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show/hide scroll to top button
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.scrollY > 500) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        // Active nav link
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
