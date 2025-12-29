@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הנחיות Schema - Manpower.co.il</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            padding: 50px 70px;
+            display: none;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .slide-header {
+            margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+
+        .slide-number {
+            font-size: 14px;
+            color: #00d4aa;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4aa, #00a8cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #00d4aa;
+        }
+
+        h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #00a8cc;
+        }
+
+        h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #a0a0a0;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .four-columns {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card.highlight {
+            border-color: #00d4aa;
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .card.warning {
+            border-color: #ffc107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .card.danger {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .card.recommended {
+            border-color: #00d4aa;
+            border-width: 2px;
+            position: relative;
+        }
+
+        .card.recommended::before {
+            content: '⭐ מומלץ';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #00d4aa;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .card.option-b {
+            border-color: #0d6efd;
+            background: rgba(13, 110, 253, 0.1);
+        }
+
+        .card.option-c {
+            border-color: #6f42c1;
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        .card.option-d {
+            border-color: #fd7e14;
+            background: rgba(253, 126, 20, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px 0;
+            padding-right: 25px;
+            position: relative;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            right: 0;
+            color: #00d4aa;
+        }
+
+        li.pro::before {
+            content: '✓';
+            color: #00d4aa;
+        }
+
+        li.con::before {
+            content: '✗';
+            color: #dc3545;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+            direction: ltr;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .code-block.small {
+            font-size: 11px;
+            padding: 15px;
+            max-height: 300px;
+        }
+
+        .code-block code {
+            color: #c9d1d9;
+            white-space: pre;
+        }
+
+        .code-block .string { color: #a5d6ff; }
+        .code-block .key { color: #7ee787; }
+        .code-block .comment { color: #8b949e; }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge.green { background: #00d4aa; color: #000; }
+        .badge.yellow { background: #ffc107; color: #000; }
+        .badge.red { background: #dc3545; color: #fff; }
+        .badge.blue { background: #0d6efd; color: #fff; }
+        .badge.purple { background: #6f42c1; color: #fff; }
+        .badge.orange { background: #fd7e14; color: #000; }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #00d4aa;
+            color: #000;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 4px;
+            background: #00d4aa;
+            transition: width 0.3s ease;
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 14px;
+            color: #a0a0a0;
+        }
+
+        .logo {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #00d4aa;
+        }
+
+        .schema-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+        }
+
+        .schema-box {
+            background: rgba(0, 212, 170, 0.2);
+            border: 2px solid #00d4aa;
+            border-radius: 12px;
+            padding: 15px 25px;
+            text-align: center;
+        }
+
+        .schema-arrow {
+            font-size: 28px;
+            color: #00d4aa;
+        }
+
+        .question-card {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .question-card h4 {
+            color: #ffc107;
+            margin-bottom: 8px;
+        }
+
+        .answer-card {
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid #00d4aa;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .answer-card h4 {
+            color: #00d4aa;
+            margin-bottom: 8px;
+        }
+
+        .icon-large {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            height: 100%;
+        }
+
+        .file-location {
+            background: #0d1117;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: #00d4aa;
+            display: inline-block;
+            margin-top: 8px;
+            direction: ltr;
+            font-size: 14px;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .small-text {
+            font-size: 15px;
+            color: #a0a0a0;
+        }
+
+        .original-doc {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .original-doc-label {
+            font-size: 12px;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .solution-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .solution-letter {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .solution-letter.a { background: #00d4aa; color: #000; }
+        .solution-letter.b { background: #0d6efd; color: #fff; }
+        .solution-letter.c { background: #6f42c1; color: #fff; }
+        .solution-letter.d { background: #fd7e14; color: #000; }
+
+        .comparison-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .comparison-label {
+            width: 80px;
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+
+        .comparison-value {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1400px) {
+            .three-columns, .four-columns {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+
+            .slide {
+                padding: 35px;
+            }
+
+            h1 { font-size: 32px; }
+            h2 { font-size: 26px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="logo">Manpower Schema</div>
+
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active" data-slide="1">
+            <div class="center-content">
+                <div class="icon-large">📋</div>
+                <h1>הנחיות להטמעת Schema</h1>
+                <p class="subtitle" style="margin-top: 20px; font-size: 28px;">manpower.co.il</p>
+                <p class="small-text" style="margin-top: 30px;">נדב כהן | SEO | דצמבר 2024</p>
+                <div style="margin-top: 40px;">
+                    <span class="badge green">Organization</span>
+                    <span class="badge blue">BreadcrumbList</span>
+                    <span class="badge yellow">SearchAction</span>
+                </div>
+                <p style="margin-top: 50px; font-size: 16px; color: #666;">כולל מספר פתרונות חלופיים לכל סכמה</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is Schema -->
+        <div class="slide" data-slide="2">
+            <div class="slide-header">
+                <div class="slide-number">סקירה כללית</div>
+                <h2>מה זה Schema ולמה זה חשוב?</h2>
+            </div>
+            <div class="content">
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>🤖 מה זה?</h3>
+                        <ul>
+                            <li>קוד JSON-LD שמוסיפים ל-HTML</li>
+                            <li>עוזר לגוגל להבין את תוכן העמוד</li>
+                            <li>לא משפיע על מה שהגולש רואה</li>
+                            <li>רק גוגל "קורא" את זה</li>
+                        </ul>
+                    </div>
+                    <div class="card highlight">
+                        <h3>🎯 למה זה חשוב?</h3>
+                        <ul>
+                            <li>תוצאות עשירות יותר בגוגל</li>
+                            <li>לוגו ופרטי חברה ב-Knowledge Panel</li>
+                            <li>פירורי לחם בתוצאות החיפוש</li>
+                            <li>אמינות מוגברת בעיני גוגל</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="schema-visual">
+                    <div class="schema-box">
+                        <div>📄</div>
+                        <div>HTML + Schema</div>
+                    </div>
+                    <div class="schema-arrow">→</div>
+                    <div class="schema-box">
+                        <div>🤖</div>
+                        <div>Google Bot</div>
+                    </div>
+                    <div class="schema-arrow">→</div>
+                    <div class="schema-box">
+                        <div>✨</div>
+                        <div>Rich Results</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Overview of 3 Schemas -->
+        <div class="slide" data-slide="3">
+            <div class="slide-header">
+                <div class="slide-number">סקירת הסכמות</div>
+                <h2>3 סכמות להטמעה</h2>
+            </div>
+            <div class="content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>סכמה</th>
+                                <th>מטרה</th>
+                                <th>מיקום</th>
+                                <th>סטטוס</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Organization</strong></td>
+                                <td>פרטי החברה, לוגו, יצירת קשר</td>
+                                <td>Layout ראשי (פעם אחת)</td>
+                                <td><span class="badge green">להטמיע</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BreadcrumbList</strong></td>
+                                <td>פירורי לחם / נתיבי ניווט</td>
+                                <td>כל עמוד פנימי</td>
+                                <td><span class="badge green">להטמיע</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>WebSite + SearchAction</strong></td>
+                                <td>תיבת חיפוש בגוגל</td>
+                                <td>-</td>
+                                <td><span class="badge yellow">אופציונלי</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Original Organization Schema -->
+        <div class="slide" data-slide="4">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #1 - המקור</div>
+                <h2>Organization Schema - הקוד המקורי</h2>
+            </div>
+            <div class="content">
+                <div class="original-doc">
+                    <div class="original-doc-label">📄 מהמסמך המקורי</div>
+                    <div class="code-block">
+                        <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-563-9999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 110",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/"
+  ]
+}
+&lt;/script&gt;</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Question 1 - Solutions -->
+        <div class="slide" data-slide="5">
+            <div class="slide-header">
+                <div class="slide-number">שאלה #1</div>
+                <h2>Organization - קבוע בקוד או מנוהל?</h2>
+            </div>
+            <div class="content">
+                <div class="question-card">
+                    <h4>❓ השאלה מצוות הפיתוח:</h4>
+                    <p>"האם את רוצה שכל הנתונים יהיו קבועים בקוד? או לתת לך אזור חדש בוורדפרס לניהול של כל הערכים?"</p>
+                </div>
+
+                <h3 style="margin-top: 20px;">4 פתרונות אפשריים:</h3>
+
+                <div class="four-columns">
+                    <div class="card recommended">
+                        <div class="solution-header">
+                            <div class="solution-letter a">A</div>
+                            <h4>Hardcoded בקוד</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">פשוט ומהיר להטמעה</li>
+                            <li class="pro">אין תלות חיצונית</li>
+                            <li class="pro">ביצועים מקסימליים</li>
+                            <li class="con">דורש deploy לשינוי</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(0,212,170,0.2); border-radius: 8px; font-size: 12px;">
+                            <strong>מורכבות:</strong> קלה<br>
+                            <strong>זמן:</strong> 5 דקות
+                        </div>
+                    </div>
+
+                    <div class="card option-b">
+                        <div class="solution-header">
+                            <div class="solution-letter b">B</div>
+                            <h4>Environment Variables</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">שינוי בלי קוד</li>
+                            <li class="pro">הפרדה בין סביבות</li>
+                            <li class="con">עדיין צריך deploy</li>
+                            <li class="con">יותר מורכב</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(13,110,253,0.2); border-radius: 8px; font-size: 12px;">
+                            <strong>מורכבות:</strong> בינונית<br>
+                            <strong>זמן:</strong> 30 דקות
+                        </div>
+                    </div>
+
+                    <div class="card option-c">
+                        <div class="solution-header">
+                            <div class="solution-letter c">C</div>
+                            <h4>קובץ Config חיצוני</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">קל לעריכה</li>
+                            <li class="pro">גמישות גבוהה</li>
+                            <li class="con">קובץ נוסף לנהל</li>
+                            <li class="con">אפשרות לשגיאות JSON</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(111,66,193,0.2); border-radius: 8px; font-size: 12px;">
+                            <strong>מורכבות:</strong> בינונית<br>
+                            <strong>זמן:</strong> 45 דקות
+                        </div>
+                    </div>
+
+                    <div class="card option-d">
+                        <div class="solution-header">
+                            <div class="solution-letter d">D</div>
+                            <h4>ממשק ניהול (CMS)</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">עריכה ללא מתכנת</li>
+                            <li class="pro">ממשק נוח</li>
+                            <li class="con">פיתוח משמעותי</li>
+                            <li class="con">Overkill לנתונים קבועים</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(253,126,20,0.2); border-radius: 8px; font-size: 12px;">
+                            <strong>מורכבות:</strong> גבוהה<br>
+                            <strong>זמן:</strong> 2-4 שעות
+                        </div>
+                    </div>
+                </div>
+
+                <div class="answer-card" style="margin-top: 20px;">
+                    <h4>✅ ההמלצה שלי: פתרון A - Hardcoded</h4>
+                    <p>הנתונים האלה משתנים אולי פעם בשנה. לא שווה להשקיע בממשק ניהול.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Organization Implementation -->
+        <div class="slide" data-slide="6">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #1 - הטמעה</div>
+                <h2>Organization Schema - איך להטמיע</h2>
+            </div>
+            <div class="content">
+                <div class="flex-row">
+                    <div class="flex-1">
+                        <div class="code-block">
+                            <code><span class="comment">// להוסיף ב-layout.tsx או _app.tsx בתוך &lt;Head&gt;</span>
+
+&lt;script type="application/ld+json"&gt;
+{
+  "<span class="key">@context</span>": "<span class="string">https://schema.org</span>",
+  "<span class="key">@type</span>": "<span class="string">Organization</span>",
+  "<span class="key">name</span>": "<span class="string">Manpower</span>",
+  "<span class="key">alternateName</span>": "<span class="string">מנפאואר ישראל</span>",
+  "<span class="key">url</span>": "<span class="string">https://www.manpower.co.il/</span>",
+  "<span class="key">logo</span>": "<span class="string">https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg</span>",
+  "<span class="key">contactPoint</span>": {
+    "<span class="key">@type</span>": "<span class="string">ContactPoint</span>",
+    "<span class="key">telephone</span>": "<span class="string">+972-3-563-9999</span>",
+    "<span class="key">contactType</span>": "<span class="string">customer service</span>",
+    "<span class="key">areaServed</span>": "<span class="string">IL</span>",
+    "<span class="key">availableLanguage</span>": ["<span class="string">he</span>", "<span class="string">en</span>"]
+  },
+  "<span class="key">address</span>": {
+    "<span class="key">@type</span>": "<span class="string">PostalAddress</span>",
+    "<span class="key">streetAddress</span>": "<span class="string">יגאל אלון 110</span>",
+    "<span class="key">addressLocality</span>": "<span class="string">תל אביב-יפו</span>",
+    "<span class="key">postalCode</span>": "<span class="string">6789149</span>",
+    "<span class="key">addressCountry</span>": "<span class="string">IL</span>"
+  },
+  "<span class="key">sameAs</span>": [
+    "<span class="string">https://www.facebook.com/ManpowerIL</span>",
+    "<span class="string">https://www.instagram.com/manpower_israel/</span>",
+    "<span class="string">https://www.linkedin.com/company/manpower-israel/</span>"
+  ]
+}
+&lt;/script&gt;</code>
+                        </div>
+                    </div>
+                    <div style="width: 260px;">
+                        <div class="card highlight">
+                            <h3>📍 מיקום</h3>
+                            <p>פעם אחת בלבד</p>
+                            <div class="file-location">layout.tsx</div>
+                            <p style="margin-top: 12px; font-size: 13px; color: #a0a0a0;">או _app.tsx<br>בתוך &lt;Head&gt;</p>
+                        </div>
+                        <div class="card" style="margin-top: 15px;">
+                            <h3>✅ Checklist</h3>
+                            <ul style="font-size: 14px;">
+                                <li>מופיע בכל עמוד</li>
+                                <li>JSON תקין</li>
+                                <li>פעם אחת בלבד</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Original Breadcrumb Template -->
+        <div class="slide" data-slide="7">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #2 - המקור</div>
+                <h2>BreadcrumbList - התבנית המקורית</h2>
+            </div>
+            <div class="content">
+                <div class="two-columns">
+                    <div>
+                        <div class="original-doc">
+                            <div class="original-doc-label">📄 תבנית מהמסמך המקורי</div>
+                            <div class="code-block small">
+                                <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{HOME_NAME}",
+      "item": "{HOME_URL}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{LEVEL_2_NAME}",
+      "item": "{LEVEL_2_URL}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{CURRENT_PAGE_NAME}"
+    }
+  ]
+}
+&lt;/script&gt;</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="original-doc">
+                            <div class="original-doc-label">📄 דוגמה - עמוד השמת בכירים</div>
+                            <div class="code-block small">
+                                <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org/",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מחפשי עבודה",
+      "item": "https://www.manpower.co.il/job-seekers/job-seekers"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "משרות בכירות"
+    }
+  ]
+}
+&lt;/script&gt;</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Question 2 - The Problem -->
+        <div class="slide" data-slide="8">
+            <div class="slide-header">
+                <div class="slide-number">שאלה #2</div>
+                <h2>Breadcrumbs - בעיית ההיררכיה</h2>
+            </div>
+            <div class="content">
+                <div class="question-card">
+                    <h4>❓ הבעיה מצוות הפיתוח:</h4>
+                    <p>"אין לנו אפשרות לבנות את ההיררכיה לפי התפריט. התפריט הוא סתם 'תצוגה' - הוא לא היררכיה אמיתית של העמוד."</p>
+                    <p style="margin-top: 10px; font-size: 14px; color: #ffc107;">דוגמה: שני עמודים עם אותו מבנה URL אבל במיקום שונה בתפריט:</p>
+                    <div style="direction: ltr; text-align: left; font-family: monospace; font-size: 14px; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+                        /employers-solutions/<strong>c-level-candidates</strong><br>
+                        /employers-solutions/<strong>flexibility</strong>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 15px;">4 פתרונות אפשריים:</h3>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>פתרון</th>
+                                <th>תיאור</th>
+                                <th>יתרונות</th>
+                                <th>חסרונות</th>
+                                <th>מורכבות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(0,212,170,0.1);">
+                                <td><span class="badge green">A</span> <strong>מיפוי קבוע</strong></td>
+                                <td>Config file עם מיפוי לכל עמוד</td>
+                                <td>שליטה מלאה, מדויק</td>
+                                <td>צריך לעדכן ידנית</td>
+                                <td>בינונית</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge blue">B</span> <strong>שדה Parent ב-CMS</strong></td>
+                                <td>כל עמוד בוחר את ה"אבא" שלו</td>
+                                <td>גמישות מקסימלית</td>
+                                <td>עבודה על כל עמוד</td>
+                                <td>גבוהה</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge purple">C</span> <strong>אוטומטי מ-URL</strong></td>
+                                <td>פיצול URL לרמות</td>
+                                <td>אוטומטי לגמרי</td>
+                                <td>שמות לא סמנטיים</td>
+                                <td>קלה</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge orange">D</span> <strong>היברידי</strong></td>
+                                <td>אוטומטי + override ידני</td>
+                                <td>הטוב משני העולמות</td>
+                                <td>מורכבות גבוהה</td>
+                                <td>גבוהה מאוד</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Breadcrumb Solutions Detail -->
+        <div class="slide" data-slide="9">
+            <div class="slide-header">
+                <div class="slide-number">שאלה #2 - פתרונות</div>
+                <h2>Breadcrumbs - השוואת פתרונות</h2>
+            </div>
+            <div class="content">
+                <div class="two-columns">
+                    <div class="card recommended">
+                        <div class="solution-header">
+                            <div class="solution-letter a">A</div>
+                            <h4>מיפוי קבוע בקוד (מומלץ)</h4>
+                        </div>
+                        <div class="code-block small" style="margin-top: 10px;">
+                            <code>const BREADCRUMB_MAP = {
+  '/employers-solutions/c-level-candidates': {
+    parent: {
+      name: 'פתרונות למעסיקים',
+      url: '/employers-solutions'
+    },
+    current: 'השמת בכירים'
+  },
+  '/job-seekers/senior-positions': {
+    parent: {
+      name: 'מחפשי עבודה',
+      url: '/job-seekers/job-seekers'
+    },
+    current: 'משרות בכירות'
+  }
+  // ... שאר העמודים
+}</code>
+                        </div>
+                        <p style="font-size: 13px; margin-top: 10px; color: #00d4aa;">✓ אני (SEO) אספק את המיפוי המלא</p>
+                    </div>
+
+                    <div class="card option-c">
+                        <div class="solution-header">
+                            <div class="solution-letter c">C</div>
+                            <h4>אוטומטי מ-URL (חלופה פשוטה)</h4>
+                        </div>
+                        <div class="code-block small" style="margin-top: 10px;">
+                            <code>function autoBreadcrumb(pathname) {
+  const segments = pathname.split('/').filter(Boolean);
+  const items = [{ name: 'בית', item: '/' }];
+
+  let currentPath = '';
+  segments.forEach((seg, i) => {
+    currentPath += '/' + seg;
+    items.push({
+      name: formatSegment(seg), // המרת slug לשם
+      item: i < segments.length - 1
+        ? currentPath : undefined
+    });
+  });
+
+  return items;
+}
+
+// employers-solutions → "פתרונות למעסיקים"
+const SEGMENT_NAMES = {
+  'employers-solutions': 'פתרונות למעסיקים',
+  'job-seekers': 'מחפשי עבודה',
+  // ...
+}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="answer-card" style="margin-top: 15px;">
+                    <h4>✅ ההמלצה שלי: פתרון A - מיפוי קבוע</h4>
+                    <p>נותן שליטה מלאה על הטקסט שמופיע, ומאפשר היררכיה שונה מזו שב-URL. אני אכין את קובץ המיפוי המלא.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Breadcrumb Full Implementation -->
+        <div class="slide" data-slide="10">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #2 - הטמעה</div>
+                <h2>Breadcrumbs - קוד מלא להעתקה</h2>
+            </div>
+            <div class="content">
+                <div class="code-block" style="max-height: 520px;">
+                    <code><span class="comment">// lib/breadcrumbConfig.ts</span>
+
+export const BREADCRUMB_MAP: Record&lt;string, { parent: { name: string; url: string } | null; current: string }&gt; = {
+  <span class="comment">// פתרונות למעסיקים</span>
+  '<span class="string">/employers-solutions/c-level-candidates</span>': {
+    parent: { name: '<span class="string">פתרונות למעסיקים</span>', url: '<span class="string">/employers-solutions</span>' },
+    current: '<span class="string">השמת בכירים</span>'
+  },
+  '<span class="string">/employers-solutions/flexibility</span>': {
+    parent: { name: '<span class="string">פתרונות למעסיקים</span>', url: '<span class="string">/employers-solutions</span>' },
+    current: '<span class="string">גמישות תעסוקתית</span>'
+  },
+  '<span class="string">/employers-solutions/outsourcing</span>': {
+    parent: { name: '<span class="string">פתרונות למעסיקים</span>', url: '<span class="string">/employers-solutions</span>' },
+    current: '<span class="string">מיקור חוץ</span>'
+  },
+
+  <span class="comment">// מחפשי עבודה</span>
+  '<span class="string">/job-seekers/job-seekers</span>': {
+    parent: null,
+    current: '<span class="string">מחפשי עבודה</span>'
+  },
+  '<span class="string">/job-seekers/senior-positions</span>': {
+    parent: { name: '<span class="string">מחפשי עבודה</span>', url: '<span class="string">/job-seekers/job-seekers</span>' },
+    current: '<span class="string">משרות בכירות</span>'
+  },
+
+  <span class="comment">// ... אוסיף את שאר העמודים</span>
+};
+
+export function generateBreadcrumbSchema(pathname: string) {
+  const config = BREADCRUMB_MAP[pathname];
+  if (!config) return null;
+
+  const items: any[] = [
+    { "@type": "ListItem", "position": 1, "name": "בית", "item": "https://www.manpower.co.il/" }
+  ];
+
+  if (config.parent) {
+    items.push({
+      "@type": "ListItem", "position": 2,
+      "name": config.parent.name, "item": `https://www.manpower.co.il${config.parent.url}`
+    });
+    items.push({ "@type": "ListItem", "position": 3, "name": config.current });
+  } else {
+    items.push({ "@type": "ListItem", "position": 2, "name": config.current });
+  }
+
+  return { "@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items };
+}</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Breadcrumb Usage -->
+        <div class="slide" data-slide="11">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #2 - שימוש</div>
+                <h2>Breadcrumbs - שימוש בעמוד</h2>
+            </div>
+            <div class="content">
+                <div class="two-columns">
+                    <div>
+                        <h3>קוד בעמוד:</h3>
+                        <div class="code-block">
+                            <code><span class="comment">// pages/employers-solutions/c-level-candidates.tsx</span>
+
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { generateBreadcrumbSchema } from '@/lib/breadcrumbConfig';
+
+export default function CLevelCandidatesPage() {
+  const router = useRouter();
+  const breadcrumbSchema = generateBreadcrumbSchema(router.pathname);
+
+  return (
+    &lt;&gt;
+      &lt;Head&gt;
+        {breadcrumbSchema && (
+          &lt;script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(breadcrumbSchema)
+            }}
+          /&gt;
+        )}
+      &lt;/Head&gt;
+
+      {/* תוכן העמוד */}
+    &lt;/&gt;
+  );
+}</code>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>הפלט שיווצר:</h3>
+                        <div class="code-block small">
+                            <code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "פתרונות למעסיקים",
+      "item": "https://www.manpower.co.il/employers-solutions"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "השמת בכירים"
+    }
+  ]
+}</code>
+                        </div>
+                        <div class="card highlight" style="margin-top: 15px;">
+                            <h4>💡 שימו לב</h4>
+                            <p style="font-size: 14px;">העמוד האחרון (הנוכחי) לא מקבל "item" - זה תקין לפי התקן של schema.org</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Original SearchAction Schema -->
+        <div class="slide" data-slide="12">
+            <div class="slide-header">
+                <div class="slide-number">סכמה #3 - המקור</div>
+                <h2>WebSite + SearchAction - הקוד המקורי</h2>
+            </div>
+            <div class="content">
+                <div class="original-doc">
+                    <div class="original-doc-label">📄 מהמסמך המקורי (אופציונלי)</div>
+                    <div class="code-block">
+                        <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.manpower.co.il/",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.manpower.co.il/search?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+&lt;/script&gt;</code>
+                    </div>
+                </div>
+
+                <div class="question-card" style="margin-top: 20px;">
+                    <h4>❓ השאלה מצוות הפיתוח:</h4>
+                    <p>"אשמח להסבר על הסכמה הזו, לא ממש הבנתי מהי"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: SearchAction Explanation -->
+        <div class="slide" data-slide="13">
+            <div class="slide-header">
+                <div class="slide-number">שאלה #3</div>
+                <h2>WebSite + SearchAction - מה זה?</h2>
+            </div>
+            <div class="content">
+                <div class="two-columns">
+                    <div class="card">
+                        <h3>🔍 מה זה עושה?</h3>
+                        <p style="margin: 15px 0;">מאפשר להציג <strong>תיבת חיפוש</strong> ישירות בתוצאות גוגל (Sitelinks Searchbox):</p>
+                        <div style="background: #fff; color: #000; padding: 20px; border-radius: 8px; direction: ltr;">
+                            <div style="font-size: 18px; color: #1a0dab; margin-bottom: 5px;">Manpower Israel - מנפאואר</div>
+                            <div style="font-size: 14px; color: #006621; margin-bottom: 10px;">https://www.manpower.co.il</div>
+                            <div style="display: flex; align-items: center; background: #f1f3f4; padding: 10px; border-radius: 20px;">
+                                <span style="flex: 1; color: #5f6368;">חפש משרות ב-Manpower...</span>
+                                <span>🔍</span>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px; color: #a0a0a0;">המשתמש מחפש באתר שלכם ישירות מגוגל!</p>
+                    </div>
+                    <div class="card warning">
+                        <h3>⚠️ הבעיה באתר שלכם</h3>
+                        <p style="margin: 15px 0;">החיפוש באתר עובד עם <strong>פילטרים</strong>, לא טקסט חופשי:</p>
+                        <div class="code-block small" style="margin-top: 10px;">
+                            <code><span class="comment">// איך החיפוש באתר עובד היום:</span>
+/search?JOBAREA=4114
+/search?JOBEXPERTISE=4142
+/search?JOBSCOPE=8305
+
+<span class="comment">// מה הסכמה מצפה:</span>
+/search?search=מזכירה
+/search?q=הנהלת חשבונות</code>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 14px; color: #ffc107;">⚠️ אין תמיכה בחיפוש טקסט חופשי = הסכמה לא תעבוד</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: SearchAction Solutions -->
+        <div class="slide" data-slide="14">
+            <div class="slide-header">
+                <div class="slide-number">שאלה #3 - פתרונות</div>
+                <h2>SearchAction - 3 אפשרויות</h2>
+            </div>
+            <div class="content">
+                <div class="three-columns">
+                    <div class="card recommended">
+                        <div class="solution-header">
+                            <div class="solution-letter a">A</div>
+                            <h4>לא להטמיע כרגע</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">אין סיכון</li>
+                            <li class="pro">אין עבודה מיותרת</li>
+                            <li class="pro">אפשר להוסיף בעתיד</li>
+                            <li class="con">מפספסים את הפיצ'ר</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(0,212,170,0.2); border-radius: 8px;">
+                            <strong>המלצה:</strong> זו האופציה הבטוחה ביותר
+                        </div>
+                    </div>
+
+                    <div class="card option-b">
+                        <div class="solution-header">
+                            <div class="solution-letter b">B</div>
+                            <h4>להוסיף תמיכה בחיפוש טקסט</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="pro">פיצ'ר שימושי לאתר</li>
+                            <li class="pro">מאפשר את הסכמה</li>
+                            <li class="con">דורש פיתוח</li>
+                            <li class="con">לא בסקופ הנוכחי</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(13,110,253,0.2); border-radius: 8px;">
+                            <strong>אם יש תקציב:</strong> אפשר לשקול בעתיד
+                        </div>
+                    </div>
+
+                    <div class="card danger">
+                        <div class="solution-header">
+                            <div class="solution-letter c">C</div>
+                            <h4>להטמיע בכל זאת</h4>
+                        </div>
+                        <ul style="font-size: 14px;">
+                            <li class="con">גוגל יבדוק ויגלה שלא עובד</li>
+                            <li class="con">לא יציג את תיבת החיפוש</li>
+                            <li class="con">עלול לפגוע באמינות</li>
+                            <li class="con">בזבוז זמן</li>
+                        </ul>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(220,53,69,0.2); border-radius: 8px;">
+                            <strong>לא מומלץ!</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="answer-card" style="margin-top: 20px;">
+                    <h4>✅ ההמלצה שלי: פתרון A - לא להטמיע כרגע</h4>
+                    <p>אין טעם להטמיע סכמה שלא תעבוד. אם בעתיד תוסיפו חיפוש טקסט חופשי באתר, נוכל להוסיף את הסכמה.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Summary Table -->
+        <div class="slide" data-slide="15">
+            <div class="slide-header">
+                <div class="slide-number">סיכום</div>
+                <h2>משימות לפיתוח</h2>
+            </div>
+            <div class="content">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>סכמה</th>
+                                <th>פתרון נבחר</th>
+                                <th>מורכבות</th>
+                                <th>פעולה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Organization</strong></td>
+                                <td><span class="badge green">A</span> Hardcoded</td>
+                                <td>קלה</td>
+                                <td>Copy-Paste ל-layout.tsx</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>BreadcrumbList</strong></td>
+                                <td><span class="badge green">A</span> מיפוי קבוע</td>
+                                <td>בינונית</td>
+                                <td>יצירת config + פונקציה + שימוש בעמודים</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>SearchAction</strong></td>
+                                <td><span class="badge red">A</span> לא להטמיע</td>
+                                <td>-</td>
+                                <td>לדחות לעתיד</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="two-columns" style="margin-top: 25px;">
+                    <div class="card highlight">
+                        <h3>📁 מה אני אספק</h3>
+                        <ul style="font-size: 15px;">
+                            <li>קובץ מיפוי מלא לכל העמודים (Breadcrumbs)</li>
+                            <li>קובץ TypeScript מוכן להעתקה</li>
+                            <li>רשימת כל ה-URLs והשמות בעברית</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>🧪 בדיקת תקינות</h3>
+                        <p style="margin: 10px 0;">אחרי ההטמעה, בדקו כאן:</p>
+                        <div class="file-location" style="word-break: break-all; font-size: 12px;">
+                            https://search.google.com/test/rich-results
+                        </div>
+                        <p style="margin-top: 10px; font-size: 14px; color: #a0a0a0;">הכניסו URL ובדקו שאין שגיאות</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 16: All Original Code Reference -->
+        <div class="slide" data-slide="16">
+            <div class="slide-header">
+                <div class="slide-number">נספח</div>
+                <h2>כל הקוד המקורי - העתקה מהירה</h2>
+            </div>
+            <div class="content">
+                <div class="three-columns">
+                    <div>
+                        <h4 style="margin-bottom: 10px;">Organization Schema</h4>
+                        <div class="code-block small" style="max-height: 350px;">
+                            <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-563-9999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 110",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/"
+  ]
+}
+&lt;/script&gt;</code>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 10px;">BreadcrumbList Template</h4>
+                        <div class="code-block small" style="max-height: 350px;">
+                            <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{PARENT_NAME}",
+      "item": "{PARENT_URL}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{CURRENT_PAGE}"
+    }
+  ]
+}
+&lt;/script&gt;</code>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 10px;">SearchAction (לא להטמיע)</h4>
+                        <div class="code-block small" style="max-height: 350px; opacity: 0.6;">
+                            <code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.manpower.co.il/",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.manpower.co.il/search?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+&lt;/script&gt;
+
+<span class="comment">// ⚠️ לא להטמיע - אין תמיכה בחיפוש טקסט</span></code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 17: Questions -->
+        <div class="slide" data-slide="17">
+            <div class="center-content">
+                <div class="icon-large">❓</div>
+                <h1>שאלות?</h1>
+                <p class="subtitle" style="margin-top: 25px;">נדב כהן | SEO</p>
+                <p style="margin-top: 15px; color: #a0a0a0;">nadav@n-c.digital</p>
+                <div style="margin-top: 50px;">
+                    <div class="card" style="display: inline-block; padding: 20px 35px;">
+                        <p>📋 מצגת זו נשמרה ב:</p>
+                        <div class="file-location">manpower_schema_presentation.html</div>
+                    </div>
+                </div>
+                <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
+                    <span class="badge green">Organization ✓</span>
+                    <span class="badge blue">BreadcrumbList ✓</span>
+                    <span class="badge red">SearchAction ✗</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">→ הקודם</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">הבא ←</button>
+    </div>
+
+    <div class="slide-indicator" id="slideIndicator">1 / 17</div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 17;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+
+            if (n > totalSlides) currentSlide = 1;
+            if (n < 1) currentSlide = totalSlides;
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            document.querySelector(`[data-slide="${currentSlide}"]`).classList.add('active');
+
+            const progress = (currentSlide / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('slideIndicator').textContent = `${currentSlide} / ${totalSlides}`;
+
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                if (e.key === 'ArrowLeft') changeSlide(1);
+                if (e.key === 'ArrowRight') changeSlide(-1);
+            }
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>
