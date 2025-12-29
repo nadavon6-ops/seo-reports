@@ -42,15 +42,43 @@ export default function Home() {
             padding: '40px',
             textDecoration: 'none',
             border: '2px solid rgba(255,255,255,0.2)',
-            transition: 'transform 0.3s, box-shadow 0.3s',
-            gridColumn: 'span 2'
+            transition: 'transform 0.3s, box-shadow 0.3s'
           }}>
             <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📋</div>
             <h2 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '10px' }}>
-              Manpower Schema Implementation Guide
+              Manpower Schema Guide
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}>
-              הנחיות להטמעת Schema עבור צוות הפיתוח | Organization + Breadcrumbs
+              הנחיות להטמעת Schema | Next.js
+            </p>
+            <div style={{
+              marginTop: '20px',
+              display: 'inline-block',
+              background: 'rgba(255,255,255,0.2)',
+              padding: '8px 20px',
+              borderRadius: '20px',
+              color: 'white',
+              fontSize: '0.9rem'
+            }}>
+              צפה במדריך →
+            </div>
+          </Link>
+
+          {/* ManpowerGroup Schema - HubSpot */}
+          <Link href="/manpowergroup-schema-hubspot.html" style={{
+            background: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)',
+            borderRadius: '20px',
+            padding: '40px',
+            textDecoration: 'none',
+            border: '2px solid rgba(255,255,255,0.2)',
+            transition: 'transform 0.3s, box-shadow 0.3s'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '15px' }}>🔧</div>
+            <h2 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '10px' }}>
+              ManpowerGroup Schema Guide
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}>
+              הנחיות להטמעת Schema | HubSpot
             </p>
             <div style={{
               marginTop: '20px',
