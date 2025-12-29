@@ -35,7 +35,37 @@ export default function Home() {
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
           gap: '30px'
         }}>
-          {/* Schema Presentation - Featured */}
+          {/* Manpower Schema Implementation - Featured */}
+          <Link href="/manpower-schema.html" style={{
+            background: 'linear-gradient(135deg, #00d4aa 0%, #00a8cc 100%)',
+            borderRadius: '20px',
+            padding: '40px',
+            textDecoration: 'none',
+            border: '2px solid rgba(255,255,255,0.2)',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+            gridColumn: 'span 2'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📋</div>
+            <h2 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '10px' }}>
+              Manpower Schema Implementation Guide
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem' }}>
+              הנחיות להטמעת Schema עבור צוות הפיתוח | Organization + Breadcrumbs
+            </p>
+            <div style={{
+              marginTop: '20px',
+              display: 'inline-block',
+              background: 'rgba(255,255,255,0.2)',
+              padding: '8px 20px',
+              borderRadius: '20px',
+              color: 'white',
+              fontSize: '0.9rem'
+            }}>
+              NEW - צפה במדריך →
+            </div>
+          </Link>
+
+          {/* Schema Presentation */}
           <Link href="/schema-presentation.html" style={{
             background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
             borderRadius: '20px',
@@ -61,7 +91,7 @@ export default function Home() {
               color: 'white',
               fontSize: '0.9rem'
             }}>
-              NEW - צפה במצגת →
+              צפה במצגת →
             </div>
           </Link>
 
