@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Fingerprinting Report | Experis.co.il 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0a0a1a;
+            --secondary: #12122a;
+            --accent: #00d4ff;
+            --danger: #ff3366;
+            --warning: #ffaa00;
+            --success: #00ff88;
+            --purple: #a855f7;
+            --gradient-cyber: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-danger: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--primary);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        /* Container - Full Width Desktop Fix */
+        .container {
+            width: 100%;
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                padding: 40px 60px;
+            }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(0,212,255,0.1) 50%, rgba(255,51,102,0.1) 100%);
+            border: 1px solid rgba(168,85,247,0.3);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
+            color: rgba(255,255,255,0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            padding: 10px 25px;
+            background: rgba(0,212,255,0.15);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge.danger {
+            background: rgba(255,51,102,0.15);
+            border-color: var(--danger);
+        }
+
+        /* Executive Summary */
+        .executive-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 1200px) {
+            .executive-summary {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 20px;
+            }
+        }
+
+        .summary-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px rgba(0,212,255,0.1);
+        }
+
+        .summary-card .icon { font-size: 2rem; margin-bottom: 10px; }
+        .summary-card .label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .summary-card .value {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .summary-card.danger .value { color: var(--danger); }
+        .summary-card.success .value { color: var(--success); }
+        .summary-card.warning .value { color: var(--warning); }
+        .summary-card.purple .value { color: var(--purple); }
+
+        /* Progress Bar - Full Width */
+        .traffic-distribution {
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .traffic-distribution h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            height: 50px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
+
+        .progress-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .progress-segment:hover {
+            filter: brightness(1.2);
+        }
+
+        .progress-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+        }
+
+        /* Methodology Section */
+        .methodology {
+            background: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(168,85,247,0.08) 100%);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .methodology h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .method-card {
+            background: rgba(0,0,0,0.25);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .method-card h4 {
+            color: var(--accent);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .method-card p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .method-card .highlight {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Section */
+        .section {
+            background: rgba(255,255,255,0.02);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                padding: 40px;
+            }
+        }
+
+        .section-title {
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tier-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tier-1 { background: rgba(255,51,102,0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .tier-2 { background: rgba(255,170,0,0.2); color: var(--warning); border: 1px solid var(--warning); }
+        .tier-3 { background: rgba(168,85,247,0.2); color: var(--purple); border: 1px solid var(--purple); }
+        .tier-safe { background: rgba(0,255,136,0.2); color: var(--success); border: 1px solid var(--success); }
+
+        /* Tables - Responsive */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            background: rgba(0,0,0,0.4);
+            padding: 15px 12px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .ctr-cell {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+        }
+
+        .ctr-low { color: var(--danger); }
+        .ctr-med { color: var(--warning); }
+        .ctr-high { color: var(--success); }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-block { background: rgba(255,51,102,0.2); color: var(--danger); }
+        .status-limit { background: rgba(255,170,0,0.2); color: var(--warning); }
+        .status-ok { background: rgba(0,255,136,0.2); color: var(--success); }
+
+        /* Property Cards */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .property-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .property-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .property-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .stat-item .label {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Blocking Rules */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .rule-card {
+            background: linear-gradient(135deg, rgba(255,51,102,0.08) 0%, rgba(255,51,102,0.03) 100%);
+            border: 1px solid rgba(255,51,102,0.2);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .rule-card.warning {
+            background: linear-gradient(135deg, rgba(255,170,0,0.08) 0%, rgba(255,170,0,0.03) 100%);
+            border-color: rgba(255,170,0,0.2);
+        }
+
+        .rule-card.info {
+            background: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(0,212,255,0.03) 100%);
+            border-color: rgba(0,212,255,0.2);
+        }
+
+        .rule-card h4 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Charts */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-box {
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            padding: 25px;
+            min-height: 350px;
+        }
+
+        /* Key Insights */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .insight-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            border-right: 4px solid var(--accent);
+        }
+
+        .insight-card.danger { border-right-color: var(--danger); }
+        .insight-card.success { border-right-color: var(--success); }
+        .insight-card.warning { border-right-color: var(--warning); }
+
+        .insight-card h4 {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .insight-card .number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .insight-card.danger .number { color: var(--danger); }
+        .insight-card.success .number { color: var(--success); }
+
+        /* Action Items */
+        .action-box {
+            background: linear-gradient(135deg, rgba(0,255,136,0.08) 0%, rgba(0,255,136,0.03) 100%);
+            border: 1px solid rgba(0,255,136,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .action-box h4 {
+            color: var(--success);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .action-list {
+            list-style: none;
+        }
+
+        .action-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .action-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .footer .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 30px 20px; border-radius: 20px; }
+            .section { padding: 20px; border-radius: 16px; }
+            .executive-summary { gap: 10px; }
+            .summary-card { padding: 18px 15px; border-radius: 15px; }
+            .summary-card .icon { font-size: 1.5rem; }
+            .progress-bar { height: 40px; }
+            .progress-segment { font-size: 0.7rem; }
+            .chart-box { min-height: 280px; padding: 20px; }
+            table { min-width: 500px; }
+            th, td { padding: 10px 8px; font-size: 0.8rem; }
+            .rules-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; }
+            .section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Bot Fingerprinting Report</h1>
+            <p class="subtitle">Experis.co.il | Advanced Bot Traffic Analysis & Blocking Recommendations</p>
+            <div class="badge-row">
+                <div class="badge">Jan 2025 - Dec 2025</div>
+                <div class="badge danger">47.6% Bot Traffic Detected</div>
+            </div>
+        </header>
+
+        <!-- Executive Summary -->
+        <div class="executive-summary">
+            <div class="summary-card">
+                <div class="icon">📊</div>
+                <div class="label">Total Impressions</div>
+                <div class="value">3,306,048</div>
+            </div>
+
+            <div class="summary-card success">
+                <div class="icon">🇮🇱</div>
+                <div class="label">Israel (Legit)</div>
+                <div class="value">1,724,643</div>
+            </div>
+
+            <div class="summary-card danger">
+                <div class="icon">🤖</div>
+                <div class="label">Tier 1 Bots</div>
+                <div class="value">1,558,417</div>
+            </div>
+
+            <div class="summary-card warning">
+                <div class="icon">⚠️</div>
+                <div class="label">Tier 2 Bots</div>
+                <div class="value">14,962</div>
+            </div>
+
+            <div class="summary-card purple">
+                <div class="icon">❓</div>
+                <div class="label">Tier 3 Review</div>
+                <div class="value">8,026</div>
+            </div>
+
+            <div class="summary-card danger">
+                <div class="icon">🛡️</div>
+                <div class="label">Safe to Block</div>
+                <div class="value">1,573,379</div>
+            </div>
+        </div>
+
+        <!-- Traffic Distribution Bar -->
+        <div class="traffic-distribution">
+            <h3>📈 Traffic Distribution Breakdown</h3>
+            <div class="progress-bar">
+                <div class="progress-segment" style="width: 52.2%; background: var(--success);">
+                    Israel 52.2%
+                </div>
+                <div class="progress-segment" style="width: 47.1%; background: var(--danger);">
+                    Tier 1 Bots 47.1%
+                </div>
+                <div class="progress-segment" style="width: 0.5%; background: var(--warning);">
+                </div>
+                <div class="progress-segment" style="width: 0.2%; background: var(--purple);">
+                </div>
+            </div>
+            <div class="progress-legend">
+                <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div>Israel (Legitimate)</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div>Tier 1 - Definite Bots</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div>Tier 2 - Very Likely</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div>Tier 3 - Needs Review</div>
+            </div>
+        </div>
+
+        <!-- Methodology -->
+        <div class="methodology">
+            <h2>🎯 Detection Methodology</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
+                Bot detection based on baseline comparison with Israel (legitimate Hebrew-speaking traffic)
+            </p>
+
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <h4>📊 Baseline (Israel)</h4>
+                    <div class="highlight">CTR 3.09%</div>
+                    <p>Hebrew site = Real users from Israel</p>
+                </div>
+
+                <div class="method-card">
+                    <h4 style="color: var(--danger);">🔴 Tier 1 (Block)</h4>
+                    <div class="highlight" style="color: var(--danger);">CTR &lt; 1%</div>
+                    <p>99.9% confidence - Safe to block immediately</p>
+                </div>
+
+                <div class="method-card">
+                    <h4 style="color: var(--warning);">🟠 Tier 2 (Limit)</h4>
+                    <div class="highlight" style="color: var(--warning);">CTR 1-5%</div>
+                    <p>95% confidence - Rate limit recommended</p>
+                </div>
+
+                <div class="method-card">
+                    <h4 style="color: var(--purple);">🟡 Tier 3 (Review)</h4>
+                    <div class="highlight" style="color: var(--purple);">CTR 5-10%</div>
+                    <p>80% confidence - Manual review needed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-grid">
+            <div class="chart-box">
+                <canvas id="trafficChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <canvas id="propertyChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Property Breakdown -->
+        <div class="section">
+            <h2 class="section-title">🏢 Property Breakdown</h2>
+            <div class="property-grid">
+                <div class="property-card">
+                    <h3>🏠 Main Site</h3>
+                    <div class="property-stats">
+                        <div class="stat-item">
+                            <div class="label">Impressions</div>
+                            <div class="value">2,153,252</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Clicks</div>
+                            <div class="value">41,405</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot Impressions</div>
+                            <div class="value" style="color: var(--danger);">828,248</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot %</div>
+                            <div class="value" style="color: var(--danger);">38.5%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <h3>🎓 Academy</h3>
+                    <div class="property-stats">
+                        <div class="stat-item">
+                            <div class="label">Impressions</div>
+                            <div class="value">686,217</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Clicks</div>
+                            <div class="value">11,080</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot Impressions</div>
+                            <div class="value" style="color: var(--danger);">245,457</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot %</div>
+                            <div class="value" style="color: var(--danger);">35.8%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="property-card">
+                    <h3>🔐 Cyber</h3>
+                    <div class="property-stats">
+                        <div class="stat-item">
+                            <div class="label">Impressions</div>
+                            <div class="value">468,593</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Clicks</div>
+                            <div class="value">2,895</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot Impressions</div>
+                            <div class="value" style="color: var(--danger);">182,278</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Bot %</div>
+                            <div class="value" style="color: var(--danger);">38.9%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tier 1 Bots - Full Table -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="tier-badge tier-1">TIER 1</span>
+                🔴 Definite Bots - Safe to Block (99.9% Confidence)
+            </h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
+                Countries with CTR below 1% of Israel's baseline. Zero chance of legitimate users.
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Country</th>
+                            <th>Impressions</th>
+                            <th>Clicks</th>
+                            <th>CTR</th>
+                            <th>vs Israel</th>
+                            <th>Click Deficit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>🇺🇸 United States</strong></td>
+                            <td>544,800</td>
+                            <td>269</td>
+                            <td class="ctr-cell ctr-low">0.049%</td>
+                            <td class="ctr-cell ctr-low">1.6%</td>
+                            <td style="color: var(--danger);">-16,565</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇧🇷 Brazil</strong></td>
+                            <td>240,220</td>
+                            <td>7</td>
+                            <td class="ctr-cell ctr-low">0.003%</td>
+                            <td class="ctr-cell ctr-low">0.1%</td>
+                            <td style="color: var(--danger);">-7,416</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇬🇧 United Kingdom</strong></td>
+                            <td>81,627</td>
+                            <td>86</td>
+                            <td class="ctr-cell ctr-low">0.105%</td>
+                            <td class="ctr-cell ctr-low">3.4%</td>
+                            <td style="color: var(--danger);">-2,436</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇮🇳 India</strong></td>
+                            <td>77,016</td>
+                            <td>71</td>
+                            <td class="ctr-cell ctr-low">0.092%</td>
+                            <td class="ctr-cell ctr-low">3.0%</td>
+                            <td style="color: var(--danger);">-2,309</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇮🇹 Italy</strong></td>
+                            <td>53,277</td>
+                            <td>47</td>
+                            <td class="ctr-cell ctr-low">0.088%</td>
+                            <td class="ctr-cell ctr-low">2.9%</td>
+                            <td style="color: var(--danger);">-1,599</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇷🇺 Russia</strong></td>
+                            <td>36,472</td>
+                            <td>13</td>
+                            <td class="ctr-cell ctr-low">0.036%</td>
+                            <td class="ctr-cell ctr-low">1.2%</td>
+                            <td style="color: var(--danger);">-1,114</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇻🇳 Vietnam</strong></td>
+                            <td>30,082</td>
+                            <td>11</td>
+                            <td class="ctr-cell ctr-low">0.037%</td>
+                            <td class="ctr-cell ctr-low">1.2%</td>
+                            <td style="color: var(--danger);">-919</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇨🇦 Canada</strong></td>
+                            <td>24,036</td>
+                            <td>30</td>
+                            <td class="ctr-cell ctr-low">0.125%</td>
+                            <td class="ctr-cell ctr-low">4.0%</td>
+                            <td style="color: var(--danger);">-713</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇰🇷 South Korea</strong></td>
+                            <td>22,389</td>
+                            <td>1</td>
+                            <td class="ctr-cell ctr-low">0.004%</td>
+                            <td class="ctr-cell ctr-low">0.1%</td>
+                            <td style="color: var(--danger);">-691</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇩🇪 Germany</strong></td>
+                            <td>20,766</td>
+                            <td>132</td>
+                            <td class="ctr-cell ctr-med">0.636%</td>
+                            <td class="ctr-cell ctr-low">20.6%</td>
+                            <td style="color: var(--danger);">-510</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇮🇩 Indonesia</strong></td>
+                            <td>19,498</td>
+                            <td>8</td>
+                            <td class="ctr-cell ctr-low">0.041%</td>
+                            <td class="ctr-cell ctr-low">1.3%</td>
+                            <td style="color: var(--danger);">-595</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇧🇩 Bangladesh</strong></td>
+                            <td>18,697</td>
+                            <td>3</td>
+                            <td class="ctr-cell ctr-low">0.016%</td>
+                            <td class="ctr-cell ctr-low">0.5%</td>
+                            <td style="color: var(--danger);">-575</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇵🇭 Philippines</strong></td>
+                            <td>18,267</td>
+                            <td>14</td>
+                            <td class="ctr-cell ctr-low">0.077%</td>
+                            <td class="ctr-cell ctr-low">2.5%</td>
+                            <td style="color: var(--danger);">-551</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇦🇷 Argentina</strong></td>
+                            <td>16,827</td>
+                            <td>9</td>
+                            <td class="ctr-cell ctr-low">0.053%</td>
+                            <td class="ctr-cell ctr-low">1.7%</td>
+                            <td style="color: var(--danger);">-511</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇲🇽 Mexico</strong></td>
+                            <td>15,696</td>
+                            <td>13</td>
+                            <td class="ctr-cell ctr-low">0.083%</td>
+                            <td class="ctr-cell ctr-low">2.7%</td>
+                            <td style="color: var(--danger);">-472</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇫🇷 France</strong></td>
+                            <td>15,005</td>
+                            <td>50</td>
+                            <td class="ctr-cell ctr-med">0.333%</td>
+                            <td class="ctr-cell ctr-low">10.8%</td>
+                            <td style="color: var(--danger);">-414</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇹🇷 Turkey</strong></td>
+                            <td>13,804</td>
+                            <td>5</td>
+                            <td class="ctr-cell ctr-low">0.036%</td>
+                            <td class="ctr-cell ctr-low">1.2%</td>
+                            <td style="color: var(--danger);">-421</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇿🇦 South Africa</strong></td>
+                            <td>12,802</td>
+                            <td>2</td>
+                            <td class="ctr-cell ctr-low">0.016%</td>
+                            <td class="ctr-cell ctr-low">0.5%</td>
+                            <td style="color: var(--danger);">-394</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇵🇰 Pakistan</strong></td>
+                            <td>11,855</td>
+                            <td>5</td>
+                            <td class="ctr-cell ctr-low">0.042%</td>
+                            <td class="ctr-cell ctr-low">1.4%</td>
+                            <td style="color: var(--danger);">-361</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇮🇶 Iraq</strong></td>
+                            <td>11,601</td>
+                            <td>2</td>
+                            <td class="ctr-cell ctr-low">0.017%</td>
+                            <td class="ctr-cell ctr-low">0.6%</td>
+                            <td style="color: var(--danger);">-356</td>
+                            <td><span class="status-badge status-block">Block</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="color: rgba(255,255,255,0.4); margin-top: 15px; font-size: 0.85rem;">
+                + 126 additional countries with combined 205,893 bot impressions
+            </p>
+        </div>
+
+        <!-- Tier 2 - Rate Limit -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="tier-badge tier-2">TIER 2</span>
+                🟠 Very Likely Bots - Rate Limit Recommended (95% Confidence)
+            </h2>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Country</th>
+                            <th>Impressions</th>
+                            <th>Clicks</th>
+                            <th>CTR</th>
+                            <th>vs Israel</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>🇵🇸 Palestine</strong></td>
+                            <td>7,455</td>
+                            <td>301</td>
+                            <td class="ctr-cell ctr-med">4.04%</td>
+                            <td class="ctr-cell ctr-med">130.7%</td>
+                            <td><span class="status-badge status-limit">Rate Limit</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇵🇹 Portugal</strong></td>
+                            <td>2,708</td>
+                            <td>38</td>
+                            <td class="ctr-cell ctr-med">1.40%</td>
+                            <td class="ctr-cell ctr-med">45.3%</td>
+                            <td><span class="status-badge status-limit">Rate Limit</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇨🇿 Czech Republic</strong></td>
+                            <td>1,869</td>
+                            <td>23</td>
+                            <td class="ctr-cell ctr-med">1.23%</td>
+                            <td class="ctr-cell ctr-med">39.8%</td>
+                            <td><span class="status-badge status-limit">Rate Limit</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇨🇾 Cyprus</strong></td>
+                            <td>1,522</td>
+                            <td>19</td>
+                            <td class="ctr-cell ctr-med">1.25%</td>
+                            <td class="ctr-cell ctr-med">40.5%</td>
+                            <td><span class="status-badge status-limit">Rate Limit</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>🇦🇹 Austria</strong></td>
+                            <td>1,308</td>
+                            <td>18</td>
+                            <td class="ctr-cell ctr-med">1.38%</td>
+                            <td class="ctr-cell ctr-med">44.7%</td>
+                            <td><span class="status-badge status-limit">Rate Limit</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Suspicious Queries -->
+        <div class="section">
+            <h2 class="section-title">🔍 Suspicious Query Patterns</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
+                English queries on Hebrew site = Automated SEO research / scraping bots
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Query</th>
+                            <th>Impressions</th>
+                            <th>Clicks</th>
+                            <th>CTR</th>
+                            <th>Pattern</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>siem soc</code></td>
+                            <td>15,850</td>
+                            <td>5</td>
+                            <td class="ctr-cell ctr-low">0.03%</td>
+                            <td>English tech term on Hebrew site</td>
+                        </tr>
+                        <tr>
+                            <td><code>שירותי אבטחת מידע</code></td>
+                            <td>11,847</td>
+                            <td>16</td>
+                            <td class="ctr-cell ctr-low">0.14%</td>
+                            <td>High volume, low engagement</td>
+                        </tr>
+                        <tr>
+                            <td><code>אבטחת סייבר</code></td>
+                            <td>19,494</td>
+                            <td>8</td>
+                            <td class="ctr-cell ctr-low">0.04%</td>
+                            <td>High volume, zero engagement</td>
+                        </tr>
+                        <tr>
+                            <td><code>הגנת סייבר</code></td>
+                            <td>8,917</td>
+                            <td>9</td>
+                            <td class="ctr-cell ctr-low">0.10%</td>
+                            <td>High volume, low engagement</td>
+                        </tr>
+                        <tr>
+                            <td><code>אבטחת מידע</code></td>
+                            <td>8,568</td>
+                            <td>7</td>
+                            <td class="ctr-cell ctr-low">0.08%</td>
+                            <td>High volume, low engagement</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Blocking Rules -->
+        <div class="section">
+            <h2 class="section-title">🛡️ Recommended Blocking Rules</h2>
+
+            <div class="rules-grid">
+                <div class="rule-card">
+                    <h4>🚫 Cloudflare/WAF Country Block</h4>
+                    <p>Block these countries immediately (Tier 1 with 5,000+ impressions):</p>
+                    <div class="code-block">US, BR, GB, IN, IT, RU, VN, CA, KR, DE,
+ID, BD, PH, AR, MX, FR, TR, ZA, PK, IQ,
+SA, MY, ES, UA, EC, PL, NL, AU, JP, TH,
+EG, CO, NG, PE, CL, TW, RO, BE, CH, CZ</div>
+                </div>
+
+                <div class="rule-card warning">
+                    <h4>⏱️ Rate Limiting (10 req/min)</h4>
+                    <p>Apply rate limits to Tier 2 countries:</p>
+                    <div class="code-block">PS (Palestine)
+PT (Portugal)
+CZ (Czech Republic)
+CY (Cyprus)
+AT (Austria)</div>
+                </div>
+
+                <div class="rule-card info">
+                    <h4>🤖 User-Agent Filtering</h4>
+                    <p>Block these user-agent patterns:</p>
+                    <div class="code-block">*crawler*, *spider*, *bot*
+*python-requests*, *curl*, *wget*
+*semrush*, *ahrefs*, *moz*, *majestic*
+*headless*, *phantom*, *puppeteer*
+*scrapy*, *httpclient*, *java/*</div>
+                </div>
+
+                <div class="rule-card info">
+                    <h4>📍 Path-Based CAPTCHA</h4>
+                    <p>Require CAPTCHA for bot-magnet paths:</p>
+                    <div class="code-block">/cyber/en/*
+/cyber/information-security*
+/*siem*
+/*soc*
+/academy/להכיר-את-המקצוע*</div>
+                </div>
+            </div>
+
+            <div class="action-box">
+                <h4>✅ Implementation Checklist</h4>
+                <ul class="action-list">
+                    <li>
+                        <span>1️⃣</span>
+                        <span><strong>Cloudflare Firewall Rules:</strong> Create country-based blocking rules for Tier 1 countries</span>
+                    </li>
+                    <li>
+                        <span>2️⃣</span>
+                        <span><strong>Rate Limiting:</strong> Configure 10 requests/minute for Tier 2 countries</span>
+                    </li>
+                    <li>
+                        <span>3️⃣</span>
+                        <span><strong>robots.txt Update:</strong> Disallow known bot user-agents from /cyber/ paths</span>
+                    </li>
+                    <li>
+                        <span>4️⃣</span>
+                        <span><strong>GA4 Bot Filter:</strong> Enable bot filtering for accurate analytics</span>
+                    </li>
+                    <li>
+                        <span>5️⃣</span>
+                        <span><strong>Monitor Weekly:</strong> Review CTR by country for new bot patterns</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Key Insights -->
+        <div class="section">
+            <h2 class="section-title">💡 Key Insights</h2>
+
+            <div class="insights-grid">
+                <div class="insight-card danger">
+                    <h4>🇺🇸 USA - Top Bot Source</h4>
+                    <div class="number">544,800</div>
+                    <p>Impressions with only 0.05% CTR</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
+                        Expected 16,834 clicks at Israel's rate. Got 269.
+                    </p>
+                </div>
+
+                <div class="insight-card danger">
+                    <h4>🇧🇷 Brazil - Zero Engagement</h4>
+                    <div class="number">240,220</div>
+                    <p>Impressions with 0.003% CTR</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
+                        7 clicks from 240K impressions = pure bot traffic
+                    </p>
+                </div>
+
+                <div class="insight-card success">
+                    <h4>🇮🇱 Israel - Healthy Baseline</h4>
+                    <div class="number">3.09%</div>
+                    <p>CTR - Natural user behavior</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
+                        52.2% of traffic, healthy engagement pattern
+                    </p>
+                </div>
+
+                <div class="insight-card warning">
+                    <h4>🔐 Cyber Content - Bot Magnet</h4>
+                    <div class="number">38.9%</div>
+                    <p>Bot rate on /cyber/ pages</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
+                        English tech queries attract SEO scrapers
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="logo">Nadav Digital</div>
+            <p>Bot Fingerprinting Report | Generated: January 5, 2026</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">
+                Methodology: Baseline Comparison Method | Data Source: Google Search Console 2025
+            </p>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">
+                report.n-c.digital/experis-bot-fingerprinting-2025
+            </p>
+        </footer>
+    </div>
+
+    <!-- Charts -->
+    <script>
+        // Traffic Distribution Chart
+        new Chart(document.getElementById('trafficChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Israel (Legitimate)', 'Tier 1 Bots', 'Tier 2 Bots', 'Tier 3 Review'],
+                datasets: [{
+                    data: [1724643, 1558417, 14962, 8026],
+                    backgroundColor: ['#00ff88', '#ff3366', '#ffaa00', '#a855f7'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#fff',
+                            font: { family: 'Heebo', size: 12 },
+                            padding: 15
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Traffic Classification',
+                        color: '#fff',
+                        font: { family: 'Heebo', size: 16, weight: '600' },
+                        padding: { bottom: 20 }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+
+        // Property Chart
+        new Chart(document.getElementById('propertyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Main Site', 'Academy', 'Cyber'],
+                datasets: [
+                    {
+                        label: 'Legitimate',
+                        data: [1325004, 440760, 286315],
+                        backgroundColor: '#00ff88',
+                        borderRadius: 6
+                    },
+                    {
+                        label: 'Bot Traffic',
+                        data: [828248, 245457, 182278],
+                        backgroundColor: '#ff3366',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#fff',
+                            font: { family: 'Heebo', size: 12 },
+                            padding: 15
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Traffic by Property',
+                        color: '#fff',
+                        font: { family: 'Heebo', size: 16, weight: '600' },
+                        padding: { bottom: 20 }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        ticks: { color: '#fff' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            color: '#fff',
+                            callback: function(value) {
+                                return (value / 1000000).toFixed(1) + 'M';
+                            }
+                        },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
