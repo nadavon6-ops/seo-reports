@@ -1,0 +1,1611 @@
+<!-- wp:html -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* WordPress Theme Reset */
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content {
+    background: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; }
+    .ult-wrapper { width: 100% !important; padding: 20px 2% !important; }
+}
+
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; min-height: 100vh !important; }
+html { direction: rtl !important; background: #0f172a !important; }
+
+header, footer, nav, .site-header, .site-footer { display: none !important; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ult-container {
+    direction: rtl;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    font-size: 16px;
+}
+
+.ult-wrapper { max-width: 100%; padding: 20px 16px; }
+
+.ult-header {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #1e293b 100%);
+    padding: 50px 25px;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 25px;
+}
+
+.ult-header .version-badge {
+    position: absolute; top: 15px; left: 15px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em;
+}
+
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; }
+.ult-header .period-badge {
+    display: inline-block; background: rgba(255,255,255,0.2); padding: 12px 30px;
+    border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3);
+}
+
+.success-banner {
+    background: linear-gradient(135deg, #f97316 0%, #0052a3 100%);
+    padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px;
+}
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+    padding: 15px 20px; background: rgba(249,115,22,0.15); border: 1px solid rgba(249,115,22,0.3);
+    border-radius: 16px; margin-bottom: 25px;
+}
+.data-source-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #fb923c;
+}
+
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.hero-stat {
+    background: linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(234,88,12,0.15) 100%);
+    border-radius: 20px; padding: 28px 10px; text-align: center;
+    border: 1px solid rgba(249,115,22,0.3); position: relative;
+}
+.hero-stat::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #f97316, #3b82f6, #60a5fa);
+}
+.hero-stat .icon { font-size: 2.4em; margin-bottom: 12px; }
+.hero-stat .value {
+    font-size: 2.2em; font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #fdba74 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-stat .label { font-size: 0.95em; color: #94a3b8; margin-bottom: 10px; }
+.hero-stat .change { display: inline-block; padding: 5px 14px; border-radius: 15px; font-size: 0.85em; font-weight: 600; }
+.hero-stat .change.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.hero-stat .change.highlight { background: rgba(249,115,22,0.2); color: #fb923c; }
+
+.ult-section {
+    background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px;
+    margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08);
+}
+.section-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+    padding-bottom: 16px; border-bottom: 2px solid rgba(249,115,22,0.4);
+}
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.organic-highlight {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%);
+    border: 2px solid rgba(34,197,94,0.4); border-radius: 18px; padding: 25px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;
+}
+.organic-stat { text-align: center; }
+.organic-stat .value { font-size: 2em; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+.organic-stat .label { font-size: 0.9em; color: #94a3b8; }
+.organic-summary {
+    text-align: center; padding: 18px; background: rgba(34,197,94,0.1);
+    border-radius: 12px; font-size: 1.1em; line-height: 1.6;
+}
+.organic-summary strong { color: #4ade80; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 12px; }
+.traffic-item {
+    display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center;
+    background: rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px; gap: 15px;
+}
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.traffic-item .source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.traffic-item .bar-container { height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
+.traffic-item .bar { height: 100%; border-radius: 5px; }
+.traffic-item .users { text-align: left; font-weight: 700; }
+.traffic-item .pct { text-align: left; color: #94a3b8; font-size: 0.9em; }
+.traffic-explanation {
+    margin-top: 20px; padding: 18px;
+    background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.08) 100%);
+    border-radius: 12px; border-right: 4px solid #f97316; line-height: 1.8;
+}
+.traffic-explanation strong { color: #fb923c; }
+
+.keywords-category {
+    background: rgba(255,255,255,0.04); border-radius: 18px; padding: 24px;
+    margin-bottom: 22px; border: 1px solid rgba(255,255,255,0.1);
+}
+.keywords-category.brand { border-color: rgba(251,191,36,0.5); background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(245,158,11,0.06) 100%); }
+.keywords-category.nonbrand { border-color: rgba(59,130,246,0.5); background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.06) 100%); }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.category-header .cat-icon { font-size: 1.6em; }
+.category-header .cat-title { font-size: 1.2em; font-weight: 700; }
+.category-header .cat-count { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; margin-right: auto; }
+
+.kw-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+.kw-table th { text-align: right; padding: 12px 10px; font-weight: 600; color: rgba(255,255,255,0.6); font-size: 0.85em; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.kw-table td { padding: 12px 10px; background: rgba(255,255,255,0.04); font-size: 0.95em; }
+.kw-table tr td:first-child { border-radius: 0 10px 10px 0; }
+.kw-table tr td:last-child { border-radius: 10px 0 0 10px; }
+.kw-name { font-weight: 600; }
+.vol-badge { background: linear-gradient(135deg, #f97316 0%, #3b82f6 100%); color: white; padding: 4px 12px; border-radius: 14px; font-size: 0.85em; font-weight: 700; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.9em; }
+.pos-badge.p1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%); color: #fff; }
+.pos-badge.top5 { background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%); color: #fff; }
+.pos-badge.top10 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); color: #fff; }
+.pos-badge.top20 { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: #fff; }
+.pos-badge.low { background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%); color: #fff; }
+
+.keywords-summary { margin-top: 18px; padding: 14px 18px; border-radius: 10px; text-align: center; font-weight: 600; font-size: 1.05em; }
+.keywords-category.brand .keywords-summary { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.keywords-category.nonbrand .keywords-summary { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+.brand-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 22px; padding: 22px; background: linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(234,88,12,0.06) 100%); border-radius: 14px; }
+.brand-stat { text-align: center; }
+.brand-stat .value { font-size: 2em; font-weight: 800; }
+.brand-stat .value.gold { color: #fbbf24; }
+.brand-stat .value.blue { color: #60a5fa; }
+.brand-stat .value.green { color: #4ade80; }
+.brand-stat .value.pink { color: #f472b6; }
+.brand-stat .label { font-size: 0.85em; color: #94a3b8; margin-top: 6px; }
+
+.pages-grid { display: grid; gap: 14px; }
+.page-item {
+    display: grid; grid-template-columns: 40px 1fr repeat(4, 90px); align-items: center;
+    background: rgba(255,255,255,0.03); padding: 18px 20px; border-radius: 12px; gap: 15px;
+}
+.page-item:hover { background: rgba(249,115,22,0.1); }
+.page-item .rank { font-size: 1.4em; font-weight: 800; color: #f97316; }
+.page-item .url { font-size: 0.9em; color: #e2e8f0; word-break: break-word; }
+.page-item .metric { text-align: center; }
+.page-item .metric .val { font-size: 1.1em; font-weight: 700; color: #fff; }
+.page-item .metric .lbl { font-size: 0.75em; color: #94a3b8; margin-top: 3px; }
+
+.summary-section { background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.06) 100%); border: 2px solid rgba(249,115,22,0.4); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
+.summary-card { background: rgba(255,255,255,0.05); border-radius: 14px; padding: 25px; text-align: center; }
+.summary-card .icon { font-size: 2.2em; margin-bottom: 12px; }
+.summary-card .title { font-size: 1.05em; font-weight: 600; margin-bottom: 10px; color: #fff; }
+.summary-card .value { font-size: 2.2em; font-weight: 800; color: #fb923c; margin-bottom: 8px; }
+.summary-card .desc { font-size: 0.9em; color: #94a3b8; }
+
+.glossary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.glossary-item { background: rgba(0,0,0,0.2); padding: 18px; border-radius: 12px; line-height: 1.6; }
+.glossary-item strong { color: #fb923c; display: block; margin-bottom: 6px; }
+
+.ult-footer { text-align: center; padding: 35px 20px; background: rgba(0,0,0,0.4); border-radius: 20px 20px 0 0; margin-top: 30px; }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #f97316 0%, #3b82f6 50%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+@media (max-width: 1024px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .organic-highlight { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .brand-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .hero-stat .value { font-size: 2em; }
+    .traffic-item { grid-template-columns: 1fr; text-align: center; }
+    .page-item { grid-template-columns: 1fr; text-align: center; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .glossary-grid { grid-template-columns: 1fr; }
+}
+
+.kw-history { display: flex; gap: 8px; flex-wrap: wrap; }
+.hist-item { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.8em; }
+.hist-item.current { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); }
+.month-label { color: #94a3b8; font-size: 0.75em; }
+.pos-value { font-weight: 700; color: #e2e8f0; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(148,163,184,0.2); color: #94a3b8; }
+
+.kw-history { display: flex; gap: 6px; flex-wrap: wrap; }
+.hist-item { display: inline-flex; flex-direction: column; align-items: center; padding: 3px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.75em; }
+.hist-item.current { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); }
+.month-label { color: #94a3b8; font-size: 0.7em; }
+.pos-value { font-weight: 700; color: #e2e8f0; }
+.change-badge { padding: 3px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(148,163,184,0.2); color: #94a3b8; }
+.dist-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+.dist-item { text-align: center; padding: 20px 15px; border-radius: 12px; background: rgba(255,255,255,0.05); }
+.dist-item.gold { background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.1)); border: 1px solid rgba(255,215,0,0.3); }
+.dist-item.silver { background: linear-gradient(135deg, rgba(192,192,192,0.2), rgba(192,192,192,0.1)); border: 1px solid rgba(192,192,192,0.3); }
+.dist-item.bronze { background: linear-gradient(135deg, rgba(205,127,50,0.2), rgba(205,127,50,0.1)); border: 1px solid rgba(205,127,50,0.3); }
+.dist-item.blue { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.1)); border: 1px solid rgba(59,130,246,0.3); }
+.dist-item.purple { background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1)); border: 1px solid rgba(139,92,246,0.3); }
+.pos-label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.pos-count { font-size: 2em; font-weight: 800; color: #fff; }
+.pos-pct { font-size: 0.9em; color: #60a5fa; margin-top: 5px; }
+@media (max-width: 768px) { .dist-grid { grid-template-columns: repeat(3, 1fr); } }
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">דצמבר 2025</div>
+        <div class="client-name">DEASY | דיזנהאוז</div>
+        <h1>דוח ביצועי SEO מקיף</h1>
+        <p class="subtitle">deasy.co.il | ניתוח תנועה ונתוני חיפוש</p>
+        <div class="period-badge">דצמבר 2025 | 2025/12/01 - 2025/12/31</div>
+    </div>
+
+    <div class="ult-wrapper">
+        <div class="success-banner">
+            <div class="title">ביצועי חיפוש בדצמבר 2025</div>
+            <div class="subtitle">8,232 קליקים מגוגל | 1,194,577 הופעות | 25% Brand</div>
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 8,232 קליקים</span></div>
+            <div class="data-source-item"><span class="icon">👁️</span><span>GSC: 1,194,577 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📊</span><span>CTR: 0.69%</span></div>
+            <div class="data-source-item"><span class="icon">📈</span><span>GA4: 17,931 ביקורים</span></div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="icon">🔗</div>
+                <div class="value">8,232</div>
+                <div class="label">קליקים מגוגל</div>
+                <div class="change up">GSC מאומת</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">👁️</div>
+                <div class="value">1,194,577</div>
+                <div class="label">הופעות בגוגל</div>
+                <div class="change up">GSC מאומת</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">📈</div>
+                <div class="value">17,931</div>
+                <div class="label">ביקורים באתר (GA4)</div>
+                <div class="change highlight">8,485 אורגני</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">🎯</div>
+                <div class="value">40</div>
+                <div class="label">מילות מפתח Top 10</div>
+                <div class="change up">1 ב-#1</div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <div class="section-title">
+                    <h2>תנועה אורגנית מגוגל</h2>
+                    <div class="desc">נתוני חיפוש אורגני - המקור האיכותי ביותר</div>
+                </div>
+            </div>
+            <div class="organic-highlight">
+                <div class="organic-stat">
+                    <div class="value">8,232</div>
+                    <div class="label">קליקים מגוגל (GSC)</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">1,194,577</div>
+                    <div class="label">הופעות בגוגל</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">0.69%</div>
+                    <div class="label">שיעור הקלקה (CTR)</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">1,000</div>
+                    <div class="label">שאילתות פעילות</div>
+                </div>
+            </div>
+            <div class="organic-summary">
+                <strong>8,232</strong> קליקים מגוגל בדצמבר 2025! שיעור הקלקה של <strong>0.69%</strong>
+            </div>
+        </div>
+
+        <!-- TRAFFIC SOURCES SECTION - GA4 -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה – התמונה המלאה</h2>
+                    <div class="desc">פילוח מלא של מקורות התנועה לאתר בדצמבר 2025 | מקור: GA4</div>
+                </div>
+                <div class="total-badge" style="margin-right: auto; background: linear-gradient(135deg, #f97316 0%, #0052a3 100%); color: white; padding: 12px 24px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 1.8em; font-weight: 800;">17,931</div>
+                    <div style="font-size: 0.85em; opacity: 0.9;">סה"כ ביקורים</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area">
+                    <canvas id="trafficSourcesChart" height="300"></canvas>
+                </div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #22c55e;"></span>חיפוש אורגני</div>
+    <div class="bar-container"><div class="bar" style="width: 47.3%; background: linear-gradient(90deg, #22c55e, #22c55e88);"></div></div>
+    <div class="users">8,485</div>
+    <div class="pct">47.3%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #f472b6;"></span>רשתות חברתיות (ממומן)</div>
+    <div class="bar-container"><div class="bar" style="width: 20.3%; background: linear-gradient(90deg, #f472b6, #f472b688);"></div></div>
+    <div class="users">3,640</div>
+    <div class="pct">20.3%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #3b82f6;"></span>ישיר (Direct)</div>
+    <div class="bar-container"><div class="bar" style="width: 14.5%; background: linear-gradient(90deg, #3b82f6, #3b82f688);"></div></div>
+    <div class="users">2,607</div>
+    <div class="pct">14.5%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #6b7280;"></span>לא מזוהה</div>
+    <div class="bar-container"><div class="bar" style="width: 8.4%; background: linear-gradient(90deg, #6b7280, #6b728088);"></div></div>
+    <div class="users">1,501</div>
+    <div class="pct">8.4%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span>דוא"ל</div>
+    <div class="bar-container"><div class="bar" style="width: 5.2%; background: linear-gradient(90deg, #8b5cf6, #8b5cf688);"></div></div>
+    <div class="users">941</div>
+    <div class="pct">5.2%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #ec4899;"></span>רשתות חברתיות (אורגני)</div>
+    <div class="bar-container"><div class="bar" style="width: 2.1%; background: linear-gradient(90deg, #ec4899, #ec489988);"></div></div>
+    <div class="users">379</div>
+    <div class="pct">2.1%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #f59e0b;"></span>הפניות (Referral)</div>
+    <div class="bar-container"><div class="bar" style="width: 1.8%; background: linear-gradient(90deg, #f59e0b, #f59e0b88);"></div></div>
+    <div class="users">318</div>
+    <div class="pct">1.8%</div>
+</div>
+<div class="traffic-item">
+    <div class="source"><span class="source-dot" style="background: #14b8a6;"></span>הודעות Push</div>
+    <div class="bar-container"><div class="bar" style="width: 0.2%; background: linear-gradient(90deg, #14b8a6, #14b8a688);"></div></div>
+    <div class="users">29</div>
+    <div class="pct">0.2%</div>
+</div>
+
+                </div>
+            </div>
+            <div class="traffic-explanation">
+                <p><strong>💡 תובנות מרכזיות:</strong></p>
+                <p>• <strong>חיפוש אורגני (47.3%)</strong> – 8,485 ביקורים עם שיעור התעניינות של 80.0%</p>
+                <p>• <strong>רשתות חברתיות (ממומן) (20.3%)</strong> – 3,640 ביקורים</p>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">⭐</span>
+                <div class="section-title">
+                    <h2>מילות מפתח ממותגות (Brand)</h2>
+                    <div class="desc">מילות מפתח הכוללות את שם המותג | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="keywords-category brand">
+                <div class="category-header">
+                    <span class="cat-icon">🏷️</span>
+                    <span class="cat-title">Brand Keywords</span>
+                    <span class="cat-count">2,054 קליקים | 25% מהתנועה</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>קליקים</th>
+                            <th>הופעות</th>
+                            <th>CTR</th>
+                            <th>מיקום</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+    <td class="kw-name">דיזנהאוז</td>
+    <td><span class="vol-badge">1,210</span></td>
+    <td>2,466</td>
+    <td>49.07%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהויז</td>
+    <td><span class="vol-badge">158</span></td>
+    <td>237</td>
+    <td>66.67%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז טיסות</td>
+    <td><span class="vol-badge">103</span></td>
+    <td>161</td>
+    <td>63.98%</td>
+    <td><span class="pos-badge p3">3</span></td>
+</tr>
+<tr>
+    <td class="kw-name">diesenhaus</td>
+    <td><span class="vol-badge">97</span></td>
+    <td>187</td>
+    <td>51.87%</td>
+    <td><span class="pos-badge top10">7</span></td>
+</tr>
+<tr>
+    <td class="kw-name">deasy</td>
+    <td><span class="vol-badge">93</span></td>
+    <td>151</td>
+    <td>61.59%</td>
+    <td><span class="pos-badge top5">4</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיול מאורגן ליפן דיזנהאוז</td>
+    <td><span class="vol-badge">50</span></td>
+    <td>147</td>
+    <td>34.01%</td>
+    <td><span class="pos-badge p2">2</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז טיולים מאורגנים</td>
+    <td><span class="vol-badge">49</span></td>
+    <td>86</td>
+    <td>56.98%</td>
+    <td><span class="pos-badge top10">6</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז חבילות נופש</td>
+    <td><span class="vol-badge">41</span></td>
+    <td>78</td>
+    <td>52.56%</td>
+    <td><span class="pos-badge top10">6</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז גרופ בע"מ</td>
+    <td><span class="vol-badge">23</span></td>
+    <td>46</td>
+    <td>50.00%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז טלפון</td>
+    <td><span class="vol-badge">16</span></td>
+    <td>103</td>
+    <td>15.53%</td>
+    <td><span class="pos-badge top10">8</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוס</td>
+    <td><span class="vol-badge">70</span></td>
+    <td>215</td>
+    <td>32.56%</td>
+    <td><span class="pos-badge p2">2</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהוז</td>
+    <td><span class="vol-badge">19</span></td>
+    <td>44</td>
+    <td>43.18%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דינהאוז</td>
+    <td><span class="vol-badge">17</span></td>
+    <td>78</td>
+    <td>21.79%</td>
+    <td><span class="pos-badge top5">4</span></td>
+</tr>
+<tr>
+    <td class="kw-name">disenhaus</td>
+    <td><span class="vol-badge">17</span></td>
+    <td>30</td>
+    <td>56.67%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+<tr>
+    <td class="kw-name">דיזנהאוז שירות לקוחות</td>
+    <td><span class="vol-badge">15</span></td>
+    <td>39</td>
+    <td>38.46%</td>
+    <td><span class="pos-badge p1">1</span></td>
+</tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    15 מילות Brand מובילות | תנועה ישירה למותג
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>מילות מפתח לא-ממותגות (Non-Brand)</h2>
+                    <div class="desc">חיפושים כלליים שמביאים תנועה לאתר | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">📈</span>
+                    <span class="cat-title">Non-Brand Keywords</span>
+                    <span class="cat-count">6,178 קליקים | 75% מהתנועה</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>קליקים</th>
+                            <th>הופעות</th>
+                            <th>CTR</th>
+                            <th>מיקום</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+    <td class="kw-name">טיסות לתאילנד</td>
+    <td><span class="vol-badge">85</span></td>
+    <td>15,808</td>
+    <td>0.54%</td>
+    <td><span class="pos-badge top10">10</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות לאילת</td>
+    <td><span class="vol-badge">84</span></td>
+    <td>7,288</td>
+    <td>1.15%</td>
+    <td><span class="pos-badge top10">9</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות לפראג</td>
+    <td><span class="vol-badge">56</span></td>
+    <td>8,718</td>
+    <td>0.64%</td>
+    <td><span class="pos-badge top10">7</span></td>
+</tr>
+<tr>
+    <td class="kw-name">חבילות נופש במחירי רצפה</td>
+    <td><span class="vol-badge">53</span></td>
+    <td>1,011</td>
+    <td>5.24%</td>
+    <td><span class="pos-badge p3">3</span></td>
+</tr>
+<tr>
+    <td class="kw-name">אל על</td>
+    <td><span class="vol-badge">48</span></td>
+    <td>135,350</td>
+    <td>0.04%</td>
+    <td><span class="pos-badge top10">7</span></td>
+</tr>
+<tr>
+    <td class="kw-name">ישראייר</td>
+    <td><span class="vol-badge">46</span></td>
+    <td>129,920</td>
+    <td>0.04%</td>
+    <td><span class="pos-badge top10">6</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסה לאילת</td>
+    <td><span class="vol-badge">40</span></td>
+    <td>3,625</td>
+    <td>1.10%</td>
+    <td><span class="pos-badge top10">9</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות זולות</td>
+    <td><span class="vol-badge">35</span></td>
+    <td>3,034</td>
+    <td>1.15%</td>
+    <td><span class="pos-badge top10">10</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות לטביליסי</td>
+    <td><span class="vol-badge">32</span></td>
+    <td>425</td>
+    <td>7.53%</td>
+    <td><span class="pos-badge top20">14</span></td>
+</tr>
+<tr>
+    <td class="kw-name">אל על טיסות</td>
+    <td><span class="vol-badge">31</span></td>
+    <td>51,877</td>
+    <td>0.06%</td>
+    <td><span class="pos-badge top10">6</span></td>
+</tr>
+<tr>
+    <td class="kw-name">איים בתאילנד</td>
+    <td><span class="vol-badge">30</span></td>
+    <td>876</td>
+    <td>3.42%</td>
+    <td><span class="pos-badge p3">3</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות לתאילנד זולות</td>
+    <td><span class="vol-badge">26</span></td>
+    <td>1,182</td>
+    <td>2.20%</td>
+    <td><span class="pos-badge top5">4</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיסות זולות לתאילנד</td>
+    <td><span class="vol-badge">23</span></td>
+    <td>1,964</td>
+    <td>1.17%</td>
+    <td><span class="pos-badge top5">5</span></td>
+</tr>
+<tr>
+    <td class="kw-name">טיולים מאורגנים לצעירים בחול</td>
+    <td><span class="vol-badge">22</span></td>
+    <td>52</td>
+    <td>42.31%</td>
+    <td><span class="pos-badge p3">3</span></td>
+</tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    15 מילות Non-Brand מובילות | נראות בחיפושים כלליים
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>תנועה Brand vs Non-Brand</h2>
+                    <div class="desc">הפרדה בין תנועת מותג לתנועה כללית | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="brand-stats-grid">
+                <div class="brand-stat">
+                    <div class="value gold">25%</div>
+                    <div class="label">תנועה Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value blue">75%</div>
+                    <div class="label">תנועה Non-Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value green">2,054</div>
+                    <div class="label">קליקים Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value pink">6,178</div>
+                    <div class="label">קליקים Non-Brand</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>דירוג מילות מפתח - SE Ranking</h2>
+                    <div class="desc">מעקב דירוגים ב-Google | מקור: SE Ranking</div>
+                </div>
+            </div>
+            <div class="brand-stats-grid">
+                <div class="brand-stat">
+                    <div class="value gold">5</div>
+                    <div class="label">מיקום #1</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value green">15</div>
+                    <div class="label">Top 3</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value blue">78</div>
+                    <div class="label">Top 10</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value pink">100</div>
+                    <div class="label">סה"כ מילות מפתח</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים בגוגל</h2>
+                    <div class="desc">העמודים שמניבים את עיקר התנועה | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-item">
+    <div class="rank">1</div>
+    <div class="url">עמוד הבית</div>
+    <div class="metric">
+        <div class="val">1,952</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">17,293</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">11.29%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">19.1</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">2</div>
+    <div class="url">/flights.html</div>
+    <div class="metric">
+        <div class="val">306</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">18,319</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">1.67%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">19.9</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">3</div>
+    <div class="url">/organized-tours/youngs.html</div>
+    <div class="metric">
+        <div class="val">264</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">3,753</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">7.03%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">20.3</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">4</div>
+    <div class="url">/flights/asia/thailand.html</div>
+    <div class="metric">
+        <div class="val">251</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">43,812</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">0.57%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">11.2</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">5</div>
+    <div class="url">/flights/asia/israel/eilat.html</div>
+    <div class="metric">
+        <div class="val">200</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">19,108</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">1.05%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">10.9</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">6</div>
+    <div class="url">/hotelpackages.html</div>
+    <div class="metric">
+        <div class="val">164</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">18,091</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">0.91%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">21.8</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+<div class="page-item">
+    <div class="rank">7</div>
+    <div class="url">/orgenizetour.html</div>
+    <div class="metric">
+        <div class="val">130</div>
+        <div class="lbl">קליקים</div>
+    </div>
+    <div class="metric">
+        <div class="val">8,152</div>
+        <div class="lbl">חשיפות</div>
+    </div>
+    <div class="metric">
+        <div class="val">1.59%</div>
+        <div class="lbl">CTR</div>
+    </div>
+    <div class="metric">
+        <div class="val">12.0</div>
+        <div class="lbl">מיקום</div>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+        
+        <!-- SE RANKING - ALL KEYWORDS COMBINED -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>מעקב מילות מפתח - SE Ranking</h2>
+                    <div class="desc">מעקב דירוגים יומי | 52 מילים במעקב</div>
+                </div>
+            </div>
+
+            <!-- ALL Keywords Table -->
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">📊</span>
+                    <span class="cat-title">כל מילות המפתח במעקב</span>
+                    <span class="cat-count">52 מילים | 1 במקום #1</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>נפח חיפוש</th>
+                            <th>מיקום עדכני</th>
+                            <th>היסטוריית מיקום</th>
+                            <th>שינוי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="kw-name">איים בתאילנד</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אי בתאילנד</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד ברגע האחרון</td>
+                            <td><span class="vol-badge">170</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד זולות</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p2">2</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות זולות לתאילנד</td>
+                            <td><span class="vol-badge">20</span></td>
+                            <td><span class="pos-badge p2">2</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד ברגע האחרון</td>
+                            <td><span class="vol-badge">170</span></td>
+                            <td><span class="pos-badge p2">2</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">כמה זמן טיסה לתאילנד באל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לפראג</td>
+                            <td><span class="vol-badge">12,100</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לאמסטרדם אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לברלין אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסת אל על</td>
+                            <td><span class="vol-badge">3,600</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד זולות</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסה אל על</td>
+                            <td><span class="vol-badge">22,200</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות זולות לתאילנד</td>
+                            <td><span class="vol-badge">20</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">el al טיסות</td>
+                            <td><span class="vol-badge">100</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">כרטיס טיסה לניו יורק</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסה אל על</td>
+                            <td><span class="vol-badge">22,200</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על טיסה</td>
+                            <td><span class="vol-badge">90,500</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לאמסטרדם אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לברלין אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">elal טיסות</td>
+                            <td><span class="vol-badge">1,600</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לוינה אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על הזמנת טיסה</td>
+                            <td><span class="vol-badge">2,900</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לפריז אל על</td>
+                            <td><span class="vol-badge">1,300</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על טיסות</td>
+                            <td><span class="vol-badge">60,500</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">el al טיסות</td>
+                            <td><span class="vol-badge">100</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסה ללונדון אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד דקה 90</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על טיסה</td>
+                            <td><span class="vol-badge">90,500</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות ישירות אל על</td>
+                            <td><span class="vol-badge">50</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות ללונדון אל על</td>
+                            <td><span class="vol-badge">20</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לפראג אל על</td>
+                            <td><span class="vol-badge">40</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">כמה זמן טיסה לתאילנד</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לניו יורק אל על</td>
+                            <td><span class="vol-badge">1,300</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">על אל טיסות</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסה ללונדון אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לתאילנד דקה 90</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">כמה שעות טיסה לתאילנד</td>
+                            <td><span class="vol-badge">590</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות אל על</td>
+                            <td><span class="vol-badge">22,400</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על</td>
+                            <td><span class="vol-badge">550,000</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לברצלונה אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות אלעל</td>
+                            <td><span class="vol-badge">110</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על הזמנת טיסה</td>
+                            <td><span class="vol-badge">2,900</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסה למדריד</td>
+                            <td><span class="vol-badge">2,400</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות אלעל</td>
+                            <td><span class="vol-badge">110</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">על אל טיסות</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות לרומא אל על</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td><span class="pos-badge top10">8</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טיסות ליפן</td>
+                            <td><span class="vol-badge">1,800</span></td>
+                            <td><span class="pos-badge top10">9</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על.</td>
+                            <td><span class="vol-badge">673,000</span></td>
+                            <td><span class="pos-badge top10">9</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אל על</td>
+                            <td><span class="vol-badge">550,000</span></td>
+                            <td><span class="pos-badge top10">9</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    77% מהמילות בעמוד 1 של גוגל! | 1 במקום #1
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKING DISTRIBUTION -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>התפלגות דירוגים בגוגל</h2>
+                    <div class="desc">כמה מילות מפתח מדורגות בכל טווח מיקומים | 52 מילים במעקב</div>
+                </div>
+            </div>
+            <div class="dist-grid">
+                <div class="dist-item gold">
+                    <div class="pos-label">מקום #1</div>
+                    <div class="pos-count">1</div>
+                    <div class="pos-pct">2%</div>
+                </div>
+                <div class="dist-item silver">
+                    <div class="pos-label">Top 3</div>
+                    <div class="pos-count">6</div>
+                    <div class="pos-pct">12%</div>
+                </div>
+                <div class="dist-item bronze">
+                    <div class="pos-label">Top 5</div>
+                    <div class="pos-count">18</div>
+                    <div class="pos-pct">35%</div>
+                </div>
+                <div class="dist-item blue">
+                    <div class="pos-label">Top 10</div>
+                    <div class="pos-count">40</div>
+                    <div class="pos-pct">77%</div>
+                </div>
+                <div class="dist-item purple">
+                    <div class="pos-label">Top 20</div>
+                    <div class="pos-count">51</div>
+                    <div class="pos-pct">98%</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="ult-section summary-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>סיכום ביצועים - דצמבר 2025</h2>
+                    <div class="desc">מדדי ההצלחה העיקריים | מקור: GSC + GA4 + SE Ranking</div>
+                </div>
+            </div>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="icon">🔍</div>
+                    <div class="title">קליקים מגוגל</div>
+                    <div class="value">8,232</div>
+                    <div class="desc">מ-Google Search Console</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">📈</div>
+                    <div class="title">ביקורים באתר</div>
+                    <div class="value">17,931</div>
+                    <div class="desc">מ-Google Analytics 4</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">🎯</div>
+                    <div class="title">מילות מפתח Top 10</div>
+                    <div class="value">40</div>
+                    <div class="desc">1 במיקום #1</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">🏷️</div>
+                    <div class="title">תנועת Brand</div>
+                    <div class="value">25%</div>
+                    <div class="desc">מותג מוכר!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📖</span>
+                <div class="section-title">
+                    <h2>מילון מונחים</h2>
+                    <div class="desc">הסברים על המונחים והמדדים בדוח זה</div>
+                </div>
+            </div>
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <strong>GSC (Google Search Console)</strong>
+                    כלי של גוגל המראה נתוני חיפוש אמיתיים: קליקים, חשיפות, CTR ומיקום.
+                </div>
+                <div class="glossary-item">
+                    <strong>GA4 (Google Analytics 4)</strong>
+                    מערכת אנליטיקס של גוגל המראה נתוני ביקורים, מקורות תנועה והתנהגות משתמשים.
+                </div>
+                <div class="glossary-item">
+                    <strong>Brand Keywords</strong>
+                    מילות מפתח הכוללות את שם המותג - מעידות על מודעות למותג.
+                </div>
+                <div class="glossary-item">
+                    <strong>CTR (Click Through Rate)</strong>
+                    אחוז המשתמשים שלחצו על התוצאה מתוך כל מי שראה אותה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        
+            
+            <div class="brand-stats-grid" style="margin-bottom: 25px;">
+                <div class="brand-stat">
+                    <div class="value gold">1</div>
+                    <div class="label">מיקום #1</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value green">6</div>
+                    <div class="label">Top 3</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value blue">40</div>
+                    <div class="label">Top 10</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value pink">51</div>
+                    <div class="label">Top 20</div>
+                </div>
+            </div>
+
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">🎯</span>
+                    <span class="cat-title">מילות כלליות (Non-Brand) - SE Ranking</span>
+                    <span class="cat-count">52 מילים | Top 20 לפי דירוג</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>נפח חיפוש</th>
+                            <th>מיקום עדכני</th>
+                            <th>היסטוריית מיקום</th>
+                            <th>שינוי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<tr>
+            <td class="kw-name">איים בתאילנד</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">אי בתאילנד</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לתאילנד ברגע האחרון</td>
+            <td><span class="vol-badge">170</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">איים בתאילנד</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">אי בתאילנד</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לתאילנד זולות</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p2">2</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לתאילנד ברגע האחרון</td>
+            <td><span class="vol-badge">170</span></td>
+            <td><span class="pos-badge p2">2</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות זולות לתאילנד</td>
+            <td><span class="vol-badge">20</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">כמה זמן טיסה לתאילנד באל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לברלין אל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות זולות לתאילנד</td>
+            <td><span class="vol-badge">20</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לתאילנד זולות</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">כמה זמן טיסה לתאילנד באל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לאמסטרדם אל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">אל על טיסות</td>
+            <td><span class="vol-badge">60,500</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">כרטיס טיסה לניו יורק</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לוינה אל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לפראג</td>
+            <td><span class="vol-badge">12,100</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסה אל על</td>
+            <td><span class="vol-badge">22,200</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">טיסות לאמסטרדם אל על</td>
+            <td><span class="vol-badge">10</span></td>
+            <td><span class="pos-badge top5">4</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    40 מילות מפתח ב-Top 10 | 1 במיקום #1!
+                </div>
+            </div>
+        </div>
+
+
+        <div class="ult-footer">
+        <div class="brand">Nadav Digital | דוח SEO</div>
+        <div class="info">נוצר ב-03/01/2026 | מקור: Google Search Console + GA4 + SE Ranking</div>
+    </div>
+</div>
+
+<script>
+// Traffic Sources Chart - GA4
+const trafficCtx = document.getElementById('trafficSourcesChart');
+if (trafficCtx) {
+    new Chart(trafficCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ["חיפוש אורגני", "רשתות חברתיות (ממומן)", "ישיר (Direct)", "לא מזוהה", "דוא\"ל", "רשתות חברתיות (אורגני)", "הפניות (Referral)", "הודעות Push"],
+            datasets: [{
+                data: [8485, 3640, 2607, 1501, 941, 379, 318, 29],
+                backgroundColor: ["#22c55e", "#f472b6", "#3b82f6", "#6b7280", "#8b5cf6", "#ec4899", "#f59e0b", "#14b8a6"],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+</script>
+
+<!-- /wp:html -->
