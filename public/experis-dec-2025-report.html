@@ -1,0 +1,1369 @@
+<!-- wp:html -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* WordPress Theme Reset */
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content {
+    background: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; }
+    .ult-wrapper { width: 100% !important; padding: 20px 2% !important; }
+}
+
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; min-height: 100vh !important; }
+html { direction: rtl !important; background: #0f172a !important; }
+
+header, footer, nav, .site-header, .site-footer { display: none !important; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.ult-container {
+    direction: rtl;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    min-height: 100vh;
+    color: #e2e8f0;
+    font-size: 16px;
+}
+
+.ult-wrapper { max-width: 100%; padding: 20px 16px; }
+
+.ult-header {
+    background: linear-gradient(135deg, #e63946 0%, #c1121f 50%, #1e293b 100%);
+    padding: 50px 25px;
+    text-align: center;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 25px;
+}
+
+.ult-header .version-badge {
+    position: absolute; top: 15px; left: 15px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em;
+}
+
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; }
+.ult-header .period-badge {
+    display: inline-block; background: rgba(255,255,255,0.2); padding: 12px 30px;
+    border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3);
+}
+
+.success-banner {
+    background: linear-gradient(135deg, #e63946 0%, #0052a3 100%);
+    padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px;
+}
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;
+    padding: 15px 20px; background: rgba(0,102,204,0.15); border: 1px solid rgba(0,102,204,0.3);
+    border-radius: 16px; margin-bottom: 25px;
+}
+.data-source-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #60a5fa;
+}
+
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.hero-stat {
+    background: linear-gradient(135deg, rgba(0,102,204,0.2) 0%, rgba(0,61,122,0.15) 100%);
+    border-radius: 20px; padding: 28px 10px; text-align: center;
+    border: 1px solid rgba(0,102,204,0.3); position: relative;
+}
+.hero-stat::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #e63946, #3b82f6, #60a5fa);
+}
+.hero-stat .icon { font-size: 2.4em; margin-bottom: 12px; }
+.hero-stat .value {
+    font-size: 2.2em; font-weight: 800;
+    background: linear-gradient(135deg, #fff 0%, #93c5fd 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-stat .label { font-size: 0.95em; color: #94a3b8; margin-bottom: 10px; }
+.hero-stat .change { display: inline-block; padding: 5px 14px; border-radius: 15px; font-size: 0.85em; font-weight: 600; }
+.hero-stat .change.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.hero-stat .change.highlight { background: rgba(0,102,204,0.2); color: #60a5fa; }
+
+.ult-section {
+    background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px;
+    margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08);
+}
+.section-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+    padding-bottom: 16px; border-bottom: 2px solid rgba(0,102,204,0.4);
+}
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.organic-highlight {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%);
+    border: 2px solid rgba(34,197,94,0.4); border-radius: 18px; padding: 25px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;
+}
+.organic-stat { text-align: center; }
+.organic-stat .value { font-size: 2em; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+.organic-stat .label { font-size: 0.9em; color: #94a3b8; }
+.organic-summary {
+    text-align: center; padding: 18px; background: rgba(34,197,94,0.1);
+    border-radius: 12px; font-size: 1.1em; line-height: 1.6;
+}
+.organic-summary strong { color: #4ade80; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 12px; }
+.traffic-item {
+    display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center;
+    background: rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px; gap: 15px;
+}
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+.traffic-item .source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.traffic-item .bar-container { height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; }
+.traffic-item .bar { height: 100%; border-radius: 5px; }
+.traffic-item .users { text-align: left; font-weight: 700; }
+.traffic-item .pct { text-align: left; color: #94a3b8; font-size: 0.9em; }
+.traffic-explanation {
+    margin-top: 20px; padding: 18px;
+    background: linear-gradient(135deg, rgba(0,102,204,0.1) 0%, rgba(0,61,122,0.08) 100%);
+    border-radius: 12px; border-right: 4px solid #e63946; line-height: 1.8;
+}
+.traffic-explanation strong { color: #60a5fa; }
+
+.keywords-category {
+    background: rgba(255,255,255,0.04); border-radius: 18px; padding: 24px;
+    margin-bottom: 22px; border: 1px solid rgba(255,255,255,0.1);
+}
+.keywords-category.brand { border-color: rgba(251,191,36,0.5); background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(245,158,11,0.06) 100%); }
+.keywords-category.nonbrand { border-color: rgba(59,130,246,0.5); background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(37,99,235,0.06) 100%); }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.category-header .cat-icon { font-size: 1.6em; }
+.category-header .cat-title { font-size: 1.2em; font-weight: 700; }
+.category-header .cat-count { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; margin-right: auto; }
+
+.kw-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+.kw-table th { text-align: right; padding: 12px 10px; font-weight: 600; color: rgba(255,255,255,0.6); font-size: 0.85em; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.kw-table td { padding: 12px 10px; background: rgba(255,255,255,0.04); font-size: 0.95em; }
+.kw-table tr td:first-child { border-radius: 0 10px 10px 0; }
+.kw-table tr td:last-child { border-radius: 10px 0 0 10px; }
+.kw-name { font-weight: 600; }
+.vol-badge { background: linear-gradient(135deg, #e63946 0%, #3b82f6 100%); color: white; padding: 4px 12px; border-radius: 14px; font-size: 0.85em; font-weight: 700; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; font-weight: 700; font-size: 0.9em; }
+.pos-badge.p1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #cd7f32 0%, #daa520 100%); color: #fff; }
+.pos-badge.top5 { background: linear-gradient(135deg, #22c55e 0%, #4ade80 100%); color: #fff; }
+.pos-badge.top10 { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); color: #fff; }
+.pos-badge.top20 { background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); color: #fff; }
+.pos-badge.low { background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%); color: #fff; }
+
+.keywords-summary { margin-top: 18px; padding: 14px 18px; border-radius: 10px; text-align: center; font-weight: 600; font-size: 1.05em; }
+.keywords-category.brand .keywords-summary { background: rgba(251,191,36,0.15); color: #fbbf24; }
+.keywords-category.nonbrand .keywords-summary { background: rgba(59,130,246,0.15); color: #60a5fa; }
+
+.brand-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 22px; padding: 22px; background: linear-gradient(135deg, rgba(0,102,204,0.08) 0%, rgba(0,61,122,0.06) 100%); border-radius: 14px; }
+.brand-stat { text-align: center; }
+.brand-stat .value { font-size: 2em; font-weight: 800; }
+.brand-stat .value.gold { color: #fbbf24; }
+.brand-stat .value.blue { color: #60a5fa; }
+.brand-stat .value.green { color: #4ade80; }
+.brand-stat .value.pink { color: #f472b6; }
+.brand-stat .label { font-size: 0.85em; color: #94a3b8; margin-top: 6px; }
+
+.pages-grid { display: grid; gap: 14px; }
+.page-item {
+    display: grid; grid-template-columns: 40px 1fr repeat(4, 90px); align-items: center;
+    background: rgba(255,255,255,0.03); padding: 18px 20px; border-radius: 12px; gap: 15px;
+}
+.page-item:hover { background: rgba(0,102,204,0.1); }
+.page-item .rank { font-size: 1.4em; font-weight: 800; color: #e63946; }
+.page-item .url { font-size: 0.9em; color: #e2e8f0; word-break: break-word; }
+.page-item .metric { text-align: center; }
+.page-item .metric .val { font-size: 1.1em; font-weight: 700; color: #fff; }
+.page-item .metric .lbl { font-size: 0.75em; color: #94a3b8; margin-top: 3px; }
+
+.summary-section { background: linear-gradient(135deg, rgba(0,102,204,0.1) 0%, rgba(0,61,122,0.06) 100%); border: 2px solid rgba(0,102,204,0.4); }
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
+.summary-card { background: rgba(255,255,255,0.05); border-radius: 14px; padding: 25px; text-align: center; }
+.summary-card .icon { font-size: 2.2em; margin-bottom: 12px; }
+.summary-card .title { font-size: 1.05em; font-weight: 600; margin-bottom: 10px; color: #fff; }
+.summary-card .value { font-size: 2.2em; font-weight: 800; color: #60a5fa; margin-bottom: 8px; }
+.summary-card .desc { font-size: 0.9em; color: #94a3b8; }
+
+.glossary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.glossary-item { background: rgba(0,0,0,0.2); padding: 18px; border-radius: 12px; line-height: 1.6; }
+.glossary-item strong { color: #60a5fa; display: block; margin-bottom: 6px; }
+
+.ult-footer { text-align: center; padding: 35px 20px; background: rgba(0,0,0,0.4); border-radius: 20px 20px 0 0; margin-top: 30px; }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #e63946 0%, #3b82f6 50%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+@media (max-width: 1024px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .organic-highlight { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .brand-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .hero-stat .value { font-size: 2em; }
+    .traffic-item { grid-template-columns: 1fr; text-align: center; }
+    .page-item { grid-template-columns: 1fr; text-align: center; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .glossary-grid { grid-template-columns: 1fr; }
+}
+
+.kw-history { display: flex; gap: 8px; flex-wrap: wrap; }
+.hist-item { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 8px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.8em; }
+.hist-item.current { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); }
+.month-label { color: #94a3b8; font-size: 0.75em; }
+.pos-value { font-weight: 700; color: #e2e8f0; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(148,163,184,0.2); color: #94a3b8; }
+
+.kw-history { display: flex; gap: 6px; flex-wrap: wrap; }
+.hist-item { display: inline-flex; flex-direction: column; align-items: center; padding: 3px 6px; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 0.75em; }
+.hist-item.current { background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.4); }
+.month-label { color: #94a3b8; font-size: 0.7em; }
+.pos-value { font-weight: 700; color: #e2e8f0; }
+.change-badge { padding: 3px 8px; border-radius: 10px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(148,163,184,0.2); color: #94a3b8; }
+.dist-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+.dist-item { text-align: center; padding: 20px 15px; border-radius: 12px; background: rgba(255,255,255,0.05); }
+.dist-item.gold { background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.1)); border: 1px solid rgba(255,215,0,0.3); }
+.dist-item.silver { background: linear-gradient(135deg, rgba(192,192,192,0.2), rgba(192,192,192,0.1)); border: 1px solid rgba(192,192,192,0.3); }
+.dist-item.bronze { background: linear-gradient(135deg, rgba(205,127,50,0.2), rgba(205,127,50,0.1)); border: 1px solid rgba(205,127,50,0.3); }
+.dist-item.blue { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.1)); border: 1px solid rgba(59,130,246,0.3); }
+.dist-item.purple { background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.1)); border: 1px solid rgba(139,92,246,0.3); }
+.pos-label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.pos-count { font-size: 2em; font-weight: 800; color: #fff; }
+.pos-pct { font-size: 0.9em; color: #60a5fa; margin-top: 5px; }
+@media (max-width: 768px) { .dist-grid { grid-template-columns: repeat(3, 1fr); } }
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">דצמבר 2025</div>
+        <div class="client-name">EXPERIS ISRAEL</div>
+        <h1>דוח ביצועי SEO מקיף</h1>
+        <p class="subtitle">experis.co.il | ניתוח תנועה ונתוני חיפוש</p>
+        <div class="period-badge">דצמבר 2025 | 2025/12/01 - 2025/12/31</div>
+    </div>
+
+    <div class="ult-wrapper">
+        <div class="success-banner">
+            <div class="title">ביצועי חיפוש בדצמבר 2025</div>
+            <div class="subtitle">3,959 קליקים מגוגל | 149,859 הופעות | 32.8% Brand</div>
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 3,959 קליקים</span></div>
+            <div class="data-source-item"><span class="icon">👁️</span><span>GSC: 149,859 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📊</span><span>CTR: 2.64%</span></div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="icon">🔗</div>
+                <div class="value">3,959</div>
+                <div class="label">קליקים מגוגל</div>
+                <div class="change up">GSC מאומת</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">👁️</div>
+                <div class="value">149,859</div>
+                <div class="label">הופעות בגוגל</div>
+                <div class="change up">GSC מאומת</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">📊</div>
+                <div class="value">2.64%</div>
+                <div class="label">שיעור הקלקה (CTR)</div>
+                <div class="change highlight">ממוצע שוק: 1.9%</div>
+            </div>
+            <div class="hero-stat">
+                <div class="icon">🏷️</div>
+                <div class="value">32.8%</div>
+                <div class="label">תנועת Brand</div>
+                <div class="change up">מותג מוכר</div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <div class="section-title">
+                    <h2>תנועה אורגנית מגוגל</h2>
+                    <div class="desc">נתוני חיפוש אורגני - המקור האיכותי ביותר</div>
+                </div>
+            </div>
+            <div class="organic-highlight">
+                <div class="organic-stat">
+                    <div class="value">3,959</div>
+                    <div class="label">קליקים מגוגל (GSC)</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">149,859</div>
+                    <div class="label">הופעות בגוגל</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">2.64%</div>
+                    <div class="label">שיעור הקלקה (CTR)</div>
+                </div>
+                <div class="organic-stat">
+                    <div class="value">1000</div>
+                    <div class="label">שאילתות פעילות</div>
+                </div>
+            </div>
+            <div class="organic-summary">
+                <strong>3,959</strong> קליקים מגוגל בדצמבר 2025! שיעור הקלקה של <strong>2.64%</strong>
+            </div>
+        </div>
+
+        
+
+        
+        <!-- TRAFFIC SOURCES SECTION - GA4 -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה – התמונה המלאה</h2>
+                    <div class="desc">פילוח מלא של מקורות התנועה לאתר בדצמבר 2025 | מקור: GA4</div>
+                </div>
+                <div class="total-badge" style="margin-right: auto; background: linear-gradient(135deg, #e63946 0%, #0052a3 100%); color: white; padding: 12px 24px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 1.8em; font-weight: 800;">7,072</div>
+                    <div style="font-size: 0.85em; opacity: 0.9;">סה"כ ביקורים</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area">
+                    <canvas id="trafficSourcesChart" height="300"></canvas>
+                </div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span>חיפוש אורגני</div>
+                        <div class="bar-container"><div class="bar" style="width: 50.7%; background: linear-gradient(90deg, #22c55e, #22c55e88);"></div></div>
+                        <div class="users">3,583</div>
+                        <div class="pct">50.7%</div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span>ישיר (Direct)</div>
+                        <div class="bar-container"><div class="bar" style="width: 26.5%; background: linear-gradient(90deg, #3b82f6, #3b82f688);"></div></div>
+                        <div class="users">1,875</div>
+                        <div class="pct">26.5%</div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ec4899;"></span>רשתות חברתיות (אורגני)</div>
+                        <div class="bar-container"><div class="bar" style="width: 18.8%; background: linear-gradient(90deg, #ec4899, #ec489988);"></div></div>
+                        <div class="users">1,330</div>
+                        <div class="pct">18.8%</div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #f472b6;"></span>רשתות חברתיות (ממומן)</div>
+                        <div class="bar-container"><div class="bar" style="width: 1.8%; background: linear-gradient(90deg, #f472b6, #f472b688);"></div></div>
+                        <div class="users">129</div>
+                        <div class="pct">1.8%</div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #f59e0b;"></span>הפניות (Referral)</div>
+                        <div class="bar-container"><div class="bar" style="width: 1.7%; background: linear-gradient(90deg, #f59e0b, #f59e0b88);"></div></div>
+                        <div class="users">119</div>
+                        <div class="pct">1.7%</div>
+                    </div>
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #6b7280;"></span>לא מזוהה</div>
+                        <div class="bar-container"><div class="bar" style="width: 0.5%; background: linear-gradient(90deg, #6b7280, #6b728088);"></div></div>
+                        <div class="users">34</div>
+                        <div class="pct">0.5%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="traffic-explanation">
+                <p><strong>💡 תובנות מרכזיות:</strong></p>
+                <p>• <strong>חיפוש אורגני (50.7%)</strong> – 3,583 ביקורים עם שיעור התעניינות של 65.5%</p>
+                <p>• <strong>תנועה ישירה (26.5%)</strong> – 1,875 ביקורים ממשתמשים שמכירים את המותג</p>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">⭐</span>
+                <div class="section-title">
+                    <h2>מילות מפתח ממותגות (Brand)</h2>
+                    <div class="desc">מילות מפתח הכוללות את שם המותג | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="keywords-category brand">
+                <div class="category-header">
+                    <span class="cat-icon">🏷️</span>
+                    <span class="cat-title">Brand Keywords</span>
+                    <span class="cat-count">1,298 קליקים | 32.8% מהתנועה</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>קליקים</th>
+                            <th>הופעות</th>
+                            <th>CTR</th>
+                            <th>מיקום</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="kw-name">experis</td>
+                            <td><span class="vol-badge">406</span></td>
+                            <td>697</td>
+                            <td>58.25%</td>
+                            <td><span class="pos-badge p1">1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אקספריס</td>
+                            <td><span class="vol-badge">230</span></td>
+                            <td>445</td>
+                            <td>51.69%</td>
+                            <td><span class="pos-badge p3">3</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis academy</td>
+                            <td><span class="vol-badge">207</span></td>
+                            <td>495</td>
+                            <td>41.82%</td>
+                            <td><span class="pos-badge p3">3</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis israel</td>
+                            <td><span class="vol-badge">101</span></td>
+                            <td>184</td>
+                            <td>54.89%</td>
+                            <td><span class="pos-badge p1">1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אקספריס אקדמי</td>
+                            <td><span class="vol-badge">61</span></td>
+                            <td>131</td>
+                            <td>46.56%</td>
+                            <td><span class="pos-badge p3">3</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis cyber</td>
+                            <td><span class="vol-badge">40</span></td>
+                            <td>85</td>
+                            <td>47.06%</td>
+                            <td><span class="pos-badge top10">8</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis דרושים</td>
+                            <td><span class="vol-badge">36</span></td>
+                            <td>51</td>
+                            <td>70.59%</td>
+                            <td><span class="pos-badge top5">5</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis software</td>
+                            <td><span class="vol-badge">29</span></td>
+                            <td>52</td>
+                            <td>55.77%</td>
+                            <td><span class="pos-badge p1">1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">אקספריס דרושים</td>
+                            <td><span class="vol-badge">27</span></td>
+                            <td>49</td>
+                            <td>55.1%</td>
+                            <td><span class="pos-badge top5">4</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">experis careers</td>
+                            <td><span class="vol-badge">25</span></td>
+                            <td>49</td>
+                            <td>51.02%</td>
+                            <td><span class="pos-badge top20">14</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    10 מילות Brand מובילות | תנועה ישירה למותג
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>מילות מפתח לא-ממותגות (Non-Brand)</h2>
+                    <div class="desc">חיפושים כלליים שמביאים תנועה לאתר | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">📈</span>
+                    <span class="cat-title">Non-Brand Keywords</span>
+                    <span class="cat-count">792 קליקים | 67.2% מהתנועה</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>קליקים</th>
+                            <th>הופעות</th>
+                            <th>CTR</th>
+                            <th>מיקום</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="kw-name">חברות השמה להייטק</td>
+                            <td><span class="vol-badge">42</span></td>
+                            <td>725</td>
+                            <td>5.79%</td>
+                            <td><span class="pos-badge top10">6</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">גאמפא</td>
+                            <td><span class="vol-badge">34</span></td>
+                            <td>658</td>
+                            <td>5.17%</td>
+                            <td><span class="pos-badge top10">10</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">כמה אני שווה</td>
+                            <td><span class="vol-badge">34</span></td>
+                            <td>183</td>
+                            <td>18.58%</td>
+                            <td><span class="pos-badge p2">2</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">לוחמים להייטק</td>
+                            <td><span class="vol-badge">28</span></td>
+                            <td>1,653</td>
+                            <td>1.69%</td>
+                            <td><span class="pos-badge top5">4</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">מחשבון שכר כמה אני שווה</td>
+                            <td><span class="vol-badge">26</span></td>
+                            <td>206</td>
+                            <td>12.62%</td>
+                            <td><span class="pos-badge p3">3</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">משרות הייטק</td>
+                            <td><span class="vol-badge">24</span></td>
+                            <td>807</td>
+                            <td>2.97%</td>
+                            <td><span class="pos-badge top5">4</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים הייטק</td>
+                            <td><span class="vol-badge">18</span></td>
+                            <td>1,044</td>
+                            <td>1.72%</td>
+                            <td><span class="pos-badge top10">6</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">חברת השמה להייטק</td>
+                            <td><span class="vol-badge">15</span></td>
+                            <td>371</td>
+                            <td>4.04%</td>
+                            <td><span class="pos-badge top5">5</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">הסבה להייטק</td>
+                            <td><span class="vol-badge">14</span></td>
+                            <td>671</td>
+                            <td>2.09%</td>
+                            <td><span class="pos-badge top10">7</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">השמה להייטק</td>
+                            <td><span class="vol-badge">12</span></td>
+                            <td>483</td>
+                            <td>2.48%</td>
+                            <td><span class="pos-badge top10">6</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">xperis</td>
+                            <td><span class="vol-badge">11</span></td>
+                            <td>21</td>
+                            <td>52.38%</td>
+                            <td><span class="pos-badge top10">7</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">expires</td>
+                            <td><span class="vol-badge">10</span></td>
+                            <td>39</td>
+                            <td>25.64%</td>
+                            <td><span class="pos-badge p2">2</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים</td>
+                            <td><span class="vol-badge">9</span></td>
+                            <td>377</td>
+                            <td>2.39%</td>
+                            <td><span class="pos-badge low">30</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">גאמפה</td>
+                            <td><span class="vol-badge">9</span></td>
+                            <td>40</td>
+                            <td>22.5%</td>
+                            <td><span class="pos-badge p1">1</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">bootcamp</td>
+                            <td><span class="vol-badge">8</span></td>
+                            <td>539</td>
+                            <td>1.48%</td>
+                            <td><span class="pos-badge p3">3</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    15 מילות Non-Brand מובילות | נראות בחיפושים כלליים
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>תנועה Brand vs Non-Brand</h2>
+                    <div class="desc">הפרדה בין תנועת מותג לתנועה כללית | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="brand-stats-grid">
+                <div class="brand-stat">
+                    <div class="value gold">32.8%</div>
+                    <div class="label">תנועה Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value blue">67.2%</div>
+                    <div class="label">תנועה Non-Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value green">1,298</div>
+                    <div class="label">קליקים Brand</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value pink">792</div>
+                    <div class="label">קליקים Non-Brand</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים בגוגל</h2>
+                    <div class="desc">העמודים שמניבים את עיקר התנועה | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-item">
+                    <div class="rank">1</div>
+                    <div class="url">עמוד הבית</div>
+                    <div class="metric">
+                        <div class="val">918</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">9,955</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">9.22%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">16.8</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">2</div>
+                    <div class="url">/search</div>
+                    <div class="metric">
+                        <div class="val">499</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">18,514</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">2.7%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">13.9</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">3</div>
+                    <div class="url">אקדמיה: </div>
+                    <div class="metric">
+                        <div class="val">478</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">10,651</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">4.49%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">10.5</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">4</div>
+                    <div class="url">/article/gafam</div>
+                    <div class="metric">
+                        <div class="val">152</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">2,790</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">5.45%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">7.9</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">5</div>
+                    <div class="url">/service/experis-perm</div>
+                    <div class="metric">
+                        <div class="val">141</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">5,692</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">2.48%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">16.1</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">6</div>
+                    <div class="url">קורס: </div>
+                    <div class="metric">
+                        <div class="val">113</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">6,156</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">1.84%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">7.9</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+                <div class="page-item">
+                    <div class="rank">7</div>
+                    <div class="url">/careers</div>
+                    <div class="metric">
+                        <div class="val">106</div>
+                        <div class="lbl">קליקים</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">4,603</div>
+                        <div class="lbl">חשיפות</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">2.3%</div>
+                        <div class="lbl">CTR</div>
+                    </div>
+                    <div class="metric">
+                        <div class="val">4.9</div>
+                        <div class="lbl">מיקום</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- SE RANKING - ALL KEYWORDS COMBINED -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>מעקב מילות מפתח - SE Ranking</h2>
+                    <div class="desc">מעקב דירוגים יומי | 25 מילים במעקב</div>
+                </div>
+            </div>
+
+            <!-- ALL Keywords Table -->
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">📊</span>
+                    <span class="cat-title">כל מילות המפתח במעקב</span>
+                    <span class="cat-count">25 מילים | 3 במקום #1</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>נפח חיפוש</th>
+                            <th>מיקום עדכני</th>
+                            <th>היסטוריית מיקום</th>
+                            <th>שינוי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="kw-name">גאמפא</td>
+                            <td><span class="vol-badge">1,000</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">brute force</td>
+                            <td><span class="vol-badge">590</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">גמפא</td>
+                            <td><span class="vol-badge">260</span></td>
+                            <td><span class="pos-badge p1">1</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">משרות הייטק</td>
+                            <td><span class="vol-badge">1,000</span></td>
+                            <td><span class="pos-badge p3">3</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">משרות הייטק</td>
+                            <td><span class="vol-badge">1,000</span></td>
+                            <td><span class="pos-badge top5">4</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">משרות היי טק</td>
+                            <td><span class="vol-badge">1,000</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">הייטק דרושים</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge top5">5</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">seim soc</td>
+                            <td><span class="vol-badge">320</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">siem soc</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">משרות היי טק</td>
+                            <td><span class="vol-badge">1,000</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">הייטק דרושים</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים הייטק</td>
+                            <td><span class="vol-badge">1,600</span></td>
+                            <td><span class="pos-badge top10">6</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">seim soc</td>
+                            <td><span class="vol-badge">320</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">siem soc</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים הייטק</td>
+                            <td><span class="vol-badge">1,600</span></td>
+                            <td><span class="pos-badge top10">7</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">גיוס עובדים להייטק</td>
+                            <td><span class="vol-badge">30</span></td>
+                            <td><span class="pos-badge top10">8</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים מתכנתים</td>
+                            <td><span class="vol-badge">260</span></td>
+                            <td><span class="pos-badge top20">11</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים סייבר</td>
+                            <td><span class="vol-badge">320</span></td>
+                            <td><span class="pos-badge top20">12</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים מתכנתים</td>
+                            <td><span class="vol-badge">260</span></td>
+                            <td><span class="pos-badge top20">12</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים סייבר</td>
+                            <td><span class="vol-badge">320</span></td>
+                            <td><span class="pos-badge top20">13</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים אבטחת מידע</td>
+                            <td><span class="vol-badge">210</span></td>
+                            <td><span class="pos-badge low">22</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים qa</td>
+                            <td><span class="vol-badge">590</span></td>
+                            <td><span class="pos-badge low">23</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">דרושים qa</td>
+                            <td><span class="vol-badge">590</span></td>
+                            <td><span class="pos-badge low">24</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טבלאות שכר הייטק</td>
+                            <td><span class="vol-badge">100</span></td>
+                            <td><span class="pos-badge low">35</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+                        <tr>
+                            <td class="kw-name">טבלאות שכר הייטק</td>
+                            <td><span class="vol-badge">100</span></td>
+                            <td><span class="pos-badge low">36</span></td>
+                            <td class="kw-history"><span class="hist-item"><span class="month-label">12ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">9ח</span><span class="pos-value">-</span></span><span class="hist-item"><span class="month-label">6ח</span><span class="pos-value">-</span></span><span class="hist-item current"><span class="month-label">3ח</span><span class="pos-value">-</span></span></td>
+                            <td><span class="change-badge stable">—</span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    64% מהמילות בעמוד 1 של גוגל! | 3 במקום #1
+                </div>
+            </div>
+        </div>
+
+        <!-- RANKING DISTRIBUTION -->
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>התפלגות דירוגים בגוגל</h2>
+                    <div class="desc">כמה מילות מפתח מדורגות בכל טווח מיקומים | 25 מילים במעקב</div>
+                </div>
+            </div>
+            <div class="dist-grid">
+                <div class="dist-item gold">
+                    <div class="pos-label">מקום #1</div>
+                    <div class="pos-count">3</div>
+                    <div class="pos-pct">12%</div>
+                </div>
+                <div class="dist-item silver">
+                    <div class="pos-label">Top 3</div>
+                    <div class="pos-count">4</div>
+                    <div class="pos-pct">16%</div>
+                </div>
+                <div class="dist-item bronze">
+                    <div class="pos-label">Top 5</div>
+                    <div class="pos-count">7</div>
+                    <div class="pos-pct">28%</div>
+                </div>
+                <div class="dist-item blue">
+                    <div class="pos-label">Top 10</div>
+                    <div class="pos-count">16</div>
+                    <div class="pos-pct">64%</div>
+                </div>
+                <div class="dist-item purple">
+                    <div class="pos-label">Top 20</div>
+                    <div class="pos-count">20</div>
+                    <div class="pos-pct">80%</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="ult-section summary-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>סיכום ביצועים - דצמבר 2025</h2>
+                    <div class="desc">מדדי ההצלחה העיקריים | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="icon">🔍</div>
+                    <div class="title">קליקים מגוגל</div>
+                    <div class="value">3,959</div>
+                    <div class="desc">מ-Google Search Console</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">👁️</div>
+                    <div class="title">חשיפות בגוגל</div>
+                    <div class="value">149,859</div>
+                    <div class="desc">פעמים שהאתר הופיע</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">📊</div>
+                    <div class="title">שיעור הקלקה</div>
+                    <div class="value">2.64%</div>
+                    <div class="desc">CTR - שיעור הקלקה</div>
+                </div>
+                <div class="summary-card">
+                    <div class="icon">🏷️</div>
+                    <div class="title">תנועת Brand</div>
+                    <div class="value">32.8%</div>
+                    <div class="desc">מותג מוכר!</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📖</span>
+                <div class="section-title">
+                    <h2>מילון מונחים</h2>
+                    <div class="desc">הסברים על המונחים והמדדים בדוח זה</div>
+                </div>
+            </div>
+            <div class="glossary-grid">
+                <div class="glossary-item">
+                    <strong>GSC (Google Search Console)</strong>
+                    כלי של גוגל המראה נתוני חיפוש אמיתיים: קליקים, חשיפות, CTR ומיקום.
+                </div>
+                <div class="glossary-item">
+                    <strong>Brand Keywords</strong>
+                    מילות מפתח הכוללות את שם המותג - מעידות על מודעות למותג.
+                </div>
+                <div class="glossary-item">
+                    <strong>Non-Brand Keywords</strong>
+                    חיפושים כלליים שלא כוללים את שם המותג - מעידות על נראות אורגנית.
+                </div>
+                <div class="glossary-item">
+                    <strong>CTR (Click Through Rate)</strong>
+                    אחוז המשתמשים שלחצו על התוצאה מתוך כל מי שראה אותה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        
+            
+            <div class="brand-stats-grid" style="margin-bottom: 25px;">
+                <div class="brand-stat">
+                    <div class="value gold">5</div>
+                    <div class="label">מיקום #1</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value green">8</div>
+                    <div class="label">Top 3</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value blue">20</div>
+                    <div class="label">Top 10</div>
+                </div>
+                <div class="brand-stat">
+                    <div class="value pink">23</div>
+                    <div class="label">Top 20</div>
+                </div>
+            </div>
+
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">🎯</span>
+                    <span class="cat-title">מילות כלליות (Non-Brand) - SE Ranking</span>
+                    <span class="cat-count">30 מילים | Top 20 לפי דירוג</span>
+                </div>
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>נפח חיפוש</th>
+                            <th>מיקום עדכני</th>
+                            <th>היסטוריית מיקום</th>
+                            <th>שינוי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+<tr>
+            <td class="kw-name">גאמפא</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">brute force</td>
+            <td><span class="vol-badge">590</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">גמפא</td>
+            <td><span class="vol-badge">260</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">גמפא</td>
+            <td><span class="vol-badge">260</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">גאמפא</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge p1">1</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">brute force</td>
+            <td><span class="vol-badge">590</span></td>
+            <td><span class="pos-badge p2">2</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">משרות הייטק</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">משרות הייטק</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge p3">3</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">משרות היי טק</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">דרושים הייטק</td>
+            <td><span class="vol-badge">1,600</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">הייטק דרושים</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">seim soc</td>
+            <td><span class="vol-badge">320</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">siem soc</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">הייטק דרושים</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">דרושים הייטק</td>
+            <td><span class="vol-badge">1,600</span></td>
+            <td><span class="pos-badge top5">5</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">seim soc</td>
+            <td><span class="vol-badge">320</span></td>
+            <td><span class="pos-badge top10">6</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">siem soc</td>
+            <td><span class="vol-badge">210</span></td>
+            <td><span class="pos-badge top10">6</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">משרות היי טק</td>
+            <td><span class="vol-badge">1,000</span></td>
+            <td><span class="pos-badge top10">6</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">גיוס עובדים להייטק</td>
+            <td><span class="vol-badge">30</span></td>
+            <td><span class="pos-badge top10">8</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+<tr>
+            <td class="kw-name">דרושים מתכנתים</td>
+            <td><span class="vol-badge">260</span></td>
+            <td><span class="pos-badge top10">10</span></td>
+            <td class="kw-history">-</td>
+            <td><span class="change-badge stable">—</span></td>
+        </tr>
+
+                    </tbody>
+                </table>
+                <div class="keywords-summary">
+                    20 מילות מפתח ב-Top 10 | 5 במיקום #1!
+                </div>
+            </div>
+        </div>
+
+
+        <div class="ult-footer">
+        <div class="brand">Nadav Digital | דוח SEO</div>
+        <div class="info">נוצר ב-03/01/2026 | מקור: Google Search Console</div>
+    </div>
+</div>
+
+<script>
+
+
+// Traffic Sources Chart - GA4
+const trafficCtx = document.getElementById('trafficSourcesChart');
+if (trafficCtx) {
+    new Chart(trafficCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ["חיפוש אורגני", "ישיר (Direct)", "רשתות חברתיות (אורגני)", "רשתות חברתיות (ממומן)", "הפניות (Referral)", "לא מזוהה"],
+            datasets: [{
+                data: [3583, 1875, 1330, 129, 119, 34],
+                backgroundColor: ["#22c55e", "#3b82f6", "#ec4899", "#f472b6", "#f59e0b", "#6b7280"],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#94a3b8', font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+</script>
+
+<!-- /wp:html -->
