@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bot Fingerprinting Report | Experis.co.il 2025</title>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -15,33 +15,77 @@
             --warning: #ffaa00;
             --success: #00ff88;
             --purple: #a855f7;
-            --gradient-cyber: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-danger: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Heebo', sans-serif;
+            font-family: 'Inter', 'Heebo', sans-serif;
             background: var(--primary);
             color: #fff;
             min-height: 100vh;
             line-height: 1.7;
+            transition: direction 0.3s;
         }
 
-        /* Container - Full Width Desktop Fix */
+        body[dir="rtl"] {
+            font-family: 'Heebo', 'Inter', sans-serif;
+        }
+
+        /* Language Toggle Button */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        body[dir="rtl"] .lang-toggle {
+            right: auto;
+            left: 20px;
+        }
+
+        .lang-btn {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn.active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .lang-btn:hover:not(.active) {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Container */
         .container {
             width: 100%;
             max-width: 1800px;
             margin: 0 auto;
             padding: 20px;
+            padding-top: 80px;
         }
 
         @media (min-width: 1200px) {
-            .container {
-                padding: 40px 60px;
-            }
+            .container { padding: 40px 60px; padding-top: 100px; }
         }
 
         /* Header */
@@ -107,9 +151,6 @@
             border: 1px solid var(--accent);
             border-radius: 50px;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .badge.danger {
@@ -117,7 +158,7 @@
             border-color: var(--danger);
         }
 
-        /* Executive Summary */
+        /* Summary Cards */
         .executive-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -126,10 +167,7 @@
         }
 
         @media (min-width: 1200px) {
-            .executive-summary {
-                grid-template-columns: repeat(6, 1fr);
-                gap: 20px;
-            }
+            .executive-summary { grid-template-columns: repeat(6, 1fr); gap: 20px; }
         }
 
         .summary-card {
@@ -144,7 +182,6 @@
         .summary-card:hover {
             transform: translateY(-5px);
             border-color: var(--accent);
-            box-shadow: 0 20px 40px rgba(0,212,255,0.1);
         }
 
         .summary-card .icon { font-size: 2rem; margin-bottom: 10px; }
@@ -166,7 +203,7 @@
         .summary-card.warning .value { color: var(--warning); }
         .summary-card.purple .value { color: var(--purple); }
 
-        /* Progress Bar - Full Width */
+        /* Traffic Distribution */
         .traffic-distribution {
             background: rgba(255,255,255,0.02);
             border-radius: 20px;
@@ -178,9 +215,6 @@
         .traffic-distribution h3 {
             margin-bottom: 20px;
             font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .progress-bar {
@@ -189,7 +223,6 @@
             border-radius: 25px;
             overflow: hidden;
             display: flex;
-            position: relative;
         }
 
         .progress-segment {
@@ -199,13 +232,10 @@
             justify-content: center;
             font-size: 0.85rem;
             font-weight: 700;
-            transition: all 0.3s;
             cursor: pointer;
         }
 
-        .progress-segment:hover {
-            filter: brightness(1.2);
-        }
+        .progress-segment:hover { filter: brightness(1.2); }
 
         .progress-legend {
             display: flex;
@@ -228,7 +258,7 @@
             border-radius: 50%;
         }
 
-        /* Methodology Section */
+        /* Methodology */
         .methodology {
             background: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(168,85,247,0.08) 100%);
             border: 1px solid rgba(0,212,255,0.2);
@@ -240,9 +270,6 @@
         .methodology h2 {
             font-size: 1.5rem;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
         }
 
         .methodology-grid {
@@ -264,16 +291,8 @@
             font-size: 1rem;
         }
 
-        .method-card p {
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.7);
-        }
-
-        .method-card .highlight {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-        }
+        .method-card p { font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+        .method-card .highlight { font-size: 1.3rem; font-weight: 700; color: #fff; }
 
         /* Section */
         .section {
@@ -284,11 +303,7 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        @media (min-width: 768px) {
-            .section {
-                padding: 40px;
-            }
-        }
+        @media (min-width: 768px) { .section { padding: 40px; } }
 
         .section-title {
             font-size: clamp(1.2rem, 3vw, 1.6rem);
@@ -305,19 +320,15 @@
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .tier-1 { background: rgba(255,51,102,0.2); color: var(--danger); border: 1px solid var(--danger); }
         .tier-2 { background: rgba(255,170,0,0.2); color: var(--warning); border: 1px solid var(--warning); }
-        .tier-3 { background: rgba(168,85,247,0.2); color: var(--purple); border: 1px solid var(--purple); }
-        .tier-safe { background: rgba(0,255,136,0.2); color: var(--success); border: 1px solid var(--success); }
 
-        /* Tables - Responsive */
+        /* Tables */
         .table-container {
             overflow-x: auto;
             border-radius: 15px;
-            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -329,14 +340,15 @@
         th {
             background: rgba(0,0,0,0.4);
             padding: 15px 12px;
-            text-align: right;
             font-weight: 600;
             color: var(--accent);
             font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             white-space: nowrap;
         }
+
+        body[dir="ltr"] th { text-align: left; }
+        body[dir="rtl"] th { text-align: right; }
 
         td {
             padding: 14px 12px;
@@ -344,18 +356,11 @@
             font-size: 0.9rem;
         }
 
-        tr:hover {
-            background: rgba(255,255,255,0.02);
-        }
+        tr:hover { background: rgba(255,255,255,0.02); }
 
-        .ctr-cell {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-        }
-
+        .ctr-cell { font-family: 'Courier New', monospace; font-weight: 600; }
         .ctr-low { color: var(--danger); }
         .ctr-med { color: var(--warning); }
-        .ctr-high { color: var(--success); }
 
         .status-badge {
             padding: 5px 12px;
@@ -367,7 +372,6 @@
 
         .status-block { background: rgba(255,51,102,0.2); color: var(--danger); }
         .status-limit { background: rgba(255,170,0,0.2); color: var(--warning); }
-        .status-ok { background: rgba(0,255,136,0.2); color: var(--success); }
 
         /* Property Cards */
         .property-grid {
@@ -384,13 +388,7 @@
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .property-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .property-card h3 { font-size: 1.2rem; margin-bottom: 20px; }
 
         .property-stats {
             display: grid;
@@ -411,12 +409,9 @@
             margin-bottom: 4px;
         }
 
-        .stat-item .value {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
+        .stat-item .value { font-size: 1.1rem; font-weight: 700; }
 
-        /* Blocking Rules */
+        /* Rules Grid */
         .rules-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -440,13 +435,7 @@
             border-color: rgba(0,212,255,0.2);
         }
 
-        .rule-card h4 {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1rem;
-        }
+        .rule-card h4 { margin-bottom: 15px; font-size: 1rem; }
 
         .code-block {
             background: rgba(0,0,0,0.4);
@@ -454,7 +443,6 @@
             padding: 15px;
             font-family: 'Courier New', monospace;
             font-size: 0.8rem;
-            overflow-x: auto;
             margin-top: 10px;
             white-space: pre-wrap;
             word-break: break-all;
@@ -475,7 +463,7 @@
             min-height: 350px;
         }
 
-        /* Key Insights */
+        /* Insights */
         .insights-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -486,28 +474,23 @@
             background: rgba(0,0,0,0.2);
             border-radius: 15px;
             padding: 25px;
-            border-right: 4px solid var(--accent);
         }
 
-        .insight-card.danger { border-right-color: var(--danger); }
-        .insight-card.success { border-right-color: var(--success); }
-        .insight-card.warning { border-right-color: var(--warning); }
+        body[dir="ltr"] .insight-card { border-left: 4px solid var(--accent); }
+        body[dir="rtl"] .insight-card { border-right: 4px solid var(--accent); }
+        body[dir="ltr"] .insight-card.danger { border-left-color: var(--danger); }
+        body[dir="rtl"] .insight-card.danger { border-right-color: var(--danger); }
+        body[dir="ltr"] .insight-card.success { border-left-color: var(--success); }
+        body[dir="rtl"] .insight-card.success { border-right-color: var(--success); }
+        body[dir="ltr"] .insight-card.warning { border-left-color: var(--warning); }
+        body[dir="rtl"] .insight-card.warning { border-right-color: var(--warning); }
 
-        .insight-card h4 {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .insight-card .number {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
+        .insight-card h4 { margin-bottom: 10px; font-size: 1rem; }
+        .insight-card .number { font-size: 2rem; font-weight: 800; margin-bottom: 5px; }
         .insight-card.danger .number { color: var(--danger); }
         .insight-card.success .number { color: var(--success); }
 
-        /* Action Items */
+        /* Action Box */
         .action-box {
             background: linear-gradient(135deg, rgba(0,255,136,0.08) 0%, rgba(0,255,136,0.03) 100%);
             border: 1px solid rgba(0,255,136,0.2);
@@ -516,15 +499,9 @@
             margin-top: 30px;
         }
 
-        .action-box h4 {
-            color: var(--success);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
+        .action-box h4 { color: var(--success); margin-bottom: 15px; font-size: 1.1rem; }
 
-        .action-list {
-            list-style: none;
-        }
+        .action-list { list-style: none; }
 
         .action-list li {
             padding: 12px 0;
@@ -534,9 +511,7 @@
             gap: 12px;
         }
 
-        .action-list li:last-child {
-            border-bottom: none;
-        }
+        .action-list li:last-child { border-bottom: none; }
 
         /* Footer */
         .footer {
@@ -554,13 +529,12 @@
             margin-bottom: 15px;
         }
 
-        /* Mobile Optimizations */
+        /* Mobile */
         @media (max-width: 768px) {
-            .container { padding: 15px; }
-            .header { padding: 30px 20px; border-radius: 20px; }
-            .section { padding: 20px; border-radius: 16px; }
-            .executive-summary { gap: 10px; }
-            .summary-card { padding: 18px 15px; border-radius: 15px; }
+            .container { padding: 15px; padding-top: 80px; }
+            .header { padding: 30px 20px; }
+            .section { padding: 20px; }
+            .summary-card { padding: 18px 15px; }
             .summary-card .icon { font-size: 1.5rem; }
             .progress-bar { height: 40px; }
             .progress-segment { font-size: 0.7rem; }
@@ -568,24 +542,27 @@
             table { min-width: 500px; }
             th, td { padding: 10px 8px; font-size: 0.8rem; }
             .rules-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Print Styles */
-        @media print {
-            body { background: #fff; color: #000; }
-            .section { break-inside: avoid; }
+            .lang-toggle { top: 10px; right: 10px; }
+            body[dir="rtl"] .lang-toggle { left: 10px; }
+            .lang-btn { padding: 10px 14px; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" data-lang="he" onclick="setLanguage('he')">עב</button>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>Bot Fingerprinting Report</h1>
-            <p class="subtitle">Experis.co.il | Advanced Bot Traffic Analysis & Blocking Recommendations</p>
+            <h1 data-i18n="title">Bot Fingerprinting Report</h1>
+            <p class="subtitle" data-i18n="subtitle">Experis.co.il | Advanced Bot Traffic Analysis & Blocking Recommendations</p>
             <div class="badge-row">
-                <div class="badge">Jan 2025 - Dec 2025</div>
-                <div class="badge danger">47.6% Bot Traffic Detected</div>
+                <div class="badge" data-i18n="date_range">Jan 2025 - Dec 2025</div>
+                <div class="badge danger" data-i18n="bot_detected">47.6% Bot Traffic Detected</div>
             </div>
         </header>
 
@@ -593,511 +570,192 @@
         <div class="executive-summary">
             <div class="summary-card">
                 <div class="icon">📊</div>
-                <div class="label">Total Impressions</div>
+                <div class="label" data-i18n="total_impressions">Total Impressions</div>
                 <div class="value">3,306,048</div>
             </div>
-
             <div class="summary-card success">
                 <div class="icon">🇮🇱</div>
-                <div class="label">Israel (Legit)</div>
+                <div class="label" data-i18n="israel_legit">Israel (Legit)</div>
                 <div class="value">1,724,643</div>
             </div>
-
             <div class="summary-card danger">
                 <div class="icon">🤖</div>
-                <div class="label">Tier 1 Bots</div>
+                <div class="label" data-i18n="tier1_bots">Tier 1 Bots</div>
                 <div class="value">1,558,417</div>
             </div>
-
             <div class="summary-card warning">
                 <div class="icon">⚠️</div>
-                <div class="label">Tier 2 Bots</div>
+                <div class="label" data-i18n="tier2_bots">Tier 2 Bots</div>
                 <div class="value">14,962</div>
             </div>
-
             <div class="summary-card purple">
                 <div class="icon">❓</div>
-                <div class="label">Tier 3 Review</div>
+                <div class="label" data-i18n="tier3_review">Tier 3 Review</div>
                 <div class="value">8,026</div>
             </div>
-
             <div class="summary-card danger">
                 <div class="icon">🛡️</div>
-                <div class="label">Safe to Block</div>
+                <div class="label" data-i18n="safe_to_block">Safe to Block</div>
                 <div class="value">1,573,379</div>
             </div>
         </div>
 
-        <!-- Traffic Distribution Bar -->
+        <!-- Traffic Distribution -->
         <div class="traffic-distribution">
-            <h3>📈 Traffic Distribution Breakdown</h3>
+            <h3 data-i18n="traffic_breakdown">📈 Traffic Distribution Breakdown</h3>
             <div class="progress-bar">
-                <div class="progress-segment" style="width: 52.2%; background: var(--success);">
-                    Israel 52.2%
-                </div>
-                <div class="progress-segment" style="width: 47.1%; background: var(--danger);">
-                    Tier 1 Bots 47.1%
-                </div>
-                <div class="progress-segment" style="width: 0.5%; background: var(--warning);">
-                </div>
-                <div class="progress-segment" style="width: 0.2%; background: var(--purple);">
-                </div>
+                <div class="progress-segment" style="width: 52.2%; background: var(--success);" data-i18n="israel_pct">Israel 52.2%</div>
+                <div class="progress-segment" style="width: 47.1%; background: var(--danger);" data-i18n="tier1_pct">Tier 1 Bots 47.1%</div>
+                <div class="progress-segment" style="width: 0.5%; background: var(--warning);"></div>
+                <div class="progress-segment" style="width: 0.2%; background: var(--purple);"></div>
             </div>
             <div class="progress-legend">
-                <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div>Israel (Legitimate)</div>
-                <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div>Tier 1 - Definite Bots</div>
-                <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div>Tier 2 - Very Likely</div>
-                <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div>Tier 3 - Needs Review</div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--success);"></div><span data-i18n="legend_israel">Israel (Legitimate)</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--danger);"></div><span data-i18n="legend_tier1">Tier 1 - Definite Bots</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div><span data-i18n="legend_tier2">Tier 2 - Very Likely</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background: var(--purple);"></div><span data-i18n="legend_tier3">Tier 3 - Needs Review</span></div>
             </div>
         </div>
 
         <!-- Methodology -->
         <div class="methodology">
-            <h2>🎯 Detection Methodology</h2>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
-                Bot detection based on baseline comparison with Israel (legitimate Hebrew-speaking traffic)
-            </p>
-
+            <h2 data-i18n="methodology_title">🎯 Detection Methodology</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;" data-i18n="methodology_desc">Bot detection based on baseline comparison with Israel (legitimate Hebrew-speaking traffic)</p>
             <div class="methodology-grid">
                 <div class="method-card">
-                    <h4>📊 Baseline (Israel)</h4>
+                    <h4 data-i18n="baseline_title">📊 Baseline (Israel)</h4>
                     <div class="highlight">CTR 3.09%</div>
-                    <p>Hebrew site = Real users from Israel</p>
+                    <p data-i18n="baseline_desc">Hebrew site = Real users from Israel</p>
                 </div>
-
                 <div class="method-card">
-                    <h4 style="color: var(--danger);">🔴 Tier 1 (Block)</h4>
+                    <h4 style="color: var(--danger);" data-i18n="tier1_title">🔴 Tier 1 (Block)</h4>
                     <div class="highlight" style="color: var(--danger);">CTR &lt; 1%</div>
-                    <p>99.9% confidence - Safe to block immediately</p>
+                    <p data-i18n="tier1_desc">99.9% confidence - Safe to block immediately</p>
                 </div>
-
                 <div class="method-card">
-                    <h4 style="color: var(--warning);">🟠 Tier 2 (Limit)</h4>
+                    <h4 style="color: var(--warning);" data-i18n="tier2_title">🟠 Tier 2 (Limit)</h4>
                     <div class="highlight" style="color: var(--warning);">CTR 1-5%</div>
-                    <p>95% confidence - Rate limit recommended</p>
+                    <p data-i18n="tier2_desc">95% confidence - Rate limit recommended</p>
                 </div>
-
                 <div class="method-card">
-                    <h4 style="color: var(--purple);">🟡 Tier 3 (Review)</h4>
+                    <h4 style="color: var(--purple);" data-i18n="tier3_title">🟡 Tier 3 (Review)</h4>
                     <div class="highlight" style="color: var(--purple);">CTR 5-10%</div>
-                    <p>80% confidence - Manual review needed</p>
+                    <p data-i18n="tier3_desc">80% confidence - Manual review needed</p>
                 </div>
             </div>
         </div>
 
         <!-- Charts -->
         <div class="chart-grid">
-            <div class="chart-box">
-                <canvas id="trafficChart"></canvas>
-            </div>
-            <div class="chart-box">
-                <canvas id="propertyChart"></canvas>
-            </div>
+            <div class="chart-box"><canvas id="trafficChart"></canvas></div>
+            <div class="chart-box"><canvas id="propertyChart"></canvas></div>
         </div>
 
         <!-- Property Breakdown -->
         <div class="section">
-            <h2 class="section-title">🏢 Property Breakdown</h2>
+            <h2 class="section-title" data-i18n="property_title">🏢 Property Breakdown</h2>
             <div class="property-grid">
                 <div class="property-card">
-                    <h3>🏠 Main Site</h3>
+                    <h3 data-i18n="main_site">🏠 Main Site</h3>
                     <div class="property-stats">
-                        <div class="stat-item">
-                            <div class="label">Impressions</div>
-                            <div class="value">2,153,252</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Clicks</div>
-                            <div class="value">41,405</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot Impressions</div>
-                            <div class="value" style="color: var(--danger);">828,248</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot %</div>
-                            <div class="value" style="color: var(--danger);">38.5%</div>
-                        </div>
+                        <div class="stat-item"><div class="label" data-i18n="impressions">Impressions</div><div class="value">2,153,252</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="clicks">Clicks</div><div class="value">41,405</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_impressions">Bot Impressions</div><div class="value" style="color: var(--danger);">828,248</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_pct">Bot %</div><div class="value" style="color: var(--danger);">38.5%</div></div>
                     </div>
                 </div>
-
                 <div class="property-card">
                     <h3>🎓 Academy</h3>
                     <div class="property-stats">
-                        <div class="stat-item">
-                            <div class="label">Impressions</div>
-                            <div class="value">686,217</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Clicks</div>
-                            <div class="value">11,080</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot Impressions</div>
-                            <div class="value" style="color: var(--danger);">245,457</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot %</div>
-                            <div class="value" style="color: var(--danger);">35.8%</div>
-                        </div>
+                        <div class="stat-item"><div class="label" data-i18n="impressions">Impressions</div><div class="value">686,217</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="clicks">Clicks</div><div class="value">11,080</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_impressions">Bot Impressions</div><div class="value" style="color: var(--danger);">245,457</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_pct">Bot %</div><div class="value" style="color: var(--danger);">35.8%</div></div>
                     </div>
                 </div>
-
                 <div class="property-card">
                     <h3>🔐 Cyber</h3>
                     <div class="property-stats">
-                        <div class="stat-item">
-                            <div class="label">Impressions</div>
-                            <div class="value">468,593</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Clicks</div>
-                            <div class="value">2,895</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot Impressions</div>
-                            <div class="value" style="color: var(--danger);">182,278</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="label">Bot %</div>
-                            <div class="value" style="color: var(--danger);">38.9%</div>
-                        </div>
+                        <div class="stat-item"><div class="label" data-i18n="impressions">Impressions</div><div class="value">468,593</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="clicks">Clicks</div><div class="value">2,895</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_impressions">Bot Impressions</div><div class="value" style="color: var(--danger);">182,278</div></div>
+                        <div class="stat-item"><div class="label" data-i18n="bot_pct">Bot %</div><div class="value" style="color: var(--danger);">38.9%</div></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tier 1 Bots - Full Table -->
+        <!-- Tier 1 Bots Table -->
         <div class="section">
             <h2 class="section-title">
                 <span class="tier-badge tier-1">TIER 1</span>
-                🔴 Definite Bots - Safe to Block (99.9% Confidence)
+                <span data-i18n="tier1_section_title">🔴 Definite Bots - Safe to Block (99.9% Confidence)</span>
             </h2>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
-                Countries with CTR below 1% of Israel's baseline. Zero chance of legitimate users.
-            </p>
-
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;" data-i18n="tier1_section_desc">Countries with CTR below 1% of Israel's baseline. Zero chance of legitimate users.</p>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Country</th>
-                            <th>Impressions</th>
-                            <th>Clicks</th>
+                            <th data-i18n="th_country">Country</th>
+                            <th data-i18n="th_impressions">Impressions</th>
+                            <th data-i18n="th_clicks">Clicks</th>
                             <th>CTR</th>
-                            <th>vs Israel</th>
-                            <th>Click Deficit</th>
-                            <th>Action</th>
+                            <th data-i18n="th_vs_israel">vs Israel</th>
+                            <th data-i18n="th_deficit">Click Deficit</th>
+                            <th data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>🇺🇸 United States</strong></td>
-                            <td>544,800</td>
-                            <td>269</td>
-                            <td class="ctr-cell ctr-low">0.049%</td>
-                            <td class="ctr-cell ctr-low">1.6%</td>
-                            <td style="color: var(--danger);">-16,565</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇧🇷 Brazil</strong></td>
-                            <td>240,220</td>
-                            <td>7</td>
-                            <td class="ctr-cell ctr-low">0.003%</td>
-                            <td class="ctr-cell ctr-low">0.1%</td>
-                            <td style="color: var(--danger);">-7,416</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇬🇧 United Kingdom</strong></td>
-                            <td>81,627</td>
-                            <td>86</td>
-                            <td class="ctr-cell ctr-low">0.105%</td>
-                            <td class="ctr-cell ctr-low">3.4%</td>
-                            <td style="color: var(--danger);">-2,436</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇮🇳 India</strong></td>
-                            <td>77,016</td>
-                            <td>71</td>
-                            <td class="ctr-cell ctr-low">0.092%</td>
-                            <td class="ctr-cell ctr-low">3.0%</td>
-                            <td style="color: var(--danger);">-2,309</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇮🇹 Italy</strong></td>
-                            <td>53,277</td>
-                            <td>47</td>
-                            <td class="ctr-cell ctr-low">0.088%</td>
-                            <td class="ctr-cell ctr-low">2.9%</td>
-                            <td style="color: var(--danger);">-1,599</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇷🇺 Russia</strong></td>
-                            <td>36,472</td>
-                            <td>13</td>
-                            <td class="ctr-cell ctr-low">0.036%</td>
-                            <td class="ctr-cell ctr-low">1.2%</td>
-                            <td style="color: var(--danger);">-1,114</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇻🇳 Vietnam</strong></td>
-                            <td>30,082</td>
-                            <td>11</td>
-                            <td class="ctr-cell ctr-low">0.037%</td>
-                            <td class="ctr-cell ctr-low">1.2%</td>
-                            <td style="color: var(--danger);">-919</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇨🇦 Canada</strong></td>
-                            <td>24,036</td>
-                            <td>30</td>
-                            <td class="ctr-cell ctr-low">0.125%</td>
-                            <td class="ctr-cell ctr-low">4.0%</td>
-                            <td style="color: var(--danger);">-713</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇰🇷 South Korea</strong></td>
-                            <td>22,389</td>
-                            <td>1</td>
-                            <td class="ctr-cell ctr-low">0.004%</td>
-                            <td class="ctr-cell ctr-low">0.1%</td>
-                            <td style="color: var(--danger);">-691</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇩🇪 Germany</strong></td>
-                            <td>20,766</td>
-                            <td>132</td>
-                            <td class="ctr-cell ctr-med">0.636%</td>
-                            <td class="ctr-cell ctr-low">20.6%</td>
-                            <td style="color: var(--danger);">-510</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇮🇩 Indonesia</strong></td>
-                            <td>19,498</td>
-                            <td>8</td>
-                            <td class="ctr-cell ctr-low">0.041%</td>
-                            <td class="ctr-cell ctr-low">1.3%</td>
-                            <td style="color: var(--danger);">-595</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇧🇩 Bangladesh</strong></td>
-                            <td>18,697</td>
-                            <td>3</td>
-                            <td class="ctr-cell ctr-low">0.016%</td>
-                            <td class="ctr-cell ctr-low">0.5%</td>
-                            <td style="color: var(--danger);">-575</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇵🇭 Philippines</strong></td>
-                            <td>18,267</td>
-                            <td>14</td>
-                            <td class="ctr-cell ctr-low">0.077%</td>
-                            <td class="ctr-cell ctr-low">2.5%</td>
-                            <td style="color: var(--danger);">-551</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇦🇷 Argentina</strong></td>
-                            <td>16,827</td>
-                            <td>9</td>
-                            <td class="ctr-cell ctr-low">0.053%</td>
-                            <td class="ctr-cell ctr-low">1.7%</td>
-                            <td style="color: var(--danger);">-511</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇲🇽 Mexico</strong></td>
-                            <td>15,696</td>
-                            <td>13</td>
-                            <td class="ctr-cell ctr-low">0.083%</td>
-                            <td class="ctr-cell ctr-low">2.7%</td>
-                            <td style="color: var(--danger);">-472</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇫🇷 France</strong></td>
-                            <td>15,005</td>
-                            <td>50</td>
-                            <td class="ctr-cell ctr-med">0.333%</td>
-                            <td class="ctr-cell ctr-low">10.8%</td>
-                            <td style="color: var(--danger);">-414</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇹🇷 Turkey</strong></td>
-                            <td>13,804</td>
-                            <td>5</td>
-                            <td class="ctr-cell ctr-low">0.036%</td>
-                            <td class="ctr-cell ctr-low">1.2%</td>
-                            <td style="color: var(--danger);">-421</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇿🇦 South Africa</strong></td>
-                            <td>12,802</td>
-                            <td>2</td>
-                            <td class="ctr-cell ctr-low">0.016%</td>
-                            <td class="ctr-cell ctr-low">0.5%</td>
-                            <td style="color: var(--danger);">-394</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇵🇰 Pakistan</strong></td>
-                            <td>11,855</td>
-                            <td>5</td>
-                            <td class="ctr-cell ctr-low">0.042%</td>
-                            <td class="ctr-cell ctr-low">1.4%</td>
-                            <td style="color: var(--danger);">-361</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇮🇶 Iraq</strong></td>
-                            <td>11,601</td>
-                            <td>2</td>
-                            <td class="ctr-cell ctr-low">0.017%</td>
-                            <td class="ctr-cell ctr-low">0.6%</td>
-                            <td style="color: var(--danger);">-356</td>
-                            <td><span class="status-badge status-block">Block</span></td>
-                        </tr>
+                        <tr><td><strong>🇺🇸</strong> <span data-i18n="usa">United States</span></td><td>544,800</td><td>269</td><td class="ctr-cell ctr-low">0.049%</td><td class="ctr-cell ctr-low">1.6%</td><td style="color: var(--danger);">-16,565</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇧🇷</strong> <span data-i18n="brazil">Brazil</span></td><td>240,220</td><td>7</td><td class="ctr-cell ctr-low">0.003%</td><td class="ctr-cell ctr-low">0.1%</td><td style="color: var(--danger);">-7,416</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇬🇧</strong> <span data-i18n="uk">United Kingdom</span></td><td>81,627</td><td>86</td><td class="ctr-cell ctr-low">0.105%</td><td class="ctr-cell ctr-low">3.4%</td><td style="color: var(--danger);">-2,436</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇮🇳</strong> <span data-i18n="india">India</span></td><td>77,016</td><td>71</td><td class="ctr-cell ctr-low">0.092%</td><td class="ctr-cell ctr-low">3.0%</td><td style="color: var(--danger);">-2,309</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇮🇹</strong> <span data-i18n="italy">Italy</span></td><td>53,277</td><td>47</td><td class="ctr-cell ctr-low">0.088%</td><td class="ctr-cell ctr-low">2.9%</td><td style="color: var(--danger);">-1,599</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇷🇺</strong> <span data-i18n="russia">Russia</span></td><td>36,472</td><td>13</td><td class="ctr-cell ctr-low">0.036%</td><td class="ctr-cell ctr-low">1.2%</td><td style="color: var(--danger);">-1,114</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇻🇳</strong> <span data-i18n="vietnam">Vietnam</span></td><td>30,082</td><td>11</td><td class="ctr-cell ctr-low">0.037%</td><td class="ctr-cell ctr-low">1.2%</td><td style="color: var(--danger);">-919</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇨🇦</strong> <span data-i18n="canada">Canada</span></td><td>24,036</td><td>30</td><td class="ctr-cell ctr-low">0.125%</td><td class="ctr-cell ctr-low">4.0%</td><td style="color: var(--danger);">-713</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇰🇷</strong> <span data-i18n="south_korea">South Korea</span></td><td>22,389</td><td>1</td><td class="ctr-cell ctr-low">0.004%</td><td class="ctr-cell ctr-low">0.1%</td><td style="color: var(--danger);">-691</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇩🇪</strong> <span data-i18n="germany">Germany</span></td><td>20,766</td><td>132</td><td class="ctr-cell ctr-med">0.636%</td><td class="ctr-cell ctr-low">20.6%</td><td style="color: var(--danger);">-510</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇮🇩</strong> <span data-i18n="indonesia">Indonesia</span></td><td>19,498</td><td>8</td><td class="ctr-cell ctr-low">0.041%</td><td class="ctr-cell ctr-low">1.3%</td><td style="color: var(--danger);">-595</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇧🇩</strong> <span data-i18n="bangladesh">Bangladesh</span></td><td>18,697</td><td>3</td><td class="ctr-cell ctr-low">0.016%</td><td class="ctr-cell ctr-low">0.5%</td><td style="color: var(--danger);">-575</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇵🇭</strong> <span data-i18n="philippines">Philippines</span></td><td>18,267</td><td>14</td><td class="ctr-cell ctr-low">0.077%</td><td class="ctr-cell ctr-low">2.5%</td><td style="color: var(--danger);">-551</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇦🇷</strong> <span data-i18n="argentina">Argentina</span></td><td>16,827</td><td>9</td><td class="ctr-cell ctr-low">0.053%</td><td class="ctr-cell ctr-low">1.7%</td><td style="color: var(--danger);">-511</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇲🇽</strong> <span data-i18n="mexico">Mexico</span></td><td>15,696</td><td>13</td><td class="ctr-cell ctr-low">0.083%</td><td class="ctr-cell ctr-low">2.7%</td><td style="color: var(--danger);">-472</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇫🇷</strong> <span data-i18n="france">France</span></td><td>15,005</td><td>50</td><td class="ctr-cell ctr-med">0.333%</td><td class="ctr-cell ctr-low">10.8%</td><td style="color: var(--danger);">-414</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇹🇷</strong> <span data-i18n="turkey">Turkey</span></td><td>13,804</td><td>5</td><td class="ctr-cell ctr-low">0.036%</td><td class="ctr-cell ctr-low">1.2%</td><td style="color: var(--danger);">-421</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇿🇦</strong> <span data-i18n="south_africa">South Africa</span></td><td>12,802</td><td>2</td><td class="ctr-cell ctr-low">0.016%</td><td class="ctr-cell ctr-low">0.5%</td><td style="color: var(--danger);">-394</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇵🇰</strong> <span data-i18n="pakistan">Pakistan</span></td><td>11,855</td><td>5</td><td class="ctr-cell ctr-low">0.042%</td><td class="ctr-cell ctr-low">1.4%</td><td style="color: var(--danger);">-361</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
+                        <tr><td><strong>🇮🇶</strong> <span data-i18n="iraq">Iraq</span></td><td>11,601</td><td>2</td><td class="ctr-cell ctr-low">0.017%</td><td class="ctr-cell ctr-low">0.6%</td><td style="color: var(--danger);">-356</td><td><span class="status-badge status-block" data-i18n="block">Block</span></td></tr>
                     </tbody>
                 </table>
             </div>
-            <p style="color: rgba(255,255,255,0.4); margin-top: 15px; font-size: 0.85rem;">
-                + 126 additional countries with combined 205,893 bot impressions
-            </p>
+            <p style="color: rgba(255,255,255,0.4); margin-top: 15px; font-size: 0.85rem;" data-i18n="additional_countries">+ 126 additional countries with combined 205,893 bot impressions</p>
         </div>
 
-        <!-- Tier 2 - Rate Limit -->
+        <!-- Tier 2 -->
         <div class="section">
             <h2 class="section-title">
                 <span class="tier-badge tier-2">TIER 2</span>
-                🟠 Very Likely Bots - Rate Limit Recommended (95% Confidence)
+                <span data-i18n="tier2_section_title">🟠 Very Likely Bots - Rate Limit Recommended (95% Confidence)</span>
             </h2>
-
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Country</th>
-                            <th>Impressions</th>
-                            <th>Clicks</th>
+                            <th data-i18n="th_country">Country</th>
+                            <th data-i18n="th_impressions">Impressions</th>
+                            <th data-i18n="th_clicks">Clicks</th>
                             <th>CTR</th>
-                            <th>vs Israel</th>
-                            <th>Action</th>
+                            <th data-i18n="th_vs_israel">vs Israel</th>
+                            <th data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>🇵🇸 Palestine</strong></td>
-                            <td>7,455</td>
-                            <td>301</td>
-                            <td class="ctr-cell ctr-med">4.04%</td>
-                            <td class="ctr-cell ctr-med">130.7%</td>
-                            <td><span class="status-badge status-limit">Rate Limit</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇵🇹 Portugal</strong></td>
-                            <td>2,708</td>
-                            <td>38</td>
-                            <td class="ctr-cell ctr-med">1.40%</td>
-                            <td class="ctr-cell ctr-med">45.3%</td>
-                            <td><span class="status-badge status-limit">Rate Limit</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇨🇿 Czech Republic</strong></td>
-                            <td>1,869</td>
-                            <td>23</td>
-                            <td class="ctr-cell ctr-med">1.23%</td>
-                            <td class="ctr-cell ctr-med">39.8%</td>
-                            <td><span class="status-badge status-limit">Rate Limit</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇨🇾 Cyprus</strong></td>
-                            <td>1,522</td>
-                            <td>19</td>
-                            <td class="ctr-cell ctr-med">1.25%</td>
-                            <td class="ctr-cell ctr-med">40.5%</td>
-                            <td><span class="status-badge status-limit">Rate Limit</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>🇦🇹 Austria</strong></td>
-                            <td>1,308</td>
-                            <td>18</td>
-                            <td class="ctr-cell ctr-med">1.38%</td>
-                            <td class="ctr-cell ctr-med">44.7%</td>
-                            <td><span class="status-badge status-limit">Rate Limit</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Suspicious Queries -->
-        <div class="section">
-            <h2 class="section-title">🔍 Suspicious Query Patterns</h2>
-            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">
-                English queries on Hebrew site = Automated SEO research / scraping bots
-            </p>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Query</th>
-                            <th>Impressions</th>
-                            <th>Clicks</th>
-                            <th>CTR</th>
-                            <th>Pattern</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>siem soc</code></td>
-                            <td>15,850</td>
-                            <td>5</td>
-                            <td class="ctr-cell ctr-low">0.03%</td>
-                            <td>English tech term on Hebrew site</td>
-                        </tr>
-                        <tr>
-                            <td><code>שירותי אבטחת מידע</code></td>
-                            <td>11,847</td>
-                            <td>16</td>
-                            <td class="ctr-cell ctr-low">0.14%</td>
-                            <td>High volume, low engagement</td>
-                        </tr>
-                        <tr>
-                            <td><code>אבטחת סייבר</code></td>
-                            <td>19,494</td>
-                            <td>8</td>
-                            <td class="ctr-cell ctr-low">0.04%</td>
-                            <td>High volume, zero engagement</td>
-                        </tr>
-                        <tr>
-                            <td><code>הגנת סייבר</code></td>
-                            <td>8,917</td>
-                            <td>9</td>
-                            <td class="ctr-cell ctr-low">0.10%</td>
-                            <td>High volume, low engagement</td>
-                        </tr>
-                        <tr>
-                            <td><code>אבטחת מידע</code></td>
-                            <td>8,568</td>
-                            <td>7</td>
-                            <td class="ctr-cell ctr-low">0.08%</td>
-                            <td>High volume, low engagement</td>
-                        </tr>
+                        <tr><td><strong>🇵🇸</strong> <span data-i18n="palestine">Palestine</span></td><td>7,455</td><td>301</td><td class="ctr-cell ctr-med">4.04%</td><td class="ctr-cell ctr-med">130.7%</td><td><span class="status-badge status-limit" data-i18n="rate_limit">Rate Limit</span></td></tr>
+                        <tr><td><strong>🇵🇹</strong> <span data-i18n="portugal">Portugal</span></td><td>2,708</td><td>38</td><td class="ctr-cell ctr-med">1.40%</td><td class="ctr-cell ctr-med">45.3%</td><td><span class="status-badge status-limit" data-i18n="rate_limit">Rate Limit</span></td></tr>
+                        <tr><td><strong>🇨🇿</strong> <span data-i18n="czech">Czech Republic</span></td><td>1,869</td><td>23</td><td class="ctr-cell ctr-med">1.23%</td><td class="ctr-cell ctr-med">39.8%</td><td><span class="status-badge status-limit" data-i18n="rate_limit">Rate Limit</span></td></tr>
+                        <tr><td><strong>🇨🇾</strong> <span data-i18n="cyprus">Cyprus</span></td><td>1,522</td><td>19</td><td class="ctr-cell ctr-med">1.25%</td><td class="ctr-cell ctr-med">40.5%</td><td><span class="status-badge status-limit" data-i18n="rate_limit">Rate Limit</span></td></tr>
+                        <tr><td><strong>🇦🇹</strong> <span data-i18n="austria">Austria</span></td><td>1,308</td><td>18</td><td class="ctr-cell ctr-med">1.38%</td><td class="ctr-cell ctr-med">44.7%</td><td><span class="status-badge status-limit" data-i18n="rate_limit">Rate Limit</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1105,41 +763,37 @@
 
         <!-- Blocking Rules -->
         <div class="section">
-            <h2 class="section-title">🛡️ Recommended Blocking Rules</h2>
-
+            <h2 class="section-title" data-i18n="rules_title">🛡️ Recommended Blocking Rules</h2>
             <div class="rules-grid">
                 <div class="rule-card">
-                    <h4>🚫 Cloudflare/WAF Country Block</h4>
-                    <p>Block these countries immediately (Tier 1 with 5,000+ impressions):</p>
+                    <h4 data-i18n="rule_country">🚫 Cloudflare/WAF Country Block</h4>
+                    <p data-i18n="rule_country_desc">Block these countries immediately (Tier 1 with 5,000+ impressions):</p>
                     <div class="code-block">US, BR, GB, IN, IT, RU, VN, CA, KR, DE,
 ID, BD, PH, AR, MX, FR, TR, ZA, PK, IQ,
 SA, MY, ES, UA, EC, PL, NL, AU, JP, TH,
 EG, CO, NG, PE, CL, TW, RO, BE, CH, CZ</div>
                 </div>
-
                 <div class="rule-card warning">
-                    <h4>⏱️ Rate Limiting (10 req/min)</h4>
-                    <p>Apply rate limits to Tier 2 countries:</p>
+                    <h4 data-i18n="rule_rate">⏱️ Rate Limiting (10 req/min)</h4>
+                    <p data-i18n="rule_rate_desc">Apply rate limits to Tier 2 countries:</p>
                     <div class="code-block">PS (Palestine)
 PT (Portugal)
 CZ (Czech Republic)
 CY (Cyprus)
 AT (Austria)</div>
                 </div>
-
                 <div class="rule-card info">
-                    <h4>🤖 User-Agent Filtering</h4>
-                    <p>Block these user-agent patterns:</p>
+                    <h4 data-i18n="rule_ua">🤖 User-Agent Filtering</h4>
+                    <p data-i18n="rule_ua_desc">Block these user-agent patterns:</p>
                     <div class="code-block">*crawler*, *spider*, *bot*
 *python-requests*, *curl*, *wget*
 *semrush*, *ahrefs*, *moz*, *majestic*
 *headless*, *phantom*, *puppeteer*
 *scrapy*, *httpclient*, *java/*</div>
                 </div>
-
                 <div class="rule-card info">
-                    <h4>📍 Path-Based CAPTCHA</h4>
-                    <p>Require CAPTCHA for bot-magnet paths:</p>
+                    <h4 data-i18n="rule_path">📍 Path-Based CAPTCHA</h4>
+                    <p data-i18n="rule_path_desc">Require CAPTCHA for bot-magnet paths:</p>
                     <div class="code-block">/cyber/en/*
 /cyber/information-security*
 /*siem*
@@ -1147,73 +801,45 @@ AT (Austria)</div>
 /academy/להכיר-את-המקצוע*</div>
                 </div>
             </div>
-
             <div class="action-box">
-                <h4>✅ Implementation Checklist</h4>
+                <h4 data-i18n="checklist_title">✅ Implementation Checklist</h4>
                 <ul class="action-list">
-                    <li>
-                        <span>1️⃣</span>
-                        <span><strong>Cloudflare Firewall Rules:</strong> Create country-based blocking rules for Tier 1 countries</span>
-                    </li>
-                    <li>
-                        <span>2️⃣</span>
-                        <span><strong>Rate Limiting:</strong> Configure 10 requests/minute for Tier 2 countries</span>
-                    </li>
-                    <li>
-                        <span>3️⃣</span>
-                        <span><strong>robots.txt Update:</strong> Disallow known bot user-agents from /cyber/ paths</span>
-                    </li>
-                    <li>
-                        <span>4️⃣</span>
-                        <span><strong>GA4 Bot Filter:</strong> Enable bot filtering for accurate analytics</span>
-                    </li>
-                    <li>
-                        <span>5️⃣</span>
-                        <span><strong>Monitor Weekly:</strong> Review CTR by country for new bot patterns</span>
-                    </li>
+                    <li><span>1️⃣</span><span data-i18n="check1"><strong>Cloudflare Firewall Rules:</strong> Create country-based blocking rules for Tier 1 countries</span></li>
+                    <li><span>2️⃣</span><span data-i18n="check2"><strong>Rate Limiting:</strong> Configure 10 requests/minute for Tier 2 countries</span></li>
+                    <li><span>3️⃣</span><span data-i18n="check3"><strong>robots.txt Update:</strong> Disallow known bot user-agents from /cyber/ paths</span></li>
+                    <li><span>4️⃣</span><span data-i18n="check4"><strong>GA4 Bot Filter:</strong> Enable bot filtering for accurate analytics</span></li>
+                    <li><span>5️⃣</span><span data-i18n="check5"><strong>Monitor Weekly:</strong> Review CTR by country for new bot patterns</span></li>
                 </ul>
             </div>
         </div>
 
         <!-- Key Insights -->
         <div class="section">
-            <h2 class="section-title">💡 Key Insights</h2>
-
+            <h2 class="section-title" data-i18n="insights_title">💡 Key Insights</h2>
             <div class="insights-grid">
                 <div class="insight-card danger">
-                    <h4>🇺🇸 USA - Top Bot Source</h4>
+                    <h4 data-i18n="insight_usa">🇺🇸 USA - Top Bot Source</h4>
                     <div class="number">544,800</div>
-                    <p>Impressions with only 0.05% CTR</p>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
-                        Expected 16,834 clicks at Israel's rate. Got 269.
-                    </p>
+                    <p data-i18n="insight_usa_desc">Impressions with only 0.05% CTR</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;" data-i18n="insight_usa_note">Expected 16,834 clicks at Israel's rate. Got 269.</p>
                 </div>
-
                 <div class="insight-card danger">
-                    <h4>🇧🇷 Brazil - Zero Engagement</h4>
+                    <h4 data-i18n="insight_brazil">🇧🇷 Brazil - Zero Engagement</h4>
                     <div class="number">240,220</div>
-                    <p>Impressions with 0.003% CTR</p>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
-                        7 clicks from 240K impressions = pure bot traffic
-                    </p>
+                    <p data-i18n="insight_brazil_desc">Impressions with 0.003% CTR</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;" data-i18n="insight_brazil_note">7 clicks from 240K impressions = pure bot traffic</p>
                 </div>
-
                 <div class="insight-card success">
-                    <h4>🇮🇱 Israel - Healthy Baseline</h4>
+                    <h4 data-i18n="insight_israel">🇮🇱 Israel - Healthy Baseline</h4>
                     <div class="number">3.09%</div>
-                    <p>CTR - Natural user behavior</p>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
-                        52.2% of traffic, healthy engagement pattern
-                    </p>
+                    <p data-i18n="insight_israel_desc">CTR - Natural user behavior</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;" data-i18n="insight_israel_note">52.2% of traffic, healthy engagement pattern</p>
                 </div>
-
                 <div class="insight-card warning">
-                    <h4>🔐 Cyber Content - Bot Magnet</h4>
+                    <h4 data-i18n="insight_cyber">🔐 Cyber Content - Bot Magnet</h4>
                     <div class="number">38.9%</div>
-                    <p>Bot rate on /cyber/ pages</p>
-                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;">
-                        English tech queries attract SEO scrapers
-                    </p>
+                    <p data-i18n="insight_cyber_desc">Bot rate on /cyber/ pages</p>
+                    <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 10px;" data-i18n="insight_cyber_note">English tech queries attract SEO scrapers</p>
                 </div>
             </div>
         </div>
@@ -1221,112 +847,341 @@ AT (Austria)</div>
         <!-- Footer -->
         <footer class="footer">
             <div class="logo">Nadav Digital</div>
-            <p>Bot Fingerprinting Report | Generated: January 5, 2026</p>
-            <p style="margin-top: 10px; font-size: 0.85rem;">
-                Methodology: Baseline Comparison Method | Data Source: Google Search Console 2025
-            </p>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">
-                report.n-c.digital/experis-bot-fingerprinting-2025
-            </p>
+            <p data-i18n="footer_generated">Bot Fingerprinting Report | Generated: January 5, 2026</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;" data-i18n="footer_method">Methodology: Baseline Comparison Method | Data Source: Google Search Console 2025</p>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: rgba(255,255,255,0.3);">report.n-c.digital/experis-bot-fingerprinting-2025</p>
         </footer>
     </div>
 
-    <!-- Charts -->
     <script>
-        // Traffic Distribution Chart
-        new Chart(document.getElementById('trafficChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Israel (Legitimate)', 'Tier 1 Bots', 'Tier 2 Bots', 'Tier 3 Review'],
-                datasets: [{
-                    data: [1724643, 1558417, 14962, 8026],
-                    backgroundColor: ['#00ff88', '#ff3366', '#ffaa00', '#a855f7'],
-                    borderWidth: 0,
-                    hoverOffset: 15
-                }]
+        // Translation dictionary
+        const translations = {
+            en: {
+                title: "Bot Fingerprinting Report",
+                subtitle: "Experis.co.il | Advanced Bot Traffic Analysis & Blocking Recommendations",
+                date_range: "Jan 2025 - Dec 2025",
+                bot_detected: "47.6% Bot Traffic Detected",
+                total_impressions: "Total Impressions",
+                israel_legit: "Israel (Legit)",
+                tier1_bots: "Tier 1 Bots",
+                tier2_bots: "Tier 2 Bots",
+                tier3_review: "Tier 3 Review",
+                safe_to_block: "Safe to Block",
+                traffic_breakdown: "📈 Traffic Distribution Breakdown",
+                israel_pct: "Israel 52.2%",
+                tier1_pct: "Tier 1 Bots 47.1%",
+                legend_israel: "Israel (Legitimate)",
+                legend_tier1: "Tier 1 - Definite Bots",
+                legend_tier2: "Tier 2 - Very Likely",
+                legend_tier3: "Tier 3 - Needs Review",
+                methodology_title: "🎯 Detection Methodology",
+                methodology_desc: "Bot detection based on baseline comparison with Israel (legitimate Hebrew-speaking traffic)",
+                baseline_title: "📊 Baseline (Israel)",
+                baseline_desc: "Hebrew site = Real users from Israel",
+                tier1_title: "🔴 Tier 1 (Block)",
+                tier1_desc: "99.9% confidence - Safe to block immediately",
+                tier2_title: "🟠 Tier 2 (Limit)",
+                tier2_desc: "95% confidence - Rate limit recommended",
+                tier3_title: "🟡 Tier 3 (Review)",
+                tier3_desc: "80% confidence - Manual review needed",
+                property_title: "🏢 Property Breakdown",
+                main_site: "🏠 Main Site",
+                impressions: "Impressions",
+                clicks: "Clicks",
+                bot_impressions: "Bot Impressions",
+                bot_pct: "Bot %",
+                tier1_section_title: "🔴 Definite Bots - Safe to Block (99.9% Confidence)",
+                tier1_section_desc: "Countries with CTR below 1% of Israel's baseline. Zero chance of legitimate users.",
+                th_country: "Country",
+                th_impressions: "Impressions",
+                th_clicks: "Clicks",
+                th_vs_israel: "vs Israel",
+                th_deficit: "Click Deficit",
+                th_action: "Action",
+                block: "Block",
+                rate_limit: "Rate Limit",
+                usa: "United States",
+                brazil: "Brazil",
+                uk: "United Kingdom",
+                india: "India",
+                italy: "Italy",
+                russia: "Russia",
+                vietnam: "Vietnam",
+                canada: "Canada",
+                south_korea: "South Korea",
+                germany: "Germany",
+                indonesia: "Indonesia",
+                bangladesh: "Bangladesh",
+                philippines: "Philippines",
+                argentina: "Argentina",
+                mexico: "Mexico",
+                france: "France",
+                turkey: "Turkey",
+                south_africa: "South Africa",
+                pakistan: "Pakistan",
+                iraq: "Iraq",
+                additional_countries: "+ 126 additional countries with combined 205,893 bot impressions",
+                tier2_section_title: "🟠 Very Likely Bots - Rate Limit Recommended (95% Confidence)",
+                palestine: "Palestine",
+                portugal: "Portugal",
+                czech: "Czech Republic",
+                cyprus: "Cyprus",
+                austria: "Austria",
+                rules_title: "🛡️ Recommended Blocking Rules",
+                rule_country: "🚫 Cloudflare/WAF Country Block",
+                rule_country_desc: "Block these countries immediately (Tier 1 with 5,000+ impressions):",
+                rule_rate: "⏱️ Rate Limiting (10 req/min)",
+                rule_rate_desc: "Apply rate limits to Tier 2 countries:",
+                rule_ua: "🤖 User-Agent Filtering",
+                rule_ua_desc: "Block these user-agent patterns:",
+                rule_path: "📍 Path-Based CAPTCHA",
+                rule_path_desc: "Require CAPTCHA for bot-magnet paths:",
+                checklist_title: "✅ Implementation Checklist",
+                check1: "<strong>Cloudflare Firewall Rules:</strong> Create country-based blocking rules for Tier 1 countries",
+                check2: "<strong>Rate Limiting:</strong> Configure 10 requests/minute for Tier 2 countries",
+                check3: "<strong>robots.txt Update:</strong> Disallow known bot user-agents from /cyber/ paths",
+                check4: "<strong>GA4 Bot Filter:</strong> Enable bot filtering for accurate analytics",
+                check5: "<strong>Monitor Weekly:</strong> Review CTR by country for new bot patterns",
+                insights_title: "💡 Key Insights",
+                insight_usa: "🇺🇸 USA - Top Bot Source",
+                insight_usa_desc: "Impressions with only 0.05% CTR",
+                insight_usa_note: "Expected 16,834 clicks at Israel's rate. Got 269.",
+                insight_brazil: "🇧🇷 Brazil - Zero Engagement",
+                insight_brazil_desc: "Impressions with 0.003% CTR",
+                insight_brazil_note: "7 clicks from 240K impressions = pure bot traffic",
+                insight_israel: "🇮🇱 Israel - Healthy Baseline",
+                insight_israel_desc: "CTR - Natural user behavior",
+                insight_israel_note: "52.2% of traffic, healthy engagement pattern",
+                insight_cyber: "🔐 Cyber Content - Bot Magnet",
+                insight_cyber_desc: "Bot rate on /cyber/ pages",
+                insight_cyber_note: "English tech queries attract SEO scrapers",
+                footer_generated: "Bot Fingerprinting Report | Generated: January 5, 2026",
+                footer_method: "Methodology: Baseline Comparison Method | Data Source: Google Search Console 2025",
+                chart_traffic: "Traffic Classification",
+                chart_property: "Traffic by Property",
+                chart_legit: "Legitimate",
+                chart_bot: "Bot Traffic"
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#fff',
-                            font: { family: 'Heebo', size: 12 },
-                            padding: 15
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Traffic Classification',
-                        color: '#fff',
-                        font: { family: 'Heebo', size: 16, weight: '600' },
-                        padding: { bottom: 20 }
-                    }
-                },
-                cutout: '65%'
+            he: {
+                title: "דוח טביעת אצבע בוטים",
+                subtitle: "Experis.co.il | ניתוח מתקדם של תעבורת בוטים והמלצות חסימה",
+                date_range: "ינואר 2025 - דצמבר 2025",
+                bot_detected: "47.6% תעבורת בוטים זוהתה",
+                total_impressions: "סה״כ הופעות",
+                israel_legit: "ישראל (לגיטימי)",
+                tier1_bots: "בוטים רמה 1",
+                tier2_bots: "בוטים רמה 2",
+                tier3_review: "רמה 3 לבדיקה",
+                safe_to_block: "בטוח לחסום",
+                traffic_breakdown: "📈 פילוח התפלגות תעבורה",
+                israel_pct: "ישראל 52.2%",
+                tier1_pct: "בוטים רמה 1 - 47.1%",
+                legend_israel: "ישראל (לגיטימי)",
+                legend_tier1: "רמה 1 - בוטים ודאיים",
+                legend_tier2: "רמה 2 - סביר מאוד",
+                legend_tier3: "רמה 3 - דורש בדיקה",
+                methodology_title: "🎯 מתודולוגיית הזיהוי",
+                methodology_desc: "זיהוי בוטים על בסיס השוואה לקו הבסיס של ישראל (תעבורה לגיטימית בעברית)",
+                baseline_title: "📊 קו בסיס (ישראל)",
+                baseline_desc: "אתר בעברית = משתמשים אמיתיים מישראל",
+                tier1_title: "🔴 רמה 1 (חסימה)",
+                tier1_desc: "ביטחון 99.9% - בטוח לחסום מיידית",
+                tier2_title: "🟠 רמה 2 (הגבלה)",
+                tier2_desc: "ביטחון 95% - מומלץ להגביל קצב",
+                tier3_title: "🟡 רמה 3 (בדיקה)",
+                tier3_desc: "ביטחון 80% - נדרשת בדיקה ידנית",
+                property_title: "🏢 פילוח לפי נכס",
+                main_site: "🏠 אתר ראשי",
+                impressions: "הופעות",
+                clicks: "קליקים",
+                bot_impressions: "הופעות בוטים",
+                bot_pct: "% בוטים",
+                tier1_section_title: "🔴 בוטים ודאיים - בטוח לחסום (ביטחון 99.9%)",
+                tier1_section_desc: "מדינות עם CTR מתחת ל-1% מקו הבסיס של ישראל. אפס סיכוי למשתמשים לגיטימיים.",
+                th_country: "מדינה",
+                th_impressions: "הופעות",
+                th_clicks: "קליקים",
+                th_vs_israel: "מול ישראל",
+                th_deficit: "גירעון קליקים",
+                th_action: "פעולה",
+                block: "חסום",
+                rate_limit: "הגבל קצב",
+                usa: "ארצות הברית",
+                brazil: "ברזיל",
+                uk: "בריטניה",
+                india: "הודו",
+                italy: "איטליה",
+                russia: "רוסיה",
+                vietnam: "וייטנאם",
+                canada: "קנדה",
+                south_korea: "דרום קוריאה",
+                germany: "גרמניה",
+                indonesia: "אינדונזיה",
+                bangladesh: "בנגלדש",
+                philippines: "פיליפינים",
+                argentina: "ארגנטינה",
+                mexico: "מקסיקו",
+                france: "צרפת",
+                turkey: "טורקיה",
+                south_africa: "דרום אפריקה",
+                pakistan: "פקיסטן",
+                iraq: "עיראק",
+                additional_countries: "+ 126 מדינות נוספות עם 205,893 הופעות בוטים",
+                tier2_section_title: "🟠 בוטים סבירים מאוד - מומלץ הגבלת קצב (ביטחון 95%)",
+                palestine: "פלסטין",
+                portugal: "פורטוגל",
+                czech: "צ׳כיה",
+                cyprus: "קפריסין",
+                austria: "אוסטריה",
+                rules_title: "🛡️ כללי חסימה מומלצים",
+                rule_country: "🚫 חסימת מדינות ב-Cloudflare/WAF",
+                rule_country_desc: "חסום את המדינות הללו מיידית (רמה 1 עם 5,000+ הופעות):",
+                rule_rate: "⏱️ הגבלת קצב (10 בקשות/דקה)",
+                rule_rate_desc: "החל הגבלת קצב על מדינות רמה 2:",
+                rule_ua: "🤖 סינון User-Agent",
+                rule_ua_desc: "חסום את הדפוסים הבאים:",
+                rule_path: "📍 CAPTCHA לפי נתיב",
+                rule_path_desc: "דרוש CAPTCHA לנתיבים שמושכים בוטים:",
+                checklist_title: "✅ רשימת יישום",
+                check1: "<strong>חוקי Cloudflare:</strong> צור חוקי חסימה לפי מדינה עבור מדינות רמה 1",
+                check2: "<strong>הגבלת קצב:</strong> הגדר 10 בקשות/דקה למדינות רמה 2",
+                check3: "<strong>עדכון robots.txt:</strong> חסום user-agents ידועים מנתיבי /cyber/",
+                check4: "<strong>סינון בוטים ב-GA4:</strong> הפעל סינון בוטים לנתונים מדויקים",
+                check5: "<strong>ניטור שבועי:</strong> בדוק CTR לפי מדינה לזיהוי דפוסים חדשים",
+                insights_title: "💡 תובנות מרכזיות",
+                insight_usa: "🇺🇸 ארה״ב - מקור הבוטים המוביל",
+                insight_usa_desc: "הופעות עם CTR של 0.05% בלבד",
+                insight_usa_note: "צפי ל-16,834 קליקים לפי ישראל. קיבלנו 269.",
+                insight_brazil: "🇧🇷 ברזיל - אפס מעורבות",
+                insight_brazil_desc: "הופעות עם CTR של 0.003%",
+                insight_brazil_note: "7 קליקים מ-240K הופעות = תעבורת בוטים טהורה",
+                insight_israel: "🇮🇱 ישראל - קו בסיס בריא",
+                insight_israel_desc: "CTR - התנהגות משתמשים טבעית",
+                insight_israel_note: "52.2% מהתעבורה, דפוס מעורבות בריא",
+                insight_cyber: "🔐 תוכן סייבר - מגנט לבוטים",
+                insight_cyber_desc: "שיעור בוטים בדפי /cyber/",
+                insight_cyber_note: "שאילתות טכניות באנגלית מושכות סורקי SEO",
+                footer_generated: "דוח טביעת אצבע בוטים | נוצר: 5 בינואר 2026",
+                footer_method: "מתודולוגיה: השוואה לקו בסיס | מקור: Google Search Console 2025",
+                chart_traffic: "סיווג תעבורה",
+                chart_property: "תעבורה לפי נכס",
+                chart_legit: "לגיטימי",
+                chart_bot: "תעבורת בוטים"
             }
-        });
+        };
 
-        // Property Chart
-        new Chart(document.getElementById('propertyChart'), {
-            type: 'bar',
-            data: {
-                labels: ['Main Site', 'Academy', 'Cyber'],
-                datasets: [
-                    {
-                        label: 'Legitimate',
-                        data: [1325004, 440760, 286315],
-                        backgroundColor: '#00ff88',
-                        borderRadius: 6
-                    },
-                    {
-                        label: 'Bot Traffic',
-                        data: [828248, 245457, 182278],
-                        backgroundColor: '#ff3366',
-                        borderRadius: 6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            color: '#fff',
-                            font: { family: 'Heebo', size: 12 },
-                            padding: 15
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Traffic by Property',
-                        color: '#fff',
-                        font: { family: 'Heebo', size: 16, weight: '600' },
-                        padding: { bottom: 20 }
-                    }
-                },
-                scales: {
-                    x: {
-                        stacked: true,
-                        ticks: { color: '#fff' },
-                        grid: { color: 'rgba(255,255,255,0.05)' }
-                    },
-                    y: {
-                        stacked: true,
-                        ticks: {
-                            color: '#fff',
-                            callback: function(value) {
-                                return (value / 1000000).toFixed(1) + 'M';
-                            }
-                        },
-                        grid: { color: 'rgba(255,255,255,0.05)' }
+        let trafficChart, propertyChart;
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            const html = document.documentElement;
+            html.lang = lang;
+            html.dir = lang === 'he' ? 'rtl' : 'ltr';
+            document.body.dir = lang === 'he' ? 'rtl' : 'ltr';
+
+            // Update toggle buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Update all translations
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (translations[lang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.innerHTML = translations[lang][key];
                     }
                 }
-            }
+            });
+
+            // Update charts
+            updateCharts(lang);
+
+            // Save preference
+            localStorage.setItem('preferredLang', lang);
+        }
+
+        function updateCharts(lang) {
+            const t = translations[lang];
+
+            if (trafficChart) trafficChart.destroy();
+            if (propertyChart) propertyChart.destroy();
+
+            trafficChart = new Chart(document.getElementById('trafficChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: [t.legend_israel, t.legend_tier1, t.legend_tier2, t.legend_tier3],
+                    datasets: [{
+                        data: [1724643, 1558417, 14962, 8026],
+                        backgroundColor: ['#00ff88', '#ff3366', '#ffaa00', '#a855f7'],
+                        borderWidth: 0,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#fff', font: { family: 'Heebo', size: 12 }, padding: 15 }
+                        },
+                        title: {
+                            display: true,
+                            text: t.chart_traffic,
+                            color: '#fff',
+                            font: { family: 'Heebo', size: 16, weight: '600' },
+                            padding: { bottom: 20 }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            propertyChart = new Chart(document.getElementById('propertyChart'), {
+                type: 'bar',
+                data: {
+                    labels: [lang === 'he' ? 'אתר ראשי' : 'Main Site', 'Academy', 'Cyber'],
+                    datasets: [
+                        { label: t.chart_legit, data: [1325004, 440760, 286315], backgroundColor: '#00ff88', borderRadius: 6 },
+                        { label: t.chart_bot, data: [828248, 245457, 182278], backgroundColor: '#ff3366', borderRadius: 6 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#fff', font: { family: 'Heebo', size: 12 }, padding: 15 }
+                        },
+                        title: {
+                            display: true,
+                            text: t.chart_property,
+                            color: '#fff',
+                            font: { family: 'Heebo', size: 16, weight: '600' },
+                            padding: { bottom: 20 }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                        y: {
+                            stacked: true,
+                            ticks: { color: '#fff', callback: v => (v / 1000000).toFixed(1) + 'M' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('preferredLang');
+            setLanguage(saved || 'en');
         });
     </script>
 </body>
