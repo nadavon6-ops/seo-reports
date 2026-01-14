@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניתוח מיגרציה - ManpowerCare.co.il | גרסה סופית מתוקנת</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle { color: #94a3b8; font-size: 1.1rem; }
+        .header .date { color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-box .number { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; }
+        .stat-box .label { color: #94a3b8; font-size: 0.85rem; }
+        .stat-box.migrate .number { color: #10b981; }
+        .stat-box.redirect .number { color: #f59e0b; }
+        .stat-box.keep-url .number { color: #00d4ff; }
+        .stat-box.change-url .number { color: #a78bfa; }
+        .section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .section-icon.migrate { background: rgba(16, 185, 129, 0.2); }
+        .section-icon.redirect { background: rgba(245, 158, 11, 0.2); }
+        .section-icon.change { background: rgba(124, 58, 237, 0.2); }
+        .section-title { font-size: 1.4rem; font-weight: 600; }
+        .section-title span { font-size: 0.95rem; color: #94a3b8; font-weight: 400; }
+        .category-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 10px;
+            text-align: right;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            vertical-align: middle;
+        }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        .url {
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #00d4ff;
+            word-break: break-all;
+            direction: ltr;
+            text-align: left;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-keep { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .badge-change { background: rgba(124, 58, 237, 0.2); color: #a78bfa; }
+        .badge-redirect { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .arrow { color: #a78bfa; font-weight: bold; font-size: 1.1rem; }
+        .new-url { color: #10b981; font-family: 'Consolas', monospace; font-size: 0.8rem; direction: ltr; }
+        .note {
+            background: rgba(245, 158, 11, 0.1);
+            border-right: 4px solid #f59e0b;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #fcd34d;
+        }
+        .note.success { background: rgba(16, 185, 129, 0.1); border-right-color: #10b981; color: #6ee7b7; }
+        .note.purple { background: rgba(124, 58, 237, 0.1); border-right-color: #a78bfa; color: #c4b5fd; }
+        .highlight-box {
+            background: rgba(124, 58, 237, 0.1);
+            border: 2px solid rgba(124, 58, 237, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .highlight-box h4 { color: #a78bfa; margin-bottom: 10px; font-size: 1.1rem; }
+        .highlight-box ul { margin-top: 10px; padding-right: 20px; }
+        .highlight-box li { color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; margin-bottom: 6px; }
+        .summary-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 40px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        .summary-box h3 { color: #00d4ff; margin-bottom: 15px; font-size: 1.2rem; }
+        .summary-box ul { list-style: none; padding: 0; }
+        .summary-box li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+            color: #e2e8f0;
+        }
+        .summary-box li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+        .checklist {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .checklist h5 { color: #f59e0b; margin-bottom: 15px; }
+        .checklist ul { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .checklist li::before { content: "☐"; position: absolute; right: 0; color: #f59e0b; }
+        .subsection { margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1); }
+        .subsection-title { font-size: 1rem; color: #94a3b8; margin-bottom: 15px; font-weight: 600; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .section { padding: 20px; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ניתוח מיגרציה SEO - גרסה סופית</h1>
+            <div class="subtitle">ManpowerCare.co.il - כל העמודים להעברה</div>
+            <div class="date">מבוסס על נתוני GSC: 28 הימים האחרונים (ינואר 2026)</div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-box migrate">
+                <div class="number">99</div>
+                <div class="label">סה"כ עמודים להעברה</div>
+            </div>
+            <div class="stat-box keep-url">
+                <div class="number">88</div>
+                <div class="label">ללא שינוי URL</div>
+            </div>
+            <div class="stat-box change-url">
+                <div class="number">11</div>
+                <div class="label">עם URL חדש + 301</div>
+            </div>
+            <div class="stat-box redirect">
+                <div class="number">~165</div>
+                <div class="label">עמודים להפניה בלבד</div>
+            </div>
+        </div>
+
+        <!-- Section 1: ALL Pages to Migrate -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon migrate">✓</div>
+                <div>
+                    <div class="section-title">1. כל העמודים להעברה <span>(99 עמודים עם קליקים)</span></div>
+                    <div class="category-label">כל עמוד עם לפחות קליק אחד = חובה להעביר</div>
+                </div>
+            </div>
+
+            <!-- Hebrew Main Pages -->
+            <div class="subsection-title">עמודים ראשיים בעברית:</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>URL</th>
+                        <th>קליקים</th>
+                        <th>חשיפות</th>
+                        <th>פעולה</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td class="url">/</td><td><strong>146</strong></td><td>10,223</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>2</td><td class="url">/branches/</td><td><strong>146</strong></td><td>3,610</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>3</td><td class="url">/טיפול-בנכי-צהל/</td><td><strong>39</strong></td><td>1,753</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>4</td><td class="url">/תביעה-ייצוגית-גרוסו/</td><td><strong>34</strong></td><td>139</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>5</td><td class="url">/contact/</td><td><strong>26</strong></td><td>1,234</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>6</td><td class="url">/הנהלת-החברה/</td><td><strong>21</strong></td><td>1,462</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>7</td><td class="url">/מדריך-להעסקת-עובד-זר/</td><td><strong>11</strong></td><td>3,395</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>8</td><td class="url">/nursing-benefit/</td><td><strong>8</strong></td><td>1,739</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>9</td><td class="url">/טפסים/</td><td><strong>8</strong></td><td>191</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>10</td><td class="url">/רגעים-קטנים-של-חסד-60-דברים-שאפשר-לעשות-ע/</td><td><strong>7</strong></td><td>123</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>11</td><td class="url">/how-to-hire-a-foreign-worker/</td><td><strong>6</strong></td><td>571</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>12</td><td class="url">/מחשבון-גמלת-סיעוד/</td><td><strong>5</strong></td><td>1,154</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>13</td><td class="url">/alzheimer/</td><td><strong>5</strong></td><td>356</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>14</td><td class="url">/manpowergroup-ישראל/</td><td><strong>3</strong></td><td>964</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>15</td><td class="url">/חרדות-נטישה-אצל-קשישים-ותשושי-נפש-ואיך/</td><td><strong>3</strong></td><td>447</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>16</td><td class="url">/שחרור-הורה-מבית-החולים-מה-חשוב-לדעת-ולה/</td><td><strong>3</strong></td><td>167</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>17</td><td class="url">/תהליך-קבלת-גמלת-סיעוד/</td><td><strong>2</strong></td><td>771</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>18</td><td class="url">/טפסים-גמלת-סיעוד/</td><td><strong>2</strong></td><td>747</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>19</td><td class="url">/טיפול-פליאטיבי-וליווי-סוף-חיים-בבית/</td><td><strong>2</strong></td><td>481</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>20</td><td class="url">/testimonials/</td><td><strong>2</strong></td><td>287</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>21</td><td class="url">/כשהגוף-מאותת-כדאי-לעצור/</td><td><strong>2</strong></td><td>112</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>22</td><td class="url">/טיפים-לשימור-מטפלת-סיעודית-לאורך-זמן-ו/</td><td><strong>2</strong></td><td>11</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>23</td><td class="url">/category/סוכרת/</td><td><strong>2</strong></td><td>11</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>24</td><td class="url">/חוק-הסיעוד-כל-מה-שחשוב-לדעת/</td><td><strong>1</strong></td><td>874</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>25</td><td class="url">/אלו-שירותי-סיעוד-קיימים-ומה-הם-כוללים/</td><td><strong>1</strong></td><td>646</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>26</td><td class="url">/חברת-סיעוד/</td><td><strong>1</strong></td><td>493</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>27</td><td class="url">/הטיפול-בהורה-סיעודי-שלב-אחרי-שלב/</td><td><strong>1</strong></td><td>230</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>28</td><td class="url">/מהו-מבחן-תלות-ואיך-להיערך/</td><td><strong>1</strong></td><td>207</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>29</td><td class="url">/branch/</td><td><strong>1</strong></td><td>117</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>30</td><td class="url">/הסוד-להצלחה-תיאום-ציפיות-עם-המטפלת-הסי/</td><td><strong>1</strong></td><td>43</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>31</td><td class="url">/מידע-וזכויות/</td><td><strong>1</strong></td><td>19</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>32</td><td class="url">/על-השיטות-והכלים-השונים-להקלה-על-חולי-ד/</td><td><strong>1</strong></td><td>12</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    <tr><td>33</td><td class="url">/נגישות/</td><td><strong>1</strong></td><td>5</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                </tbody>
+            </table>
+
+            <!-- Branch Pages -->
+            <div class="subsection">
+                <div class="subsection-title">עמודי סניפים בעברית:</div>
+                <table>
+                    <thead>
+                        <tr><th>URL</th><th>קליקים</th><th>חשיפות</th><th>פעולה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="url">/branch/סניף-חיפה/</td><td><strong>33</strong></td><td>435</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-נתניה-צפון/</td><td><strong>28</strong></td><td>275</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-ירושלים/</td><td><strong>13</strong></td><td>325</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-חדרה/</td><td><strong>5</strong></td><td>174</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-רמלוד/</td><td><strong>5</strong></td><td>54</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-תל-אביב/</td><td><strong>3</strong></td><td>180</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-יהוד/</td><td><strong>3</strong></td><td>87</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-מזרח-ירושלים/</td><td><strong>2</strong></td><td>27</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branch/סניף-שפלה/</td><td><strong>1</strong></td><td>10</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Branch Manager Pages -->
+            <div class="subsection">
+                <div class="subsection-title">עמודי מנהלי סניפים:</div>
+                <table>
+                    <thead>
+                        <tr><th>URL</th><th>קליקים</th><th>פעולה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="url">/branchmanager/סבטלנה-סוקולוב/</td><td><strong>3</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/נאהלה-מלחם/</td><td><strong>3</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/אנאידה-קוזמנקו/</td><td><strong>2</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/</td><td><strong>1</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/ריאהם-ברהום/</td><td><strong>1</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/מרינה-גרשנגורן/</td><td><strong>1</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/branchmanager/זהבית-כוררש/</td><td><strong>1</strong></td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- English Pages -->
+            <div class="subsection">
+                <div class="subsection-title">עמודים באנגלית (English):</div>
+                <table>
+                    <thead>
+                        <tr><th>URL</th><th>קליקים</th><th>חשיפות</th><th>פעולה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="url">/en/</td><td><strong>43</strong></td><td>1,596</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/about/</td><td><strong>7</strong></td><td>251</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/why-care/</td><td><strong>6</strong></td><td>277</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/the-management-copy/</td><td><strong>4</strong></td><td>620</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/vision-and-values/</td><td><strong>2</strong></td><td>98</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/manpower-world/</td><td><strong>1</strong></td><td>97</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branch/petah-tikva-branch/</td><td><strong>1</strong></td><td>52</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branch/south-netanya-branch/</td><td><strong>1</strong></td><td>20</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branch/yehud-branch/</td><td><strong>1</strong></td><td>11</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branchmanager/avital-lamb/</td><td><strong>1</strong></td><td>7</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branchmanager/tamar-levi/</td><td><strong>1</strong></td><td>6</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branch/krayot-branch/</td><td><strong>1</strong></td><td>4</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/en/branchmanager/marina-gershengoren/</td><td><strong>1</strong></td><td>2</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Russian Pages -->
+            <div class="subsection">
+                <div class="subsection-title">עמודים ברוסית (Russian):</div>
+                <table>
+                    <thead>
+                        <tr><th>URL</th><th>קליקים</th><th>חשיפות</th><th>פעולה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="url">/ru/</td><td><strong>19</strong></td><td>498</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/информация-о-компании-manpower-care/</td><td><strong>5</strong></td><td>211</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/контактная-информация/</td><td><strong>5</strong></td><td>38</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/филиалы/</td><td><strong>4</strong></td><td>97</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/иностранные-рабочие-коллективный-ис/</td><td><strong>3</strong></td><td>8</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/инструктаж-трудоустройство-иностра/</td><td><strong>2</strong></td><td>70</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-в-северной-части-нетании/</td><td><strong>2</strong></td><td>29</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-петах-тиква/</td><td><strong>2</strong></td><td>16</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-тель-авив/</td><td><strong>2</strong></td><td>15</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-хайфа/</td><td><strong>1</strong></td><td>62</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-хадера/</td><td><strong>1</strong></td><td>43</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/услуги-патронажного-ухода/</td><td><strong>1</strong></td><td>34</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/branch/отделение-холон-и-бат-ям/</td><td><strong>1</strong></td><td>27</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/секрет-успеха-координация-ожиданий-с/</td><td><strong>1</strong></td><td>24</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ru/наем-иностранного-работника-по-уходу/</td><td><strong>1</strong></td><td>7</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Arabic Pages -->
+            <div class="subsection">
+                <div class="subsection-title">עמודים בערבית (Arabic):</div>
+                <table>
+                    <thead>
+                        <tr><th>URL</th><th>קליקים</th><th>חשיפות</th><th>פעולה</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="url">/ar/</td><td><strong>11</strong></td><td>607</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branches/</td><td><strong>7</strong></td><td>74</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branch/فرع-كفر-قرع/</td><td><strong>4</strong></td><td>50</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/دليل-مخصصات-التمريض/</td><td><strong>2</strong></td><td>80</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branch/فرع-القدس/</td><td><strong>2</strong></td><td>22</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/why-care/</td><td><strong>1</strong></td><td>18</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branch/فرع-شرقي-القدس/</td><td><strong>1</strong></td><td>10</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branch/فرع-حيفا/</td><td><strong>1</strong></td><td>9</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/about/</td><td><strong>1</strong></td><td>64</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                        <tr><td class="url">/ar/branch/فرع-يهود/</td><td><strong>1</strong></td><td>1</td><td><span class="badge badge-keep">ללא שינוי</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note success">
+                <strong>סה"כ: 88 עמודים</strong> מועברים ללא שינוי URL. אין צורך בהפניות - רק להעביר את התוכן לאותו נתיב בדיוק.
+            </div>
+        </div>
+
+        <!-- Section 2: Pages with URL Change -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon change">✎</div>
+                <div>
+                    <div class="section-title">2. עמודים להעברה עם שינוי URL <span>(11 עמודים)</span></div>
+                    <div class="category-label">URLs בעייתיים - עוברים ל-URL חדש עם מילת מפתח + הפניה 301</div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>הנחיות לשינוי URL:</h4>
+                <ul>
+                    <li>לבנות את העמוד החדש ב-URL החדש עם כל התוכן</li>
+                    <li>להגדיר 301 redirect מה-URL הישן לחדש</li>
+                    <li>לעדכן קישורים פנימיים באתר ל-URL החדש</li>
+                </ul>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL ישן</th>
+                        <th>קליקים</th>
+                        <th></th>
+                        <th>URL חדש</th>
+                        <th>פעולה</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-copy-5/</td>
+                        <td><strong>68</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/מטפלת-סיעודית/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/branch/סניף-חדרה-copy/</td>
+                        <td><strong>13</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/branch/סניף-חדרה/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-13/</td>
+                        <td><strong>11</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/טיפולי-סיעוד/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/jobs-2/</td>
+                        <td><strong>13</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/דרושים/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-16/</td>
+                        <td><strong>9</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/דמנציה-מידע/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/branch/סניף-חדרה-copy-copy/</td>
+                        <td><strong>9</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/branch/סניף-חדרה/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-14/</td>
+                        <td><strong>7</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/סיעוד-בבית/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-copy-7/</td>
+                        <td><strong>5</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/[לפי-נושא-העמוד]/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-15/</td>
+                        <td><strong>2</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/סיעוד-בבית/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/פיצוח-האתגר-של-חיפוש-אחר-מטפלת-copy/</td>
+                        <td><strong>2</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/מטפלת-סיעודית/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                    <tr>
+                        <td class="url">/happy-employees-good-employees-copy-6/</td>
+                        <td><strong>1</strong></td>
+                        <td class="arrow">←</td>
+                        <td class="new-url">/[לפי-נושא-העמוד]/</td>
+                        <td><span class="badge badge-change">301 redirect</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note purple">
+                <strong>סה"כ: 11 עמודים</strong> עוברים ל-URL חדש עם מילת מפתח בעברית + הפניה 301 מה-URL הישן.
+            </div>
+        </div>
+
+        <!-- Section 3: High-Impression Pages to Redirect -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon redirect">→</div>
+                <div>
+                    <div class="section-title">3. עמודים עם חשיפות גבוהות - להפניה בלבד <span>(0 קליקים)</span></div>
+                    <div class="category-label">עמודים עם פוטנציאל SEO - להפנות לעמודים רלוונטיים</div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>עמוד (לא עובר)</th>
+                        <th>חשיפות</th>
+                        <th>יעד הפניה 301</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="url">/?cp=521 <small style="color:#f59e0b">(3 קליקים - פרמטר מעקב)</small></td><td>109</td><td class="new-url">/ (עמוד הבית)</td></tr>
+                    <tr><td class="url">/מה-חשוב-לדעת-לפני-שמעסיקים-מטפלת-סיעוד/</td><td>420</td><td class="new-url">/מטפלת-סיעודית/</td></tr>
+                    <tr><td class="url">/זכויות-ניצולי-שואה-מידע-וזכויות/</td><td>407</td><td class="new-url">/טיפול-בנכי-צהל/</td></tr>
+                    <tr><td class="url">/manpower-world/</td><td>391</td><td class="new-url">/הנהלת-החברה/</td></tr>
+                    <tr><td class="url">/חזון-וערכים/</td><td>371</td><td class="new-url">/הנהלת-החברה/</td></tr>
+                    <tr><td class="url">/about/</td><td>285</td><td class="new-url">/הנהלת-החברה/</td></tr>
+                    <tr><td class="url">/התאמת-הסביבה-לאדם-הסיעודי/</td><td>231</td><td class="new-url">/סיעוד-בבית/</td></tr>
+                    <tr><td class="url">/en/branches/</td><td>207</td><td class="new-url">/en/</td></tr>
+                    <tr><td class="url">/manpower-care-copy-2/</td><td>196</td><td class="new-url">/</td></tr>
+                    <tr><td class="url">/לבחור-נכון-איך-בוחרים-חברת-סיעוד/</td><td>161</td><td class="new-url">/</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>חשוב:</strong> עמודים אלה מקבלים חשיפות אך ללא קליקים. יש להפנות 301 לעמודים רלוונטיים כדי לשמר את הערך.
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-box">
+            <h3>סיכום סופי - 3 השאלות</h3>
+            <ul>
+                <li><strong>מי עוברים?</strong> 99 עמודים - כל העמודים עם לפחות קליק אחד</li>
+                <li><strong>מי לא עוברים?</strong> ~165 עמודים (חשיפות בלבד או ללא נתונים) → הפניה 301</li>
+                <li><strong>האם משתנה ה-URL?</strong> 92 נשארים זהים | 11 עוברים ל-URL חדש עם מילת מפתח</li>
+            </ul>
+        </div>
+
+        <!-- Checklist -->
+        <div class="section" style="margin-top: 30px;">
+            <div class="section-header">
+                <div class="section-icon migrate">📋</div>
+                <div>
+                    <div class="section-title">צ'קליסט מיגרציה</div>
+                    <div class="category-label">פעולות חובה</div>
+                </div>
+            </div>
+
+            <div class="checklist">
+                <h5>לפני המיגרציה:</h5>
+                <ul>
+                    <li>לייצא את כל ה-URLs לקובץ Excel</li>
+                    <li>לתעד מדדים נוכחיים מ-GSC</li>
+                    <li>לבנות את 11 העמודים החדשים ב-URLs החדשים</li>
+                    <li>להכין קובץ הפניות 301</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h5>במהלך המיגרציה:</h5>
+                <ul>
+                    <li>להעלות את כל ההפניות 301 לשרת</li>
+                    <li>לבדוק שכל URL ישן מפנה נכון</li>
+                    <li>להגיש sitemap חדש ב-GSC</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+                <h5>אחרי המיגרציה:</h5>
+                <ul>
+                    <li>לעקוב אחרי קליקים וחשיפות ב-GSC</li>
+                    <li>לבדוק Coverage Report</li>
+                    <li>לטפל בשגיאות מיד</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: #64748b; font-size: 0.85rem;">
+            <p>דוח זה נוצר על בסיס נתוני Google Search Console</p>
+            <p>תקופה: 28 הימים האחרונים (ינואר 2026) | אתר: manpowercare.co.il</p>
+            <p style="margin-top: 10px;">Nadav Digital - SEO Agency</p>
+        </div>
+    </div>
+</body>
+</html>
