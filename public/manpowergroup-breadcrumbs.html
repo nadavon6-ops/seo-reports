@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManpowerGroup Israel - מדריך יישום BreadcrumbList</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: #00d4ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+            border-radius: 2px;
+        }
+
+        /* Hierarchy Tree */
+        .hierarchy-tree {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 2;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .tree-home {
+            color: #ffd700;
+        }
+
+        .tree-level1 {
+            color: #00d4ff;
+        }
+
+        .tree-level2 {
+            color: #a78bfa;
+        }
+
+        .tree-approved {
+            color: #10b981;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .summary-number {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+
+        /* Approved Schemas Section */
+        .approved-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #10b981, #059669);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .schema-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-right: 4px solid #00d4ff;
+        }
+
+        .schema-title {
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .schema-path {
+            color: #a78bfa;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #c9d1d9;
+        }
+
+        .json-key {
+            color: #7ee787;
+        }
+
+        .json-string {
+            color: #a5d6ff;
+        }
+
+        .json-number {
+            color: #ffa657;
+        }
+
+        /* Page Tables */
+        .pages-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .pages-table th,
+        .pages-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pages-table th {
+            background: rgba(0, 212, 255, 0.1);
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .pages-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .level-1 {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+
+        .level-2 {
+            background: rgba(167, 139, 250, 0.2);
+            color: #a78bfa;
+        }
+
+        .status-approved {
+            color: #10b981;
+        }
+
+        /* Instructions */
+        .instruction-steps {
+            counter-reset: step;
+        }
+
+        .instruction-step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .step-content h4 {
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .step-content p {
+            color: #a0a0a0;
+            font-size: 14px;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            font-size: 18px;
+            color: #00d4ff;
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .schema-wrapper {
+            position: relative;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0a0;
+        }
+
+        .footer-link {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 32px;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hierarchy-tree {
+                font-size: 12px;
+                padding: 15px;
+            }
+
+            .code-block pre {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">ManpowerGroup Israel</div>
+            <div class="subtitle">מדריך יישום BreadcrumbList Schema</div>
+            <div class="meta-info">
+                <div class="meta-item">🌐 manpowergroup.co.il</div>
+                <div class="meta-item">📦 HubSpot Platform</div>
+                <div class="meta-item">🌍 עברית (he-IL)</div>
+                <div class="meta-item">📅 ינואר 2026</div>
+            </div>
+        </header>
+
+        <!-- Summary Section -->
+        <section class="section">
+            <h2 class="section-title">סיכום מהיר</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-number">11</div>
+                    <div class="summary-label">עמודים לעדכון</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">4</div>
+                    <div class="summary-label">עמודי רמה 1 (2 שכבות)</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">7</div>
+                    <div class="summary-label">עמודי רמה 2 (3 שכבות)</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-number">1</div>
+                    <div class="summary-label">סכמה מאושרת</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hierarchy Section -->
+        <section class="section">
+            <h2 class="section-title">מפת היררכיית האתר</h2>
+            <div class="hierarchy-tree">
+<span class="tree-home">🏠 manpowergroup.co.il (Homepage)</span>
+│
+├── <span class="tree-level1">אודותינו (About Us)</span> ─────────────── /about-us
+│   ├── <span class="tree-level2">חזון וערכים</span> ───────────────────── /vision-and-values
+│   ├── <span class="tree-level2">הכרה בהישגים ובמצוינות</span> ─────────── /recognition
+│   ├── <span class="tree-level2">קיימות ואחריות תאגידית</span> ────────── /sustainability_
+│   └── <span class="tree-level2">הנהלת הקבוצה</span> ───────────────────── /הנהלה
+│
+├── <span class="tree-level1">הפתרונות שלנו (Our Solutions)</span> ────── /our-solutions
+│
+├── <span class="tree-level1">סקרים ותובנות (Surveys)</span> ─────────── blog.manpowergroup.co.il/...
+│   ├── <span class="tree-approved">סקר צפי תעסוקה ✅ APPROVED</span> ────── /meos
+│   ├── <span class="tree-level2">מחסור בכישרונות 2025</span> ────────────── /talent_shorage_2025
+│   └── <span class="tree-level2">מגמות בכוח העבודה 2025</span> ───────────── /workforce-trends-report-2025
+│
+├── <span class="tree-level1">מועמדים (Candidates)</span> ───────────── /candidates
+│
+└── <span class="tree-level1">צרו קשר (Contact)</span> ─────────────── /contact
+            </div>
+        </section>
+
+        <!-- Approved Schemas -->
+        <section class="section">
+            <h2 class="section-title">סכמות מאושרות מהלקוח</h2>
+
+            <!-- Template -->
+            <div class="schema-box">
+                <div class="approved-badge">TEMPLATE - תבנית בסיס</div>
+                <div class="schema-title">תבנית כללית לכל העמודים</div>
+                <div class="schema-path">השתמש בתבנית זו והחלף את המשתנים</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('template-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="template-schema">{
+  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org"</span>,
+  <span class="json-key">"@type"</span>: <span class="json-string">"BreadcrumbList"</span>,
+  <span class="json-key">"itemListElement"</span>: [
+    {
+      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+      <span class="json-key">"position"</span>: <span class="json-number">1</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"{HOME_NAME}"</span>,
+      <span class="json-key">"item"</span>: <span class="json-string">"{HOME_URL}"</span>
+    },
+    {
+      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+      <span class="json-key">"position"</span>: <span class="json-number">2</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"{LEVEL_2_NAME}"</span>,
+      <span class="json-key">"item"</span>: <span class="json-string">"{LEVEL_2_URL}"</span>
+    },
+    {
+      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+      <span class="json-key">"position"</span>: <span class="json-number">3</span>,
+      <span class="json-key">"name"</span>: <span class="json-string">"{CURRENT_PAGE_NAME}"</span>
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Approved Employment Survey -->
+            <div class="schema-box" style="border-right-color: #10b981;">
+                <div class="approved-badge">✅ APPROVED - מאושר ליישום</div>
+                <div class="schema-title">סקר צפי תעסוקה (Employment Survey)</div>
+                <div class="schema-path">בית → סקרים ותובנות → סקר צפי תעסוקה</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('approved-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="approved-schema">{
+  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org/"</span>,
+  <span class="json-key">"@type"</span>: <span class="json-string">"BreadcrumbList"</span>,
+  <span class="json-key">"itemListElement"</span>: [{
+    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+    <span class="json-key">"position"</span>: <span class="json-number">1</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"בית"</span>,
+    <span class="json-key">"item"</span>: <span class="json-string">"https://manpowergroup.co.il/"</span>
+  },{
+    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+    <span class="json-key">"position"</span>: <span class="json-number">2</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"סקרים ותובנות"</span>,
+    <span class="json-key">"item"</span>: <span class="json-string">"https://blog.manpowergroup.co.il/%D7%9E%D7%92%D7%96%D7%99%D7%9F-%D7%A1%D7%A7%D7%A8%D7%99%D7%9D-%D7%92%D7%9C%D7%95%D7%91%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%95%D7%AA%D7%95%D7%91%D7%A0%D7%95%D7%AA-%D7%91%D7%AA%D7%97%D7%95%D7%9D-%D7%9E%D7%A9%D7%90%D7%91%D7%99-%D7%94%D7%90%D7%A0%D7%95%D7%A9"</span>
+  },{
+    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
+    <span class="json-key">"position"</span>: <span class="json-number">3</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"סקר צפי תעסוקה"</span>
+  }]
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Pages Schemas -->
+        <section class="section">
+            <h2 class="section-title">סכמות לכל העמודים</h2>
+
+            <h3 style="color: #00d4ff; margin-bottom: 20px; font-size: 18px;">רמה 1 - עמודים ראשיים (2 שכבות)</h3>
+
+            <!-- About Us -->
+            <div class="schema-box">
+                <div class="schema-title">אודותינו (About Us)</div>
+                <div class="schema-path">בית → אודותינו</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('about-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="about-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Our Solutions -->
+            <div class="schema-box">
+                <div class="schema-title">הפתרונות שלנו (Our Solutions)</div>
+                <div class="schema-path">בית → הפתרונות שלנו</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('solutions-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="solutions-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "הפתרונות שלנו"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Candidates -->
+            <div class="schema-box">
+                <div class="schema-title">מועמדים (Candidates)</div>
+                <div class="schema-path">בית → מועמדים</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('candidates-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="candidates-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מועמדים"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div class="schema-box">
+                <div class="schema-title">צרו קשר (Contact)</div>
+                <div class="schema-path">בית → צרו קשר</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('contact-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="contact-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "צרו קשר"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color: #a78bfa; margin: 40px 0 20px; font-size: 18px;">רמה 2 - תתי עמודים (3 שכבות)</h3>
+
+            <!-- Vision & Values -->
+            <div class="schema-box">
+                <div class="schema-title">חזון וערכים (Vision & Values)</div>
+                <div class="schema-path">בית → אודותינו → חזון וערכים</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('vision-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="vision-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו",
+      "item": "https://manpowergroup.co.il/about-us"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "חזון וערכים"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recognition -->
+            <div class="schema-box">
+                <div class="schema-title">הכרה בהישגים ובמצוינות (Recognition)</div>
+                <div class="schema-path">בית → אודותינו → הכרה בהישגים ובמצוינות</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('recognition-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="recognition-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו",
+      "item": "https://manpowergroup.co.il/about-us"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "הכרה בהישגים ובמצוינות"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sustainability -->
+            <div class="schema-box">
+                <div class="schema-title">קיימות ואחריות תאגידית (Sustainability)</div>
+                <div class="schema-path">בית → אודותינו → קיימות ואחריות תאגידית</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('sustainability-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="sustainability-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו",
+      "item": "https://manpowergroup.co.il/about-us"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "קיימות ואחריות תאגידית"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leadership -->
+            <div class="schema-box">
+                <div class="schema-title">הנהלת הקבוצה (Leadership)</div>
+                <div class="schema-path">בית → אודותינו → הנהלת הקבוצה</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('leadership-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="leadership-schema">{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו",
+      "item": "https://manpowergroup.co.il/about-us"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "הנהלת הקבוצה"
+    }
+  ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Talent Shortage -->
+            <div class="schema-box">
+                <div class="schema-title">מחסור בכישרונות 2025 (Talent Shortage)</div>
+                <div class="schema-path">בית → סקרים ותובנות → מחסור בכישרונות 2025</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('talent-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="talent-schema">{
+  "@context": "https://schema.org/",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "בית",
+    "item": "https://manpowergroup.co.il/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "סקרים ותובנות",
+    "item": "https://blog.manpowergroup.co.il/%D7%9E%D7%92%D7%96%D7%99%D7%9F-%D7%A1%D7%A7%D7%A8%D7%99%D7%9D-%D7%92%D7%9C%D7%95%D7%91%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%95%D7%AA%D7%95%D7%91%D7%A0%D7%95%D7%AA-%D7%91%D7%AA%D7%97%D7%95%D7%9D-%D7%9E%D7%A9%D7%90%D7%91%D7%99-%D7%94%D7%90%D7%A0%D7%95%D7%A9"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "מחסור בכישרונות 2025"
+  }]
+}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workforce Trends -->
+            <div class="schema-box">
+                <div class="schema-title">מגמות בכוח העבודה 2025 (Workforce Trends)</div>
+                <div class="schema-path">בית → סקרים ותובנות → מגמות בכוח העבודה 2025</div>
+                <div class="schema-wrapper">
+                    <button class="copy-btn" onclick="copySchema('workforce-schema')">העתק</button>
+                    <div class="code-block">
+                        <pre id="workforce-schema">{
+  "@context": "https://schema.org/",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "בית",
+    "item": "https://manpowergroup.co.il/"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "סקרים ותובנות",
+    "item": "https://blog.manpowergroup.co.il/%D7%9E%D7%92%D7%96%D7%99%D7%9F-%D7%A1%D7%A7%D7%A8%D7%99%D7%9D-%D7%92%D7%9C%D7%95%D7%91%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%95%D7%AA%D7%95%D7%91%D7%A0%D7%95%D7%AA-%D7%91%D7%AA%D7%97%D7%95%D7%9D-%D7%9E%D7%A9%D7%90%D7%91%D7%99-%D7%94%D7%90%D7%A0%D7%95%D7%A9"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "מגמות בכוח העבודה 2025"
+  }]
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HubSpot Instructions -->
+        <section class="section">
+            <h2 class="section-title">הוראות יישום ב-HubSpot</h2>
+            <div class="instruction-steps">
+                <div class="instruction-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>כניסה ל-HubSpot</h4>
+                        <p>היכנס ל-Marketing → Website → Website Pages</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>בחירת העמוד</h4>
+                        <p>בחר את העמוד שברצונך לערוך</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>פתיחת הגדרות מתקדמות</h4>
+                        <p>לחץ על Settings → Advanced options</p>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>הוספת הסכמה</h4>
+                        <p>הדבק את הסכמה בשדה Head HTML בתוך תגית script:</p>
+                        <div class="code-block" style="margin-top: 10px;">
+                            <pre>&lt;script type="application/ld+json"&gt;
+{הסכמה כאן}
+&lt;/script&gt;</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="instruction-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>פרסום</h4>
+                        <p>לחץ על Publish לפרסום השינויים</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Checklist -->
+        <section class="section">
+            <h2 class="section-title">רשימת בדיקה לאימות</h2>
+            <ul class="checklist">
+                <li>@context הוא "https://schema.org" או "https://schema.org/"</li>
+                <li>@type הוא "BreadcrumbList"</li>
+                <li>position רץ ברצף: 1, 2, 3...</li>
+                <li>כל ה-URLs מלאים (כולל https://)</li>
+                <li>הפריט האחרון ללא "item" - רק "name"</li>
+                <li>כל הפריטים האמצעיים עם "item"</li>
+                <li>טקסט בעברית לכל ערכי ה-name</li>
+                <li>בדיקה ב-Google Rich Results Test</li>
+            </ul>
+        </section>
+
+        <!-- Pages Summary Table -->
+        <section class="section">
+            <h2 class="section-title">טבלת סיכום - כל העמודים</h2>
+            <table class="pages-table">
+                <thead>
+                    <tr>
+                        <th>עמוד</th>
+                        <th>נתיב Breadcrumb</th>
+                        <th>רמה</th>
+                        <th>סטטוס</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>אודותינו</td>
+                        <td>בית → אודותינו</td>
+                        <td><span class="level-badge level-1">רמה 1</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>חזון וערכים</td>
+                        <td>בית → אודותינו → חזון וערכים</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>הכרה בהישגים</td>
+                        <td>בית → אודותינו → הכרה בהישגים</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>קיימות ואחריות</td>
+                        <td>בית → אודותינו → קיימות ואחריות</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>הנהלת הקבוצה</td>
+                        <td>בית → אודותינו → הנהלת הקבוצה</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>הפתרונות שלנו</td>
+                        <td>בית → הפתרונות שלנו</td>
+                        <td><span class="level-badge level-1">רמה 1</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                        <td>סקר צפי תעסוקה</td>
+                        <td>בית → סקרים ותובנות → סקר צפי תעסוקה</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td class="status-approved">✅ מאושר</td>
+                    </tr>
+                    <tr>
+                        <td>מחסור בכישרונות 2025</td>
+                        <td>בית → סקרים ותובנות → מחסור בכישרונות</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>מגמות בכוח העבודה</td>
+                        <td>בית → סקרים ותובנות → מגמות בכוח העבודה</td>
+                        <td><span class="level-badge level-2">רמה 2</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>מועמדים</td>
+                        <td>בית → מועמדים</td>
+                        <td><span class="level-badge level-1">רמה 1</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                    <tr>
+                        <td>צרו קשר</td>
+                        <td>בית → צרו קשר</td>
+                        <td><span class="level-badge level-1">רמה 1</span></td>
+                        <td>ממתין</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <footer>
+            <p>הוכן על ידי צוות SEO של Nadav Digital</p>
+            <p style="margin-top: 10px;">
+                <a href="https://docs.google.com/document/d/13dLG7zAy4s1NjmPInzMJeKi2LaxNQZk_s6jZP6PL20U/edit" class="footer-link" target="_blank">
+                    📄 מסמך הסכמות המאושרות
+                </a>
+                &nbsp;|&nbsp;
+                <a href="https://search.google.com/test/rich-results" class="footer-link" target="_blank">
+                    🔍 Google Rich Results Test
+                </a>
+            </p>
+            <p style="margin-top: 15px; font-size: 12px; color: #666;">עודכן לאחרונה: ינואר 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        function copySchema(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'הועתק!';
+                btn.style.background = 'rgba(16, 185, 129, 0.3)';
+                btn.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                btn.style.color = '#10b981';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'rgba(0, 212, 255, 0.2)';
+                    btn.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+                    btn.style.color = '#00d4ff';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
