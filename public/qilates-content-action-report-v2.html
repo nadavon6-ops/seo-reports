@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QILATES Content Action Report V2 | תוכנית פעולה לתוכן</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --accent: #38b2ac;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --info: #4299e1;
+            --new-green: #22c55e;
+            --optimize-blue: #3b82f6;
+            --add-orange: #f97316;
+            --critical-red: #dc2626;
+            --bg-light: #f7fafc;
+            --text-dark: #2d3748;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: var(--accent);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* Report Purpose Section */
+        .purpose-section {
+            background: white;
+            border-right: 5px solid var(--accent);
+            margin: 30px auto;
+            max-width: 1200px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .purpose-section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .purpose-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .purpose-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .purpose-card h3 {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .purpose-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .purpose-card li {
+            padding: 5px 0;
+            padding-right: 20px;
+            position: relative;
+        }
+
+        .purpose-card li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Critical Alert Box */
+        .critical-alert {
+            background: #fef2f2;
+            border: 2px solid var(--critical-red);
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin: 30px auto;
+            max-width: 1200px;
+        }
+
+        .critical-alert h3 {
+            color: var(--critical-red);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .critical-alert h3::before {
+            content: "⚠️";
+        }
+
+        .critical-alert ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .critical-alert li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+            border-bottom: 1px dashed #fecaca;
+        }
+
+        .critical-alert li::before {
+            content: "!";
+            position: absolute;
+            right: 0;
+            background: var(--critical-red);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Legend */
+        .legend {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .legend h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .badge-new {
+            background: var(--new-green);
+            color: white;
+        }
+
+        .badge-optimize {
+            background: var(--optimize-blue);
+            color: white;
+        }
+
+        .badge-critical {
+            background: var(--critical-red);
+            color: white;
+        }
+
+        /* Navigation */
+        .nav-section {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .nav-section h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: var(--bg-light);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .nav-link .badge {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+        }
+
+        /* Individual Page Links */
+        .page-link-card {
+            display: block;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            border-right: 5px solid transparent;
+        }
+
+        .page-link-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .page-link-card.new-type {
+            border-right-color: var(--new-green);
+        }
+
+        .page-link-card.optimize-type {
+            border-right-color: var(--optimize-blue);
+        }
+
+        .page-link-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .page-link-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .target-url {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--text-dark);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .page-link-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Content Section */
+        .content-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* Page Cards */
+        .page-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .page-header {
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-header.new-page {
+            background: linear-gradient(135deg, #22c55e15 0%, #22c55e05 100%);
+            border-bottom: 3px solid var(--new-green);
+        }
+
+        .page-header.optimize-page {
+            background: linear-gradient(135deg, #3b82f615 0%, #3b82f605 100%);
+            border-bottom: 3px solid var(--optimize-blue);
+        }
+
+        .page-title-area h2 {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .page-body {
+            padding: 30px;
+        }
+
+        /* Action Summary Box */
+        .action-summary {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+        }
+
+        .action-summary h4 {
+            color: #92400e;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-summary h4::before {
+            content: "⚡";
+        }
+
+        .action-summary p {
+            font-size: 1.05rem;
+            color: #78350f;
+            font-weight: 500;
+        }
+
+        /* Details Grid */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .detail-box {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-box h5 {
+            color: var(--secondary);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .detail-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-box li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .detail-box li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-box li::before {
+            content: "→";
+            position: absolute;
+            right: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Existing vs New Content */
+        .existing-content-box {
+            background: #fef3c7;
+            border-right: 4px solid #f59e0b;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .existing-content-box h6 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .existing-content-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .existing-content-box li {
+            padding: 4px 0;
+            color: #78350f;
+            font-size: 0.9rem;
+        }
+
+        .existing-content-box li::before {
+            content: "✓ ";
+            color: #d97706;
+        }
+
+        .new-content-highlight {
+            background: #dcfce7;
+            border-right: 4px solid var(--new-green);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .new-content-highlight h6 {
+            color: #166534;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .new-content-highlight p, .new-content-highlight ul {
+            color: #15803d;
+            font-size: 0.9rem;
+        }
+
+        .new-content-highlight ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .new-content-highlight li {
+            padding: 4px 0;
+        }
+
+        .new-content-highlight li::before {
+            content: "➕ ";
+            color: var(--new-green);
+        }
+
+        /* URL Migration Alert */
+        .url-alert {
+            background: #fef2f2;
+            border: 2px solid var(--critical-red);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .url-alert h6 {
+            color: var(--critical-red);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .url-alert h6::before {
+            content: "⚠️";
+        }
+
+        .url-alert .old-url, .url-alert .new-url {
+            font-family: monospace;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 5px 0;
+            display: block;
+            font-size: 0.85rem;
+        }
+
+        .url-alert .old-url {
+            background: #fee2e2;
+            color: #991b1b;
+            text-decoration: line-through;
+        }
+
+        .url-alert .new-url {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-item {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Implementation Checklist */
+        .checklist {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .checklist h5 {
+            color: #166534;
+            margin-bottom: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #86efac;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .summary-table th, .summary-table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-table th {
+            background: var(--primary);
+            color: white;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+
+        .footer p {
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+            }
+
+            .stats-row {
+                justify-content: center;
+            }
+
+            .nav-link {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .page-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>תוכנית פעולה לתוכן | QILATES</h1>
+        <p class="subtitle">דוח פעולות מובנה לתוכן "פילאטיס לגברים" - מוכן לביצוע</p>
+        <span class="version-badge">גרסה 2.0 - מתוקנת ומלאה</span>
+    </header>
+
+    <!-- Report Purpose Section -->
+    <section class="purpose-section" id="purpose">
+        <h2>📋 מטרת הדוח והנחיות שימוש</h2>
+
+        <div class="purpose-grid">
+            <div class="purpose-card">
+                <h3>🎯 מה הדוח הזה מספק?</h3>
+                <ul>
+                    <li><strong>6 עמודי תוכן נפרדים</strong> עם URLs ייחודיים</li>
+                    <li>סיווג ברור: <strong>עמוד חדש</strong> או <strong>אופטימיזציה</strong></li>
+                    <li>פעולות נדרשות ספציפיות לכל עמוד</li>
+                    <li>הבחנה ברורה בין תוכן קיים לתוכן מומלץ</li>
+                </ul>
+            </div>
+
+            <div class="purpose-card">
+                <h3>👥 למי הדוח מיועד?</h3>
+                <ul>
+                    <li><strong>ללקוח:</strong> אישור ומעקב התקדמות</li>
+                    <li><strong>לצוות הביצוע:</strong> הנחיות עבודה ברורות</li>
+                    <li><strong>לכותבי התוכן:</strong> מה לכתוב ואיפה</li>
+                    <li><strong>למפתחים:</strong> URLs וסכמות נדרשים</li>
+                </ul>
+            </div>
+
+            <div class="purpose-card">
+                <h3>📝 למה "פילאטיס לגברים"?</h3>
+                <ul>
+                    <li>פער תוכן משמעותי בשוק הישראלי</li>
+                    <li>נישה עם תחרות נמוכה ופוטנציאל גבוה</li>
+                    <li>מילות מפתח עם נפח חיפוש הולך וגדל</li>
+                    <li>התאמה מושלמת לקהל היעד של QILATES רחובות</li>
+                </ul>
+            </div>
+
+            <div class="purpose-card">
+                <h3>📖 איך להשתמש בדוח?</h3>
+                <ul>
+                    <li>כל עמוד = קישור נפרד בניווט</li>
+                    <li>קרא את תיבת הפעולה הצהובה קודם</li>
+                    <li>זהה תוכן קיים (צהוב) vs חדש (ירוק)</li>
+                    <li>השתמש בצ'קליסט למעקב</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Critical Alerts -->
+    <div class="critical-alert">
+        <h3>נקודות קריטיות לתשומת לב</h3>
+        <ul>
+            <li><strong>עמוד קיים עם URL בעברית:</strong> "תרגילי פילאטיס לגברים בבית" - דורש העברה ל-URL באנגלית</li>
+            <li><strong>5 עמודים חדשים + 1 לאופטימיזציה:</strong> סה"כ 6 עמודי תוכן</li>
+            <li><strong>סדר העלאה:</strong> Hub קודם, אח"כ Spokes, לבסוף העמוד הקיים</li>
+        </ul>
+    </div>
+
+    <!-- Legend -->
+    <section class="legend">
+        <h3>מקרא סוגי פעולות</h3>
+        <div class="legend-items">
+            <div class="legend-item">
+                <span class="badge badge-new">עמוד חדש</span>
+                <span>יצירת עמוד חדש מאפס - 5 עמודים</span>
+            </div>
+            <div class="legend-item">
+                <span class="badge badge-optimize">אופטימיזציה</span>
+                <span>שיפור ועדכון עמוד קיים - 1 עמוד</span>
+            </div>
+            <div class="legend-item">
+                <span class="badge badge-critical">דורש תיקון URL</span>
+                <span>העברה מעברית לאנגלית</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Summary Table -->
+    <section class="purpose-section">
+        <h2>📊 סיכום מהיר - כל העמודים</h2>
+        <table class="summary-table">
+            <thead>
+                <tr>
+                    <th>עמוד</th>
+                    <th>URL יעד</th>
+                    <th>סוג פעולה</th>
+                    <th>מילים</th>
+                    <th>עדיפות</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. עמוד האב (Hub)</strong></td>
+                    <td><code>/pilates-for-men/</code></td>
+                    <td><span class="badge badge-new">חדש</span></td>
+                    <td>~2,100</td>
+                    <td>קריטית - ראשון!</td>
+                </tr>
+                <tr>
+                    <td><strong>2. פילאטיס לספורטאים</strong></td>
+                    <td><code>/pilates-for-athletes/</code></td>
+                    <td><span class="badge badge-new">חדש</span></td>
+                    <td>~1,500</td>
+                    <td>גבוהה</td>
+                </tr>
+                <tr>
+                    <td><strong>3. רפורמר לגברים</strong></td>
+                    <td><code>/reformer-pilates-for-men/</code></td>
+                    <td><span class="badge badge-new">חדש</span></td>
+                    <td>~1,200</td>
+                    <td>גבוהה</td>
+                </tr>
+                <tr>
+                    <td><strong>4. פילאטיס לכאבי גב</strong></td>
+                    <td><code>/pilates-back-pain-men/</code></td>
+                    <td><span class="badge badge-new">חדש</span></td>
+                    <td>~1,300</td>
+                    <td>גבוהה</td>
+                </tr>
+                <tr>
+                    <td><strong>5. 10 יתרונות לגברים</strong></td>
+                    <td><code>/benefits-pilates-for-men/</code></td>
+                    <td><span class="badge badge-new">חדש</span></td>
+                    <td>~1,400</td>
+                    <td>בינונית</td>
+                </tr>
+                <tr style="background: #fef2f2;">
+                    <td><strong>6. תרגילים בבית</strong></td>
+                    <td><code>/home-pilates-men/</code></td>
+                    <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+                    <td>+600</td>
+                    <td>בינונית + תיקון URL</td>
+                </tr>
+            </tbody>
+        </table>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">* סה"כ: ~8,100 מילים חדשות + ~600 מילים לעדכון</p>
+    </section>
+
+    <!-- Quick Navigation with Separate Links -->
+    <section class="nav-section">
+        <h3>ניווט מהיר - לחץ לפרטים מלאים</h3>
+        <div class="nav-grid">
+            <a href="qilates-page-hub.html" class="nav-link">
+                <span class="badge badge-new">חדש</span>
+                <span>1. עמוד האב - פילאטיס לגברים</span>
+            </a>
+            <a href="qilates-page-athletes.html" class="nav-link">
+                <span class="badge badge-new">חדש</span>
+                <span>2. פילאטיס לספורטאים</span>
+            </a>
+            <a href="qilates-page-reformer.html" class="nav-link">
+                <span class="badge badge-new">חדש</span>
+                <span>3. רפורמר לגברים</span>
+            </a>
+            <a href="qilates-page-backpain.html" class="nav-link">
+                <span class="badge badge-new">חדש</span>
+                <span>4. פילאטיס לכאבי גב</span>
+            </a>
+            <a href="qilates-page-benefits.html" class="nav-link">
+                <span class="badge badge-new">חדש</span>
+                <span>5. 10 יתרונות לגברים</span>
+            </a>
+            <a href="qilates-page-home.html" class="nav-link" style="border-color: var(--optimize-blue);">
+                <span class="badge badge-optimize">אופטימיזציה</span>
+                <span>6. תרגילים בבית (קיים)</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Detailed Page Sections -->
+    <main class="content-section">
+        <h2 class="section-title">פירוט מלא לכל עמוד</h2>
+
+        <!-- PAGE 1: HUB PAGE -->
+        <article class="page-card" id="page-hub">
+            <div class="page-header new-page">
+                <div class="page-title-area">
+                    <span class="badge badge-new">עמוד חדש ליצירה</span>
+                    <h2>1. עמוד האב: פילאטיס לגברים - המדריך המקיף</h2>
+                    <div class="target-url">qilates.co.il/pilates-for-men/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת עמוד חדש מאפס</strong> - עמוד נחיתה מרכזי (Hub) המקשר לכל מאמרי המשנה. זהו העמוד החשוב ביותר ויש להעלות אותו ראשון.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <h5>📄 סקציות ליצירה</h5>
+                        <ul>
+                            <li>Hero + כותרת עם מילת מפתח ראשית</li>
+                            <li>"מיתוסים ומציאות" - 5 מיתוסים</li>
+                            <li>8 יתרונות מבוססי מחקר</li>
+                            <li>טבלת השוואה: פילאטיס vs חדר כושר</li>
+                            <li>שירותים: פרטי, קבוצתי, ציוד</li>
+                            <li>3 המלצות לקוחות</li>
+                            <li>6 שאלות נפוצות (FAQ)</li>
+                            <li>CTA - שיעור ניסיון</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🔗 קישורים פנימיים (חובה)</h5>
+                        <ul>
+                            <li>→ /pilates-for-athletes/</li>
+                            <li>→ /reformer-pilates-for-men/</li>
+                            <li>→ /pilates-back-pain-men/</li>
+                            <li>→ /benefits-pilates-for-men/</li>
+                            <li>→ /home-pilates-men/</li>
+                            <li>→ עמוד צור קשר</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🏷️ SEO טכני</h5>
+                        <ul>
+                            <li>Title: פילאטיס לגברים | QILATES רחובות</li>
+                            <li>Meta Description: 155 תווים + CTA</li>
+                            <li>H1: פילאטיס לגברים</li>
+                            <li>Schema: Service + FAQPage + LocalBusiness</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>📊 מטריקות יעד</h5>
+                        <ul>
+                            <li>אורך: ~2,100 מילים</li>
+                            <li>ציטוטי מחקר: 8+</li>
+                            <li>תמונות: 4-6 ממותגות</li>
+                            <li>Internal links: 5 לspokes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="new-content-highlight">
+                    <h6>💡 תוכן מומלץ - ספורטאים מפורסמים</h6>
+                    <p>רשימת ספורטאים מפורסמים שמתאמנים בפילאטיס: לברון ג'יימס, טייגר וודס, כריסטיאנו רונאלדו. מפריך מיתוס "פילאטיס לנשים בלבד".</p>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט לביצוע</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת תוכן מלא (~2,100 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הכנת 4-6 תמונות</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>יצירת Schema JSON-LD</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הגדרת Meta Tags</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העלאה ל-qilates.co.il/pilates-for-men/</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>בדיקת 5 קישורים פנימיים</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>שליחה ל-Search Console</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- PAGE 2: Athletes -->
+        <article class="page-card" id="page-athletes">
+            <div class="page-header new-page">
+                <div class="page-title-area">
+                    <span class="badge badge-new">עמוד חדש ליצירה</span>
+                    <h2>2. מאמר: פילאטיס לספורטאים מקצועיים</h2>
+                    <div class="target-url">qilates.co.il/pilates-for-athletes/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת מאמר חדש מאפס</strong> - מאמר מעמיק על יתרונות פילאטיס לספורטאים. כולל מקרי בוחן, נתוני מחקר, ותוכנית אימונים.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <h5>📄 סקציות ליצירה</h5>
+                        <ul>
+                            <li>מבוא - למה ספורטאים בוחרים פילאטיס</li>
+                            <li>5 יתרונות מבוססי מחקר</li>
+                            <li>3 מקרי בוחן: ספורטאים מפורסמים</li>
+                            <li>תוכנית אימונים שבועית</li>
+                            <li>סקציית "לפני ואחרי"</li>
+                            <li>5 שאלות נפוצות</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🎯 מילות מפתח</h5>
+                        <ul>
+                            <li><strong>ראשי:</strong> פילאטיס לספורטאים</li>
+                            <li>פילאטיס לשיפור ביצועים</li>
+                            <li>פילאטיס מניעת פציעות</li>
+                            <li>אימון core לספורטאים</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="new-content-highlight">
+                    <h6>💡 תוכן מומלץ - מקרה בוחן ישראלי</h6>
+                    <p>הוספת מקרה בוחן של ספורטאי ישראלי (כדורגלן/כדורסלן) - מחזק לוקליזציה ואמינות.</p>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">~1,500</div>
+                        <div class="stat-label">מילים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">מחקרים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">FAQ</div>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת תוכן (~1,500 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>איסוף מקורות מחקר</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הכנת תמונות/אינפוגרפיקה</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>Schema FAQ</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישור מ/אל Hub</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- PAGE 3: Reformer -->
+        <article class="page-card" id="page-reformer">
+            <div class="page-header new-page">
+                <div class="page-title-area">
+                    <span class="badge badge-new">עמוד חדש ליצירה</span>
+                    <h2>3. מאמר: רפורמר פילאטיס לגברים</h2>
+                    <div class="target-url">qilates.co.il/reformer-pilates-for-men/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת מאמר חדש מאפס</strong> - מדריך על אימוני רפורמר לגברים. מסביר הציוד, יתרונות ספציפיים, ולמה לנסות.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <h5>📄 סקציות ליצירה</h5>
+                        <ul>
+                            <li>מה זה מכשיר רפורמר</li>
+                            <li>6 יתרונות ספציפיים לגברים</li>
+                            <li>השוואה: רפורמר vs מזרן</li>
+                            <li>תיאור אימון טיפוסי</li>
+                            <li>למי מתאים (גיל, כושר)</li>
+                            <li>5 שאלות נפוצות</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🎯 מילות מפתח</h5>
+                        <ul>
+                            <li><strong>ראשי:</strong> רפורמר פילאטיס</li>
+                            <li>פילאטיס מכשירים</li>
+                            <li>רפורמר פילאטיס רחובות</li>
+                            <li>מחיר רפורמר פילאטיס</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="new-content-highlight">
+                    <h6>💡 תוכן מומלץ - וידאו</h6>
+                    <p>וידאו קצר (30-60 שניות) המדגים תרגיל רפורמר בסיסי. מגביר זמן שהייה ודירוג.</p>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">~1,200</div>
+                        <div class="stat-label">מילים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">FAQ</div>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת תוכן (~1,200 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>צילום תמונות רפורמר</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>וידאו תרגיל (אופציונלי)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישור מ/אל Hub</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- PAGE 4: Back Pain -->
+        <article class="page-card" id="page-backpain">
+            <div class="page-header new-page">
+                <div class="page-title-area">
+                    <span class="badge badge-new">עמוד חדש ליצירה</span>
+                    <h2>4. מאמר: פילאטיס לכאבי גב לגברים</h2>
+                    <div class="target-url">qilates.co.il/pilates-back-pain-men/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת מאמר חדש מאפס</strong> - מאמר רפואי-מקצועי על פילאטיס לכאבי גב. כולל עדויות קליניות ותרגילים ספציפיים.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <h5>📄 סקציות ליצירה</h5>
+                        <ul>
+                            <li>גורמי כאבי גב בגברים</li>
+                            <li>איך פילאטיס מחזק שרירי ליבה</li>
+                            <li>5 תרגילים לכאבי גב תחתון</li>
+                            <li>ציטוטים ממחקרים קליניים</li>
+                            <li>סיפור הצלחה של לקוח</li>
+                            <li>מתי לראות רופא (אזהרות)</li>
+                            <li>6 שאלות נפוצות</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>⚠️ דגשים מיוחדים (YMYL)</h5>
+                        <ul>
+                            <li>Disclaimer - לא מחליף ייעוץ רפואי</li>
+                            <li>המלצה להתייעץ עם רופא</li>
+                            <li>ציטוט מקורות רפואיים</li>
+                            <li>הצגת הסמכות QILATES</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="new-content-highlight">
+                    <h6>💡 תוכן מומלץ - ציטוט מומחה</h6>
+                    <p>ציטוט מפיזיותרפיסט או אורתופד ישראלי על יתרונות הפילאטיס לגב - מחזק E-E-A-T.</p>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">~1,300</div>
+                        <div class="stat-label">מילים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">מחקרים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">תרגילים</div>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת תוכן (~1,300 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>מקורות רפואיים</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הצהרת Disclaimer</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>איורי תרגילים</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישור מ/אל Hub</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- PAGE 5: Benefits (CORRECTED - NEW, not ADD) -->
+        <article class="page-card" id="page-benefits">
+            <div class="page-header new-page">
+                <div class="page-title-area">
+                    <span class="badge badge-new">עמוד חדש ליצירה</span>
+                    <h2>5. מאמר: 10 יתרונות הפילאטיס לגברים</h2>
+                    <div class="target-url">qilates.co.il/benefits-pilates-for-men/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת מאמר חדש מאפס</strong> - מאמר ליסטיקל עם 10 יתרונות מבוססי מחקר. פורמט קל לקריאה עם נתונים.</p>
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-box">
+                        <h5>📄 10 היתרונות</h5>
+                        <ul>
+                            <li>1. חיזוק שרירי הליבה</li>
+                            <li>2. שיפור גמישות</li>
+                            <li>3. מניעת פציעות</li>
+                            <li>4. שיפור יציבה</li>
+                            <li>5. הפחתת סטרס</li>
+                            <li>6. שיפור ביצועים מיניים</li>
+                            <li>7. שיפור איזון וקואורדינציה</li>
+                            <li>8. האטת הזדקנות</li>
+                            <li>9. שיפור איכות השינה</li>
+                            <li>10. חיזוק בריאות הלב</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🎯 מילות מפתח</h5>
+                        <ul>
+                            <li><strong>ראשי:</strong> יתרונות פילאטיס לגברים</li>
+                            <li>פילאטיס לגברים יתרונות</li>
+                            <li>למה פילאטיס לגברים</li>
+                            <li>פילאטיס טוב לגברים</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="new-content-highlight">
+                    <h6>💡 תוכן מומלץ - טבלת השוואה</h6>
+                    <p>טבלה ויזואלית: פילאטיס vs ריצה vs חדר כושר vs יוגה. קטגוריות: סיכון פציעה, עלות, זמן, התאמה לגיל.</p>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">~1,400</div>
+                        <div class="stat-label">מילים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">10</div>
+                        <div class="stat-label">יתרונות</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">FAQ</div>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת 10 יתרונות (~1,400 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>מחקר לכל יתרון</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>טבלת השוואה</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>אינפוגרפיקה</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישור מ/אל Hub</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- PAGE 6: Home Exercises (EXISTS - OPTIMIZE) -->
+        <article class="page-card" id="page-home">
+            <div class="page-header optimize-page">
+                <div class="page-title-area">
+                    <span class="badge badge-optimize">אופטימיזציה לעמוד קיים</span>
+                    <span class="badge badge-critical" style="margin-right: 10px;">דורש תיקון URL</span>
+                    <h2>6. מאמר: תרגילי פילאטיס לגברים בבית</h2>
+                    <div class="target-url">qilates.co.il/home-pilates-men/</div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="action-summary">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>אופטימיזציה של עמוד קיים + העברת URL</strong> - העמוד קיים עם URL בעברית. יש להעביר לURL באנגלית ולהוסיף תוכן.</p>
+                </div>
+
+                <!-- URL Migration Alert -->
+                <div class="url-alert">
+                    <h6>נדרשת העברת URL (301 Redirect)</h6>
+                    <span class="old-url">❌ נוכחי: /תרגילי-פילאטיס-לגברים-בבית-אימון-חכ/</span>
+                    <span class="new-url">✓ חדש: /home-pilates-men/</span>
+                    <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">יש להגדיר 301 redirect מהכתובת הישנה לחדשה ולעדכן את כל הקישורים הפנימיים.</p>
+                </div>
+
+                <div class="details-grid">
+                    <!-- Existing Content -->
+                    <div class="detail-box" style="background: #fef3c7; border-color: #f59e0b;">
+                        <h5>📋 תוכן קיים (לא לשנות)</h5>
+                        <ul>
+                            <li>✓ מבוא על פילאטיס בבית</li>
+                            <li>✓ 5 תרגילים בסיסיים</li>
+                            <li>✓ טיפים להתחלה</li>
+                            <li>✓ ציוד נדרש</li>
+                        </ul>
+                    </div>
+
+                    <!-- New Content to Add -->
+                    <div class="detail-box" style="background: #dcfce7; border-color: #22c55e;">
+                        <h5>➕ תוכן חדש להוספה</h5>
+                        <ul>
+                            <li>🆕 5 תרגילים מתקדמים</li>
+                            <li>🆕 תוכנית אימונים שבועית לבית</li>
+                            <li>🆕 סקציית "טעויות נפוצות"</li>
+                            <li>🆕 וידאו הדגמה</li>
+                            <li>🆕 5 שאלות FAQ נוספות</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🔗 קישורים להוסיף</h5>
+                        <ul>
+                            <li>חזרה ל: /pilates-for-men/ (Hub)</li>
+                            <li>קישור ל: /benefits-pilates-for-men/</li>
+                            <li>CTA - "רוצה תוצאות מהירות? בואו לסטודיו"</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-box">
+                        <h5>🏷️ עדכוני SEO</h5>
+                        <ul>
+                            <li>עדכון Title באנגלית</li>
+                            <li>Canonical לURL החדש</li>
+                            <li>הוספת 5 שאלות FAQ</li>
+                            <li>עדכון Schema</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">+600</div>
+                        <div class="stat-label">מילים להוספה</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">תרגילים חדשים</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">301 Redirect</div>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט אופטימיזציה</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הגדרת 301 redirect מURL ישן לחדש</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת 5 תרגילים מתקדמים (+400 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת תוכנית שבועית (+200 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>וידאו הדגמה (אופציונלי)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת 5 שאלות FAQ</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>עדכון Meta Tags</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>חיבור קישורים ל-Hub</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>עדכון כל הקישורים הפנימיים באתר</span></div>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- Final Summary -->
+    <section class="purpose-section" style="border-right-color: #22c55e;">
+        <h2>📊 סיכום כולל - תוכנית פעולה</h2>
+
+        <div class="purpose-grid">
+            <div class="purpose-card" style="background: #dcfce7;">
+                <h3>🆕 עמודים חדשים (5)</h3>
+                <ul>
+                    <li>Hub: /pilates-for-men/ (~2,100)</li>
+                    <li>/pilates-for-athletes/ (~1,500)</li>
+                    <li>/reformer-pilates-for-men/ (~1,200)</li>
+                    <li>/pilates-back-pain-men/ (~1,300)</li>
+                    <li>/benefits-pilates-for-men/ (~1,400)</li>
+                </ul>
+                <p style="margin-top: 10px; font-weight: bold;">סה"כ: ~7,500 מילים חדשות</p>
+            </div>
+
+            <div class="purpose-card" style="background: #dbeafe;">
+                <h3>🔧 אופטימיזציה (1)</h3>
+                <ul>
+                    <li>/home-pilates-men/ (+600 מילים)</li>
+                    <li>301 Redirect מURL עברי</li>
+                    <li>5 תרגילים חדשים</li>
+                    <li>תוכנית שבועית</li>
+                </ul>
+                <p style="margin-top: 10px; font-weight: bold;">סה"כ: +600 מילים</p>
+            </div>
+
+            <div class="purpose-card">
+                <h3>📈 סיכום מספרי</h3>
+                <ul>
+                    <li>6 עמודי תוכן סה"כ</li>
+                    <li>~8,100 מילים סה"כ</li>
+                    <li>31 שאלות FAQ</li>
+                    <li>6 Schema Markups</li>
+                    <li>1 URL Migration</li>
+                </ul>
+            </div>
+
+            <div class="purpose-card">
+                <h3>📅 לו"ז מומלץ</h3>
+                <ul>
+                    <li><strong>שבוע 1:</strong> Hub (קריטי - ראשון!)</li>
+                    <li><strong>שבוע 2:</strong> Athletes + Reformer</li>
+                    <li><strong>שבוע 3:</strong> Back Pain + Benefits</li>
+                    <li><strong>שבוע 4:</strong> Home (+ URL migration)</li>
+                    <li><strong>שבוע 5:</strong> Internal linking + GSC</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>QILATES Content Action Report V2.0 | Nadav Digital</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">6 עמודי תוכן | 5 חדשים + 1 אופטימיזציה | ~8,100 מילים</p>
+    </footer>
+
+</body>
+</html>
