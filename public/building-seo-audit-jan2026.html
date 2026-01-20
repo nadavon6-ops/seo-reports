@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דו"ח ביקורת SEO טכני - building.org.il</title>
+    <style>
+        :root {
+            --critical: #dc2626;
+            --critical-bg: #fef2f2;
+            --high: #ea580c;
+            --high-bg: #fff7ed;
+            --medium: #ca8a04;
+            --medium-bg: #fefce8;
+            --low: #16a34a;
+            --low-bg: #f0fdf4;
+            --primary: #1e40af;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header .meta {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card.critical { border-right: 4px solid var(--critical); }
+        .stat-card.high { border-right: 4px solid var(--high); }
+        .stat-card.medium { border-right: 4px solid var(--medium); }
+        .stat-card.low { border-right: 4px solid var(--low); }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card.critical .stat-number { color: var(--critical); }
+        .stat-card.high .stat-number { color: var(--high); }
+        .stat-card.medium .stat-number { color: var(--medium); }
+        .stat-card.low .stat-number { color: var(--low); }
+
+        .stat-label {
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .summary-text {
+            font-size: 1.1rem;
+            color: var(--gray-700);
+            margin-bottom: 20px;
+        }
+
+        .top-10-list {
+            list-style: none;
+        }
+
+        .top-10-list li {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .top-10-list li.critical { background: var(--critical-bg); border-right: 4px solid var(--critical); }
+        .top-10-list li.high { background: var(--high-bg); border-right: 4px solid var(--high); }
+
+        .issue-number {
+            background: var(--primary);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .issue-content h4 {
+            margin-bottom: 5px;
+            color: var(--gray-900);
+        }
+
+        .issue-content p {
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        .issue-content code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .severity-section {
+            margin-bottom: 30px;
+        }
+
+        .severity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .severity-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .severity-badge.critical { background: var(--critical); color: white; }
+        .severity-badge.high { background: var(--high); color: white; }
+        .severity-badge.medium { background: var(--medium); color: white; }
+        .severity-badge.low { background: var(--low); color: white; }
+
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .issues-table th {
+            background: var(--gray-100);
+            padding: 12px 15px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .issues-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: top;
+        }
+
+        .issues-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .issues-table a {
+            color: var(--primary);
+            text-decoration: none;
+            word-break: break-all;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .issues-table a:hover {
+            text-decoration: underline;
+        }
+
+        .priority-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .priority-badge.immediate { background: var(--critical-bg); color: var(--critical); }
+        .priority-badge.week { background: var(--high-bg); color: var(--high); }
+        .priority-badge.month { background: var(--medium-bg); color: var(--medium); }
+        .priority-badge.ongoing { background: var(--low-bg); color: var(--low); }
+
+        .checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .checklist-category {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .checklist-category h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist-category ul {
+            list-style: none;
+        }
+
+        .checklist-category li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .checklist-category li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-category li::before {
+            content: "☐";
+            color: var(--primary);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 1rem;
+            direction: rtl;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .risk-assessment {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .risk-card {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .risk-card.high-risk {
+            background: var(--critical-bg);
+            border: 1px solid var(--critical);
+        }
+
+        .risk-card.medium-risk {
+            background: var(--medium-bg);
+            border: 1px solid var(--medium);
+        }
+
+        .risk-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .assumption-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .assumption-box h4 {
+            color: #1d4ed8;
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body { background: white; }
+            .container { max-width: 100%; }
+            section { box-shadow: none; border: 1px solid var(--gray-200); }
+            .search-box { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .stat-number { font-size: 2rem; }
+            .issues-table { font-size: 0.8rem; }
+            .issues-table th, .issues-table td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>דו"ח ביקורת SEO טכני</h1>
+            <div class="meta">
+                <strong>אתר:</strong> building.org.il |
+                <strong>תאריך סריקה:</strong> 15 בינואר 2026 |
+                <strong>סה"כ עמודים:</strong> 324 עמודי HTML
+            </div>
+        </header>
+
+        <!-- סיכום מנהלים -->
+        <section>
+            <h2>סיכום מנהלים</h2>
+            <p class="summary-text">
+                בוצעה סריקה מקיפה של אתר מרכז הבנייה הישראלי לאחר שינויי עיצוב ותבנית שבוצעו לפני כ-1-2 חודשים.
+                הסריקה זיהתה <strong>160 שגיאות 4xx פנימיות</strong>, כולל שגיאת קריטית עם 138 קישורים נכנסים.
+                בנוסף, נמצאו <strong>249 עמודים (76.85%) ללא תיאור מטא</strong> ו-<strong>אפס סכמות מובנות</strong> באתר כולו.
+                יש לטפל בבעיות הקריטיות באופן מיידי כדי למנוע פגיעה בדירוג ובחוויית המשתמש.
+            </p>
+
+            <div class="assumption-box">
+                <h4>הנחות עבודה</h4>
+                <ul>
+                    <li>נתוני תנועה מ-GSC לא היו זמינים בקבצים שהורדו - תעדוף מבוסס על כמות קישורים פנימיים</li>
+                    <li>עמודים עם 0 קישורים נכנסים מסווגים כעדיפות נמוכה יותר</li>
+                    <li>תמונות חסרות ב-wp-content/uploads מניחים שנמחקו בטעות או שהנתיב שונה</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- סטטיסטיקות מהירות -->
+        <div class="stats-grid">
+            <div class="stat-card critical">
+                <div class="stat-number">160</div>
+                <div class="stat-label">שגיאות 4xx פנימיות</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="stat-number">249</div>
+                <div class="stat-label">עמודים ללא תיאור מטא</div>
+            </div>
+            <div class="stat-card high">
+                <div class="stat-number">75</div>
+                <div class="stat-label">עמודים ללא H1</div>
+            </div>
+            <div class="stat-card high">
+                <div class="stat-number">110</div>
+                <div class="stat-label">עמודים עם H1 מרובה</div>
+            </div>
+            <div class="stat-card medium">
+                <div class="stat-number">5,396</div>
+                <div class="stat-label">תמונות כבדות (100KB+)</div>
+            </div>
+            <div class="stat-card critical">
+                <div class="stat-number">0</div>
+                <div class="stat-label">סכמות מובנות</div>
+            </div>
+        </div>
+
+        <!-- 10 הבעיות הקריטיות ביותר -->
+        <section>
+            <h2>10 הבעיות הקריטיות ביותר - לטיפול מיידי</h2>
+            <ol class="top-10-list">
+                <li class="critical">
+                    <span class="issue-number">1</span>
+                    <div class="issue-content">
+                        <h4>שגיאת 404 קריטית - הגנת אימייל של Cloudflare</h4>
+                        <p><code>/cdn-cgi/l/email-protection</code> מחזיר 404 עם <strong>138 קישורים נכנסים</strong>.
+                        הבעיה נגרמת כנראה מתבנית שמקשרת לכתובות אימייל מוגנות. יש לבדוק הגדרות Cloudflare או להסיר קישורים שבורים.</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="issue-number">2</span>
+                    <div class="issue-content">
+                        <h4>אפס סכמות מובנות באתר</h4>
+                        <p>לא זוהו סכמות (Schema.org) באף אחד מ-324 העמודים. חובה להוסיף: Organization, BreadcrumbList, Course (לעמודי קורסים), Article (למאמרים).</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="issue-number">3</span>
+                    <div class="issue-content">
+                        <h4>249 עמודים (76.85%) ללא תיאור מטא</h4>
+                        <p>הרוב המוחלט של העמודים חסרים Meta Description. זה פוגע ב-CTR בתוצאות החיפוש. יש לכתוב תיאורים ייחודיים לכל עמוד.</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="issue-number">4</span>
+                    <div class="issue-content">
+                        <h4>~120 תמונות חסרות מחזירות 404</h4>
+                        <p>קבצי תמונה מ-<code>/wp-content/uploads/2025/11/IMG_*.jpg</code> מחזירים 404. כנראה נמחקו בטעות או שהנתיב שונה. יש לשחזר או להסיר הפניות.</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="issue-number">5</span>
+                    <div class="issue-content">
+                        <h4>75 עמודים (23.15%) ללא כותרת H1</h4>
+                        <p>כותרת H1 חיונית לדירוג ולמבנה העמוד. יש להוסיף H1 ייחודי ותיאורי לכל עמוד.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="issue-number">6</span>
+                    <div class="issue-content">
+                        <h4>110 עמודים (33.95%) עם יותר מ-H1 אחד</h4>
+                        <p>ריבוי H1 פוגע במבנה הסמנטי. יש לוודא H1 יחיד בכל עמוד ולהמיר כותרות נוספות ל-H2/H3.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="issue-number">7</span>
+                    <div class="issue-content">
+                        <h4>הפניה 301 בפוטר - 2,805 מופעים</h4>
+                        <p>הקישור <code>/articles/קורס-קבלני-אינסטלציה/</code> בפוטר מפנה ל-URL אחר. יש לעדכן הקישור ישירות ל-URL הסופי.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="issue-number">8</span>
+                    <div class="issue-content">
+                        <h4>30 עמודים חסומים ב-robots.txt</h4>
+                        <p>עמודים פנימיים חסומים מסריקה. יש לבדוק אם החסימה מכוונת או בטעות.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="issue-number">9</span>
+                    <div class="issue-content">
+                        <h4>5,396 תמונות (53.52%) מעל 100KB</h4>
+                        <p>יותר ממחצית התמונות כבדות מדי. זה פוגע ב-Core Web Vitals וב-LCP. יש לדחוס תמונות ולהמיר ל-WebP.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="issue-number">10</span>
+                    <div class="issue-content">
+                        <h4>עמודי ארכיון תאריכים מחזירים 404</h4>
+                        <p>כתובות כמו <code>/articles/2025/12/08/</code> מחזירות 404. כנראה התבנית שונתה ולא יצרה הפניות. יש להגדיר 301 או להסיר קישורים.</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- הערכת סיכונים -->
+        <section>
+            <h2>הערכת סיכונים</h2>
+            <div class="risk-assessment">
+                <div class="risk-card high-risk">
+                    <h4>סיכון לתנועה אורגנית: גבוה</h4>
+                    <p>76.85% מהעמודים ללא Meta Description פוגע משמעותית ב-CTR. היעדר סכמות מונע הצגת Rich Snippets.</p>
+                </div>
+                <div class="risk-card high-risk">
+                    <h4>סיכון לאינדוקס: גבוה</h4>
+                    <p>160 שגיאות 4xx ו-30 עמודים חסומים ב-robots.txt מבזבזים Crawl Budget ופוגעים באינדוקס.</p>
+                </div>
+                <div class="risk-card medium-risk">
+                    <h4>סיכון Core Web Vitals: בינוני-גבוה</h4>
+                    <p>53.52% תמונות כבדות (מעל 100KB) פוגעות ב-LCP ועלולות לגרום לכישלון ב-CWV.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- בעיות לפי חומרה -->
+        <section>
+            <h2>פירוט בעיות לפי חומרה</h2>
+
+            <!-- קריטי -->
+            <div class="severity-section">
+                <div class="severity-header">
+                    <span class="severity-badge critical">קריטי</span>
+                    <span>- טיפול מיידי תוך 48 שעות</span>
+                </div>
+                <table class="issues-table">
+                    <thead>
+                        <tr>
+                            <th>סוג בעיה</th>
+                            <th>כמות</th>
+                            <th>השפעה על SEO</th>
+                            <th>מה לתקן</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>404 - הגנת אימייל Cloudflare</td>
+                            <td>1 (138 קישורים)</td>
+                            <td>קישורים שבורים, חוויית משתמש גרועה</td>
+                            <td>בדוק הגדרות Cloudflare Email Protection או הסר קישורים</td>
+                        </tr>
+                        <tr>
+                            <td>סכמות מובנות חסרות</td>
+                            <td>324 עמודים (100%)</td>
+                            <td>אין Rich Snippets, פגיעה בנראות</td>
+                            <td>הוסף Organization, BreadcrumbList, Course, Article</td>
+                        </tr>
+                        <tr>
+                            <td>Meta Description חסר</td>
+                            <td>249 עמודים (76.85%)</td>
+                            <td>פגיעה ב-CTR, Google יוצר snippet עצמאי</td>
+                            <td>כתוב תיאור ייחודי 120-155 תווים לכל עמוד</td>
+                        </tr>
+                        <tr>
+                            <td>תמונות חסרות (404)</td>
+                            <td>~120 קבצים</td>
+                            <td>חוויית משתמש גרועה, עמודים שבורים</td>
+                            <td>שחזר תמונות או הסר הפניות מהתוכן</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- גבוה -->
+            <div class="severity-section">
+                <div class="severity-header">
+                    <span class="severity-badge high">גבוה</span>
+                    <span>- טיפול תוך שבוע</span>
+                </div>
+                <table class="issues-table">
+                    <thead>
+                        <tr>
+                            <th>סוג בעיה</th>
+                            <th>כמות</th>
+                            <th>השפעה על SEO</th>
+                            <th>מה לתקן</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>H1 חסר</td>
+                            <td>75 עמודים (23.15%)</td>
+                            <td>פגיעה בדירוג, מבנה לא ברור</td>
+                            <td>הוסף H1 ייחודי ותיאורי לכל עמוד</td>
+                        </tr>
+                        <tr>
+                            <td>H1 מרובה</td>
+                            <td>110 עמודים (33.95%)</td>
+                            <td>בלבול במבנה סמנטי</td>
+                            <td>השאר H1 אחד, המר את השאר ל-H2/H3</td>
+                        </tr>
+                        <tr>
+                            <td>הפניות 301 פנימיות</td>
+                            <td>23 URLs (2,805 מופעים)</td>
+                            <td>בזבוז Crawl Budget, השהיית טעינה</td>
+                            <td>עדכן קישורים ישירות ל-URL הסופי</td>
+                        </tr>
+                        <tr>
+                            <td>חסום ב-robots.txt</td>
+                            <td>30 עמודים</td>
+                            <td>לא ניתן לאינדוקס</td>
+                            <td>בדוק אם החסימה מכוונת, אם לא - הסר</td>
+                        </tr>
+                        <tr>
+                            <td>404 - עמודי ארכיון תאריכים</td>
+                            <td>~20 URLs</td>
+                            <td>קישורים שבורים</td>
+                            <td>הגדר 301 לעמוד ראשי או הסר קישורים</td>
+                        </tr>
+                        <tr>
+                            <td>1 עמוד עם noindex</td>
+                            <td>1</td>
+                            <td>לא באינדקס</td>
+                            <td>בדוק אם מכוון, אם לא - הסר</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- בינוני -->
+            <div class="severity-section">
+                <div class="severity-header">
+                    <span class="severity-badge medium">בינוני</span>
+                    <span>- טיפול תוך חודש</span>
+                </div>
+                <table class="issues-table">
+                    <thead>
+                        <tr>
+                            <th>סוג בעיה</th>
+                            <th>כמות</th>
+                            <th>השפעה על SEO</th>
+                            <th>מה לתקן</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>תמונות כבדות (100KB+)</td>
+                            <td>5,396 (53.52%)</td>
+                            <td>פגיעה ב-Core Web Vitals (LCP)</td>
+                            <td>דחוס תמונות, המר ל-WebP, השתמש ב-lazy loading</td>
+                        </tr>
+                        <tr>
+                            <td>H1 כפול</td>
+                            <td>119 עמודים (36.73%)</td>
+                            <td>תוכן כפול, בלבול</td>
+                            <td>כתוב H1 ייחודי לכל עמוד</td>
+                        </tr>
+                        <tr>
+                            <td>כותרות Page Title ארוכות</td>
+                            <td>134 עמודים (41.36%)</td>
+                            <td>חיתוך בתוצאות חיפוש</td>
+                            <td>קצר כותרות ל-60 תווים</td>
+                        </tr>
+                        <tr>
+                            <td>Title כפול</td>
+                            <td>30 עמודים (9.26%)</td>
+                            <td>תוכן כפול</td>
+                            <td>כתוב כותרת ייחודית לכל עמוד</td>
+                        </tr>
+                        <tr>
+                            <td>עמודים עם תוכן דל</td>
+                            <td>66 עמודים (20.25%)</td>
+                            <td>עשוי להיחשב Thin Content</td>
+                            <td>הרחב תוכן או אחד עמודים דומים</td>
+                        </tr>
+                        <tr>
+                            <td>H1 לא רציף</td>
+                            <td>66 עמודים (20.37%)</td>
+                            <td>מבנה סמנטי לקוי</td>
+                            <td>וודא ש-H1 מופיע לפני כותרות אחרות</td>
+                        </tr>
+                        <tr>
+                            <td>Canonical חסר</td>
+                            <td>2 עמודים</td>
+                            <td>אי-ודאות באינדוקס</td>
+                            <td>הוסף תג canonical לכל עמוד</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- נמוך -->
+            <div class="severity-section">
+                <div class="severity-header">
+                    <span class="severity-badge low">נמוך</span>
+                    <span>- שיפור מתמשך</span>
+                </div>
+                <table class="issues-table">
+                    <thead>
+                        <tr>
+                            <th>סוג בעיה</th>
+                            <th>כמות</th>
+                            <th>השפעה על SEO</th>
+                            <th>מה לתקן</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>תמונות ללא Alt Text</td>
+                            <td>509 (5.05%)</td>
+                            <td>נגישות, SEO תמונות</td>
+                            <td>הוסף תיאור Alt לכל תמונה</td>
+                        </tr>
+                        <tr>
+                            <td>URLs עם תווים לא ASCII</td>
+                            <td>2,200 (20.64%)</td>
+                            <td>בעיות קידוד אפשריות</td>
+                            <td>לא חובה לשנות, אך עדיף כתובות באנגלית</td>
+                        </tr>
+                        <tr>
+                            <td>קישורים חיצוניים ללא noopener</td>
+                            <td>324 עמודים</td>
+                            <td>סיכון אבטחה מזערי</td>
+                            <td>הוסף rel="noopener" לקישורים עם target="_blank"</td>
+                        </tr>
+                        <tr>
+                            <td>Meta Description כפול</td>
+                            <td>5 עמודים</td>
+                            <td>תוכן כפול</td>
+                            <td>כתוב תיאור ייחודי</td>
+                        </tr>
+                        <tr>
+                            <td>H2 כפול</td>
+                            <td>242 עמודים (74.69%)</td>
+                            <td>השפעה מזערית</td>
+                            <td>בדוק אם מדובר בתבנית או בטעות</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- טבלת בעיות מלאה -->
+        <section>
+            <h2>טבלת בעיות מלאה</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="חפש לפי URL, סוג בעיה או תיאור..." onkeyup="filterTable()">
+            </div>
+            <table class="issues-table" id="fullIssuesTable">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>סוג בעיה</th>
+                        <th>תיאור הבעיה</th>
+                        <th>חומרה</th>
+                        <th>עדיפות</th>
+                        <th>מה לתקן בפועל</th>
+                        <th>מקור</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="https://www.building.org.il/cdn-cgi/l/email-protection" target="_blank">/cdn-cgi/l/email-protection</a></td>
+                        <td>404</td>
+                        <td>138 קישורים נכנסים מובילים לשגיאה</td>
+                        <td><span class="severity-badge critical">קריטי</span></td>
+                        <td><span class="priority-badge immediate">מיידי</span></td>
+                        <td>בדוק הגדרות Cloudflare, הסר קישורים שבורים מהתבנית</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/articles/2026/01/14/" target="_blank">/articles/2026/01/14/</a></td>
+                        <td>404</td>
+                        <td>6 קישורים נכנסים - עמוד ארכיון תאריך לא קיים</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>הגדר 301 לעמוד המאמרים הראשי או הסר קישורים</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/articles/2025/12/02/" target="_blank">/articles/2025/12/02/</a></td>
+                        <td>404</td>
+                        <td>5 קישורים נכנסים - עמוד ארכיון תאריך לא קיים</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>הגדר 301 לעמוד המאמרים הראשי או הסר קישורים</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/articles/2025/12/16/" target="_blank">/articles/2025/12/16/</a></td>
+                        <td>404</td>
+                        <td>4 קישורים נכנסים - עמוד ארכיון תאריך לא קיים</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>הגדר 301 לעמוד המאמרים הראשי או הסר קישורים</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/eran-garden/" target="_blank">/eran-garden/</a></td>
+                        <td>404</td>
+                        <td>עמוד שנמחק או שונה</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>שחזר עמוד או הגדר 301 לעמוד רלוונטי</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/?page_id=11309" target="_blank">/?page_id=11309</a></td>
+                        <td>404</td>
+                        <td>עמוד לפי ID לא קיים</td>
+                        <td><span class="severity-badge medium">בינוני</span></td>
+                        <td><span class="priority-badge month">חודש</span></td>
+                        <td>בדוק מאיפה הקישור הגיע והסר או הפנה</td>
+                        <td>4xx report</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.building.org.il/articles/קורס-קבלני-אינסטלציה/" target="_blank">/articles/קורס-קבלני-אינסטלציה/</a></td>
+                        <td>301 redirect</td>
+                        <td>מפנה ל-/קורס-קבלני-אינסטלציה-לחיילים-משוחררי/ - מופיע בפוטר</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>עדכן הקישור בפוטר ישירות ל-URL הסופי</td>
+                        <td>redirects.csv</td>
+                    </tr>
+                    <tr>
+                        <td>כל האתר (324 עמודים)</td>
+                        <td>סכמה חסרה</td>
+                        <td>אין Structured Data באף עמוד</td>
+                        <td><span class="severity-badge critical">קריטי</span></td>
+                        <td><span class="priority-badge immediate">מיידי</span></td>
+                        <td>הוסף Organization, BreadcrumbList לכל העמודים. Course לקורסים, Article למאמרים</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>249 עמודים (76.85%)</td>
+                        <td>Meta Description חסר</td>
+                        <td>רוב העמודים ללא תיאור מטא</td>
+                        <td><span class="severity-badge critical">קריטי</span></td>
+                        <td><span class="priority-badge immediate">מיידי</span></td>
+                        <td>כתוב תיאור ייחודי 120-155 תווים לכל עמוד, התחל מעמודי קורסים וקטגוריות</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>75 עמודים (23.15%)</td>
+                        <td>H1 חסר</td>
+                        <td>עמודים ללא כותרת ראשית</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>הוסף תג H1 עם כותרת ייחודית ותיאורית לכל עמוד</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>110 עמודים (33.95%)</td>
+                        <td>H1 מרובה</td>
+                        <td>יותר מ-H1 אחד בעמוד</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>השאר H1 אחד בלבד, המר כותרות נוספות ל-H2 או H3</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>30 עמודים</td>
+                        <td>חסום robots.txt</td>
+                        <td>עמודים פנימיים חסומים מסריקה</td>
+                        <td><span class="severity-badge high">גבוה</span></td>
+                        <td><span class="priority-badge week">שבוע</span></td>
+                        <td>בדוק קובץ robots.txt, הסר חסימות לא מכוונות</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>5,396 תמונות (53.52%)</td>
+                        <td>תמונות כבדות</td>
+                        <td>תמונות מעל 100KB פוגעות ב-Core Web Vitals</td>
+                        <td><span class="severity-badge medium">בינוני</span></td>
+                        <td><span class="priority-badge month">חודש</span></td>
+                        <td>דחוס תמונות, המר ל-WebP, הגדר lazy loading</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>119 עמודים (36.73%)</td>
+                        <td>H1 כפול</td>
+                        <td>אותו H1 מופיע במספר עמודים</td>
+                        <td><span class="severity-badge medium">בינוני</span></td>
+                        <td><span class="priority-badge month">חודש</span></td>
+                        <td>כתוב H1 ייחודי לכל עמוד</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>134 עמודים (41.36%)</td>
+                        <td>כותרת ארוכה</td>
+                        <td>Page Title מעל 60 תווים</td>
+                        <td><span class="severity-badge medium">בינוני</span></td>
+                        <td><span class="priority-badge month">חודש</span></td>
+                        <td>קצר כותרות ל-60 תווים או פחות</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                    <tr>
+                        <td>509 תמונות (5.05%)</td>
+                        <td>Alt חסר</td>
+                        <td>תמונות ללא טקסט חלופי</td>
+                        <td><span class="severity-badge low">נמוך</span></td>
+                        <td><span class="priority-badge ongoing">מתמשך</span></td>
+                        <td>הוסף תיאור Alt לכל תמונה</td>
+                        <td>crawl_overview.csv</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- צ'קליסט למפתחים -->
+        <section>
+            <h2>צ'קליסט למפתחים</h2>
+            <div class="checklist">
+                <div class="checklist-category">
+                    <h4>שגיאות 404</h4>
+                    <ul>
+                        <li>תקן בעיית /cdn-cgi/l/email-protection (138 קישורים)</li>
+                        <li>שחזר ~120 תמונות חסרות ב-wp-content/uploads</li>
+                        <li>הגדר 301 לעמודי ארכיון תאריכים שבורים</li>
+                        <li>בדוק עמוד /eran-garden/ ותקן או הפנה</li>
+                        <li>הסר או תקן קישור ל-/?page_id=11309</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>הפניות 301</h4>
+                    <ul>
+                        <li>עדכן קישור בפוטר: /articles/קורס-קבלני-אינסטלציה/ → URL סופי</li>
+                        <li>בדוק 23 הפניות פנימיות נוספות</li>
+                        <li>עדכן כל קישור פנימי שמפנה ל-301</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>מבנה כותרות</h4>
+                    <ul>
+                        <li>הוסף H1 ל-75 עמודים חסרים</li>
+                        <li>תקן 110 עמודים עם H1 מרובה</li>
+                        <li>וודא H1 ייחודי ב-119 עמודים עם H1 כפול</li>
+                        <li>תקן היררכיית כותרות ב-66 עמודים</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>תוכן כפול ומטא-דאטה</h4>
+                    <ul>
+                        <li>כתוב Meta Description ל-249 עמודים</li>
+                        <li>תקן 30 כותרות כפולות</li>
+                        <li>תקן 5 תיאורי מטא כפולים</li>
+                        <li>קצר 134 כותרות ארוכות מדי</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>סכמות (Schema)</h4>
+                    <ul>
+                        <li>הוסף Organization Schema לעמוד הבית</li>
+                        <li>הוסף BreadcrumbList לכל העמודים</li>
+                        <li>הוסף Course Schema לעמודי קורסים</li>
+                        <li>הוסף Article Schema לעמודי מאמרים</li>
+                        <li>הוסף FAQPage לעמודים עם שאלות נפוצות</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>אופטימיזציית תמונות</h4>
+                    <ul>
+                        <li>דחוס 5,396 תמונות מעל 100KB</li>
+                        <li>המר תמונות גדולות ל-WebP</li>
+                        <li>הוסף loading="lazy" לתמונות מתחת ל-fold</li>
+                        <li>הוסף Alt text ל-509 תמונות</li>
+                        <li>הוסף width/height ל-2 תמונות חסרות מימדים</li>
+                    </ul>
+                </div>
+                <div class="checklist-category">
+                    <h4>robots.txt ואינדוקס</h4>
+                    <ul>
+                        <li>בדוק 30 עמודים חסומים ב-robots.txt</li>
+                        <li>בדוק עמוד עם noindex אם מכוון</li>
+                        <li>הוסף canonical ל-2 עמודים חסרים</li>
+                        <li>בדוק 3 עמודים עם canonical לכתובת אחרת</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 20px; color: var(--gray-700);">
+            <p>דו"ח נוצר אוטומטית | תאריך: 20 בינואר 2026 | נתונים מ-Screaming Frog</p>
+            <p>Nadav Digital - SEO Agency</p>
+        </footer>
+    </div>
+
+    <script>
+        function filterTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('fullIssuesTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    const cellText = cells[j].textContent || cells[j].innerText;
+                    if (cellText.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+    </script>
+</body>
+</html>
