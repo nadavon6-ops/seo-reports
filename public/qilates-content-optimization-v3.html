@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QILATES Content Optimization Report V3 | דוח אופטימיזציה</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2c5282;
+            --accent: #38b2ac;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --info: #4299e1;
+            --new-green: #22c55e;
+            --optimize-blue: #3b82f6;
+            --redirect-purple: #8b5cf6;
+            --critical-red: #dc2626;
+            --cannibalization-orange: #f97316;
+            --bg-light: #f7fafc;
+            --text-dark: #2d3748;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        .version-badge {
+            display: inline-block;
+            background: var(--critical-red);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Critical Alert */
+        .critical-alert {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 3px solid var(--critical-red);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px auto;
+            max-width: 1200px;
+        }
+        .critical-alert h2 {
+            color: var(--critical-red);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .critical-alert h2::before { content: "🚨"; }
+        .critical-alert p { margin-bottom: 15px; font-size: 1.05rem; }
+        .critical-alert ul { list-style: none; padding: 0; }
+        .critical-alert li {
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-right: 4px solid var(--critical-red);
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .badge-optimize { background: var(--optimize-blue); color: white; }
+        .badge-new { background: var(--new-green); color: white; }
+        .badge-redirect { background: var(--redirect-purple); color: white; }
+        .badge-cannibalization { background: var(--cannibalization-orange); color: white; }
+        .badge-critical { background: var(--critical-red); color: white; }
+
+        /* Summary Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+        .summary-table th {
+            background: var(--primary);
+            color: white;
+            padding: 14px 12px;
+            text-align: right;
+        }
+        .summary-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .summary-table tr:hover { background: #f8fafc; }
+        .summary-table code {
+            background: #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: block;
+            margin: 3px 0;
+        }
+        .summary-table .url-old {
+            background: #fee2e2;
+            color: #991b1b;
+            text-decoration: line-through;
+        }
+        .summary-table .url-new {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* Page Card */
+        .page-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            border-right: 5px solid var(--optimize-blue);
+        }
+        .page-card.new-card { border-right-color: var(--new-green); }
+        .page-card.redirect-card { border-right-color: var(--redirect-purple); }
+
+        .page-header {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .page-header h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .page-header .urls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .url-tag {
+            font-family: monospace;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--text-dark);
+            color: white;
+        }
+        .url-tag.hebrew { background: #fee2e2; color: #991b1b; }
+        .url-tag.english { background: #dcfce7; color: #166534; }
+
+        .page-body { padding: 25px; }
+
+        /* Action Box */
+        .action-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .action-box h4 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        .action-box h4::before { content: "⚡ "; }
+
+        /* Redirect Box */
+        .redirect-box {
+            background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%);
+            border: 2px solid var(--redirect-purple);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .redirect-box h4 { color: #6b21a8; margin-bottom: 10px; }
+        .redirect-box h4::before { content: "🔀 "; }
+
+        /* Cannibalization Box */
+        .cannibalization-box {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+            border: 2px solid var(--cannibalization-orange);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .cannibalization-box h4 { color: #c2410c; margin-bottom: 10px; }
+        .cannibalization-box h4::before { content: "⚠️ "; }
+
+        /* Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .detail-box {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 18px;
+            border: 1px solid var(--border);
+        }
+        .detail-box h5 {
+            color: var(--secondary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+        }
+        .detail-box ul { list-style: none; padding: 0; }
+        .detail-box li {
+            padding: 6px 0;
+            padding-right: 20px;
+            position: relative;
+        }
+        .detail-box li::before {
+            content: "→";
+            position: absolute;
+            right: 0;
+            color: var(--accent);
+        }
+
+        /* Checklist */
+        .checklist {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .checklist h5 { color: #166534; margin-bottom: 15px; }
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #86efac;
+            border-radius: 4px;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+        .stat-label { font-size: 0.85rem; color: #666; margin-top: 5px; }
+
+        /* Footer */
+        .footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.6rem; }
+            .summary-table { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <h1>דוח אופטימיזציה לתוכן | QILATES</h1>
+        <p class="subtitle">תיקון קריטי: רוב הדפים כבר קיימים באתר - נדרשת אופטימיזציה, לא יצירה חדשה</p>
+        <span class="version-badge">גרסה 3.0 - מתוקנת לאחר סקירה</span>
+    </header>
+
+    <!-- Critical Alert -->
+    <div class="critical-alert">
+        <h2>תיקון קריטי - הממצאים מהסקירה</h2>
+        <p><strong>לאחר בדיקה מעמיקה של האתר qilates.co.il, התברר שרוב הדפים שסומנו כ"חדשים" בגרסאות קודמות - כבר קיימים באתר!</strong></p>
+        <ul>
+            <li><strong>8 דפים קיימים</strong> - דורשים אופטימיזציה והעברת URL לאנגלית</li>
+            <li><strong>1-2 דפים חדשים בלבד</strong> - אפשר ליצור (רפורמר לגברים, 10 יתרונות מקיף)</li>
+            <li><strong>בעיית קניבליזציה</strong> - שני דפים מתחרים על "פילאטיס לספורטאים"</li>
+            <li><strong>רוב ה-URLs בעברית</strong> - נדרשת העברה ל-URLs באנגלית עם 301 redirects</li>
+        </ul>
+    </div>
+
+    <div class="container">
+
+        <!-- Summary Section -->
+        <section class="section">
+            <h2>📊 סיכום מצב קיים - כל הדפים</h2>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="badge badge-optimize">אופטימיזציה</span>
+                    <span>דף קיים - לשפר</span>
+                </div>
+                <div class="legend-item">
+                    <span class="badge badge-new">חדש</span>
+                    <span>דף חדש ליצירה</span>
+                </div>
+                <div class="legend-item">
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <span>העברת URL</span>
+                </div>
+                <div class="legend-item">
+                    <span class="badge badge-cannibalization">קניבליזציה</span>
+                    <span>איחוד דפים</span>
+                </div>
+            </div>
+
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>נושא</th>
+                        <th>URL נוכחי</th>
+                        <th>URL מומלץ</th>
+                        <th>סטטוס</th>
+                        <th>פעולה</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Hub: פילאטיס לגברים</strong></td>
+                        <td><code class="url-old">/פילאטיס-לגברים</code></td>
+                        <td><code class="url-new">/pilates-for-men/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>הרחבה + 301</td>
+                    </tr>
+                    <tr style="background: #fff7ed;">
+                        <td>2</td>
+                        <td><strong>פילאטיס לספורטאים</strong></td>
+                        <td>
+                            <code>/pilates-for-athletes-performance/</code>
+                            <code class="url-old">/פילאטיס-וספורט/</code>
+                        </td>
+                        <td><code class="url-new">/pilates-for-athletes/</code></td>
+                        <td>
+                            <span class="badge badge-cannibalization">קניבליזציה!</span>
+                        </td>
+                        <td>איחוד + 301</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>תרגילים בבית</strong></td>
+                        <td><code class="url-old">/תרגילי-פילאטיס-לגברים-בבית-אימון-חכ/</code></td>
+                        <td><code class="url-new">/home-pilates-men/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>אופטימיזציה + 301</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>יתרונות אחרי גיל 40</strong></td>
+                        <td><code class="url-old">/יתרונות-פילאטיס-לגברים-אחרי-גיל-40/</code></td>
+                        <td><code class="url-new">/pilates-men-over-40/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>הרחבה + 301</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><strong>5 מיתוסים</strong></td>
+                        <td><code class="url-old">/5-מיתוסים-על-פילאטיס-לגברים.../</code></td>
+                        <td><code class="url-new">/pilates-men-myths/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>אופטימיזציה + 301</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><strong>פילאטיס לכאבי גב/דיסק</strong></td>
+                        <td><code class="url-old">/פילאטיס-ופריצת-דיסק-מה-חשוב-לדעת/</code></td>
+                        <td><code class="url-new">/pilates-back-pain/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>הרחבה + 301</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><strong>הבדלים גברים/נשים</strong></td>
+                        <td><code>/pilates-differences-men-women/</code></td>
+                        <td><code>אותו URL ✓</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>אופטימיזציה בלבד</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><strong>יציבה לגברים</strong></td>
+                        <td><code class="url-old">/איך-לשפר-יציבה-לגברים.../</code></td>
+                        <td><code class="url-new">/pilates-posture-men/</code></td>
+                        <td><span class="badge badge-optimize">קיים</span></td>
+                        <td>אופטימיזציה + 301</td>
+                    </tr>
+                    <tr style="background: #dcfce7;">
+                        <td>9</td>
+                        <td><strong>רפורמר לגברים</strong></td>
+                        <td><code>לא קיים</code></td>
+                        <td><code class="url-new">/reformer-pilates-men/</code></td>
+                        <td><span class="badge badge-new">חדש!</span></td>
+                        <td>יצירה מאפס</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value">8</div>
+                    <div class="stat-label">דפים קיימים</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">דף חדש</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">301 Redirects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">איחוד קניבליזציה</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cannibalization Issue -->
+        <section class="section" style="border-right: 5px solid var(--cannibalization-orange);">
+            <h2>⚠️ בעיית קניבליזציה - פילאטיס לספורטאים</h2>
+
+            <div class="cannibalization-box">
+                <h4>שני דפים מתחרים על אותו נושא!</h4>
+                <p>קיימים שני דפים שמטרגטים "פילאטיס לספורטאים":</p>
+                <ul style="list-style: none; padding: 0; margin-top: 10px;">
+                    <li style="padding: 10px; background: white; border-radius: 6px; margin: 8px 0;">
+                        <strong>דף 1 (מדורג בגוגל):</strong><br>
+                        <code style="background: #dcfce7; padding: 4px 8px; border-radius: 4px;">
+                            /pilates-for-athletes-performance/
+                        </code>
+                        <span style="color: green; margin-right: 10px;">← לשמור ולחזק!</span>
+                    </li>
+                    <li style="padding: 10px; background: white; border-radius: 6px; margin: 8px 0;">
+                        <strong>דף 2 (URL עברי, מתחרה):</strong><br>
+                        <code style="background: #fee2e2; padding: 4px 8px; border-radius: 4px; text-decoration: line-through;">
+                            /פילאטיס-וספורט/
+                        </code>
+                        <span style="color: red; margin-right: 10px;">← 301 redirect לדף 1</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="action-box">
+                <h4>פעולה נדרשת</h4>
+                <ol style="padding-right: 20px;">
+                    <li><strong>לא למחוק</strong> את הדף העברי - יש לו לינקים נכנסים אפשריים</li>
+                    <li>להגדיר <strong>301 redirect</strong> מ-<code>/פילאטיס-וספורט/</code> ל-<code>/pilates-for-athletes-performance/</code></li>
+                    <li>להעביר תוכן ייחודי מהדף העברי לדף האנגלי (אם קיים)</li>
+                    <li>לעדכן את כל הקישורים הפנימיים באתר</li>
+                </ol>
+            </div>
+
+            <div class="checklist">
+                <h5>✅ צ'קליסט איחוד</h5>
+                <div class="checklist-item"><div class="checkbox"></div><span>בדיקת תוכן ייחודי בשני הדפים</span></div>
+                <div class="checklist-item"><div class="checkbox"></div><span>העברת תוכן ייחודי לדף האנגלי</span></div>
+                <div class="checklist-item"><div class="checkbox"></div><span>הגדרת 301 redirect</span></div>
+                <div class="checklist-item"><div class="checkbox"></div><span>עדכון קישורים פנימיים</span></div>
+                <div class="checklist-item"><div class="checkbox"></div><span>מעקב בSearch Console למשך חודש</span></div>
+            </div>
+        </section>
+
+        <!-- Page 1: Hub -->
+        <article class="page-card" id="page-hub">
+            <div class="page-header">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <span class="badge badge-optimize">דף קיים - אופטימיזציה</span>
+                        <span class="badge badge-redirect">301 Redirect</span>
+                        <h3>1. עמוד האב: פילאטיס לגברים</h3>
+                    </div>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /פילאטיס-לגברים</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /pilates-for-men/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>הרחבה משמעותית של תוכן קיים</strong> - הדף קיים אבל דליל מאוד (תוכן מינימלי). יש להרחיב ל-2,000+ מילים ולהעביר לURL באנגלית.</p>
+                </div>
+
+                <div class="redirect-box">
+                    <h4>העברת URL</h4>
+                    <p><code style="text-decoration: line-through;">/פילאטיס-לגברים</code> → <code>/pilates-for-men/</code></p>
+                    <p style="font-size: 0.9rem; margin-top: 8px;">הגדרת 301 permanent redirect מהכתובת הישנה לחדשה.</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-box" style="background: #fef3c7;">
+                        <h5>📋 תוכן קיים (לשמור)</h5>
+                        <ul>
+                            <li>✓ כותרת וH1 קיימים</li>
+                            <li>✓ FAQ Schema (4 שאלות)</li>
+                            <li>✓ מבנה בסיסי</li>
+                        </ul>
+                    </div>
+                    <div class="detail-box" style="background: #dcfce7;">
+                        <h5>➕ תוכן להוספה</h5>
+                        <ul>
+                            <li>🆕 הרחבה ל-2,000+ מילים</li>
+                            <li>🆕 סקציית מיתוסים</li>
+                            <li>🆕 טבלת השוואה</li>
+                            <li>🆕 המלצות לקוחות</li>
+                            <li>🆕 קישורים ל-8 מאמרי המשנה</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הרחבת תוכן קיים (+1,500 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>יצירת URL חדש באנגלית</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הגדרת 301 redirect</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת קישורים ל-8 מאמרים</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>עדכון Schema</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 2: Athletes (Cannibalization) -->
+        <article class="page-card" style="border-right-color: var(--cannibalization-orange);" id="page-athletes">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-cannibalization">קניבליזציה</span>
+                    <h3>2. פילאטיס לספורטאים (מדורג בגוגל!)</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag english">לשמור: /pilates-for-athletes-performance/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>אופטימיזציה + איחוד הדף העברי המתחרה</strong> - הדף האנגלי כבר מדורג. יש לחזק אותו ולהפנות את הדף העברי אליו.</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-box" style="background: #fef3c7;">
+                        <h5>📋 תוכן קיים (~1,400 מילים)</h5>
+                        <ul>
+                            <li>✓ מדורג בגוגל</li>
+                            <li>✓ תוכן על שיפור ביצועים</li>
+                            <li>✓ URL באנגלית</li>
+                            <li>✗ חסר FAQ Schema</li>
+                        </ul>
+                    </div>
+                    <div class="detail-box" style="background: #dcfce7;">
+                        <h5>➕ לשפר</h5>
+                        <ul>
+                            <li>🆕 הוספת FAQ Schema (5 שאלות)</li>
+                            <li>🆕 מקרי בוחן ספורטאים</li>
+                            <li>🆕 נתוני מחקר נוספים</li>
+                            <li>🆕 קישור לHub</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>301 redirect מהדף העברי</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת internal links</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>עדכון Meta Description</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 3: Home Exercises -->
+        <article class="page-card" id="page-home">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <h3>3. תרגילי פילאטיס לגברים בבית</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /תרגילי-פילאטיס-לגברים-בבית-אימון-חכ/</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /home-pilates-men/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>העברת URL + אופטימיזציה קלה</strong> - הדף קיים עם תוכן טוב. צריך בעיקר להעביר לURL באנגלית.</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-box" style="background: #fef3c7;">
+                        <h5>📋 תוכן קיים</h5>
+                        <ul>
+                            <li>✓ תרגילים לחיזוק הגב והליבה</li>
+                            <li>✓ מדריך מעשי</li>
+                            <li>✓ תוכן איכותי</li>
+                        </ul>
+                    </div>
+                    <div class="detail-box" style="background: #dcfce7;">
+                        <h5>➕ לשפר</h5>
+                        <ul>
+                            <li>🆕 הוספת FAQ Schema</li>
+                            <li>🆕 וידאו הדגמה (אופציונלי)</li>
+                            <li>🆕 קישור לHub ולמאמרים אחרים</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>יצירת URL חדש באנגלית</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הגדרת 301 redirect</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישורים פנימיים</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 4: Benefits Over 40 -->
+        <article class="page-card" id="page-benefits40">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <h3>4. יתרונות פילאטיס לגברים אחרי גיל 40</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /יתרונות-פילאטיס-לגברים-אחרי-גיל-40/</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /pilates-men-over-40/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>הרחבה + העברת URL</strong> - תוכן קצר (~700 מילים). יש להרחיב ולהעביר לאנגלית.</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-box" style="background: #fef3c7;">
+                        <h5>📋 תוכן קיים (~700 מילים)</h5>
+                        <ul>
+                            <li>✓ 5 יתרונות עיקריים</li>
+                            <li>✓ מבנה ברור</li>
+                            <li>✗ חסר FAQ Schema</li>
+                        </ul>
+                    </div>
+                    <div class="detail-box" style="background: #dcfce7;">
+                        <h5>➕ להוסיף</h5>
+                        <ul>
+                            <li>🆕 הרחבה ל-1,200 מילים</li>
+                            <li>🆕 נתוני מחקר לגיל 40+</li>
+                            <li>🆕 FAQ Schema</li>
+                            <li>🆕 תוכנית אימונים לדוגמה</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הרחבת תוכן (+500 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העברת URL לאנגלית</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישורים פנימיים</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 5: Myths -->
+        <article class="page-card" id="page-myths">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <h3>5. מיתוסים על פילאטיס לגברים</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /5-מיתוסים-על-פילאטיס-לגברים.../</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /pilates-men-myths/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>העברת URL + אופטימיזציה</strong> - תוכן טוב (~900 מילים) עם 5 מיתוסים. צריך העברה לאנגלית והוספת Schema.</p>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העברת URL לאנגלית + 301</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>שיפור Meta Description</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 6: Back Pain -->
+        <article class="page-card" id="page-backpain">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <h3>6. פילאטיס לכאבי גב ופריצת דיסק</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /פילאטיס-ופריצת-דיסק-מה-חשוב-לדעת/</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /pilates-back-pain/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>העברת URL + אופטימיזציה</strong> - תוכן מקיף (~1,600 מילים) על פילאטיס ופריצת דיסק. איכות טובה, צריך העברה והוספת Schema.</p>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העברת URL לאנגלית + 301</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema (YMYL)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>בדיקת דיסקליימר רפואי</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 7: Men vs Women -->
+        <article class="page-card" id="page-differences">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span style="color: green; font-weight: bold;">✓ URL באנגלית</span>
+                    <h3>7. פילאטיס לגברים ונשים - הבדלים</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag english">/pilates-differences-men-women/ ✓</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>אופטימיזציה בלבד</strong> - הדף כבר עם URL באנגלית! צריך רק הוספת FAQ Schema וקישורים פנימיים.</p>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישורים פנימיים לHub</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 8: Posture -->
+        <article class="page-card" id="page-posture">
+            <div class="page-header">
+                <div>
+                    <span class="badge badge-optimize">דף קיים</span>
+                    <span class="badge badge-redirect">301 Redirect</span>
+                    <h3>8. שיפור יציבה לגברים עם פילאטיס</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag hebrew">נוכחי: /איך-לשפר-יציבה-לגברים.../</span>
+                    <span>→</span>
+                    <span class="url-tag english">יעד: /pilates-posture-men/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>העברת URL + אופטימיזציה</strong></p>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העברת URL לאנגלית + 301</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>הוספת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישורים פנימיים</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Page 9: NEW - Reformer -->
+        <article class="page-card new-card" id="page-reformer">
+            <div class="page-header" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+                <div>
+                    <span class="badge badge-new">דף חדש ליצירה!</span>
+                    <h3>9. רפורמר פילאטיס לגברים (חדש!)</h3>
+                </div>
+                <div class="urls">
+                    <span class="url-tag english">יעד: /reformer-pilates-men/</span>
+                </div>
+            </div>
+            <div class="page-body">
+                <div class="action-box" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); border-color: var(--new-green);">
+                    <h4>פעולה נדרשת</h4>
+                    <p><strong>יצירת דף חדש מאפס</strong> - זהו הנושא היחיד שלא קיים כדף ייעודי באתר! דף ייעודי על רפורמר לגברים יכול למלא פער תוכן.</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-box">
+                        <h5>📄 תוכן ליצירה</h5>
+                        <ul>
+                            <li>מה זה רפורמר והאם מתאים לגברים</li>
+                            <li>יתרונות הרפורמר לגברים</li>
+                            <li>השוואה: רפורמר vs מזרן</li>
+                            <li>תרגילי רפורמר לגברים</li>
+                            <li>5 שאלות FAQ</li>
+                        </ul>
+                    </div>
+                    <div class="detail-box">
+                        <h5>🎯 מילות מפתח</h5>
+                        <ul>
+                            <li>רפורמר פילאטיס לגברים</li>
+                            <li>פילאטיס מכשירים לגברים</li>
+                            <li>רפורמר פילאטיס רחובות</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="checklist">
+                    <h5>✅ צ'קליסט יצירה</h5>
+                    <div class="checklist-item"><div class="checkbox"></div><span>כתיבת תוכן (~1,200 מילים)</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>יצירת FAQ Schema</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>תמונות רפורמר</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>קישורים ל-Hub ומאמרים</span></div>
+                    <div class="checklist-item"><div class="checkbox"></div><span>העלאה בURL באנגלית</span></div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Final Summary -->
+        <section class="section" style="border-right: 5px solid var(--success);">
+            <h2>📋 סיכום תוכנית פעולה</h2>
+
+            <div class="detail-grid">
+                <div class="detail-box" style="background: #dbeafe;">
+                    <h5>שלב 1: איחוד קניבליזציה</h5>
+                    <ul>
+                        <li>301 redirect: /פילאטיס-וספורט/ → /pilates-for-athletes-performance/</li>
+                        <li>בדיקה ב-Search Console</li>
+                    </ul>
+                </div>
+                <div class="detail-box" style="background: #f3e8ff;">
+                    <h5>שלב 2: העברת URLs (7 דפים)</h5>
+                    <ul>
+                        <li>יצירת URLs באנגלית</li>
+                        <li>הגדרת 301 redirects</li>
+                        <li>עדכון קישורים פנימיים</li>
+                    </ul>
+                </div>
+                <div class="detail-box" style="background: #fef3c7;">
+                    <h5>שלב 3: אופטימיזציה</h5>
+                    <ul>
+                        <li>הוספת FAQ Schema לכל הדפים</li>
+                        <li>הרחבת Hub (~1,500 מילים)</li>
+                        <li>שיפור internal linking</li>
+                    </ul>
+                </div>
+                <div class="detail-box" style="background: #dcfce7;">
+                    <h5>שלב 4: תוכן חדש</h5>
+                    <ul>
+                        <li>יצירת דף רפורמר לגברים</li>
+                        <li>~1,200 מילים</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stats-row" style="margin-top: 30px;">
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--optimize-blue);">8</div>
+                    <div class="stat-label">דפים לאופטימיזציה</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--new-green);">1</div>
+                    <div class="stat-label">דף חדש</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--redirect-purple);">7</div>
+                    <div class="stat-label">301 Redirects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" style="color: var(--cannibalization-orange);">1</div>
+                    <div class="stat-label">איחוד קניבליזציה</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        <p>QILATES Content Optimization Report V3.0 | Nadav Digital</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">מתוקן לאחר סקירת מומחה - 8 דפים קיימים + 1 חדש</p>
+    </footer>
+
+</body>
+</html>
