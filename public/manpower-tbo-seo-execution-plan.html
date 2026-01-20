@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manpower TBO - תוכנית SEO מפורטת לפי עמוד | Page-Level Execution Plan</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+        }
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #8b5cf6 100%);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 15px 0;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p { margin: 8px 0; opacity: 0.95; font-size: 18px; }
+        .header .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .header .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #475569;
+        }
+        .stat-card .number {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-card.red .number { color: #ef4444; }
+        .stat-card.orange .number { color: #f59e0b; }
+        .stat-card.green .number { color: #22c55e; }
+        .stat-card.blue .number { color: #3b82f6; }
+        .stat-card.purple .number { color: #8b5cf6; }
+
+        /* Page Section */
+        .page-section {
+            background: #1e293b;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .page-header {
+            background: linear-gradient(90deg, #334155, #475569);
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-header h2 {
+            margin: 0;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-number {
+            background: #3b82f6;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .page-url {
+            background: #1e293b;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #94a3b8;
+            direction: ltr;
+        }
+        .page-content {
+            padding: 30px;
+        }
+
+        /* Subsections */
+        .subsection {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subsection h4 {
+            margin: 20px 0 12px 0;
+            font-size: 15px;
+            color: #94a3b8;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        th {
+            background: #334155;
+            padding: 14px 12px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid #475569;
+        }
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #334155;
+            vertical-align: top;
+        }
+        tr:hover { background: #1e293b; }
+
+        /* Current vs Recommended */
+        .current-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .current-box::before {
+            content: "נוכחי";
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .recommended-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .recommended-box::before {
+            content: "מומלץ";
+            background: #22c55e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Critical Issue */
+        .critical-issue {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .critical-issue h4 {
+            color: #ef4444;
+            margin: 0 0 12px 0;
+            font-size: 16px;
+        }
+
+        /* Keywords */
+        .keyword-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+        .keyword-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .keyword-secondary {
+            background: #1e40af;
+            color: #bfdbfe;
+        }
+        .keyword-missing {
+            background: #dc2626;
+            color: white;
+        }
+        .keyword-add {
+            background: #16a34a;
+            color: white;
+        }
+
+        /* Priority Tags */
+        .priority {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .priority-critical { background: #ef4444; color: white; }
+        .priority-high { background: #f59e0b; color: #1e293b; }
+        .priority-medium { background: #3b82f6; color: white; }
+        .priority-low { background: #6b7280; color: white; }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .checklist li {
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .check-missing { background: #ef4444; }
+        .check-add { background: #22c55e; }
+        .check-improve { background: #f59e0b; }
+
+        /* Competitor Box */
+        .competitor-gap {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .competitor-gap h5 {
+            color: #f59e0b;
+            margin: 0 0 12px 0;
+        }
+
+        /* Action Items Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .action-item {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 18px;
+            border-right: 4px solid;
+        }
+        .action-item.critical { border-color: #ef4444; }
+        .action-item.high { border-color: #f59e0b; }
+        .action-item.medium { border-color: #3b82f6; }
+        .action-item h5 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .action-item p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .exec-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>Manpower TBO - תוכנית SEO מפורטת לפי עמוד</h1>
+    <p>Page-by-Page SEO Execution Plan | 7 Service Pages Deep Analysis</p>
+    <p>ינואר 2026 | Nadav Digital SEO Agency</p>
+    <div class="badge-row">
+        <span class="badge">7 עמודים נותחו</span>
+        <span class="badge">47 פעולות נדרשות</span>
+        <span class="badge">15 מתחרים נחקרו</span>
+        <span class="badge">32 מילות מפתח</span>
+    </div>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="exec-summary">
+    <div class="stat-card red">
+        <div>בעיות קריטיות</div>
+        <div class="number">12</div>
+        <div>לתיקון מיידי</div>
+    </div>
+    <div class="stat-card orange">
+        <div>מילות מפתח חסרות</div>
+        <div class="number">18</div>
+        <div>להוספה לתוכן</div>
+    </div>
+    <div class="stat-card blue">
+        <div>כותרות לשינוי</div>
+        <div class="number">6</div>
+        <div>H1 + H2</div>
+    </div>
+    <div class="stat-card purple">
+        <div>Meta Descriptions</div>
+        <div class="number">5</div>
+        <div>לשכתוב</div>
+    </div>
+    <div class="stat-card green">
+        <div>Schema חסרים</div>
+        <div class="number">6</div>
+        <div>FAQPage + Service</div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 1: TBO MAIN ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">1</span> עמוד ראשי TBO</h2>
+        <span class="page-url">/employers/tbo</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <h4>מילת מפתח ראשית</h4>
+            <span class="keyword-tag keyword-primary">מיקור חוץ</span>
+            <span class="keyword-tag keyword-primary">TBO</span>
+
+            <h4>מילות מפתח משניות - קיימות</h4>
+            <span class="keyword-tag keyword-secondary">ניהול פעילויות</span>
+            <span class="keyword-tag keyword-secondary">ניהול פרויקטים</span>
+
+            <div class="critical-issue">
+                <h4>מילות מפתח חסרות - להוספה מיידית</h4>
+                <span class="keyword-tag keyword-missing">שירותי אאוטסורסינג</span>
+                <span class="keyword-tag keyword-missing">BPO ישראל</span>
+                <span class="keyword-tag keyword-missing">עלויות מיקור חוץ</span>
+                <span class="keyword-tag keyword-missing">יתרונות מיקור חוץ</span>
+                <span class="keyword-tag keyword-missing">חברת מיקור חוץ מובילה</span>
+            </div>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>סטטוס נוכחי</th>
+                    <th>מיקום מומלץ</th>
+                    <th>עדיפות</th>
+                </tr>
+                <tr>
+                    <td><strong>מיקור חוץ</strong></td>
+                    <td>מופיעה 3 פעמים - לא מספיק</td>
+                    <td>H1, H2, פסקה ראשונה, ALT תמונות</td>
+                    <td><span class="priority priority-critical">קריטי</span></td>
+                </tr>
+                <tr>
+                    <td><strong>BPO</strong></td>
+                    <td>חסרה לחלוטין</td>
+                    <td>H2 נפרד, פסקה הסבר</td>
+                    <td><span class="priority priority-high">גבוה</span></td>
+                </tr>
+                <tr>
+                    <td><strong>יתרונות מיקור חוץ</strong></td>
+                    <td>חסרה</td>
+                    <td>H2 חדש עם רשימה</td>
+                    <td><span class="priority priority-high">גבוה</span></td>
+                </tr>
+                <tr>
+                    <td><strong>60 שנות ניסיון</strong></td>
+                    <td>לא מודגש מספיק</td>
+                    <td>H2, Trust signals section</td>
+                    <td><span class="priority priority-medium">בינוני</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "Manpower TBO ניהול פעילויות במיקור חוץ"<br>
+                <strong>בעיה:</strong> מילת מפתח "מיקור חוץ" בסוף, לא בהתחלה. חסר focus keyword.
+            </div>
+
+            <div class="recommended-box">
+                <strong>H1 מומלץ:</strong> "מיקור חוץ לעסקים | Manpower TBO - 60 שנות מומחיות"<br>
+                <strong>סיבה:</strong> מילת מפתח בהתחלה, USP ברור (60 שנים)
+            </div>
+
+            <h4>כותרות H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"מה זה מיקור חוץ ולמה זה משתלם?"</strong> - כיסוי שאלות PAA</li>
+                <li><span class="check-icon check-add">+</span> <strong>"יתרונות מיקור חוץ לעסקים"</strong> - Long-tail targeting</li>
+                <li><span class="check-icon check-add">+</span> <strong>"למי מתאים מיקור חוץ?"</strong> - Persona targeting</li>
+                <li><span class="check-icon check-add">+</span> <strong>"מדוע לבחור במנפאואר TBO?"</strong> - USP differentiation</li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <div class="critical-issue">
+                <h4>פערי תוכן קריטיים</h4>
+                <ul class="checklist">
+                    <li><span class="check-icon check-missing">!</span> <strong>אין הסבר "מה זה מיקור חוץ"</strong> - מתחרים מכסים זאת בהרחבה</li>
+                    <li><span class="check-icon check-missing">!</span> <strong>אין מספרים/סטטיסטיקות</strong> - כמה לקוחות? כמה פרויקטים?</li>
+                    <li><span class="check-icon check-missing">!</span> <strong>אין ROI או חיסכון עלויות</strong> - CFO persona needs this</li>
+                    <li><span class="check-icon check-missing">!</span> <strong>אין השוואה In-house vs Outsourcing</strong> - קישורית יש להם</li>
+                </ul>
+            </div>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>סקשן "מה זה מיקור חוץ?"</h5>
+                    <p>200-300 מילים. הגדרה ברורה, סוגי מיקור חוץ (BPO, KPO), יתרונות עיקריים.</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>אותות אמון (Trust Signals)</h5>
+                    <p>60+ שנים, 8,000 לקוחות, 50,000 עובדים, נוכחות ב-40+ סניפים. הצגה ויזואלית.</p>
+                </div>
+                <div class="action-item high">
+                    <h5>טבלת השוואה: פנימי vs מיקור חוץ</h5>
+                    <p>עלויות, גמישות, מומחיות, סיכונים - טבלה ברורה לקבלת החלטות.</p>
+                </div>
+                <div class="action-item high">
+                    <h5>מחשבון ROI או עלויות</h5>
+                    <p>כלי אינטראקטיבי כמו שיש בקישורית - יתרון תחרותי משמעותי.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <h4>Title Tag</h4>
+            <div class="current-box">
+                "ניהול פרויקטים במיקור חוץ – Manpower TBO" (43 תווים)
+            </div>
+            <div class="recommended-box">
+                "מיקור חוץ לעסקים | TBO מנפאואר - 60 שנות מומחיות בישראל" (55 תווים)<br>
+                <small>מילת מפתח בהתחלה, USP, גיאוגרפיה</small>
+            </div>
+
+            <h4>Meta Description</h4>
+            <div class="current-box">
+                "Manpower TBO מתמחה בניהול פרויקטים ובשירותי מיקור חוץ לארגונים במגוון תחומים" (77 תווים)<br>
+                <strong>בעיות:</strong> קצר מדי, אין CTA, אין USP, אין מספרים
+            </div>
+            <div class="recommended-box">
+                "מיקור חוץ מקצועי עם מנפאואר TBO - 60+ שנות ניסיון, 8,000+ לקוחות. שירותי מוקדים, לוגיסטיקה, ייצור וחדרים נקיים. השאירו פרטים לייעוץ חינם!" (145 תווים)<br>
+                <small>מילות מפתח, מספרים, CTA</small>
+            </div>
+        </div>
+
+        <!-- SEO Fixes -->
+        <div class="subsection">
+            <h3>5. תיקוני SEO בסיסיים</h3>
+            <ul class="checklist">
+                <li><span class="check-icon check-missing">!</span> <strong>FAQPage Schema חסר</strong> - 4 שאלות קיימות בדף, צריך להוסיף Schema</li>
+                <li><span class="check-icon check-missing">!</span> <strong>Service Schema חסר</strong> - עמוד שירותים ללא structured data</li>
+                <li><span class="check-icon check-missing">!</span> <strong>BreadcrumbList חסר</strong> - חשוב לנווט ול-SERP</li>
+                <li><span class="check-icon check-improve">~</span> <strong>קישורים פנימיים חלשים</strong> - צריך לקשר בין 6 עמודי השירות</li>
+                <li><span class="check-icon check-improve">~</span> <strong>תמונות ללא ALT</strong> - הוסף מילות מפתח ל-ALT</li>
+            </ul>
+        </div>
+
+        <!-- Competitor Gap -->
+        <div class="subsection">
+            <h3>6. פער מול מתחרים</h3>
+
+            <div class="competitor-gap">
+                <h5>מה לקישורית יש שאין לנו:</h5>
+                <ul>
+                    <li>בלוג עם Case Studies מפורטים</li>
+                    <li>VideoObject Schema על תוכן וידאו</li>
+                    <li>מדריך השוואה "אאוטסורסינג vs פנימי"</li>
+                    <li>לקוחות מוזכרים: American Express, Bank Leumi, L'Oreal</li>
+                </ul>
+            </div>
+
+            <div class="competitor-gap">
+                <h5>מה לקבוצת ברק יש:</h5>
+                <ul>
+                    <li>פורום שאלות ותשובות אינטראקטיבי</li>
+                    <li>כלי Self-Assessment לבעלי עסקים</li>
+                    <li>מאמרים ממוקדי תעשייה</li>
+                </ul>
+            </div>
+
+            <h4>פעולות לסגירת פער</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>ליישם FAQPage Schema</h5>
+                    <p>4 שאלות כבר קיימות - צריך רק להוסיף את ה-Schema!</p>
+                </div>
+                <div class="action-item high">
+                    <h5>להוסיף לוגואים של לקוחות</h5>
+                    <p>Migdal, Elbit, Netivey Israel כבר מוזכרים - להציג ויזואלית</p>
+                </div>
+                <div class="action-item high">
+                    <h5>ליצור עמוד בלוג/מדריכים</h5>
+                    <p>מתחילים עם 3 מאמרים: "מה זה מיקור חוץ", "ROI Calculator", "Case Study"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 2: CALL CENTER ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">2</span> מוקדים טלפוניים במיקור חוץ</h2>
+        <span class="page-url">/employers-solutions/service-center</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <h4>מילת מפתח ראשית - קיימת וחזקה</h4>
+            <span class="keyword-tag keyword-primary">מוקד טלפוני במיקור חוץ</span>
+            <span class="keyword-tag keyword-primary">שירות לקוחות באאוטסורסינג</span>
+
+            <h4>מילות מפתח חסרות</h4>
+            <span class="keyword-tag keyword-missing">קול סנטר 24/7</span>
+            <span class="keyword-tag keyword-missing">מוקד טלפוני ענן</span>
+            <span class="keyword-tag keyword-missing">עלות מוקד טלפוני</span>
+            <span class="keyword-tag keyword-missing">IVR שירות</span>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>נפח חיפוש</th>
+                    <th>סטטוס</th>
+                    <th>פעולה</th>
+                </tr>
+                <tr>
+                    <td><strong>מוקד טלפוני במיקור חוץ</strong></td>
+                    <td>~320/חודש</td>
+                    <td>קיימת ב-H1 ו-Title</td>
+                    <td><span class="priority priority-medium">שמור</span></td>
+                </tr>
+                <tr>
+                    <td><strong>קול סנטר</strong></td>
+                    <td>~480/חודש</td>
+                    <td>חסרה</td>
+                    <td><span class="priority priority-critical">הוסף</span></td>
+                </tr>
+                <tr>
+                    <td><strong>מוקד שירות לקוחות</strong></td>
+                    <td>~280/חודש</td>
+                    <td>חלקית</td>
+                    <td><span class="priority priority-high">חזק</span></td>
+                </tr>
+                <tr>
+                    <td><strong>טלמרקטינג</strong></td>
+                    <td>~150/חודש</td>
+                    <td>חסרה לחלוטין</td>
+                    <td><span class="priority priority-high">הוסף</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "מוקדים טלפוניים במיקור חוץ" - טוב!<br>
+                <strong>H2s:</strong> "ארבעת השלבים למוקד שירות מוצלח", "סיפורי לקוחות"
+            </div>
+
+            <h4>H2 חסרים - להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"יתרונות מוקד טלפוני במיקור חוץ"</strong> - Feature snippet opportunity</li>
+                <li><span class="check-icon check-add">+</span> <strong>"עלויות הקמת מוקד טלפוני"</strong> - Commercial intent keyword</li>
+                <li><span class="check-icon check-add">+</span> <strong>"סוגי מוקדים שאנו מפעילים"</strong> - Service types (inbound, outbound, omnichannel)</li>
+                <li><span class="check-icon check-add">+</span> <strong>"שאלות נפוצות על מוקדים טלפוניים"</strong> - FAQ section for schema</li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <p><strong>אורך נוכחי:</strong> ~1,200-1,500 מילים - בינוני</p>
+            <p><strong>המלצה:</strong> להרחיב ל-2,000+ מילים</p>
+
+            <h4>תוכן חסר</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>טבלת סוגי מוקדים</h5>
+                    <p>Inbound, Outbound, Omnichannel, Help Desk, Telemarketing - עם הסבר ומחירים</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>KPIs ומדדי הצלחה</h5>
+                    <p>SLA, First Call Resolution, Average Handle Time - הראה מקצועיות</p>
+                </div>
+                <div class="action-item high">
+                    <h5>טכנולוגיות בשימוש</h5>
+                    <p>IVR, ACD, CRM Integration, AI Chatbots - מתחרים מציגים זאת</p>
+                </div>
+                <div class="action-item high">
+                    <h5>FAQ Section (5-7 שאלות)</h5>
+                    <p>"כמה עולה?", "כמה זמן הקמה?", "האם 24/7?", "איזו שפות?"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <h4>Title Tag</h4>
+            <div class="current-box">
+                "מוקד טלפוני במיקור חוץ | שירות לקוחות באאוטסורסינג - Manpower" (57 תווים) - טוב!
+            </div>
+
+            <h4>Meta Description</h4>
+            <div class="current-box">
+                "מוקד טלפוני במיקור חוץ (TBO): Manpower ישראל מספקת ניהול ותפעול מוקדי שירות ברמה גבוהה..." (97 תווים)<br>
+                <strong>בעיה:</strong> חתוך, אין CTA
+            </div>
+            <div class="recommended-box">
+                "מוקד טלפוני במיקור חוץ עם מנפאואר TBO | 24/7, רב-ערוצי, 500+ נציגים פעילים. מגדל, אלביט ונתיבי ישראל כבר איתנו. קבלו הצעת מחיר!" (136 תווים)
+            </div>
+        </div>
+
+        <!-- Competitor Gap -->
+        <div class="subsection">
+            <h3>5. פער מול מתחרים</h3>
+
+            <div class="competitor-gap">
+                <h5>קישורית (www.kishurit.co.il) - המתחרה המרכזי:</h5>
+                <ul>
+                    <li><strong>Schema:</strong> Organization, VideoObject, WebPage, BreadcrumbList, WebSite - מלא!</li>
+                    <li><strong>תוכן:</strong> בלוג עם Case Studies, וידאו, FAQ מפורט</li>
+                    <li><strong>לקוחות מוזכרים:</strong> American Express, Bank Leumi, Hewlett Packard, L'Oréal</li>
+                    <li><strong>USP:</strong> "מאז 1993" - ותק מודגש</li>
+                </ul>
+            </div>
+
+            <h4>פעולות לסגירת פער</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> הוסף Service Schema עם serviceType: "Call Center Outsourcing"</li>
+                <li><span class="check-icon check-add">+</span> הוסף FAQPage Schema (צור 5 שאלות)</li>
+                <li><span class="check-icon check-add">+</span> הצג לוגואים של לקוחות (מגדל, אלביט, נתיבי ישראל)</li>
+                <li><span class="check-icon check-add">+</span> הדגש "60 שנות ניסיון" vs "1993" של קישורית</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 3: CLEAN ROOMS ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">3</span> חדרים נקיים (Clean Rooms)</h2>
+        <span class="page-url">/employers-solutions/cleanrooms</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <div class="critical-issue">
+                <h4>בעיה קריטית: H1 חלש מאוד!</h4>
+                <p>H1 נוכחי: "ניקיון חדרים נקיים" - זה לא מה שמחפשים!</p>
+                <p>אנשים מחפשים "חדרים נקיים" או "Clean Rooms" - לא "ניקיון חדרים נקיים"</p>
+            </div>
+
+            <h4>מילות מפתח חסרות</h4>
+            <span class="keyword-tag keyword-missing">ISO 14644</span>
+            <span class="keyword-tag keyword-missing">GMP חדרים נקיים</span>
+            <span class="keyword-tag keyword-missing">חדרים נקיים פרמצבטיים</span>
+            <span class="keyword-tag keyword-missing">חדרים נקיים סמיקונדקטור</span>
+            <span class="keyword-tag keyword-missing">Class 100 / Class 1000</span>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>חשיבות</th>
+                    <th>סטטוס</th>
+                    <th>פעולה</th>
+                </tr>
+                <tr>
+                    <td><strong>חדרים נקיים במיקור חוץ</strong></td>
+                    <td>ראשית</td>
+                    <td>חסרה ב-H1!</td>
+                    <td><span class="priority priority-critical">שנה H1</span></td>
+                </tr>
+                <tr>
+                    <td><strong>ISO 14644</strong></td>
+                    <td>טכנית/אמון</td>
+                    <td>לא מוזכרת</td>
+                    <td><span class="priority priority-critical">הוסף</span></td>
+                </tr>
+                <tr>
+                    <td><strong>GMP</strong></td>
+                    <td>פרמצבטיקה</td>
+                    <td>מוזכרת פעם אחת</td>
+                    <td><span class="priority priority-high">חזק</span></td>
+                </tr>
+                <tr>
+                    <td><strong>חדרים נקיים תעשייתיים</strong></td>
+                    <td>Long-tail</td>
+                    <td>חסרה</td>
+                    <td><span class="priority priority-medium">הוסף</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "ניקיון חדרים נקיים" - שגוי!<br>
+                <strong>בעיה:</strong> מתמקד ב"ניקיון" במקום ב"ניהול/שירותי חדרים נקיים"
+            </div>
+
+            <div class="recommended-box">
+                <strong>H1 מומלץ:</strong> "חדרים נקיים במיקור חוץ | שירותי תחזוקה וניהול ISO"<br>
+                <strong>סיבה:</strong> מילת מפתח ראשית + תקן + שירות
+            </div>
+
+            <h4>H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"תקני חדרים נקיים - ISO 14644"</strong> - Technical authority</li>
+                <li><span class="check-icon check-add">+</span> <strong>"חדרים נקיים לפי תעשייה"</strong> - פרמצבטיקה, אלקטרוניקה, מזון</li>
+                <li><span class="check-icon check-add">+</span> <strong>"סיווג חדרים נקיים (Class)"</strong> - Class 100, 1000, 10000</li>
+                <li><span class="check-icon check-add">+</span> <strong>"שאלות נפוצות על חדרים נקיים"</strong> - FAQ for schema</li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <div class="critical-issue">
+                <h4>פערים קריטיים בתוכן</h4>
+                <ul class="checklist">
+                    <li><span class="check-icon check-missing">!</span> אין הסבר על סיווגי ISO (Class 1-9)</li>
+                    <li><span class="check-icon check-missing">!</span> אין פירוט תעשיות (Pharma, Semiconductor, Medical Devices)</li>
+                    <li><span class="check-icon check-missing">!</span> אין מידע טכני על תקנים</li>
+                    <li><span class="check-icon check-missing">!</span> אין FAQ</li>
+                </ul>
+            </div>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>טבלת סיווגי ISO 14644</h5>
+                    <p>Class 1 עד Class 9, חלקיקים למטר מעוקב, שימושים לכל class</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>סקשן תעשיות</h5>
+                    <p>פרמצבטיקה (GMP), אלקטרוניקה, מכשור רפואי, תעופה וחלל, מזון</p>
+                </div>
+                <div class="action-item high">
+                    <h5>רשימת תקנים ואישורים</h5>
+                    <p>ISO 14644-1/2/3, GMP, FDA 21 CFR, EU Annex 1</p>
+                </div>
+                <div class="action-item high">
+                    <h5>FAQ טכני (5-7 שאלות)</h5>
+                    <p>"מה ההבדל בין Class?", "כמה זמן הכשרה?", "איזה ציוד נדרש?"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <h4>Title Tag</h4>
+            <div class="current-box">
+                "חדרים נקיים (Clean Rooms) - שירותי תחזוקה וניקיון | Manpower TBO" (58 תווים) - טוב
+            </div>
+
+            <h4>Meta Description</h4>
+            <div class="current-box">
+                נוכחי: סביר אבל חסר מספרים ו-CTA
+            </div>
+            <div class="recommended-box">
+                "חדרים נקיים במיקור חוץ | ISO 14644 + GMP | תחזוקה וניהול לפרמצבטיקה ואלקטרוניקה. NOVA ואלביט סומכים עלינו. קבלו הצעה!" (118 תווים)
+            </div>
+        </div>
+
+        <!-- SEO Fixes -->
+        <div class="subsection">
+            <h3>5. תיקוני SEO</h3>
+            <ul class="checklist">
+                <li><span class="check-icon check-missing">!</span> <strong>אין Schema בכלל!</strong> - צריך Service Schema + FAQPage</li>
+                <li><span class="check-icon check-missing">!</span> <strong>H1 שגוי</strong> - לשנות מיידית</li>
+                <li><span class="check-icon check-improve">~</span> <strong>חסרים קישורים פנימיים</strong> - קשר ל-Technology Industry page</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 4: LOGISTICS ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">4</span> ניהול לוגיסטיקה במיקור חוץ</h2>
+        <span class="page-url">/employers-solutions/logistics</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <h4>מילת מפתח ראשית - טובה!</h4>
+            <span class="keyword-tag keyword-primary">ניהול לוגיסטיקה במיקור חוץ</span>
+
+            <h4>מילות מפתח חסרות</h4>
+            <span class="keyword-tag keyword-missing">3PL ישראל</span>
+            <span class="keyword-tag keyword-missing">ניהול מחסן</span>
+            <span class="keyword-tag keyword-missing">Fulfillment</span>
+            <span class="keyword-tag keyword-missing">שרשרת אספקה</span>
+            <span class="keyword-tag keyword-missing">WMS</span>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>נפח</th>
+                    <th>סטטוס</th>
+                    <th>פעולה</th>
+                </tr>
+                <tr>
+                    <td><strong>לוגיסטיקה במיקור חוץ</strong></td>
+                    <td>~390/חודש</td>
+                    <td>ב-H1 - מצוין</td>
+                    <td><span class="priority priority-medium">שמור</span></td>
+                </tr>
+                <tr>
+                    <td><strong>3PL</strong></td>
+                    <td>~210/חודש</td>
+                    <td>חסרה לחלוטין</td>
+                    <td><span class="priority priority-critical">הוסף</span></td>
+                </tr>
+                <tr>
+                    <td><strong>ניהול מחסן</strong></td>
+                    <td>~180/חודש</td>
+                    <td>חלקית</td>
+                    <td><span class="priority priority-high">חזק</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Fulfillment e-commerce</strong></td>
+                    <td>~120/חודש</td>
+                    <td>חסרה</td>
+                    <td><span class="priority priority-high">הוסף</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "ניהול לוגיסטיקה במיקור חוץ" - טוב!<br>
+                <strong>H2:</strong> "עם TBO הכל פשוט יותר", "מה אנחנו מציעים?", "ארבעת השלבים"
+            </div>
+
+            <h4>H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"שירותי 3PL - לוגיסטיקה צד שלישי"</strong> - Important keyword</li>
+                <li><span class="check-icon check-add">+</span> <strong>"ניהול מחסן ואחסון"</strong> - Service specific</li>
+                <li><span class="check-icon check-add">+</span> <strong>"Fulfillment לחנויות אונליין"</strong> - E-commerce segment</li>
+                <li><span class="check-icon check-add">+</span> <strong>"יתרונות מיקור חוץ לוגיסטי"</strong> - Feature snippet</li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <p><strong>אורך נוכחי:</strong> ~2,500 מילים - טוב!</p>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>סקשן 3PL מפורט</h5>
+                    <p>הסבר מה זה 3PL, יתרונות, למי מתאים, השוואה ל-2PL/4PL</p>
+                </div>
+                <div class="action-item high">
+                    <h5>טכנולוגיות WMS/TMS</h5>
+                    <p>מערכות ניהול מחסן ושינוע, אינטגרציות, tracking בזמן אמת</p>
+                </div>
+                <div class="action-item high">
+                    <h5>סקשן E-commerce Fulfillment</h5>
+                    <p>Pick & Pack, Returns handling, Same-day delivery - שוק צומח!</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>FAQ (5 שאלות)</h5>
+                    <p>"מה ההבדל בין 3PL ל-4PL?", "כמה זמן אינטגרציה?", "מהן העלויות?"</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <div class="recommended-box">
+                <strong>Title מומלץ:</strong> "לוגיסטיקה במיקור חוץ | 3PL ו-Fulfillment | Manpower TBO" (52 תווים)<br>
+                <strong>Meta מומלץ:</strong> "ניהול לוגיסטיקה במיקור חוץ עם מנפאואר TBO. שירותי 3PL, ניהול מחסן, Fulfillment ושרשרת אספקה. 50+ לקוחות פעילים. קבלו הצעה!" (128 תווים)
+            </div>
+        </div>
+
+        <!-- Competitor Gap -->
+        <div class="subsection">
+            <h3>5. פער מול מתחרים</h3>
+            <div class="competitor-gap">
+                <h5>Fridenson Group - מתחרה מוביל:</h5>
+                <ul>
+                    <li>50,000 מ"ר מחסנים (אשדוד, חיפה)</li>
+                    <li>350 עובדים, 300 משאיות</li>
+                    <li>מחסן קפוא אוטומטי</li>
+                    <li>מספרים ותשתית מודגשים מאוד</li>
+                </ul>
+                <p><strong>פעולה:</strong> הוסף מספרים ספציפיים - כמה מ"ר, כמה משלוחים, כמה לקוחות</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 5: MANUFACTURING ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">5</span> ניהול קווי ייצור, אריזה והרכבה</h2>
+        <span class="page-url">/employers-solutions/manufacture</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <h4>מילות מפתח קיימות</h4>
+            <span class="keyword-tag keyword-primary">ניהול קווי ייצור</span>
+            <span class="keyword-tag keyword-secondary">אריזה והרכבה</span>
+            <span class="keyword-tag keyword-secondary">מיקור חוץ</span>
+
+            <div class="critical-issue">
+                <h4>מילות מפתח חסרות - קריטי</h4>
+                <span class="keyword-tag keyword-missing">ייצור במיקור חוץ</span>
+                <span class="keyword-tag keyword-missing">Co-manufacturing</span>
+                <span class="keyword-tag keyword-missing">Contract manufacturing</span>
+                <span class="keyword-tag keyword-missing">הרכבה תעשייתית</span>
+                <span class="keyword-tag keyword-missing">אריזה תעשייתית</span>
+            </div>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "ניהול קווי ייצור, אריזה והרכבה" - סביר<br>
+                <strong>בעיה:</strong> חסר "במיקור חוץ" ב-H1!
+            </div>
+
+            <div class="recommended-box">
+                <strong>H1 מומלץ:</strong> "ייצור, אריזה והרכבה במיקור חוץ | Manpower TBO"
+            </div>
+
+            <h4>H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"ייצור במיקור חוץ - Contract Manufacturing"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"שירותי אריזה תעשייתית"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"הרכבת מוצרים והרכבה קלה"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"למי מתאים ייצור במיקור חוץ?"</strong></li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <p><strong>אורך נוכחי:</strong> ~1,200-1,400 מילים - דורש הרחבה</p>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>טבלת סוגי שירותי ייצור</h5>
+                    <p>Contract Manufacturing, Co-packing, Assembly, Kitting - עם הסברים</p>
+                </div>
+                <div class="action-item high">
+                    <h5>תעשיות שאנו משרתים</h5>
+                    <p>מזון, קוסמטיקה, פרמצבטיקה, אלקטרוניקה, רכב</p>
+                </div>
+                <div class="action-item high">
+                    <h5>אישורים ותקנים</h5>
+                    <p>ISO 9001, HACCP, GMP - הראה compliance</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>יתרונות מיקור חוץ לייצור</h5>
+                    <p>גמישות, חיסכון בעלויות קבועות, מומחיות, scalability</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <div class="current-box">
+                <strong>Title:</strong> "ניהול קווי ייצור, הרכבה ואריזה | שירותי מיקור חוץ | Manpower" (58 תווים) - סביר
+            </div>
+            <div class="recommended-box">
+                <strong>Title מומלץ:</strong> "ייצור ואריזה במיקור חוץ | Contract Manufacturing | Manpower TBO" (56 תווים)<br>
+                <strong>Meta מומלץ:</strong> "ייצור, אריזה והרכבה במיקור חוץ עם מנפאואר TBO. Contract manufacturing לתעשיית המזון, קוסמטיקה ואלקטרוניקה. ISO 9001. בקשו הצעה!" (135 תווים)
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 6: SERVICE PLANS ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">6</span> ניהול מערכי שירות תומכים</h2>
+        <span class="page-url">/employers-solutions/service-plans</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <div class="critical-issue">
+                <h4>בעיה קריטית: H1 לא ברור!</h4>
+                <p>H1 נוכחי: "ניהול מערכי שירות" - לא מכסה את מילת המפתח</p>
+                <p>מה בדיוק? IT Support? Help Desk? Back Office?</p>
+            </div>
+
+            <h4>מילות מפתח חסרות</h4>
+            <span class="keyword-tag keyword-missing">Help Desk במיקור חוץ</span>
+            <span class="keyword-tag keyword-missing">IT Support outsourcing</span>
+            <span class="keyword-tag keyword-missing">Back Office services</span>
+            <span class="keyword-tag keyword-missing">תמיכה טכנית 24/7</span>
+            <span class="keyword-tag keyword-missing">Managed Services</span>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "ניהול מערכי שירות" - מעורפל מדי
+            </div>
+
+            <div class="recommended-box">
+                <strong>H1 מומלץ:</strong> "שירותי תמיכה וניהול Back Office במיקור חוץ"<br>
+                או: "Help Desk ושירותים תומכים במיקור חוץ | Manpower TBO"
+            </div>
+
+            <h4>H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"שירותי Help Desk במיקור חוץ"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"IT Support ותמיכה טכנית"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"ניהול Back Office"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"שירותים אדמיניסטרטיביים"</strong></li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>הגדרה ברורה של השירותים</h5>
+                    <p>רשימה ברורה: Help Desk, IT Support, Back Office, Data Entry, HR Admin</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>SLA ומדדי שירות</h5>
+                    <p>Response time, Resolution rate, Uptime - הראה מקצועיות</p>
+                </div>
+                <div class="action-item high">
+                    <h5>טכנולוגיות ופלטפורמות</h5>
+                    <p>Ticketing systems, Remote support tools, ITSM platforms</p>
+                </div>
+                <div class="action-item high">
+                    <h5>שכבות שירות (Tiers)</h5>
+                    <p>Tier 1, Tier 2, Tier 3 - הסבר מה כלול בכל רמה</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="subsection">
+            <h3>4. Title Tag & Meta Description</h3>
+
+            <div class="current-box">
+                <strong>Title:</strong> "ניהול התפעול והשירות הפנים ארגוני | שירותי מיקור חוץ | Manpower" (64 תווים - ארוך!)
+            </div>
+            <div class="recommended-box">
+                <strong>Title מומלץ:</strong> "Help Desk ו-Back Office במיקור חוץ | Manpower TBO" (47 תווים)<br>
+                <strong>Meta מומלץ:</strong> "שירותי תמיכה ו-Back Office במיקור חוץ. Help Desk 24/7, IT Support, שירותים אדמיניסטרטיביים. צוות מקצועי עם SLA מובטח. פנו עכשיו!" (133 תווים)
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 7: TECHNOLOGY INDUSTRY ==================== -->
+<div class="page-section">
+    <div class="page-header">
+        <h2><span class="page-number">7</span> ניהול בעולמות התעשייה הטכנולוגית</h2>
+        <span class="page-url">/employers-solutions/technology-industry</span>
+    </div>
+    <div class="page-content">
+
+        <!-- Keywords -->
+        <div class="subsection">
+            <h3>1. מילות מפתח - כיסוי ופערים</h3>
+
+            <h4>מילות מפתח קיימות</h4>
+            <span class="keyword-tag keyword-secondary">ניהול טכנולוגי</span>
+            <span class="keyword-tag keyword-secondary">תעשייה טכנולוגית</span>
+
+            <h4>מילות מפתח חסרות</h4>
+            <span class="keyword-tag keyword-missing">הייטק מיקור חוץ</span>
+            <span class="keyword-tag keyword-missing">IT outsourcing ישראל</span>
+            <span class="keyword-tag keyword-missing">פיתוח תוכנה במיקור חוץ</span>
+            <span class="keyword-tag keyword-missing">QA outsourcing</span>
+            <span class="keyword-tag keyword-missing">DevOps במיקור חוץ</span>
+            <span class="keyword-tag keyword-missing">מיקור חוץ סייבר</span>
+        </div>
+
+        <!-- Headings -->
+        <div class="subsection">
+            <h3>2. מבנה כותרות (H Tags)</h3>
+
+            <div class="current-box">
+                <strong>H1:</strong> "ניהול בעולמות התעשייה הטכנולוגית" - מעורפל
+            </div>
+
+            <div class="recommended-box">
+                <strong>H1 מומלץ:</strong> "מיקור חוץ לתעשיית ההייטק | IT Outsourcing | Manpower TBO"
+            </div>
+
+            <h4>H2 להוספה</h4>
+            <ul class="checklist">
+                <li><span class="check-icon check-add">+</span> <strong>"שירותי IT Outsourcing"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"פיתוח תוכנה במיקור חוץ"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"QA ובדיקות תוכנה"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"DevOps ו-Cloud Services"</strong></li>
+                <li><span class="check-icon check-add">+</span> <strong>"סייבר ואבטחת מידע"</strong></li>
+            </ul>
+        </div>
+
+        <!-- Content -->
+        <div class="subsection">
+            <h3>3. עומק תוכן ושיפורים</h3>
+
+            <p><strong>אורך נוכחי:</strong> ~1,200-1,400 מילים - דורש הרחבה משמעותית</p>
+
+            <h4>תוכן להוספה</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>פירוט שירותי IT</h5>
+                    <p>Software Development, QA, DevOps, Cloud, Cybersecurity, Data Engineering</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>Stack טכנולוגי</h5>
+                    <p>שפות, frameworks, פלטפורמות - הראה מומחיות טכנית</p>
+                </div>
+                <div class="action-item high">
+                    <h5>מודלי שיתוף פעולה</h5>
+                    <p>Dedicated Team, Staff Augmentation, Project-based, BOT</p>
+                </div>
+                <div class="action-item high">
+                    <h5>סקשן סייבר ואבטחת מידע</h5>
+                    <p>SOC, Penetration Testing, Security Assessment - שוק צומח!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Competitor Gap -->
+        <div class="subsection">
+            <h3>4. פער מול מתחרים</h3>
+            <div class="competitor-gap">
+                <h5>קבוצת יעל (Yael Group) - מתחרה מוביל בהייטק:</h5>
+                <ul>
+                    <li>1,000+ מומחים טכנולוגיים</li>
+                    <li>התמחות בבנקאות, פיננסים, Healthcare, Telecom</li>
+                    <li>שירותי QA, פיתוח, DevOps מפורטים</li>
+                </ul>
+            </div>
+            <div class="competitor-gap">
+                <h5>NESS Technologies:</h5>
+                <ul>
+                    <li>עמוד Outsourcing ייעודי עם case studies</li>
+                    <li>פירוט טכנולוגיות ו-stack</li>
+                    <li>מודלי engagement ברורים</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #16a34a, #22c55e);">
+        <h2>סיכום פעולות נדרשות - לפי עדיפות</h2>
+    </div>
+    <div class="page-content">
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">קריטי - לביצוע השבוע</h3>
+            <table>
+                <tr>
+                    <th>עמוד</th>
+                    <th>פעולה</th>
+                    <th>מילת מפתח</th>
+                </tr>
+                <tr>
+                    <td>TBO Main</td>
+                    <td>הוסף FAQPage Schema (4 שאלות קיימות!)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Clean Rooms</td>
+                    <td><strong>שנה H1</strong> מ"ניקיון חדרים" ל"חדרים נקיים במיקור חוץ"</td>
+                    <td>חדרים נקיים</td>
+                </tr>
+                <tr>
+                    <td>Clean Rooms</td>
+                    <td>הוסף תוכן ISO 14644 וסיווגי Class</td>
+                    <td>ISO 14644, GMP</td>
+                </tr>
+                <tr>
+                    <td>Call Center</td>
+                    <td>הוסף מילת מפתח "קול סנטר" לתוכן</td>
+                    <td>קול סנטר</td>
+                </tr>
+                <tr>
+                    <td>Logistics</td>
+                    <td>הוסף סקשן "3PL" - מילת מפתח חסרה לחלוטין</td>
+                    <td>3PL</td>
+                </tr>
+                <tr>
+                    <td>All Pages</td>
+                    <td>הוסף Service Schema לכל עמוד שירות</td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #f59e0b;">עדיפות גבוהה - תוך שבועיים</h3>
+            <table>
+                <tr>
+                    <th>עמוד</th>
+                    <th>פעולה</th>
+                </tr>
+                <tr>
+                    <td>TBO Main</td>
+                    <td>הוסף סקשן "מה זה מיקור חוץ?" (300 מילים)</td>
+                </tr>
+                <tr>
+                    <td>TBO Main</td>
+                    <td>הוסף Trust Signals: 60 שנים, 8,000 לקוחות, לוגואים</td>
+                </tr>
+                <tr>
+                    <td>Manufacturing</td>
+                    <td>הוסף "במיקור חוץ" ל-H1</td>
+                </tr>
+                <tr>
+                    <td>Service Plans</td>
+                    <td>שכתב H1 להיות ספציפי יותר (Help Desk/Back Office)</td>
+                </tr>
+                <tr>
+                    <td>Technology</td>
+                    <td>שכתב H1 עם "הייטק מיקור חוץ" או "IT Outsourcing"</td>
+                </tr>
+                <tr>
+                    <td>All Pages</td>
+                    <td>הוסף FAQ section (5 שאלות) + FAQPage Schema</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #3b82f6;">עדיפות בינונית - תוך חודש</h3>
+            <table>
+                <tr>
+                    <th>פעולה</th>
+                    <th>השפעה</th>
+                </tr>
+                <tr>
+                    <td>צור מחשבון ROI / עלויות</td>
+                    <td>Lead generation + יתרון על מתחרים</td>
+                </tr>
+                <tr>
+                    <td>הוסף Case Studies לכל עמוד שירות</td>
+                    <td>Social proof + תוכן</td>
+                </tr>
+                <tr>
+                    <td>צור טבלאות השוואה (Outsourcing vs In-house)</td>
+                    <td>Feature snippet potential</td>
+                </tr>
+                <tr>
+                    <td>שפר קישורים פנימיים בין עמודי TBO</td>
+                    <td>Link equity distribution</td>
+                </tr>
+                <tr>
+                    <td>הוסף BreadcrumbList Schema לכל העמודים</td>
+                    <td>SERP visibility</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <h3>Manpower TBO - Page-Level SEO Execution Plan</h3>
+    <p>גרסה 1.0 | ינואר 2026</p>
+    <p style="margin-top: 15px;">Nadav Digital SEO Agency | www.n-c.digital</p>
+    <p style="color: #475569; margin-top: 10px;">מבוסס על ניתוח 7 עמודי TBO, 15 מתחרים, ומחקר מילות מפתח</p>
+</div>
+
+</body>
+</html>
