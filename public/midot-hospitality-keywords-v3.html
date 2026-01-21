@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מידות | מחקר מילות מפתח מורחב - מלונאות | V3</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2rem; color: white; margin-bottom: 10px; }
+        .header .subtitle { color: rgba(255,255,255,0.9); font-size: 1.1rem; }
+        .version-badge {
+            display: inline-block;
+            background: #fbbf24;
+            color: #1e293b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .alert-box {
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
+            color: white;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+        }
+        .alert-box h2 { margin-bottom: 15px; font-size: 1.3rem; }
+        section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+        }
+        section h2 {
+            color: #38bdf8;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+        }
+        section h3 {
+            color: #a5f3fc;
+            font-size: 1.1rem;
+            margin: 20px 0 15px;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 12px 15px; text-align: right; border-bottom: 1px solid rgba(148, 163, 184, 0.2); }
+        th { background: rgba(15, 23, 42, 0.6); color: #38bdf8; font-weight: 600; }
+        tr:hover { background: rgba(56, 189, 248, 0.05); }
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .tag-green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .tag-red { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .tag-yellow { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+        .tag-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .tag-purple { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card.green { border-left: 4px solid #22c55e; }
+        .stat-card.blue { border-left: 4px solid #3b82f6; }
+        .stat-card.yellow { border-left: 4px solid #eab308; }
+        .stat-card.red { border-left: 4px solid #ef4444; }
+        .stat-card.purple { border-left: 4px solid #a855f7; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: white; }
+        .stat-label { color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+        .decision-card {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+        .decision-card.approved { border-right: 4px solid #22c55e; }
+        .decision-card.rejected { border-right: 4px solid #ef4444; }
+        .decision-card.caution { border-right: 4px solid #f59e0b; }
+        .decision-card h4 { color: #38bdf8; margin-bottom: 10px; }
+        ul, ol { margin-right: 25px; margin-top: 10px; }
+        li { margin-bottom: 8px; }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .highlight-box {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <h1>מחקר מילות מפתח מורחב - מלונאות</h1>
+        <div class="subtitle">מידות | תגובה למשוב לקוח | אימות וולידציה מלא</div>
+        <span class="version-badge">V3 - מורחב | 21/01/2026</span>
+    </header>
+
+    <div class="alert-box alert-warning">
+        <h2>ממצא קריטי - נדרשת תשומת לב</h2>
+        <p><strong>לאחר מחקר מעמיק עם 4 סוכני AI מקבילים, עולה תמונה מורכבת:</strong></p>
+        <ul style="margin-top: 15px;">
+            <li>מילות המפתח שהוצעו על ידי הלקוח אינן בשימוש נפוץ בישראל</li>
+            <li>היעדר תוכן מתחרים בתחום המלונאות הוא סימן לביקוש נמוך - לא הזדמנות</li>
+            <li>כל 4 המתחרים הגדולים (Adam Milo, Midot, IntegrityMeter, Logipass) לא מייצרים תוכן מלונאות</li>
+            <li>שוק המלונאות הישראלי במשבר כוח אדם - צריכים עובדים, לא סינון</li>
+        </ul>
+    </div>
+
+    <section>
+        <h2>סיכום מנהלים</h2>
+        <div class="stats-grid">
+            <div class="stat-card red">
+                <div class="stat-value">3/3</div>
+                <div class="stat-label">מילות לקוח נדחו</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-value">8</div>
+                <div class="stat-label">מילות מפתח חדשות מאומתות</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-value">0</div>
+                <div class="stat-label">מתחרים עם תוכן מלונאות</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-value">?</div>
+                <div class="stat-label">האם יש ביקוש אמיתי</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>חלק 1: וולידציה של מילות מפתח מהלקוח</h2>
+        <p style="margin-bottom: 20px;">הלקוח הציע בדיקת 3 מילות מפתח על סמך שפה מפורומים מקצועיים:</p>
+
+        <h3>מילות מפתח שנבדקו</h3>
+        <table>
+            <tr>
+                <th>מילת מפתח (אנגלית)</th>
+                <th>עברית</th>
+                <th>נפח חיפוש</th>
+                <th>החלטה</th>
+                <th>סיבה</th>
+            </tr>
+            <tr>
+                <td>Employee screening tests</td>
+                <td>מבחני סינון עובדים</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>לא בשימוש - משתמשים ב"מבחני מיון"</td>
+            </tr>
+            <tr>
+                <td>Employee suitability tests</td>
+                <td>מבחני התאמה לעובדים</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>צורה לא תקנית - משתמשים ב"מבחני התאמה לתפקיד"</td>
+            </tr>
+            <tr>
+                <td>Job screening process</td>
+                <td>תהליך סינון לעבודה</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>"סינון" = סינון קו"ח (ATS), לא מבחנים</td>
+            </tr>
+        </table>
+
+        <div class="highlight-box">
+            <strong>ממצא מרכזי:</strong> בישראל משתמשים ב-<strong>"מיון"</strong> (sorting/selection) ולא ב-<strong>"סינון"</strong> (screening) כשמדברים על מבחני הערכה. "סינון" בדרך כלל מתייחס לסינון קורות חיים (מערכות ATS).
+        </div>
+
+        <h3>מילות מפתח שכבר נכללו במחקר המקורי</h3>
+        <table>
+            <tr>
+                <th>מילת מפתח</th>
+                <th>סטטוס</th>
+                <th>הערה</th>
+            </tr>
+            <tr>
+                <td>מרכז הערכה / Assessment Center</td>
+                <td><span class="tag tag-green">נכלל</span></td>
+                <td>מונח תקני, בשימוש בתעשייה</td>
+            </tr>
+            <tr>
+                <td>מבחני אישיות / Personality tests</td>
+                <td><span class="tag tag-green">נכלל</span></td>
+                <td>מונח תקני, נפח חיפוש קיים</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>חלק 2: מונחי תעשיית המלונאות - וולידציה</h2>
+        <p style="margin-bottom: 20px;">הלקוח שאל אילו מונחים משתמשים בפועל בחיפושים:</p>
+
+        <table>
+            <tr>
+                <th>מונח</th>
+                <th>עברית</th>
+                <th>נפח חיפוש</th>
+                <th>מי משתמש</th>
+                <th>המלצה</th>
+            </tr>
+            <tr>
+                <td>Hospitality</td>
+                <td>אירוח</td>
+                <td><span class="tag tag-yellow">נמוך</span></td>
+                <td>מעורפל - יכול להיות אירוח אירועים</td>
+                <td><span class="tag tag-red">לא להשתמש</span></td>
+            </tr>
+            <tr>
+                <td>Hospitality industry</td>
+                <td>תעשיית האירוח</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td>תרגום מאנגלית - לא טבעי</td>
+                <td><span class="tag tag-red">לא להשתמש</span></td>
+            </tr>
+            <tr>
+                <td>Hotel industry</td>
+                <td>תעשיית המלונאות / ענף המלונאות</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td>ז'רגון תעשייתי בלבד</td>
+                <td><span class="tag tag-yellow">רקע בלבד</span></td>
+            </tr>
+            <tr>
+                <td>Hotels and hospitality</td>
+                <td>מלונות ואירוח</td>
+                <td><span class="tag tag-red">0</span></td>
+                <td>לא בשימוש</td>
+                <td><span class="tag tag-red">לא להשתמש</span></td>
+            </tr>
+        </table>
+
+        <h3>מה כן משתמשים בפועל (מאומת מול אתרי דרושים)</h3>
+        <table>
+            <tr>
+                <th>מונח</th>
+                <th>נפח חיפוש</th>
+                <th>מקור</th>
+                <th>המלצה</th>
+            </tr>
+            <tr>
+                <td><strong>מלונאות</strong></td>
+                <td><span class="tag tag-green">170/חודש</span></td>
+                <td>AllJobs, Drushim, JobMaster</td>
+                <td><span class="tag tag-green">להשתמש - עיקרי</span></td>
+            </tr>
+            <tr>
+                <td><strong>עבודה במלון</strong></td>
+                <td><span class="tag tag-green">170/חודש</span></td>
+                <td>חיפוש טבעי של מחפשי עבודה</td>
+                <td><span class="tag tag-green">להשתמש - עיקרי</span></td>
+            </tr>
+            <tr>
+                <td><strong>דרושים מלונאות</strong></td>
+                <td><span class="tag tag-green">110/חודש</span></td>
+                <td>חיפוש intent גבוה</td>
+                <td><span class="tag tag-green">להשתמש</span></td>
+            </tr>
+            <tr>
+                <td><strong>תיירות ומלונאות</strong></td>
+                <td><span class="tag tag-green">140/חודש</span></td>
+                <td>קטגוריה באתרי דרושים</td>
+                <td><span class="tag tag-green">להשתמש</span></td>
+            </tr>
+            <tr>
+                <td>עבודה במלונאות</td>
+                <td><span class="tag tag-yellow">10/חודש</span></td>
+                <td>וריאציה</td>
+                <td><span class="tag tag-yellow">משני</span></td>
+            </tr>
+        </table>
+
+        <div class="highlight-box">
+            <strong>מקור:</strong> התאחדות המלונות משתמשת ב-"ענף המלונאות" | אתרי דרושים: "תיירות ומלונאות" | מחפשי עבודה: "עבודה במלון"
+        </div>
+    </section>
+
+    <section>
+        <h2>חלק 3: מילות מפתח חדשות מאומתות (SE Ranking API)</h2>
+        <p style="margin-bottom: 20px;">מילות מפתח עם נפח חיפוש מוכח שיכולות להתאים לאסטרטגיה:</p>
+
+        <h3>מילות מפתח סינון/מיון - נפח גבוה</h3>
+        <table>
+            <tr>
+                <th>מילת מפתח</th>
+                <th>נפח</th>
+                <th>CPC</th>
+                <th>קושי</th>
+                <th>Intent</th>
+            </tr>
+            <tr>
+                <td><strong>גיוס עובדים</strong></td>
+                <td><span class="tag tag-green">480</span></td>
+                <td>$2.05</td>
+                <td>33</td>
+                <td><span class="tag tag-blue">B2B מסחרי</span></td>
+            </tr>
+            <tr>
+                <td><strong>אבחון תעסוקתי</strong></td>
+                <td><span class="tag tag-green">480</span></td>
+                <td>$0.62</td>
+                <td>3</td>
+                <td><span class="tag tag-blue">B2B מסחרי</span> - הזדמנות!</td>
+            </tr>
+            <tr>
+                <td>מבחני התאמה</td>
+                <td><span class="tag tag-yellow">110</span></td>
+                <td>$0.53</td>
+                <td>9</td>
+                <td><span class="tag tag-purple">B2B + B2C</span></td>
+            </tr>
+            <tr>
+                <td>מבחני מיון לעבודה</td>
+                <td><span class="tag tag-yellow">110</span></td>
+                <td>$0.43</td>
+                <td>5</td>
+                <td><span class="tag tag-purple">B2C</span></td>
+            </tr>
+            <tr>
+                <td>מיון עובדים</td>
+                <td><span class="tag tag-yellow">90</span></td>
+                <td>$0</td>
+                <td>14</td>
+                <td><span class="tag tag-blue">B2B</span></td>
+            </tr>
+            <tr>
+                <td>מבחני קבלה לעבודה</td>
+                <td><span class="tag tag-yellow">50</span></td>
+                <td>$0.21</td>
+                <td>6</td>
+                <td><span class="tag tag-purple">B2C</span></td>
+            </tr>
+        </table>
+
+        <div class="alert-box alert-success" style="margin-top: 20px;">
+            <h3>הזדמנות שזוהתה: אבחון תעסוקתי</h3>
+            <p>נפח 480/חודש, קושי 3 בלבד! זו הזדמנות אמיתית שלא נכללה במחקר המקורי.</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>חלק 4: ניתוח מתחרים מעמיק - ממצא קריטי</h2>
+
+        <div class="alert-box alert-warning">
+            <h3>שאלה: למה אף מתחר לא יוצר תוכן מלונאות?</h3>
+            <p><strong>תשובה: כי אין ביקוש מספיק - לא כי פספסו הזדמנות.</strong></p>
+        </div>
+
+        <h3>בדיקת מתחרים - תוכן מלונאות</h3>
+        <table>
+            <tr>
+                <th>חברה</th>
+                <th>תוכן מלונאות</th>
+                <th>ורטיקלים שכן מכסים</th>
+            </tr>
+            <tr>
+                <td>Adam Milo</td>
+                <td><span class="tag tag-red">0 תוצאות</span></td>
+                <td>תעשייה, ביטחון, פארמה, SaaS, בריאות, פיננסים</td>
+            </tr>
+            <tr>
+                <td>Midot</td>
+                <td><span class="tag tag-red">0 תוצאות</span></td>
+                <td>תעופה, בנקאות, קמעונאות, ייצור, אבטחה</td>
+            </tr>
+            <tr>
+                <td>IntegrityMeter</td>
+                <td><span class="tag tag-red">0 תוצאות</span></td>
+                <td>שירותים כלליים בלבד</td>
+            </tr>
+            <tr>
+                <td>Logipass</td>
+                <td><span class="tag tag-red">0 תוצאות</span></td>
+                <td>פסיכומטריקה כללית</td>
+            </tr>
+        </table>
+
+        <h3>למה מתחרים חכמים לא משקיעים במלונאות?</h3>
+        <div class="grid-2">
+            <div class="decision-card rejected">
+                <h4>סיבה 1: ROI לא מצדיק</h4>
+                <p>עלות מבחן: 300-500 ש"ח</p>
+                <p>משכורת: שכר מינימום</p>
+                <p>תחלופה: 70%+</p>
+                <p><strong>מתמטיקה: לא כדאי</strong></p>
+            </div>
+            <div class="decision-card rejected">
+                <h4>סיבה 2: משבר כוח אדם</h4>
+                <p>המלונות נואשים לעובדים</p>
+                <p>לא יכולים להרשות לסנן</p>
+                <p>מעדיפים הכשרה על סינון</p>
+                <p><strong>לא צריכים את השירות</strong></p>
+            </div>
+            <div class="decision-card rejected">
+                <h4>סיבה 3: עובדים זרים</h4>
+                <p>2,000-4,500 עובדים זרים/שנה</p>
+                <p>למשרות בסיסיות</p>
+                <p>תהליך גיוס שונה לחלוטין</p>
+                <p><strong>לא רלוונטי למבחני יושרה</strong></p>
+            </div>
+            <div class="decision-card rejected">
+                <h4>סיבה 4: ראיות בינלאומיות</h4>
+                <p>מחקר Cornell: אימוץ נמוך גם בארה"ב</p>
+                <p>"employers have been slow to embrace"</p>
+                <p>חששות: תקפות, אפליה, עלויות</p>
+                <p><strong>זה לא רק ישראל</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>חלק 5: הערכה מחודשת - Blue Ocean או Dead Sea?</h2>
+
+        <table>
+            <tr>
+                <th>פקטור</th>
+                <th>Blue Ocean (הזדמנות)</th>
+                <th>Dead Sea (אין ביקוש)</th>
+                <th>ראיות</th>
+            </tr>
+            <tr>
+                <td>נוכחות מתחרים</td>
+                <td>אף אחד לא מכסה</td>
+                <td style="background: rgba(239, 68, 68, 0.1);">---</td>
+                <td>4 מתחרים = 0 תוכן</td>
+            </tr>
+            <tr>
+                <td>חיפושים בשוק</td>
+                <td>---</td>
+                <td style="background: rgba(239, 68, 68, 0.1);">אין תוכן עברי</td>
+                <td>site: חיפושים ריקים</td>
+            </tr>
+            <tr>
+                <td>מבנה תעשייה</td>
+                <td>---</td>
+                <td style="background: rgba(239, 68, 68, 0.1);">שכר נמוך, תחלופה גבוהה</td>
+                <td>ROI לא מצדיק</td>
+            </tr>
+            <tr>
+                <td>עדיפויות לקוחות</td>
+                <td>---</td>
+                <td style="background: rgba(239, 68, 68, 0.1);">משבר כוח אדם</td>
+                <td>צריכים עובדים, לא מסננים</td>
+            </tr>
+            <tr>
+                <td>בנצ'מרק גלובלי</td>
+                <td>---</td>
+                <td style="background: rgba(239, 68, 68, 0.1);">אימוץ נמוך גם בארה"ב</td>
+                <td>מחקר Cornell</td>
+            </tr>
+        </table>
+
+        <div class="alert-box alert-warning" style="margin-top: 20px;">
+            <h3>מסקנה: Dead Sea - ביקוש נמוך מאוד</h3>
+            <p>היעדר תוכן מתחרים הוא סימן למציאות השוק, לא פער. המלונאות הישראלית:</p>
+            <ol style="margin-top: 10px;">
+                <li>לא יכולה להרשות סינון יקר למשרות שכר מינימום</li>
+                <li>נואשת לכל עובד - לא יכולה לסנן</li>
+                <li>משקיעה בהכשרה ושימור, לא בסינון קדם-גיוסי</li>
+            </ol>
+        </div>
+    </section>
+
+    <section>
+        <h2>חלק 6: המלצות מעודכנות</h2>
+
+        <h3>אם בכל זאת רוצים להמשיך עם מלונאות:</h3>
+        <div class="decision-card caution">
+            <h4>נישות שיכולות לעבוד</h4>
+            <ul>
+                <li><strong>קזינו:</strong> עובדים שמטפלים במזומנים - מוסדר, סיכון גבוה</li>
+                <li><strong>הנהלת מלון:</strong> משרות בכירות בלבד (לא entry-level)</li>
+                <li><strong>אבטחה במלונות:</strong> קצין ביטחון - דרישות רגולטוריות</li>
+                <li><strong>מלונות יוקרה/בוטיק:</strong> כלכלה שונה</li>
+            </ul>
+        </div>
+
+        <h3>המלצה חלופית - ורטיקלים עם ביקוש מוכח</h3>
+        <div class="grid-2">
+            <div class="decision-card approved">
+                <h4>קמעונאות / Retail</h4>
+                <p>סיכון גניבה גבוה</p>
+                <p>ROI מוכח</p>
+                <p>מתחרים משקיעים</p>
+            </div>
+            <div class="decision-card approved">
+                <h4>שירותים פיננסיים</h4>
+                <p>דרישות רגולטוריות</p>
+                <p>חובת בדיקה</p>
+                <p>תקציבים גבוהים</p>
+            </div>
+            <div class="decision-card approved">
+                <h4>Hi-Tech</h4>
+                <p>משכורות גבוהות</p>
+                <p>ROI מצדיק השקעה</p>
+                <p>מודעות גבוהה</p>
+            </div>
+            <div class="decision-card approved">
+                <h4>ביטחון/בטיחות</h4>
+                <p>חובה רגולטורית</p>
+                <p>סיכון גבוה</p>
+                <p>ביקוש קבוע</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>סיכום שינויים מול V2</h2>
+        <table>
+            <tr>
+                <th>קטגוריה</th>
+                <th>נוסף</th>
+                <th>נדחה</th>
+                <th>סיבה</th>
+            </tr>
+            <tr>
+                <td colspan="4" style="background: rgba(56, 189, 248, 0.1);"><strong>מילות לקוח</strong></td>
+            </tr>
+            <tr>
+                <td>מבחני סינון עובדים</td>
+                <td>-</td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>0 נפח, לא בשימוש</td>
+            </tr>
+            <tr>
+                <td>מבחני התאמה לעובדים</td>
+                <td>-</td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>צורה לא תקנית</td>
+            </tr>
+            <tr>
+                <td>תהליך סינון לעבודה</td>
+                <td>-</td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>"סינון" = קו"ח, לא מבחנים</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="background: rgba(56, 189, 248, 0.1);"><strong>מונחי מלונאות</strong></td>
+            </tr>
+            <tr>
+                <td>תעשיית האירוח</td>
+                <td>-</td>
+                <td><span class="tag tag-red">נדחה</span></td>
+                <td>0 נפח, לא טבעי בעברית</td>
+            </tr>
+            <tr>
+                <td>מלונאות</td>
+                <td><span class="tag tag-green">אושר</span></td>
+                <td>-</td>
+                <td>170/חודש - מונח עיקרי</td>
+            </tr>
+            <tr>
+                <td>עבודה במלון</td>
+                <td><span class="tag tag-green">אושר</span></td>
+                <td>-</td>
+                <td>170/חודש - חיפוש טבעי</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="background: rgba(56, 189, 248, 0.1);"><strong>מילות מפתח חדשות</strong></td>
+            </tr>
+            <tr>
+                <td>אבחון תעסוקתי</td>
+                <td><span class="tag tag-green">חדש!</span></td>
+                <td>-</td>
+                <td>480/חודש, קושי 3 - הזדמנות!</td>
+            </tr>
+            <tr>
+                <td>גיוס עובדים</td>
+                <td><span class="tag tag-green">חדש!</span></td>
+                <td>-</td>
+                <td>480/חודש, CPC $2.05</td>
+            </tr>
+            <tr>
+                <td>מבחני מיון לעבודה</td>
+                <td><span class="tag tag-green">חדש!</span></td>
+                <td>-</td>
+                <td>110/חודש - מונח נכון</td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>המלצה סופית</h2>
+        <div class="alert-box alert-info">
+            <h3>המלצה: שקלו מחדש את אסטרטגיית המלונאות</h3>
+            <p style="margin-top: 15px;">הראיות מצביעות על ביקוש נמוך מאוד לשילוב "סינון עובדים + מלונאות" בישראל.</p>
+            <p style="margin-top: 10px;"><strong>אפשרויות:</strong></p>
+            <ol style="margin-top: 10px;">
+                <li><strong>לצמצם:</strong> רק נישות ספציפיות (קזינו, הנהלה, אבטחה)</li>
+                <li><strong>להחליף:</strong> להתמקד בורטיקלים עם ביקוש מוכח (קמעונאות, פיננסים, Hi-Tech)</li>
+                <li><strong>לבדוק ישירות:</strong> לשאול לקוחות מלונאות אם יש להם עניין בפועל</li>
+            </ol>
+        </div>
+    </section>
+
+    <footer>
+        <p>מחקר מילות מפתח מורחב | מידות - תגובה למשוב לקוח</p>
+        <p>V3 | נוצר ע"י Nadav Digital | 21/01/2026</p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: #64748b;">מחקר זה מבוסס על 4 סוכני AI מקבילים: מחקר מילות מפתח, מונחי תעשייה, SE Ranking API, וניתוח מתחרים</p>
+    </footer>
+</div>
+</body>
+</html>
