@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מרכז הבנייה הישראלי - FAQ Schema Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a1628;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        .stat strong { font-size: 1.5em; }
+        .stat.new { border: 2px solid #3b82f6; }
+        .stat.warning { border: 2px solid #f59e0b; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .notice {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .notice h3 { margin-bottom: 10px; }
+        .notice-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.blue { background: #3b82f6; }
+        .legend-dot.orange { background: #f59e0b; }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .tab {
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab:hover { border-color: #60a5fa; color: #fff; }
+        .tab.active {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .page-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-title { font-size: 1.5em; color: #f59e0b; }
+        .page-url {
+            background: #0f172a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            word-break: break-all;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .badge.new {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .section {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section h3 { color: #f59e0b; font-size: 1.1em; }
+        .status-badge {
+            background: #3b82f6;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .faq-item {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-right: 4px solid #f59e0b;
+        }
+        .faq-item strong { color: #f59e0b; display: block; margin-bottom: 8px; }
+        .faq-item p { color: #94a3b8; font-size: 14px; }
+        .schema-box {
+            background: #0f172a;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .schema-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .schema-header h4 { color: #3b82f6; }
+        .copy-btn {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #2563eb; }
+        .copy-btn.copied {
+            background: #10b981;
+        }
+        .schema-code {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 12px;
+            color: #94a3b8;
+            max-height: 400px;
+            overflow-y: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        .schema-code pre { white-space: pre-wrap; word-break: break-word; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .container { padding: 15px; }
+            .page-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>מרכז הבנייה הישראלי - FAQ Schema Dashboard</h1>
+        <p>building.org.il | סכמות FAQ חדשות</p>
+        <div class="stats">
+            <div class="stat warning">
+                <strong>?</strong><br>נדרש אימות ידני
+            </div>
+            <div class="stat new">
+                <strong>4</strong><br>סכמות חדשות
+            </div>
+            <div class="stat">
+                <strong>20</strong><br>שאלות סה"כ
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="notice">
+            <h3>⚠️ אתר גדול - נדרש אימות ידני</h3>
+            <p>מרכז הבנייה הישראלי הוא אתר גדול עם עמודי קורסים רבים. יש לאמת ידנית כל עמוד קורס לפני הוספת סכמה.</p>
+        </div>
+
+        <div class="notice-info">
+            <h3>הסכמות למטה מיועדות לעמודים ראשיים בלבד</h3>
+            <p>לאחר בדיקה - לא נמצאו סכמות FAQ קיימות בעמודים הראשיים. ניתן להטמיע את הסכמות הבאות.</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot blue"></div>
+                <span>סכמה חדשה - מוכנה להטמעה</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot orange"></div>
+                <span>עמודי קורסים - לאמת ידנית</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showPage('homepage')">עמוד הבית (5 שאלות)</button>
+            <button class="tab" onclick="showPage('about')">אודות (5 שאלות)</button>
+            <button class="tab" onclick="showPage('college')">מכללה (5 שאלות)</button>
+            <button class="tab" onclick="showPage('contact')">צור קשר (5 שאלות)</button>
+        </div>
+
+        <!-- Homepage - NEW SCHEMA -->
+        <div id="homepage" class="page-content active">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="badge new">סכמה חדשה</span>
+                        <span class="page-title">עמוד הבית</span>
+                    </div>
+                    <div class="page-url">https://building.org.il/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ חדשה</h3>
+                        <span class="status-badge">5 שאלות</span>
+                    </div>
+
+                    <div class="faq-item">
+                        <strong>ש: מהו מרכז הבנייה הישראלי?</strong>
+                        <p>ת: מרכז הבנייה הישראלי הוא הגוף המקצועי הגדול, הוותיק והמשפיע ביותר בענף הבנייה והנדל"ן בישראל. המרכז פועל למעלה מ-50 שנה ומהווה מרכז ידע מקצועי לכל השחקנים בענף.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: אילו שירותים מציע מרכז הבנייה?</strong>
+                        <p>ת: המרכז מציע מודיעין עסקי וניתוח שוק, ידע מקצועי וחדשות מהענף, תוכניות לימודים במכללת מרכז הבנייה, כנסים ופורומים מקצועיים, ויוזמות חדשנות טכנולוגית.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: האם ניתן ללמוד קורסים מקצועיים במרכז הבנייה?</strong>
+                        <p>ת: כן, מכללת מרכז הבנייה מציעה מגוון רחב של קורסים מקצועיים בתחומי הבנייה, נדל"ן, שמאות, ניהול פרויקטים ועוד, המותאמים לאנשי מקצוע בענף.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: למי מיועדים השירותים של מרכז הבנייה?</strong>
+                        <p>ת: השירותים מיועדים לקבלנים, יזמים, אדריכלים, מהנדסים, שמאים, אנשי נדל"ן, ובעלי מקצוע בענפי הבנייה והתשתיות.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: איפה ממוקם מרכז הבנייה הישראלי?</strong>
+                        <p>ת: המרכז ממוקם בתל אביב ופועל ברחבי ישראל באמצעות קורסים, כנסים ואירועים מקצועיים.</p>
+                    </div>
+                </div>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <h4>העתק והדבק סכמה</h4>
+                        <button class="copy-btn" onclick="copySchema('homepage-schema')">העתק סכמה</button>
+                    </div>
+                    <div class="schema-code">
+                        <pre id="homepage-schema">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהו מרכז הבנייה הישראלי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מרכז הבנייה הישראלי הוא הגוף המקצועי הגדול, הוותיק והמשפיע ביותר בענף הבנייה והנדל\"ן בישראל. המרכז פועל למעלה מ-50 שנה ומהווה מרכז ידע מקצועי לכל השחקנים בענף."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו שירותים מציע מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המרכז מציע מודיעין עסקי וניתוח שוק, ידע מקצועי וחדשות מהענף, תוכניות לימודים במכללת מרכז הבנייה, כנסים ופורומים מקצועיים, ויוזמות חדשנות טכנולוגית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם ניתן ללמוד קורסים מקצועיים במרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, מכללת מרכז הבנייה מציעה מגוון רחב של קורסים מקצועיים בתחומי הבנייה, נדל\"ן, שמאות, ניהול פרויקטים ועוד, המותאמים לאנשי מקצוע בענף."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למי מיועדים השירותים של מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "השירותים מיועדים לקבלנים, יזמים, אדריכלים, מהנדסים, שמאים, אנשי נדל\"ן, ובעלי מקצוע בענפי הבנייה והתשתיות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איפה ממוקם מרכז הבנייה הישראלי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המרכז ממוקם בתל אביב ופועל ברחבי ישראל באמצעות קורסים, כנסים ואירועים מקצועיים."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About - NEW SCHEMA -->
+        <div id="about" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="badge new">סכמה חדשה</span>
+                        <span class="page-title">אודות</span>
+                    </div>
+                    <div class="page-url">https://building.org.il/about/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ חדשה</h3>
+                        <span class="status-badge">5 שאלות</span>
+                    </div>
+
+                    <div class="faq-item">
+                        <strong>ש: מתי הוקם מרכז הבנייה הישראלי?</strong>
+                        <p>ת: מרכז הבנייה הישראלי הוקם בשנת 1969 כחברה ממשלתית תחת משרד הבינוי והשיכון, ומאז עבר תהליך הפרטה ומיזוג עם מכללת הבנייה.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: מי עומד בראש מרכז הבנייה?</strong>
+                        <p>ת: ערן רולס משמש כיו"ר ובעלים של המרכז, ויהודית פרוכט מכהנת כמנכ"לית.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: מהי המכללה של מרכז הבנייה?</strong>
+                        <p>ת: מכללת מרכז הבנייה היא מוסד לימודים מקצועי המציע קורסים והכשרות בתחומי הבנייה, הנדסה, שמאות, ניהול פרויקטים ונדל"ן לאנשי מקצוע.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: מה הקשר בין מרכז הבנייה לממשלה?</strong>
+                        <p>ת: המרכז פועל כגשר בין אנשי מקצוע, הציבור והממשלה, עם דגש על קידום בנייה איכותית והתקדמות טכנולוגית בענף הבנייה.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: האם מרכז הבנייה מקיים כנסים מקצועיים?</strong>
+                        <p>ת: כן, המרכז מקיים כנסים, פורומים ואירועים מקצועיים לאורך כל השנה, המושכים אלפי משתתפים מענף הבנייה והנדל"ן.</p>
+                    </div>
+                </div>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <h4>העתק והדבק סכמה</h4>
+                        <button class="copy-btn" onclick="copySchema('about-schema')">העתק סכמה</button>
+                    </div>
+                    <div class="schema-code">
+                        <pre id="about-schema">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מתי הוקם מרכז הבנייה הישראלי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מרכז הבנייה הישראלי הוקם בשנת 1969 כחברה ממשלתית תחת משרד הבינוי והשיכון, ומאז עבר תהליך הפרטה ומיזוג עם מכללת הבנייה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי עומד בראש מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ערן רולס משמש כיו\"ר ובעלים של המרכז, ויהודית פרוכט מכהנת כמנכ\"לית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהי המכללה של מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מכללת מרכז הבנייה היא מוסד לימודים מקצועי המציע קורסים והכשרות בתחומי הבנייה, הנדסה, שמאות, ניהול פרויקטים ונדל\"ן לאנשי מקצוע."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה הקשר בין מרכז הבנייה לממשלה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המרכז פועל כגשר בין אנשי מקצוע, הציבור והממשלה, עם דגש על קידום בנייה איכותית והתקדמות טכנולוגית בענף הבנייה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם מרכז הבנייה מקיים כנסים מקצועיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, המרכז מקיים כנסים, פורומים ואירועים מקצועיים לאורך כל השנה, המושכים אלפי משתתפים מענף הבנייה והנדל\"ן."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- College - NEW SCHEMA -->
+        <div id="college" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="badge new">סכמה חדשה</span>
+                        <span class="page-title">מכללת מרכז הבנייה</span>
+                    </div>
+                    <div class="page-url">https://building.org.il/college/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ חדשה</h3>
+                        <span class="status-badge">5 שאלות</span>
+                    </div>
+
+                    <div class="faq-item">
+                        <strong>ש: אילו קורסים מציעה מכללת מרכז הבנייה?</strong>
+                        <p>ת: המכללה מציעה קורסים בתחומי שמאות מקרקעין, ניהול פרויקטים בנייה, הנדסת בנייה, יזמות נדל"ן, בטיחות בבנייה, ועוד מגוון תחומים מקצועיים.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: האם הקורסים מוכרים לצורכי השתלמות?</strong>
+                        <p>ת: כן, רוב הקורסים מוכרים על ידי גופים מקצועיים ומעניקים נקודות זכות להשתלמויות וחידוש רישיונות מקצועיים.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: כמה עולים הקורסים במכללה?</strong>
+                        <p>ת: מחירי הקורסים משתנים בהתאם לסוג הקורס, משך הלימודים והתוכנית. ניתן לקבל מידע מפורט על מחירים באתר או בפנייה למזכירות.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: האם יש קורסים מקוונים?</strong>
+                        <p>ת: כן, המכללה מציעה גם קורסים מקוונים (אונליין) וגם קורסים פרונטליים, המאפשרים גמישות בלימודים לאנשי מקצוע עסוקים.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: איך נרשמים לקורסים במכללה?</strong>
+                        <p>ת: ניתן להירשם דרך האתר, בטלפון, או בביקור במשרדי המכללה. לחלק מהקורסים יש תנאי קבלה מוקדמים.</p>
+                    </div>
+                </div>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <h4>העתק והדבק סכמה</h4>
+                        <button class="copy-btn" onclick="copySchema('college-schema')">העתק סכמה</button>
+                    </div>
+                    <div class="schema-code">
+                        <pre id="college-schema">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו קורסים מציעה מכללת מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המכללה מציעה קורסים בתחומי שמאות מקרקעין, ניהול פרויקטים בנייה, הנדסת בנייה, יזמות נדל\"ן, בטיחות בבנייה, ועוד מגוון תחומים מקצועיים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם הקורסים מוכרים לצורכי השתלמות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, רוב הקורסים מוכרים על ידי גופים מקצועיים ומעניקים נקודות זכות להשתלמויות וחידוש רישיונות מקצועיים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה עולים הקורסים במכללה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מחירי הקורסים משתנים בהתאם לסוג הקורס, משך הלימודים והתוכנית. ניתן לקבל מידע מפורט על מחירים באתר או בפנייה למזכירות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש קורסים מקוונים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, המכללה מציעה גם קורסים מקוונים (אונליין) וגם קורסים פרונטליים, המאפשרים גמישות בלימודים לאנשי מקצוע עסוקים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך נרשמים לקורסים במכללה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן להירשם דרך האתר, בטלפון, או בביקור במשרדי המכללה. לחלק מהקורסים יש תנאי קבלה מוקדמים."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact - NEW SCHEMA -->
+        <div id="contact" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="badge new">סכמה חדשה</span>
+                        <span class="page-title">צור קשר</span>
+                    </div>
+                    <div class="page-url">https://building.org.il/contact/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ חדשה</h3>
+                        <span class="status-badge">5 שאלות</span>
+                    </div>
+
+                    <div class="faq-item">
+                        <strong>ש: מהן שעות הפעילות של מרכז הבנייה?</strong>
+                        <p>ת: מרכז הבנייה פועל בימים א'-ה' בין השעות 08:00-17:00. בימי שישי ושבת המשרדים סגורים.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: איך ניתן ליצור קשר עם מרכז הבנייה?</strong>
+                        <p>ת: ניתן ליצור קשר באמצעות טופס יצירת קשר באתר, בטלפון, או בדואר אלקטרוני. כמו כן ניתן להגיע למשרדים בתל אביב.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: תוך כמה זמן מקבלים תשובה לפניות?</strong>
+                        <p>ת: מרכז הבנייה משתדל להשיב לכל פנייה תוך 1-2 ימי עסקים. פניות דחופות ניתן להעביר בטלפון.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: האם יש חניה במשרדי מרכז הבנייה?</strong>
+                        <p>ת: קיימת חניה בתשלום בסביבת המשרדים. מומלץ לבדוק אפשרויות חניה מראש או להגיע בתחבורה ציבורית.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: למי לפנות בנושא הרשמה לקורסים?</strong>
+                        <p>ת: בנושאי הרשמה לקורסים יש לפנות למזכירות מכללת מרכז הבנייה באמצעות טופס ההרשמה באתר או בטלפון הייעודי.</p>
+                    </div>
+                </div>
+
+                <div class="schema-box">
+                    <div class="schema-header">
+                        <h4>העתק והדבק סכמה</h4>
+                        <button class="copy-btn" onclick="copySchema('contact-schema')">העתק סכמה</button>
+                    </div>
+                    <div class="schema-code">
+                        <pre id="contact-schema">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהן שעות הפעילות של מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מרכז הבנייה פועל בימים א'-ה' בין השעות 08:00-17:00. בימי שישי ושבת המשרדים סגורים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך ניתן ליצור קשר עם מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן ליצור קשר באמצעות טופס יצירת קשר באתר, בטלפון, או בדואר אלקטרוני. כמו כן ניתן להגיע למשרדים בתל אביב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "תוך כמה זמן מקבלים תשובה לפניות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מרכז הבנייה משתדל להשיב לכל פנייה תוך 1-2 ימי עסקים. פניות דחופות ניתן להעביר בטלפון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש חניה במשרדי מרכז הבנייה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "קיימת חניה בתשלום בסביבת המשרדים. מומלץ לבדוק אפשרויות חניה מראש או להגיע בתחבורה ציבורית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למי לפנות בנושא הרשמה לקורסים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בנושאי הרשמה לקורסים יש לפנות למזכירות מכללת מרכז הבנייה באמצעות טופס ההרשמה באתר או בטלפון הייעודי."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function copySchema(elementId) {
+            const schemaText = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(schemaText).then(() => {
+                const btn = event.target;
+                btn.textContent = 'הועתק!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'העתק סכמה';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

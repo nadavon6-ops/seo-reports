@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>א.א אורטופדיה - FAQ Schema Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        .stat strong { font-size: 1.5em; }
+        .stat.existing { border: 2px solid #10b981; }
+        .stat.new { border: 2px solid #3b82f6; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.green { background: #10b981; }
+        .legend-dot.blue { background: #3b82f6; }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .tab {
+            background: #1e293b;
+            border: 2px solid #334155;
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab:hover { border-color: #e94560; color: #fff; }
+        .tab.active {
+            background: #e94560;
+            border-color: #e94560;
+            color: #fff;
+        }
+        .tab.existing { border-color: #10b981; }
+        .tab.new { border-color: #3b82f6; }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .page-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-title { font-size: 1.5em; color: #e94560; }
+        .page-url {
+            background: #0f172a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            word-break: break-all;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge.existing {
+            background: #10b981;
+            color: #fff;
+        }
+        .badge.new {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .badge.upgrade {
+            background: #f59e0b;
+            color: #000;
+        }
+        .section {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section h3 { color: #e94560; font-size: 1.1em; }
+        .quality-score {
+            background: #10b981;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .quality-score.medium {
+            background: #f59e0b;
+            color: #000;
+        }
+        .faq-item {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-right: 4px solid #e94560;
+        }
+        .faq-item strong { color: #e94560; display: block; margin-bottom: 8px; }
+        .faq-item p { color: #94a3b8; font-size: 14px; }
+        .recommendations {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .recommendations h4 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+        .recommendations li {
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            color: #94a3b8;
+        }
+        .recommendations li:last-child { border-bottom: none; }
+        .recommendations li::before {
+            content: "💡";
+            margin-left: 10px;
+        }
+        .schema-box {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .schema-box h4 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+        .copy-btn {
+            background: linear-gradient(135deg, #e94560 0%, #0f3460 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .copy-btn:hover { transform: scale(1.02); }
+        .copy-btn:active { transform: scale(0.98); }
+        .schema-code {
+            background: #000;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            color: #10b981;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre;
+            direction: ltr;
+            text-align: left;
+        }
+        .topics-covered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .topic-tag {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .container { padding: 15px; }
+            .page-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>א.א אורטופדיה - FAQ Schema Dashboard</h1>
+        <p>aa-orthopedics.co.il | ניתוח סכמות קיימות + יצירת סכמות חדשות</p>
+        <div class="stats">
+            <div class="stat existing">
+                <strong>2</strong><br>סכמות קיימות
+            </div>
+            <div class="stat new">
+                <strong>3</strong><br>סכמות חדשות
+            </div>
+            <div class="stat">
+                <strong>5</strong><br>סה״כ עמודים
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot green"></div>
+                <span>סכמה קיימת - המלצות בלבד</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot blue"></div>
+                <span>סכמה חדשה - להטמעה</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab existing active" onclick="showPage('insoles')">רפידות אורתופדיות</button>
+            <button class="tab existing" onclick="showPage('shoes')">נעליים אורתופדיות</button>
+            <button class="tab new" onclick="showPage('homepage')">עמוד הבית</button>
+            <button class="tab new" onclick="showPage('qna')">שאלות ותשובות</button>
+            <button class="tab new" onclick="showPage('3d')">מדרסים 3D</button>
+        </div>
+
+        <!-- Page 1: Insoles - EXISTING SCHEMA -->
+        <div id="insoles" class="page-content active">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">רפידות אורתופדיות</span>
+                        <span class="badge existing">סכמה קיימת</span>
+                    </div>
+                    <div class="page-url">https://aa-orthopedics.co.il/product-category/insoles/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ קיימת באתר</h3>
+                        <span class="quality-score medium">איכות: 70%</span>
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">2 שאלות ותשובות מותקנות כרגע</p>
+
+                    <div class="faq-item">
+                        <strong>ש: מתי כדאי להשתמש ברפידות אורתופדיות?</strong>
+                        <p>ת: רפידות אורתופדיות מתאימות למי שחווה כאבים קלים באזור העקב ובכף הרגל ככלל. ישנן רפידות שונות לאזורים שונים - רפידות סיליקון לתמיכה בקשת, רפידות עם אוורור למניעת ריח, ועוד. (תשובה מלאה ומקיפה)</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: מהם היתרונות של רפידות אורתופדיות?</strong>
+                        <p>ת: מחיר נגיש יותר ממדרסים, שיפור אחיזת כף הרגל, אין צורך בהתאמה אישית, מניעת זעזועים. עם זאת, לעיתים מומלץ לגשת לאבחון מקצועי. (תשובה מפורטת)</p>
+                    </div>
+
+                    <div class="topics-covered">
+                        <span class="topic-tag">מתי להשתמש</span>
+                        <span class="topic-tag">יתרונות</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h4>💡 המלצות לשיפור</h4>
+                    <ul>
+                        <li>להוסיף שאלה על סוגי רפידות (ג'ל, סיליקון, מגנטיות) - נושא חשוב ללקוחות</li>
+                        <li>להוסיף שאלה על ההבדל בין רפידות למדרסים - שאלה נפוצה מאוד</li>
+                        <li>להוסיף שאלה על אופן בחירת מידה נכונה</li>
+                        <li>להוסיף שאלה על משך החיים והתחזוקה של רפידות</li>
+                        <li>לשקול הרחבה ל-5 שאלות לכיסוי מקיף יותר</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Shoes - EXISTING SCHEMA -->
+        <div id="shoes" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">נעליים אורתופדיות בהתאמה אישית</span>
+                        <span class="badge existing">סכמה קיימת</span>
+                    </div>
+                    <div class="page-url">https://aa-orthopedics.co.il/custome-shoes/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סכמת FAQ קיימת באתר</h3>
+                        <span class="quality-score medium">איכות: 70%</span>
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">2 שאלות ותשובות מותקנות כרגע</p>
+
+                    <div class="faq-item">
+                        <strong>ש: מהן נעליים אורטופדיות?</strong>
+                        <p>ת: נעליים אורטופדיות מגיעות במגוון סוגים ומתאימות לבעיות שונות בכף הרגל - מניתוחים, עיוות מולד, פציעות, חולי סכרת עם פצעים וכיבים, דפורמציה קשה, כף רגל חבושה או רחבה, טראומות וטיפול בבצקת לימפתית.</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>ש: מהם הסוגים השונים של נעליים אורטופדיות?</strong>
+                        <p>ת: ישנם סוגים רבים המשתנים ברמת התמיכה, סגנון ומראה. הסיווג נעשה לפי תמיכה בקשת, גובה העקב, וסוג הסוליה (קשיחה או רכה).</p>
+                    </div>
+
+                    <div class="topics-covered">
+                        <span class="topic-tag">מהן נעליים אורטופדיות</span>
+                        <span class="topic-tag">סוגים</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h4>💡 המלצות לשיפור</h4>
+                    <ul>
+                        <li>להוסיף שאלה על תהליך ההתאמה האישית - מה כולל, כמה זמן לוקח</li>
+                        <li>להוסיף שאלה על מחירים ועלויות משוערות</li>
+                        <li>להוסיף שאלה על אחריות וזמני אספקה</li>
+                        <li>להוסיף שאלה על מי מתאים לנעליים אורטופדיות vs רפידות/מדרסים</li>
+                        <li>לשקול הרחבה ל-5 שאלות לכיסוי מלא של הנושא</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Homepage - NEW SCHEMA -->
+        <div id="homepage" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">עמוד הבית</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://aa-orthopedics.co.il/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סטטוס נוכחי</h3>
+                    </div>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד הבית כרגע - מומלץ להוסיף</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('homepage-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="homepage-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין מדרסים לרפידות אורתופדיות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מדרסים הם מוצר בהתאמה אישית שמיוצר על פי סריקה של כף הרגל ומספק תמיכה מותאמת לבעיות ספציפיות. רפידות הן מוצר מדף שמספק תמיכה כללית ומתאים לכאבים קלים. מדרסים יקרים יותר אך מספקים פתרון מדויק יותר לבעיות מורכבות. אצלנו ב-א.א אורטופדיה תוכלו לקבל ייעוץ חינם לבחירה הנכונה עבורכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש אחריות על מוצרי א.א אורטופדיה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, כל המוצרים שלנו מגיעים עם אחריות יצרן מלאה. מדרסים בהתאמה אישית כוללים אחריות ותקופת התאמה, נעליים אורטופדיות מגיעות עם אחריות על פגמי ייצור, ורפידות ניתנות להחלפה תוך 14 יום אם אינן מתאימות. צוות שירות הלקוחות שלנו זמין לכל שאלה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מזמינים מדרסים בהתאמה אישית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התהליך פשוט: מגיעים לאחת מהסניפים שלנו לסריקת כף רגל תלת-ממדית (לוקח כ-15 דקות), מקבלים ייעוץ מקצועי על סוג המדרס המתאים, והמדרסים מוכנים תוך 7-14 ימי עסקים. ניתן גם להזמין נסיעת בית לסריקה. לתיאום - התקשרו 03-9131999."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "לאיזה סניף של א.א אורטופדיה אפשר להגיע?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא.א אורטופדיה מספר סניפים ברחבי הארץ עם מומחים לבריאות כף הרגל. בכל סניף ניתן לקבל ייעוץ מקצועי, סריקת כף רגל למדרסים, ולרכוש מגוון רחב של מוצרים אורטופדיים. לפרטי סניפים ושעות פעילות - צרו קשר או בדקו באתר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם קופות החולים מממנות מדרסים אורטופדיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חלק מקופות החולים מספקות השתתפות במימון מדרסים אורטופדיים, בהתאם לתכנית הביטוח. מומלץ לבדוק מול קופת החולים שלכם לגבי זכאות והשתתפות. אנחנו מספקים את כל האישורים והקבלות הנדרשים להגשת בקשה להחזר."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 4: Q&A Page - NEW SCHEMA -->
+        <div id="qna" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">שאלות ותשובות</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://aa-orthopedics.co.il/שאלות-ותשובות/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סטטוס נוכחי</h3>
+                    </div>
+                    <p style="color: #f59e0b;">⚠️ יש תוכן FAQ גלוי בעמוד (8 שאלות) אבל אין סכמת FAQPage מותקנת!</p>
+                    <p style="color: #94a3b8; margin-top: 10px;">הזדמנות מצוינת - להוסיף סכמה לתוכן שכבר קיים</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה (מבוססת תוכן קיים)</h4>
+                    <button class="copy-btn" onclick="copySchema('qna-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="qna-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מתי מתקבלת המשלוח ואיך?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המוצר נשלח באמצעות שליח עד הבית או מקום העבודה ומגיע תוך 7 ימי עסקים מרגע ההזמנה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה עלות המשלוח?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עלות המשלוח היא 30 ש״ח והמוצר מגיע עד לדלת הבית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש אפשרות לאיסוף עצמי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, ניתן לבחור באיסוף עצמי מאחד הסניפים שלנו בעת ביצוע ההזמנה. המוצרים יהיו מוכנים לאיסוף תוך 7 ימי עסקים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מחזירים מוצרים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן להזמין שליח לאיסוף המוצר בעלות 30 ש״ח, או להחזיר ישירות לאחד הסניפים. ההחזרה מתאפשרת תוך 14 יום מקבלת המוצר כשהוא במצבו המקורי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה פרק הזמן להחזרת מוצר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן להחזיר מוצרים עד 30 יום מתאריך הרכישה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתבצע תהליך ההחזרה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש ליצור קשר עם שירות הלקוחות בטלפון 03-9131999 שלוחה 3 או במייל לקבלת אישור החזרה והנחיות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך פונים בשאלות נוספות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לפנות אלינו במייל ולקבל מענה מהיר לכל שאלה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה המחירים אצלנו תחרותיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "א.א אורטופדיה פועלת למעלה מ-20 שנה ובנתה קשרים ישירים עם ספקים ויבואנים. אנחנו מייבאים מוצרים ישירות ולכן יכולים להציע מחירים תחרותיים ללקוחותינו."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 5: 3D Insoles - NEW SCHEMA -->
+        <div id="3d" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">מדרסים 3D בהתאמה אישית</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://aa-orthopedics.co.il/3d-insoles/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>סטטוס נוכחי</h3>
+                    </div>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד זה - מומלץ להוסיף</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('3d-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="3d-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה מדרסים 3D ומה ההבדל ממדרסים רגילים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מדרסים 3D מיוצרים באמצעות טכנולוגיית סריקה תלת-ממדית מתקדמת שיוצרת מפה מדויקת של כף הרגל. בניגוד למדרסים מסורתיים שמבוססים על טביעה או מדידה ידנית, סריקת 3D מאפשרת דיוק של עד חצי מילימטר ומדרס שמותאם לאנטומיה הייחודית שלכם. התוצאה - נוחות מקסימלית ותמיכה אופטימלית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקחת סריקת 3D למדרסים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הסריקה עצמה אורכת כ-5 דקות בלבד. כל התהליך כולל ייעוץ מקצועי ובחירת סוג המדרס לוקח כ-15-20 דקות. הסריקה לא פולשנית, ללא כאב, ומתבצעת כשאתם עומדים בצורה טבעית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "לאילו בעיות מדרסי 3D יכולים לעזור?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מדרסי 3D מסייעים במגוון רחב של בעיות: כף רגל שטוחה, קשת גבוהה, פשיטת יתר (אובר-פרונציה), דורבן בעקב, פסיאטיס פלנטרית, כאבי ברכיים וגב תחתון, וכאבים כלליים בכף הרגל. הם גם מומלצים לספורטאים ולאנשים שעומדים שעות רבות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן מחזיקים מדרסי 3D?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מדרסי 3D איכותיים מחזיקים בדרך כלל 2-4 שנים, תלוי בשימוש ובפעילות. ספורטאים פעילים ייתכן שיצטרכו להחליף מוקדם יותר. אנחנו ממליצים לבדוק את מצב המדרסים אחת לשנה ולהחליף כשמתחילים לראות סימני בלאי או שהנוחות יורדת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם מדרסי 3D מתאימים לכל נעל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מדרסי 3D מותאמים לסוג הנעליים שבהם תשתמשו - נעלי ספורט, נעלי עבודה, נעליים אלגנטיות, או סנדלים. בעת ההזמנה חשוב לציין לאיזה סוג נעליים מיועד המדרס כדי לקבל התאמה מושלמת. ניתן להזמין מספר מדרסים לסוגי נעליים שונים."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function copySchema(elementId) {
+            const schema = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(schema).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ הועתק!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #e94560 0%, #0f3460 100%)';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

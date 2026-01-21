@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioTeam - FAQ Schema Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        .stat strong { font-size: 1.5em; }
+        .stat.new { border: 2px solid #3b82f6; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .notice {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .notice h3 { margin-bottom: 10px; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.blue { background: #3b82f6; }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .tab {
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab:hover { border-color: #dc2626; color: #fff; }
+        .tab.active {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: #fff;
+        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .page-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-title { font-size: 1.5em; color: #dc2626; }
+        .page-url {
+            background: #0f172a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            word-break: break-all;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge.new {
+            background: #3b82f6;
+            color: #fff;
+        }
+        .section {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section h3 { color: #dc2626; font-size: 1.1em; margin-bottom: 15px; }
+        .schema-box {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .schema-box h4 {
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+        .copy-btn {
+            background: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .copy-btn:hover { transform: scale(1.02); }
+        .copy-btn:active { transform: scale(0.98); }
+        .schema-code {
+            background: #000;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            color: #10b981;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre;
+            direction: ltr;
+            text-align: left;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .container { padding: 15px; }
+            .page-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CardioTeam - FAQ Schema Dashboard</h1>
+        <p>cardioteam.co.il | סכמות חדשות להטמעה</p>
+        <div class="stats">
+            <div class="stat">
+                <strong>0</strong><br>סכמות קיימות
+            </div>
+            <div class="stat new">
+                <strong>5</strong><br>סכמות חדשות
+            </div>
+            <div class="stat">
+                <strong>25</strong><br>שאלות חדשות
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="notice">
+            <h3>הזדמנות מצוינת! האתר ללא סכמות FAQ כרגע</h3>
+            <p>לאחר סריקה מקיפה, לא נמצאו סכמות FAQPage באתר. להלן סכמות חדשות מוכנות להטמעה.</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot blue"></div>
+                <span>סכמה חדשה - להטמעה</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showPage('homepage')">עמוד הבית</button>
+            <button class="tab" onclick="showPage('health')">הצהרת בריאות</button>
+            <button class="tab" onclick="showPage('center')">המרכז הישראלי</button>
+            <button class="tab" onclick="showPage('faq')">שאלות נפוצות</button>
+            <button class="tab" onclick="showPage('contact')">צור קשר</button>
+        </div>
+
+        <!-- Homepage - NEW SCHEMA -->
+        <div id="homepage" class="page-content active">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">עמוד הבית</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://cardioteam.co.il/</div>
+                </div>
+
+                <div class="section">
+                    <h3>סטטוס נוכחי</h3>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד הבית כרגע</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('homepage-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="homepage-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהי בדיקת אקו לב ולמה היא חשובה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בדיקת אקו לב (אקוקרדיוגרפיה) היא בדיקת אולטרסאונד לא פולשנית שמאפשרת לראות את מבנה הלב ותפקודו בזמן אמת. הבדיקה חשובה לאבחון מחלות לב, הערכת תפקוד מסתמים, זיהוי בעיות במבנה הלב, ומעקב אחרי טיפולים. ב-CardioTeam אנו מבצעים את הבדיקה עם הציוד המתקדם ביותר ומומחים מנוסים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי צריך לעבור בדיקת לב ובאיזה גיל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מומלץ לעבור בדיקת לב בסיסית החל מגיל 40, או מוקדם יותר אם יש גורמי סיכון: היסטוריה משפחתית של מחלות לב, יתר לחץ דם, סוכרת, עישון, עודף משקל, או תסמינים כמו קוצר נשימה וכאבים בחזה. בדיקות מניעתיות יכולות לזהות בעיות בשלב מוקדם ולמנוע סיבוכים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקחת בדיקת אקו לב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בדיקת אקו לב סטנדרטית אורכת כ-20-30 דקות. הבדיקה לא דורשת הכנה מיוחדת, אינה כואבת, ואפשר לחזור לפעילות רגילה מיד אחריה. התוצאות נקראות במקום על ידי קרדיולוג מומחה ותקבלו הסבר מפורט על הממצאים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם בדיקות הלב ב-CardioTeam מכוסות בביטוח?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רוב בדיקות הלב מכוסות על ידי קופות החולים וביטוחים משלימים. אנו עובדים עם כל קופות החולים ורוב חברות הביטוח. מומלץ לבדוק מראש עם הקופה או הביטוח שלכם לגבי כיסוי וזכאות. צוות המזכירות שלנו ישמח לסייע בבירור."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך קובעים תור ב-CardioTeam?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לקבוע תור בכמה דרכים: טלפונית דרך המוקד שלנו, דרך האתר בטופס יצירת קשר, או ישירות דרך האפליקציה של קופת החולים שלכם. אנו משתדלים לתת תורים בהקדם האפשרי, ויש לנו זמינות גם בערבים ובימי שישי לנוחיותכם."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Declaration - NEW SCHEMA -->
+        <div id="health" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">הצהרת בריאות</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://cardioteam.co.il/הצהרת-בריאות/</div>
+                </div>
+
+                <div class="section">
+                    <h3>סטטוס נוכחי</h3>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד זה</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('health-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="health-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהי הצהרת בריאות ולמה היא נדרשת?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הצהרת בריאות היא טופס שממלאים לפני בדיקות לב מסוימות או פעילות גופנית. הטופס מאפשר לרופא להעריך את מצבכם הבריאותי, לזהות גורמי סיכון, ולהתאים את הבדיקה או הפעילות למצבכם. מילוי מדויק חשוב לבטיחותכם ולקבלת תוצאות אמינות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה עליי לציין בהצהרת הבריאות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לציין: מצב בריאותי כללי, תרופות שאתם נוטלים, ניתוחים קודמים, מחלות כרוניות (סוכרת, לחץ דם, מחלות לב), אלרגיות, והיסטוריה משפחתית של מחלות לב. ככל שהמידע מדויק יותר, כך הרופא יכול להעניק לכם טיפול מותאם יותר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם ניתן למלא הצהרת בריאות אונליין?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, ניתן למלא את הצהרת הבריאות באופן מקוון דרך האתר שלנו לפני ההגעה למרפאה. זה חוסך זמן ומאפשר לצוות הרפואי להתכונן מראש לביקור שלכם. ניתן גם למלא במקום בעת ההגעה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה קורה אם יש לי מצב רפואי מיוחד?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אם יש לכם מצב רפואי מיוחד, חשוב לציין זאת בהצהרת הבריאות. הצוות הרפואי שלנו מנוסה בטיפול במטופלים עם מצבים מורכבים ויתאים את הבדיקה בהתאם. במקרים מסוימים ייתכן שנבקש מסמכים רפואיים נוספים או התייעצות עם הרופא המטפל."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם המידע בהצהרת הבריאות חסוי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בהחלט. כל המידע הרפואי שלכם מוגן בסודיות רפואית מלאה בהתאם לחוק. המידע משמש אך ורק לצורך הטיפול הרפואי שלכם ולא מועבר לגורמים חיצוניים ללא הסכמתכם המפורשת."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center - NEW SCHEMA -->
+        <div id="center" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">המרכז הישראלי לרפואת הלב</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://cardioteam.co.il/המרכז-הישראלי-לרפואת-הלב/</div>
+                </div>
+
+                <div class="section">
+                    <h3>סטטוס נוכחי</h3>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד זה</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('center-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="center-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה מייחד את CardioTeam מרפאות לב אחרות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CardioTeam מציע גישה מקיפה לבריאות הלב: צוות מומחים מהשורה הראשונה בישראל, ציוד אבחון מתקדם ביותר, מיקומים נוחים בכל הארץ, זמינות גבוהה לתורים, וגישה אישית לכל מטופל. אנחנו מאמינים בשילוב של מקצועיות עם יחס אנושי וחם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו בדיקות לב ניתן לבצע ב-CardioTeam?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנו מציעים מגוון רחב של בדיקות: אקו לב (כולל אקו מאמץ), הולטר לב 24-72 שעות, הולטר לחץ דם, א.ק.ג, מבחן מאמץ, בדיקות טרום ניתוח, ועוד. כל הבדיקות מבוצעות על ידי קרדיולוגים מומחים עם ניסיון רב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו סניפים ניתן לקבל שירות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CardioTeam פועל במספר סניפים ברחבי הארץ לנוחיותכם, כולל סניפים במרכז הארץ ובאזור חיפה. בכל סניף זמינים אותם שירותים ואותה רמת מקצועיות. בחרו את הסניף הקרוב אליכם וקבעו תור בקלות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהו הניסיון של הרופאים ב-CardioTeam?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צוות הרופאים שלנו כולל קרדיולוגים מומחים עם ניסיון של עשרות שנים, רבים מהם משמשים כמנהלי מחלקות ויחידות בבתי חולים מובילים בארץ. הרופאים מתעדכנים באופן שוטף בחידושים בתחום ומשתתפים בכנסים בינלאומיים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם CardioTeam מטפל גם בילדים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, יש לנו מומחים בקרדיולוגיה ילדים שמבצעים בדיקות לב לתינוקות, ילדים ובני נוער. הצוות מיומן בעבודה עם ילדים ויוצר סביבה רגועה ונעימה שמפחיתה חרדה מהבדיקה."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Page - NEW SCHEMA -->
+        <div id="faq" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">שאלות נפוצות</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://cardioteam.co.il/שאלות-נפוצות/</div>
+                </div>
+
+                <div class="section">
+                    <h3>סטטוס נוכחי</h3>
+                    <p style="color: #f59e0b;">⚠️ יש תוכן FAQ גלוי בעמוד אבל אין סכמת FAQPage!</p>
+                    <p style="color: #94a3b8; margin-top: 10px;">הזדמנות מצוינת - להוסיף סכמה לתוכן שכבר קיים</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('faq-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="faq-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "האם צריך להגיע בצום לבדיקת אקו לב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא, בדיקת אקו לב רגילה לא דורשת צום. ניתן לאכול ולשתות כרגיל לפני הבדיקה. עם זאת, אם מדובר באקו מאמץ או בדיקה הדורשת הרגעה, ייתכן שתידרש הכנה מיוחדת - במקרה כזה המזכירות תעדכן אתכם מראש."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח לקבל תוצאות בדיקה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רוב הבדיקות נקראות במקום והתוצאות נמסרות מיד לאחר הבדיקה. בבדיקות הולטר, התוצאות מוכנות תוך 2-3 ימי עסקים. סיכום הבדיקה נשלח גם לרופא המפנה ולקופת החולים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם בדיקות הלב כואבות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רוב בדיקות הלב שאנו מבצעים (אקו, הולטר, א.ק.ג) אינן כואבות כלל ואינן פולשניות. הן אינן דורשות זריקות או הרדמה. במבחן מאמץ יש מאמץ גופני, אך הוא מותאם ליכולת שלכם ומפוקח על ידי רופא."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה לעשות אם יש לי חרדה מבדיקות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו מבינים שבדיקות רפואיות יכולות לעורר חרדה. הצוות שלנו מיומן ביצירת אווירה רגועה ותומכת. מומלץ להגיע עם מלווה אם זה מרגיע אתכם, ולספר לצוות על החרדה - נתאים את קצב הבדיקה ונסביר כל שלב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם אפשר להמשיך לקחת תרופות לפני הבדיקה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בדרך כלל כן, יש להמשיך ליטול את התרופות הקבועות. עם זאת, בחלק מהבדיקות (כמו מבחן מאמץ) ייתכן שתתבקשו להפסיק תרופות מסוימות מראש. כשקובעים תור, המזכירות תיתן הנחיות מדויקות בהתאם לסוג הבדיקה ולתרופות שאתם נוטלים."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact - NEW SCHEMA -->
+        <div id="contact" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">צור קשר</span>
+                        <span class="badge new">סכמה חדשה</span>
+                    </div>
+                    <div class="page-url">https://cardioteam.co.il/צור-קשר/</div>
+                </div>
+
+                <div class="section">
+                    <h3>סטטוס נוכחי</h3>
+                    <p style="color: #f59e0b;">⚠️ אין סכמת FAQ בעמוד זה</p>
+                </div>
+
+                <div class="schema-box">
+                    <h4>📋 סכמה חדשה להטמעה</h4>
+                    <button class="copy-btn" onclick="copySchema('contact-schema')">📋 העתק סכמה</button>
+                    <div class="schema-code" id="contact-schema">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהן שעות הפעילות של CardioTeam?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הסניפים שלנו פעילים בימים א'-ה' בשעות מורחבות, וחלק מהסניפים פעילים גם בימי שישי בבוקר. לנוחיותכם, יש גם תורים בשעות הערב. לפרטים מדויקים על שעות הפעילות בסניף הקרוב אליכם, צרו קשר או בדקו באתר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך אפשר לקבוע תור לבדיקה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לקבוע תור בכמה דרכים: טלפונית למוקד שלנו, דרך טופס יצירת קשר באתר, או ישירות דרך האפליקציה של קופת החולים. אנו משתדלים לתת תורים בהקדם האפשרי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך הפניה מרופא משפחה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לרוב הבדיקות נדרשת הפניה מרופא משפחה או מרופא מומחה. ההפניה מאפשרת כיסוי של קופת החולים ומספקת לנו מידע רקע חשוב. ניתן להגיע גם באופן פרטי ללא הפניה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה לעשות אם צריך לבטל או לשנות תור?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אם אתם צריכים לבטל או לשנות תור, אנא עדכנו אותנו מוקדם ככל האפשר - לפחות 24 שעות מראש. ניתן לעשות זאת טלפונית או דרך האתר. זה מאפשר לנו להציע את התור למטופלים אחרים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש חניה ליד הסניפים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ברוב הסניפים שלנו יש חניה נוחה בסמוך או חניון סמוך. חלק מהסניפים נמצאים ליד תחבורה ציבורית נוחה. לפרטים על חניה בסניף הספציפי, צרו קשר או בדקו את פרטי הסניף באתר."
+      }
+    }
+  ]
+}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function copySchema(elementId) {
+            const schema = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(schema).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ הועתק!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%)';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

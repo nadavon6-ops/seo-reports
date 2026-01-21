@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barefoot Cozumel - FAQ Schema Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a1628;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #0891b2 0%, #164e63 100%);
+            padding: 30px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 2em; margin-bottom: 5px; }
+        .header p { opacity: 0.9; }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+        .stat strong { font-size: 1.5em; }
+        .stat.existing { border: 2px solid #10b981; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        .notice {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .notice h3 { margin-bottom: 10px; }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.green { background: #10b981; }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .tab {
+            background: #1e293b;
+            border: 2px solid #10b981;
+            color: #94a3b8;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .tab:hover { border-color: #0891b2; color: #fff; }
+        .tab.active {
+            background: #0891b2;
+            border-color: #0891b2;
+            color: #fff;
+        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
+        .page-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-title { font-size: 1.5em; color: #0891b2; }
+        .page-url {
+            background: #0f172a;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            word-break: break-all;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge.existing {
+            background: #10b981;
+            color: #fff;
+        }
+        .section {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section h3 { color: #0891b2; font-size: 1.1em; }
+        .quality-score {
+            background: #10b981;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .faq-item {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #0891b2;
+        }
+        .faq-item strong { color: #0891b2; display: block; margin-bottom: 8px; }
+        .faq-item p { color: #94a3b8; font-size: 14px; }
+        .recommendations {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .recommendations h4 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+        .recommendations.optional h4 {
+            color: #94a3b8;
+        }
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+        .recommendations li {
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            color: #94a3b8;
+        }
+        .recommendations li:last-child { border-bottom: none; }
+        .recommendations li::before {
+            content: "✓";
+            color: #10b981;
+            margin-right: 10px;
+        }
+        .topics-covered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .topic-tag {
+            background: #334155;
+            color: #e2e8f0;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.5em; }
+            .container { padding: 15px; }
+            .page-card { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Barefoot Cozumel - FAQ Schema Dashboard</h1>
+        <p>barefootcozumel.com | Existing Schema Analysis</p>
+        <div class="stats">
+            <div class="stat existing">
+                <strong>2</strong><br>Existing Schemas
+            </div>
+            <div class="stat">
+                <strong>20</strong><br>Total FAQs
+            </div>
+            <div class="stat">
+                <strong>0</strong><br>New Schemas Needed
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="notice">
+            <h3>Excellent Coverage! All Key Pages Have FAQ Schemas</h3>
+            <p>The website already has comprehensive FAQ schemas on both main pages. Below are recommendations for potential improvements only.</p>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot green"></div>
+                <span>Existing Schema - Recommendations Only</span>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showPage('homepage')">Homepage (17 FAQs)</button>
+            <button class="tab" onclick="showPage('divesites')">Dive Sites (3 FAQs)</button>
+        </div>
+
+        <!-- Homepage - EXISTING SCHEMA -->
+        <div id="homepage" class="page-content active">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">Homepage</span>
+                        <span class="badge existing">17 FAQs Existing</span>
+                    </div>
+                    <div class="page-url">https://barefootcozumel.com/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Existing FAQ Schema</h3>
+                        <span class="quality-score">Quality: 98%</span>
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">17 comprehensive questions covering all aspects of diving in Cozumel</p>
+
+                    <div class="faq-item">
+                        <strong>Q: How much does it cost to scuba dive in Cozumel?</strong>
+                        <p>A: Varied packages based on dive type, equipment rental, and number of dives</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: Can I dive in Cozumel without certification?</strong>
+                        <p>A: Discover Scuba programs available for beginners</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: What equipment do I need to go diving in Cozumel?</strong>
+                        <p>A: Mask, snorkel, fins, wetsuit, BCD, regulator, dive computer, tanks</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: What scuba diving courses do you offer?</strong>
+                        <p>A: Open Water, Advanced, Rescue Diver, Divemaster, specialty courses</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: What languages are courses offered in?</strong>
+                        <p>A: English and Spanish available</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>+ 12 more questions</strong>
+                        <p>Location, instructor languages, services, refresher courses, hours, best months, payment methods, booking, group discounts, age restrictions, what makes Cozumel special</p>
+                    </div>
+
+                    <div class="topics-covered">
+                        <span class="topic-tag">Pricing</span>
+                        <span class="topic-tag">Certification</span>
+                        <span class="topic-tag">Equipment</span>
+                        <span class="topic-tag">Courses</span>
+                        <span class="topic-tag">Languages</span>
+                        <span class="topic-tag">Location</span>
+                        <span class="topic-tag">Hours</span>
+                        <span class="topic-tag">Booking</span>
+                        <span class="topic-tag">Payment</span>
+                        <span class="topic-tag">Groups</span>
+                        <span class="topic-tag">Best Season</span>
+                    </div>
+                </div>
+
+                <div class="recommendations optional">
+                    <h4>✓ Excellent Schema - No Changes Needed</h4>
+                    <ul>
+                        <li>17 FAQs is exceptional coverage for a homepage</li>
+                        <li>Covers all common questions potential customers would ask</li>
+                        <li>Includes practical info (pricing, hours, booking, payments)</li>
+                        <li>Addresses both beginners and certified divers</li>
+                        <li>Multi-language support clearly communicated</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dive Sites - EXISTING SCHEMA -->
+        <div id="divesites" class="page-content">
+            <div class="page-card">
+                <div class="page-header">
+                    <div>
+                        <span class="page-title">Dive Sites</span>
+                        <span class="badge existing">3 FAQs Existing</span>
+                    </div>
+                    <div class="page-url">https://barefootcozumel.com/dive-sites/</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Existing FAQ Schema</h3>
+                        <span class="quality-score">Quality: 75%</span>
+                    </div>
+                    <p style="color: #94a3b8; margin-bottom: 15px;">3 questions about diving locations and destinations</p>
+
+                    <div class="faq-item">
+                        <strong>Q: Where is the Best Diving in the World?</strong>
+                        <p>A: Information about top diving destinations</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: What is the Number 1 Diving Spot?</strong>
+                        <p>A: Details about premier dive locations</p>
+                    </div>
+                    <div class="faq-item">
+                        <strong>Q: What Makes a Diving Spot So Great?</strong>
+                        <p>A: Factors that determine dive site quality</p>
+                    </div>
+
+                    <div class="topics-covered">
+                        <span class="topic-tag">Best Dive Sites</span>
+                        <span class="topic-tag">Location Quality</span>
+                        <span class="topic-tag">Dive Destinations</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h4>Recommendations for Improvement</h4>
+                    <ul>
+                        <li>Consider adding FAQs about specific Cozumel dive sites (Palancar, Santa Rosa, Columbia)</li>
+                        <li>Add questions about depth ranges for different skill levels</li>
+                        <li>Include FAQs about marine life visibility at different sites</li>
+                        <li>Add questions about best times to dive at specific locations</li>
+                        <li>Consider expanding to 6-8 FAQs for better coverage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
