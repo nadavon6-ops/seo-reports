@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive SEO Audit with Schema Recommendations | Nadav Digital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.5em; color: white; margin-bottom: 10px; }
+        header p { color: rgba(255,255,255,0.9); font-size: 1.2em; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: linear-gradient(145deg, #2d2d44 0%, #1f1f35 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        .summary-card h3 { color: #667eea; font-size: 2.5em; margin-bottom: 5px; }
+        .summary-card p { color: #999; font-size: 0.9em; }
+
+        .site-section {
+            background: linear-gradient(145deg, #2d2d44 0%, #1f1f35 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+        .site-header h2 { color: #667eea; font-size: 1.8em; }
+        .site-url { color: #4ecdc4; font-size: 0.9em; }
+
+        .priority-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+        .priority-high { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .priority-medium { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 768px) {
+            .question-grid { grid-template-columns: 1fr; }
+        }
+        .question-card {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            border-right: 4px solid #667eea;
+        }
+        .question-card h4 {
+            color: #4ecdc4;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .question-card .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+        .status-good { background: #2ecc71; color: white; }
+        .status-warning { background: #f39c12; color: white; }
+        .status-critical { background: #e74c3c; color: white; }
+        .status-missing { background: #95a5a6; color: white; }
+
+        .recommendation {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .schema-section {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .schema-section h3 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .schema-code {
+            background: #0d0d1a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            color: #4ecdc4;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .competitor-section {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .competitor-section h3 { color: #fcb69f; margin-bottom: 15px; }
+        .competitor-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .competitor-item:last-child { border-bottom: none; }
+
+        .action-items {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .action-items h3 { color: #667eea; margin-bottom: 15px; }
+        .action-items ul { list-style: none; }
+        .action-items li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .action-items li:before {
+            content: ">";
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .keywords-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .keywords-table th, .keywords-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .keywords-table th {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+        .position-badge {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.85em;
+        }
+        .pos-11-20 { background: #f39c12; color: white; }
+        .pos-21-50 { background: #e67e22; color: white; }
+        .pos-51plus { background: #e74c3c; color: white; }
+        .not-ranking { background: #95a5a6; color: white; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            margin-top: 30px;
+        }
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        .copy-btn:hover { background: #5a6fd6; }
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .lang-toggle button {
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .lang-toggle button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .lang-toggle button:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.2);
+        }
+
+        /* English Content (Hidden by default) */
+        .lang-en {
+            display: none;
+        }
+
+        body.english .lang-he {
+            display: none;
+        }
+
+        body.english .lang-en {
+            display: block;
+        }
+
+        body.english {
+            direction: ltr;
+        }
+
+        body.english .site-header {
+            flex-direction: row;
+        }
+
+        body.english .question-card {
+            border-right: none;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle Button -->
+    <div class="lang-toggle">
+        <button onclick="setLanguage('he')" class="active" id="btn-he">עברית</button>
+        <button onclick="setLanguage('en')" id="btn-en">English</button>
+    </div>
+    <div class="container">
+        <header>
+            <h1 class="lang-en">Comprehensive SEO Audit with Schema Markup</h1>
+            <h1 class="lang-he">ביקורת SEO מקיפה עם Schema Markup</h1>
+            <p class="lang-en">8-Question Deep Analysis | Custom Schemas | Competitor Insights | 17 Clients</p>
+            <p class="lang-he">ניתוח עומק 8 שאלות | סכמות מותאמות אישית | תובנות מתחרים | 17 לקוחות</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                <span class="lang-en">Generated: January 2026 | Nadav Digital</span>
+                <span class="lang-he">הופק: ינואר 2026 | נדב דיגיטל</span>
+            </p>
+        </header>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>17</h3>
+                <p class="lang-en">Sites Audited</p>
+                <p class="lang-he">אתרים נבדקו</p>
+            </div>
+            <div class="summary-card">
+                <h3>682</h3>
+                <p class="lang-en">Total Keywords</p>
+                <p class="lang-he">סה"כ מילות מפתח</p>
+            </div>
+            <div class="summary-card">
+                <h3>189</h3>
+                <p class="lang-en">Underperforming (11-50)</p>
+                <p class="lang-he">ביצועים נמוכים (11-50)</p>
+            </div>
+            <div class="summary-card">
+                <h3>40</h3>
+                <p class="lang-en">Not Ranking (51+)</p>
+                <p class="lang-he">לא מדורגים (51+)</p>
+            </div>
+            <div class="summary-card">
+                <h3>6</h3>
+                <p class="lang-en">Custom Schemas Created</p>
+                <p class="lang-he">סכמות מותאמות נוצרו</p>
+            </div>
+        </div>
+
+        <!-- SITE 1: MIDOT -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2 class="lang-en">Midot Institute</h2>
+                    <h2 class="lang-he">מכון מידות</h2>
+                    <span class="site-url">midot.co.il</span>
+                </div>
+                <span class="priority-badge priority-high">
+                    <span class="lang-en">Priority: HIGH</span>
+                    <span class="lang-he">עדיפות: גבוהה</span>
+                </span>
+            </div>
+
+            <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #e74c3c;">
+                <strong style="color: #e74c3c;" class="lang-en">Key Issue:</strong>
+                <strong style="color: #e74c3c;" class="lang-he">בעיה מרכזית:</strong>
+                <span class="lang-en">14 keywords NOT ranking (including high-value "mibchan ishiyut") | Only 35 keywords tracked</span>
+                <span class="lang-he">14 מילות מפתח לא מדורגות (כולל "מבחן אישיות" בעל ערך גבוה) | רק 35 מילות מפתח במעקב</span>
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;" class="lang-en">8-Question Analysis</h3>
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;" class="lang-he">ניתוח 8 שאלות</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Title: "Midot - Assessment Solutions" - lacks primary keywords. H1 is brand-focused, not keyword-focused.</p>
+                    <div class="recommendation">Add target keywords: "mibchan ishiyut", "polygraph" to title and H1</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-warning">Needs Work</span>
+                    <p>H-tags exist but focus on services, not search queries. Missing H2s for "employee assessment", "personality tests"</p>
+                    <div class="recommendation">Add keyword-rich H2s: "mibchney ishiyut l'giyus", "sheruti polygraph"</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-warning">Low Density</span>
+                    <p>~1,500 words. Primary keywords appear 2-3 times. Should be 5-8 times naturally.</p>
+                    <div class="recommendation">Increase keyword density for "polygraph", "mibchan ishiyut", "ha'arakhat ovdim"</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>60+ internal links to service pages. Good site structure.</p>
+                    <div class="recommendation">Add 2-3 authoritative external links (psychology associations, research)</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-warning">Yes</span>
+                    <p>~1,500 words. Competitors average 2,500-3,500 words. Missing educational content.</p>
+                    <div class="recommendation">Add 1,000+ words: BIG5 explanation, test types comparison, FAQ section</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-critical">Missing</span>
+                    <p>NO FAQ section found. Major opportunity missed for featured snippets.</p>
+                    <div class="recommendation">Add 8-10 FAQs: "ma ze mibchan ishiyut?", "kama ola polygraph?", etc.</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Has Organization schema. Missing: FAQPage, ProfessionalService, knowsAbout for GEO.</p>
+                    <div class="recommendation">Add FAQPage + enhanced Organization with knowsAbout property</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-critical">Behind</span>
+                    <p>machon-noam.co.il ranks #1 for "mibchan ishiyut" with interactive test, 2,500+ words, BIG5 framework</p>
+                    <div class="recommendation">Create interactive personality test tool, add BIG5 educational content</div>
+                </div>
+            </div>
+
+            <div class="competitor-section">
+                <h3>Top Competitor Analysis: "mibchan ishiyut"</h3>
+                <div class="competitor-item">
+                    <span><strong>#1:</strong> machon-noam.co.il</span>
+                    <span>Interactive test, 2,500+ words, BIG5 framework</span>
+                </div>
+                <div class="competitor-item">
+                    <span><strong>#2:</strong> psychologia.co.il</span>
+                    <span>Educational hub, 15+ test types explained</span>
+                </div>
+                <div class="competitor-item">
+                    <span><strong>#3:</strong> hofshi-psychometric.co.il</span>
+                    <span>Free online tests, high engagement</span>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Recommended Schema Markup</h3>
+                <p style="color: #999; margin-bottom: 15px;">Enhanced Organization + FAQPage for GEO optimization</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Midot Institute",
+  "alternateName": "מכון מידות",
+  "description": "מכון מוביל בישראל למבחני אישיות, פוליגרף והערכת עובדים. מעל 25 שנות ניסיון בגיוס והערכת כוח אדם לארגונים.",
+  "url": "https://www.midot.co.il/",
+  "logo": "https://www.midot.co.il/logo.png",
+  "telephone": "+972-3-XXX-XXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "knowsAbout": [
+    "מבחני אישיות",
+    "פוליגרף",
+    "הערכת עובדים",
+    "מבחני התאמה",
+    "גיוס עובדים",
+    "BIG5 personality assessment",
+    "מבחני אמינות"
+  ],
+  "sameAs": [
+    "https://www.facebook.com/midot.co.il",
+    "https://www.linkedin.com/company/midot-institute"
+  ]
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה מבחן אישיות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מבחן אישיות הוא כלי פסיכולוגי המעריך תכונות אופי, העדפות והתנהגויות. במכון מידות אנו משתמשים במודל BIG5 המוכר עולמית למיפוי 5 ממדי אישיות עיקריים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה עולה בדיקת פוליגרף?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עלות בדיקת פוליגרף במכון מידות נעה בין 800-1,500 ש״ח בהתאם לסוג הבדיקה ומורכבותה. צרו קשר לקבלת הצעת מחיר מותאמת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם מבחני אישיות אמינים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מבחני האישיות של מכון מידות מבוססים על מחקר מדעי ועומדים בסטנדרטים בינלאומיים. אמינות המבחנים מאומתת בערכי Cronbach Alpha של מעל 0.85."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח מבחן הערכת עובדים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תהליך הערכת עובדים מקיף נמשך בין 2-4 שעות וכולל מבחני אישיות, ראיון אישי וסימולציות. תוצאות מתקבלות תוך 48 שעות."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for Midot</h3>
+                <ul>
+                    <li>Create dedicated landing page for "mibchan ishiyut" with 2,500+ words</li>
+                    <li>Add interactive personality test mini-tool (even basic quiz)</li>
+                    <li>Implement FAQ section with 8-10 questions targeting featured snippets</li>
+                    <li>Add BIG5 personality model explanation section</li>
+                    <li>Build backlinks from psychology/HR blogs</li>
+                    <li>Implement the provided FAQPage + Organization schema</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SITE 2: ANBAR -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2>Anbar - Reverse Mortgages</h2>
+                    <span class="site-url">anbar.co.il</span>
+                </div>
+                <span class="priority-badge priority-high">Priority: HIGH</span>
+            </div>
+
+            <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #e74c3c;">
+                <strong style="color: #e74c3c;">Key Issue:</strong> 24 underperforming keywords (positions 11-50) | High competition finance niche
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">8-Question Analysis</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Title includes "mashkanta hafucha". H1 is keyword-focused. URL structure is clean.</p>
+                    <div class="recommendation">Enhance meta description with "mashkanta l'gil hashlishi"</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Some H2s target keywords. Missing H2s for "shi'abud neches", "halvaa k'neged neches".</p>
+                    <div class="recommendation">Add H2s for each underperforming keyword topic</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-warning">Low</span>
+                    <p>~1,000 words homepage. Primary terms appear 3-4 times. Need more content depth.</p>
+                    <div class="recommendation">Create dedicated pages for each mortgage type (2,000+ words each)</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>25-30 internal links. Missing links to Bank of Israel, financial authority sources.</p>
+                    <div class="recommendation">Add authoritative external links to Bank of Israel mortgage info</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-critical">Yes</span>
+                    <p>Only ~1,000 words. Finance competitors average 3,000-4,500 words with calculators.</p>
+                    <div class="recommendation">Add mortgage calculator, comparison tables, eligibility checker</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>FAQ exists in footer link but not on homepage. No FAQPage schema.</p>
+                    <div class="recommendation">Add inline FAQ section to homepage with FAQPage schema</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Has Organization. Missing: FinancialService, FAQPage, Service schemas.</p>
+                    <div class="recommendation">Implement FinancialService schema with service offerings</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-warning">Behind</span>
+                    <p>Competitors have mortgage calculators, comparison tools, detailed eligibility guides.</p>
+                    <div class="recommendation">Build interactive mortgage calculator tool</div>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Recommended Schema Markup</h3>
+                <p style="color: #999; margin-bottom: 15px;">FinancialService + FAQPage for mortgage/finance authority</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FinancialService",
+  "name": "ענבר - משכנתא הפוכה",
+  "alternateName": "Anbar Reverse Mortgages",
+  "description": "חברה מובילה בישראל למשכנתאות הפוכות והלוואות כנגד נכס. פתרונות מימון לגיל השלישי ושיעבוד נכסים.",
+  "url": "https://www.anbar.co.il/",
+  "logo": "https://www.anbar.co.il/logo.png",
+  "telephone": "+972-3-XXX-XXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "knowsAbout": [
+    "משכנתא הפוכה",
+    "הלוואה כנגד נכס",
+    "שעבוד נכס",
+    "משכנתא לגיל השלישי",
+    "מחזור משכנתא",
+    "משכנתא לדירה שניה"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "שירותי משכנתא",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "משכנתא הפוכה"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "הלוואה כנגד נכס"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "מחזור משכנתא"
+        }
+      }
+    ]
+  },
+  "sameAs": [
+    "https://www.facebook.com/anbar.mortgages"
+  ]
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה משכנתא הפוכה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "משכנתא הפוכה היא הלוואה המיועדת לבעלי דירות מעל גיל 60. ההלוואה ניתנת כנגד שיעבוד הדירה, והחזר ההלוואה נדחה עד למכירת הנכס או פטירת הלווה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי זכאי למשכנתא הפוכה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "זכאים למשכנתא הפוכה בעלי דירה בגיל 60+ (או בני זוג כששניהם מעל 55), כאשר הדירה נקייה משעבודים או עם יתרת משכנתא נמוכה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה אפשר לקבל במשכנתא הפוכה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סכום המשכנתא ההפוכה נע בין 20%-50% משווי הדירה, בהתאם לגיל הלווה ושווי הנכס. ככל שהגיל גבוה יותר, אחוז המימון עולה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין משכנתא הפוכה להלוואה כנגד נכס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "במשכנתא הפוכה אין החזר חודשי והפירעון נדחה. בהלוואה כנגד נכס יש החזר חודשי קבוע. משכנתא הפוכה מיועדת לגיל 60+, הלוואה כנגד נכס לכל גיל."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for Anbar</h3>
+                <ul>
+                    <li>Build mortgage calculator tool (high conversion + SEO value)</li>
+                    <li>Create dedicated pages for each mortgage type (2,000+ words each)</li>
+                    <li>Add comparison tables: reverse mortgage vs. regular loan</li>
+                    <li>Implement FAQ section on homepage with schema</li>
+                    <li>Add Bank of Israel links for E-E-A-T signals</li>
+                    <li>Create eligibility checker widget</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SITE 3: CARDIOTEAM -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2>Cardioteam - Cardiology</h2>
+                    <span class="site-url">cardioteam.co.il</span>
+                </div>
+                <span class="priority-badge priority-high">Priority: HIGH</span>
+            </div>
+
+            <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #e74c3c;">
+                <strong style="color: #e74c3c;">Key Issue:</strong> 21 underperforming keywords in competitive YMYL medical niche
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">8-Question Analysis</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Title includes medical terms. H1 is brand + specialty focused. Good URL structure.</p>
+                    <div class="recommendation">Add "cardiolog prati" and "tipul b'lev" to meta description</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Comprehensive H-tag structure. Topics organized by condition and treatment.</p>
+                    <div class="recommendation">Add H2s for underperforming terms: "ablation", "tzintur"</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>~3,000 words. Medical terminology well-distributed. Good content depth.</p>
+                    <div class="recommendation">Add more content around "hatkaf lev" and "hafraat ktzev"</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-good">Excellent</span>
+                    <p>120+ internal links to condition/treatment pages. Well-structured information architecture.</p>
+                    <div class="recommendation">Add links to medical journals, health.gov.il for YMYL trust</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Good content depth but missing patient stories, procedure videos, pre/post care guides.</p>
+                    <div class="recommendation">Add video content, patient testimonials, procedure guides</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>FAQ in navigation but limited. No FAQPage schema detected.</p>
+                    <div class="recommendation">Expand FAQ with condition-specific questions + implement schema</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-critical">Major Gap</span>
+                    <p>Has Organization only. Missing: MedicalBusiness, Physician, MedicalProcedure schemas.</p>
+                    <div class="recommendation">Critical: Add MedicalBusiness + Physician schemas for YMYL</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-warning">Competitive</span>
+                    <p>Hospital sites dominate. Opportunity: specialized content on specific procedures.</p>
+                    <div class="recommendation">Create detailed procedure pages with doctor credentials</div>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Recommended Schema Markup</h3>
+                <p style="color: #999; margin-bottom: 15px;">MedicalBusiness + Physician schemas for YMYL compliance and Google Health panels</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "name": "Cardioteam",
+  "alternateName": "קרדיוטים - מרפאת קרדיולוגיה",
+  "description": "מרפאה מובילה לקרדיולוגיה בישראל. מומחים בצנתורים, אבלציה, קוצבי לב והפרעות קצב. צוות רופאים בכירים מבתי החולים המובילים.",
+  "url": "https://www.cardioteam.co.il/",
+  "logo": "https://www.cardioteam.co.il/logo.png",
+  "telephone": "+972-3-XXX-XXXX",
+  "medicalSpecialty": "Cardiology",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "knowsAbout": [
+    "קרדיולוגיה",
+    "צנתור לב",
+    "אבלציה",
+    "קוצב לב",
+    "הפרעות קצב",
+    "אי ספיקת לב",
+    "אקו לב"
+  ],
+  "availableService": [
+    {
+      "@type": "MedicalProcedure",
+      "name": "צנתור לב",
+      "description": "פרוצדורה אבחנתית וטיפולית להערכת עורקי הלב"
+    },
+    {
+      "@type": "MedicalProcedure",
+      "name": "אבלציה",
+      "description": "טיפול בהפרעות קצב לב באמצעות צריבה"
+    },
+    {
+      "@type": "MedicalProcedure",
+      "name": "השתלת קוצב לב",
+      "description": "התקנת קוצב לב לטיפול בהפרעות קצב"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/cardioteam"
+  ]
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Physician",
+  "name": "Dr. [Name]",
+  "description": "קרדיולוג בכיר ומומחה לצנתורים והפרעות קצב",
+  "medicalSpecialty": "Cardiology",
+  "worksFor": {
+    "@type": "MedicalBusiness",
+    "name": "Cardioteam"
+  },
+  "alumniOf": {
+    "@type": "EducationalOrganization",
+    "name": "[Medical School]"
+  }
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה צנתור לב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צנתור לב הוא פרוצדורה רפואית בה מחדירים צנתר דק לעורקי הלב דרך כלי דם בזרוע או במפשעה. הפרוצדורה מאפשרת אבחון חסימות ובמידת הצורך טיפול באמצעות בלון וסטנטים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי צריך לפנות לקרדיולוג?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לפנות לקרדיולוג במקרים של: כאבים בחזה, קוצר נשימה, דפיקות לב לא סדירות, עילפון, או אם יש היסטוריה משפחתית של מחלות לב. בדיקה תקופתית מומלצת מגיל 40."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן נמשך צנתור לב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צנתור אבחנתי נמשך כ-30-60 דקות. צנתור טיפולי הכולל הרחבת עורקים והשתלת סטנטים יכול להימשך 1-2 שעות. לאחר הפרוצדורה נדרשת מנוחה של מספר שעות."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for Cardioteam</h3>
+                <ul>
+                    <li>CRITICAL: Implement MedicalBusiness + Physician schemas for YMYL trust</li>
+                    <li>Add doctor credentials and qualifications prominently</li>
+                    <li>Create video content explaining procedures</li>
+                    <li>Add patient testimonials with consent</li>
+                    <li>Link to peer-reviewed medical sources</li>
+                    <li>Expand FAQ section with condition-specific questions</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SITE 4: ULTIMA SCHOOL -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2>Ultima School - Interior Design</h2>
+                    <span class="site-url">ultimaschool.co.il</span>
+                </div>
+                <span class="priority-badge priority-high">Priority: HIGH</span>
+            </div>
+
+            <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #e74c3c;">
+                <strong style="color: #e74c3c;">Key Issue:</strong> 14 underperforming keywords + 3 not ranking | Primary keyword "kurs itzuv pnim" at position 17
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">8-Question Analysis</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Has Course schema but title focuses on brand. "limudei itzuv pnim" not in H1.</p>
+                    <div class="recommendation">Optimize title: "Ultima - limudei itzuv pnim | kurs te'uda"</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-warning">Needs Work</span>
+                    <p>H-tags exist but miss search query variations. Missing "kurs itzuv pnim", "me'atzevet pnim limudim".</p>
+                    <div class="recommendation">Add H2s: "kurs itzuv pnim b'te'uda", "eifo lomdim itzuv pnim?"</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-warning">Medium</span>
+                    <p>~3,000 words. Primary terms appear 4-5 times. Could be optimized better.</p>
+                    <div class="recommendation">Increase variations: "kurs", "limudim", "te'uda" naturally throughout</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>45-50 internal links. Course catalog well-linked.</p>
+                    <div class="recommendation">Add links to interior design industry associations</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-warning">Yes</span>
+                    <p>Good word count but missing career outcomes, student portfolios, industry insights.</p>
+                    <div class="recommendation">Add graduate portfolio gallery, career paths section, salary data</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-critical">Missing</span>
+                    <p>No FAQ section. Major opportunity for "eifo lomdim", "kama ola kurs" queries.</p>
+                    <div class="recommendation">Add 10+ FAQs targeting prospective student questions</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Has Course schema. Missing: EducationalOrganization, FAQPage, aggregate ratings.</p>
+                    <div class="recommendation">Add EducationalOrganization + FAQPage + Review schema</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-critical">Behind</span>
+                    <p>openu.ac.il and shenkar.ac.il rank higher with faculty bios, accreditation badges, industry partners.</p>
+                    <div class="recommendation">Add faculty credentials, industry partnerships, accreditation info</div>
+                </div>
+            </div>
+
+            <div class="competitor-section">
+                <h3>Top Competitor Analysis: "limudei itzuv pnim"</h3>
+                <div class="competitor-item">
+                    <span><strong>#1:</strong> shenkar.ac.il</span>
+                    <span>Academic degree, strong brand, faculty profiles</span>
+                </div>
+                <div class="competitor-item">
+                    <span><strong>#2:</strong> openu.ac.il</span>
+                    <span>3,500+ words, course catalog, accreditation</span>
+                </div>
+                <div class="competitor-item">
+                    <span><strong>#3:</strong> hit.ac.il</span>
+                    <span>Industry partnerships, student work gallery</span>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Recommended Schema Markup</h3>
+                <p style="color: #999; margin-bottom: 15px;">EducationalOrganization + Enhanced Course + FAQPage</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Ultima School",
+  "alternateName": "אולטימה - בית ספר לעיצוב",
+  "description": "מכללה מובילה בישראל ללימודי עיצוב פנים. קורסים מקצועיים עם תעודה, הכשרה מעשית וליווי לשוק העבודה.",
+  "url": "https://www.ultimaschool.co.il/",
+  "logo": "https://www.ultimaschool.co.il/logo.png",
+  "telephone": "+972-3-XXX-XXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "knowsAbout": [
+    "עיצוב פנים",
+    "לימודי עיצוב",
+    "הכשרה מקצועית",
+    "תעודת מעצב פנים",
+    "עיצוב מרחבים"
+  ],
+  "sameAs": [
+    "https://www.facebook.com/ultimaschool",
+    "https://www.instagram.com/ultimaschool"
+  ]
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "קורס עיצוב פנים מקצועי",
+  "description": "קורס מקיף לעיצוב פנים הכולל תכנון מרחבים, בחירת חומרים, תאורה וסטיילינג. כולל פרויקט גמר וליווי לשוק העבודה.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "Ultima School",
+    "url": "https://www.ultimaschool.co.il/"
+  },
+  "educationalCredentialAwarded": "תעודת מעצב/ת פנים",
+  "occupationalCategory": "מעצב פנים",
+  "timeRequired": "P12M",
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "onsite",
+    "courseWorkload": "PT15H"
+  }
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "כמה עולה קורס עיצוב פנים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עלות קורס עיצוב פנים מקצועי באולטימה נעה בין 15,000-25,000 ש״ח בהתאם למסלול. ניתן לפרוס לתשלומים ללא ריבית. זכאים גם להחזר מס הכנסה על לימודים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לומדים עיצוב פנים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "קורס עיצוב פנים מקצועי נמשך 10-12 חודשים, הכולל לימודים פעם-פעמיים בשבוע. בסיום מקבלים תעודת מעצב/ת פנים מוכרת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך רקע קודם ללימודי עיצוב פנים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא נדרש רקע קודם. הקורס מתאים למתחילים ומלמד את כל היסודות מאפס. נדרשת יצירתיות, חשיבה מרחבית ותשוקה לעיצוב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה עושים עם תעודת עיצוב פנים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בוגרים עובדים כמעצבי פנים עצמאיים, בסטודיו לעיצוב, ברשתות ריהוט, כסטייליסטים או יועצי צבע. שכר התחלתי נע בין 12,000-18,000 ש״ח."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for Ultima</h3>
+                <ul>
+                    <li>Optimize title and H1 with "limudei itzuv pnim" keyword</li>
+                    <li>Add graduate portfolio gallery showing student work</li>
+                    <li>Create salary/career outcomes page with statistics</li>
+                    <li>Implement FAQ section targeting prospective student queries</li>
+                    <li>Add faculty credentials and industry experience</li>
+                    <li>Include industry partnership logos and accreditation badges</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SITE 5: BESPIRIT -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2>BeSpirit - Holistic Education</h2>
+                    <span class="site-url">bespirit.co.il</span>
+                </div>
+                <span class="priority-badge priority-medium">Priority: MEDIUM</span>
+            </div>
+
+            <div style="background: rgba(241, 196, 15, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #f1c40f;">
+                <strong style="color: #f1c40f;">Status:</strong> Already well-optimized with FAQ + Course schemas | 35 underperforming but most are position 11-15
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">8-Question Analysis</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Title includes "michlala l'refua mshlima". Keywords well-distributed.</p>
+                    <div class="recommendation">Minor: Add more course-specific keywords to meta</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Comprehensive H-tag structure covering courses and specializations.</p>
+                    <div class="recommendation">Add H2s for specific courses: "kurs yoga", "kurs dula"</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-good">Excellent</span>
+                    <p>~4,000 words. Strong content depth across course pages.</p>
+                    <div class="recommendation">Minor optimization for underperforming terms</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-good">Excellent</span>
+                    <p>Well-structured internal linking between courses and specializations.</p>
+                    <div class="recommendation">Add links to professional associations</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Strong content base. Could expand on career outcomes per specialization.</p>
+                    <div class="recommendation">Add graduate success stories and case studies</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-good">Implemented</span>
+                    <p>Has FAQPage schema. Well-structured Q&A content.</p>
+                    <div class="recommendation">Expand FAQs for each course category</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Has Organization + FAQPage + Course schemas. Well-implemented.</p>
+                    <div class="recommendation">Add Review/Rating schema, more Course instances</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-warning">Competitive</span>
+                    <p>Strong position but academic institutions compete for some terms.</p>
+                    <div class="recommendation">Focus on practical/vocational angle vs academic</div>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Enhancement Schema (Additional Courses)</h3>
+                <p style="color: #999; margin-bottom: 15px;">BeSpirit already has good schemas - adding AggregateRating for reviews</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "BeSpirit",
+  "alternateName": "ביספיריט - מכללה לרפואה משלימה",
+  "description": "מכללה מובילה בישראל לרפואה משלימה והוליסטית. קורסים בעיסוי, יוגה, ארומתרפיה, דיקור סיני ודולה.",
+  "url": "https://www.bespirit.co.il/",
+  "logo": "https://www.bespirit.co.il/logo.png",
+  "telephone": "+972-3-XXX-XXXX",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "320",
+    "bestRating": "5"
+  },
+  "knowsAbout": [
+    "רפואה משלימה",
+    "עיסוי רפואי",
+    "יוגה",
+    "ארומתרפיה",
+    "דיקור סיני",
+    "נטורופתיה",
+    "דולה"
+  ],
+  "sameAs": [
+    "https://www.facebook.com/bespirit",
+    "https://www.instagram.com/bespirit_college"
+  ]
+}
+&lt;/script&gt;
+
+&lt;!-- Add Review schema for student testimonials --&gt;
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "EducationalOrganization",
+    "name": "BeSpirit"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "[Student Name]"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "5",
+    "bestRating": "5"
+  },
+  "reviewBody": "[Student testimonial text]"
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for BeSpirit</h3>
+                <ul>
+                    <li>Add AggregateRating schema with real student review counts</li>
+                    <li>Create individual Course schema for each program</li>
+                    <li>Expand course-specific landing pages for underperforming keywords</li>
+                    <li>Add graduate success stories with Review schema</li>
+                    <li>Build backlinks from wellness/health publications</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SITE 6: BAREFOOT COZUMEL -->
+        <section class="site-section">
+            <div class="site-header">
+                <div>
+                    <h2>Barefoot Cozumel - Diving</h2>
+                    <span class="site-url">barefootcozumel.com</span>
+                </div>
+                <span class="priority-badge priority-medium">Priority: MEDIUM</span>
+            </div>
+
+            <div style="background: rgba(241, 196, 15, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-right: 4px solid #f1c40f;">
+                <strong style="color: #f1c40f;">Status:</strong> Good schema foundation with FAQ + AggregateRating | 7 underperforming, 5 not ranking
+            </div>
+
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">8-Question Analysis</h3>
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>1. Target Keywords in Title/H1/URL/Meta?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Title includes "Cozumel diving". Keywords present in H1 and meta.</p>
+                    <div class="recommendation">Add "PADI courses Cozumel" to title</div>
+                </div>
+                <div class="question-card">
+                    <h4>2. H2/H3/H4 with Search Terms?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Good H-tag structure with dive sites, certifications, tours.</p>
+                    <div class="recommendation">Add H2 for "cenotes diving Cozumel"</div>
+                </div>
+                <div class="question-card">
+                    <h4>3. Keyword Repetition in Body/H-tags?</h4>
+                    <span class="status status-good">Excellent</span>
+                    <p>~5,000 words. Comprehensive content covering all diving topics.</p>
+                    <div class="recommendation">Minor: optimize for "best scuba diving Mexico"</div>
+                </div>
+                <div class="question-card">
+                    <h4>4. Internal/External Links?</h4>
+                    <span class="status status-good">Good</span>
+                    <p>Well-linked to dive sites, tours, and certification pages.</p>
+                    <div class="recommendation">Add links to PADI official, Cozumel tourism</div>
+                </div>
+                <div class="question-card">
+                    <h4>5. Need More Content?</h4>
+                    <span class="status status-good">Strong</span>
+                    <p>5,000+ words with comprehensive diving guides.</p>
+                    <div class="recommendation">Add dive site video content and underwater photos</div>
+                </div>
+                <div class="question-card">
+                    <h4>6. FAQ Section with Schema?</h4>
+                    <span class="status status-good">Implemented</span>
+                    <p>Has FAQPage schema with 18 Q&A pairs. Well-implemented.</p>
+                    <div class="recommendation">Add FAQs for cenotes and PADI certifications</div>
+                </div>
+                <div class="question-card">
+                    <h4>7. Additional Schema Opportunities?</h4>
+                    <span class="status status-warning">Partial</span>
+                    <p>Has Organization + FAQ + AggregateRating. Missing: TouristAttraction, LocalBusiness, Product.</p>
+                    <div class="recommendation">Add SportsActivityLocation + TouristAttraction schemas</div>
+                </div>
+                <div class="question-card">
+                    <h4>8. Competitor Gap Analysis?</h4>
+                    <span class="status status-warning">Competitive</span>
+                    <p>Competes with large dive aggregators and TripAdvisor listings.</p>
+                    <div class="recommendation">Focus on unique experiences, cenotes, and PADI certification</div>
+                </div>
+            </div>
+
+            <div class="schema-section">
+                <h3>Recommended Schema Markup</h3>
+                <p style="color: #999; margin-bottom: 15px;">SportsActivityLocation + TouristAttraction for diving business</p>
+                <div class="schema-code">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": ["SportsActivityLocation", "LocalBusiness"],
+  "name": "Barefoot Cozumel Diving",
+  "description": "Premier PADI dive center in Cozumel, Mexico. Offering scuba diving, PADI certifications, cenote diving, and reef tours. Professional instructors and small group experiences.",
+  "url": "https://www.barefootcozumel.com/",
+  "logo": "https://www.barefootcozumel.com/logo.png",
+  "telephone": "+52-XXX-XXX-XXXX",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Cozumel",
+    "addressRegion": "Quintana Roo",
+    "addressCountry": "MX"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "20.4230",
+    "longitude": "-86.9223"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "07:00",
+      "closes": "18:00"
+    }
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "850",
+    "bestRating": "5"
+  },
+  "knowsAbout": [
+    "Scuba diving",
+    "PADI certification",
+    "Cozumel reef diving",
+    "Cenote diving",
+    "Marine conservation",
+    "Underwater photography"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Diving Services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "PADI Open Water Certification"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Reef Diving Tours"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Cenote Diving Excursions"
+        }
+      }
+    ]
+  },
+  "sameAs": [
+    "https://www.facebook.com/barefootcozumel",
+    "https://www.instagram.com/barefootcozumel",
+    "https://www.tripadvisor.com/barefootcozumel"
+  ]
+}
+&lt;/script&gt;
+
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "TouristAttraction",
+  "name": "Cozumel Reef Diving with Barefoot",
+  "description": "Experience world-famous Cozumel reefs including Palancar, Columbia, and Santa Rosa walls. Crystal clear visibility and abundant marine life.",
+  "url": "https://www.barefootcozumel.com/dive-sites/",
+  "isAccessibleForFree": false,
+  "touristType": ["Scuba Divers", "Snorkelers", "Adventure Seekers"]
+}
+&lt;/script&gt;</div>
+                <button class="copy-btn" onclick="copySchema(this)">Copy Schema</button>
+            </div>
+
+            <div class="action-items">
+                <h3>Priority Actions for Barefoot Cozumel</h3>
+                <ul>
+                    <li>Add SportsActivityLocation schema for better local search</li>
+                    <li>Create dedicated cenote diving page with TouristAttraction schema</li>
+                    <li>Add more underwater video/photo content</li>
+                    <li>Build backlinks from PADI, dive publications</li>
+                    <li>Optimize for "best scuba diving Mexico" with comparison content</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SUMMARY TABLE OF ALL 17 CLIENTS -->
+        <section class="site-section">
+            <h2 style="color: #667eea; margin-bottom: 20px;" class="lang-en">Full Client Overview - All 17 Sites</h2>
+            <h2 style="color: #667eea; margin-bottom: 20px;" class="lang-he">סקירת לקוחות מלאה - 17 אתרים</h2>
+            <div style="overflow-x: auto;">
+                <table class="keywords-table">
+                    <thead>
+                        <tr>
+                            <th><span class="lang-en">Site</span><span class="lang-he">אתר</span></th>
+                            <th><span class="lang-en">Keywords</span><span class="lang-he">מילות מפתח</span></th>
+                            <th><span class="lang-en">Top 10</span><span class="lang-he">טופ 10</span></th>
+                            <th><span class="lang-en">Underperforming</span><span class="lang-he">ביצועים נמוכים</span></th>
+                            <th><span class="lang-en">Not Ranking</span><span class="lang-he">לא מדורגים</span></th>
+                            <th><span class="lang-en">Schema Status</span><span class="lang-he">סטטוס סכמה</span></th>
+                            <th><span class="lang-en">Priority</span><span class="lang-he">עדיפות</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Midot</strong></td>
+                            <td>35</td>
+                            <td>13</td>
+                            <td><span class="position-badge pos-11-20">8</span></td>
+                            <td><span class="position-badge not-ranking">14</span></td>
+                            <td style="color: #e74c3c;">Needs FAQPage</td>
+                            <td style="color: #e74c3c;">HIGH</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anbar</strong></td>
+                            <td>36</td>
+                            <td>10</td>
+                            <td><span class="position-badge pos-21-50">24</span></td>
+                            <td><span class="position-badge not-ranking">2</span></td>
+                            <td style="color: #e74c3c;">Needs FinancialService</td>
+                            <td style="color: #e74c3c;">HIGH</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cardioteam</strong></td>
+                            <td>44</td>
+                            <td>23</td>
+                            <td><span class="position-badge pos-11-20">21</span></td>
+                            <td>0</td>
+                            <td style="color: #e74c3c;">Needs MedicalBusiness</td>
+                            <td style="color: #e74c3c;">HIGH</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ultima</strong></td>
+                            <td>33</td>
+                            <td>16</td>
+                            <td><span class="position-badge pos-11-20">14</span></td>
+                            <td><span class="position-badge not-ranking">3</span></td>
+                            <td style="color: #f39c12;">Has Course, needs FAQ</td>
+                            <td style="color: #e74c3c;">HIGH</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BeSpirit</strong></td>
+                            <td>93</td>
+                            <td>53</td>
+                            <td><span class="position-badge pos-11-20">35</span></td>
+                            <td><span class="position-badge not-ranking">4</span></td>
+                            <td style="color: #2ecc71;">Good (FAQ+Course)</td>
+                            <td style="color: #f39c12;">MEDIUM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Barefoot</strong></td>
+                            <td>27</td>
+                            <td>15</td>
+                            <td><span class="position-badge pos-11-20">7</span></td>
+                            <td><span class="position-badge not-ranking">5</span></td>
+                            <td style="color: #2ecc71;">Good (FAQ+Rating)</td>
+                            <td style="color: #f39c12;">MEDIUM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AA-Orthopedics</strong></td>
+                            <td>60</td>
+                            <td>53</td>
+                            <td><span class="position-badge pos-11-20">6</span></td>
+                            <td>0</td>
+                            <td style="color: #f39c12;">Needs MedicalBusiness</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Building</strong></td>
+                            <td>45</td>
+                            <td>37</td>
+                            <td><span class="position-badge pos-11-20">7</span></td>
+                            <td><span class="position-badge not-ranking">1</span></td>
+                            <td style="color: #f39c12;">Needs Educational</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fency</strong></td>
+                            <td>35</td>
+                            <td>31</td>
+                            <td><span class="position-badge pos-11-20">4</span></td>
+                            <td>0</td>
+                            <td style="color: #f39c12;">Basic Organization</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Admati</strong></td>
+                            <td>28</td>
+                            <td>20</td>
+                            <td><span class="position-badge pos-11-20">6</span></td>
+                            <td><span class="position-badge not-ranking">2</span></td>
+                            <td style="color: #f39c12;">Needs Manufacturer</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Moya CBD</strong></td>
+                            <td>31</td>
+                            <td>19</td>
+                            <td><span class="position-badge pos-11-20">11</span></td>
+                            <td><span class="position-badge not-ranking">1</span></td>
+                            <td style="color: #f39c12;">Needs Product schema</td>
+                            <td style="color: #f39c12;">MEDIUM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Manpower</strong></td>
+                            <td>91</td>
+                            <td>60</td>
+                            <td><span class="position-badge pos-11-20">27</span></td>
+                            <td><span class="position-badge not-ranking">4</span></td>
+                            <td style="color: #2ecc71;">Has Organization</td>
+                            <td style="color: #f39c12;">MEDIUM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ManpowerCare</strong></td>
+                            <td>22</td>
+                            <td>12</td>
+                            <td><span class="position-badge pos-11-20">10</span></td>
+                            <td>0</td>
+                            <td style="color: #f39c12;">Needs HomeAndCare</td>
+                            <td style="color: #f39c12;">MEDIUM</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Experis Main</strong></td>
+                            <td>16</td>
+                            <td>10</td>
+                            <td><span class="position-badge pos-11-20">4</span></td>
+                            <td><span class="position-badge not-ranking">2</span></td>
+                            <td style="color: #2ecc71;">Has Organization</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Experis Academy</strong></td>
+                            <td>32</td>
+                            <td>30</td>
+                            <td>0</td>
+                            <td><span class="position-badge not-ranking">2</span></td>
+                            <td style="color: #2ecc71;">Good</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Experis Cyber</strong></td>
+                            <td>24</td>
+                            <td>21</td>
+                            <td><span class="position-badge pos-51plus">3</span></td>
+                            <td>0</td>
+                            <td style="color: #2ecc71;">Good</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Amos Ziv</strong></td>
+                            <td>30</td>
+                            <td>28</td>
+                            <td><span class="position-badge pos-11-20">2</span></td>
+                            <td>0</td>
+                            <td style="color: #f39c12;">Needs Physician</td>
+                            <td style="color: #2ecc71;">LOW</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: rgba(102, 126, 234, 0.2);">
+                            <td><strong><span class="lang-en">TOTALS</span><span class="lang-he">סה"כ</span></strong></td>
+                            <td><strong>682</strong></td>
+                            <td><strong>451</strong></td>
+                            <td><strong>189</strong></td>
+                            <td><strong>40</strong></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+
+        <!-- GEO OPTIMIZATION SUMMARY -->
+        <section class="site-section">
+            <h2 style="color: #667eea; margin-bottom: 20px;">GEO (Generative Engine Optimization) Summary</h2>
+            <p style="color: #999; margin-bottom: 20px;">Key optimizations for AI search visibility (ChatGPT, Perplexity, Google AI Overview)</p>
+
+            <div class="question-grid">
+                <div class="question-card">
+                    <h4>knowsAbout Property</h4>
+                    <p>Added to all recommended schemas. This property helps AI engines understand the business's expertise areas for citation and recommendations.</p>
+                </div>
+                <div class="question-card">
+                    <h4>Description Field</h4>
+                    <p>All schemas include 150-300 character descriptions optimized for AI summarization and citation.</p>
+                </div>
+                <div class="question-card">
+                    <h4>Entity Linking (sameAs)</h4>
+                    <p>Social profiles and directory listings linked for cross-platform entity recognition.</p>
+                </div>
+                <div class="question-card">
+                    <h4>FAQ Schema</h4>
+                    <p>Critical for featured snippets AND AI citations. Recommended for 12 of 17 sites.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p class="lang-en">Comprehensive SEO Audit with Schema Markup | Nadav Digital | January 2026</p>
+            <p class="lang-he">ביקורת SEO מקיפה עם Schema Markup | נדב דיגיטל | ינואר 2026</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                <span class="lang-en">Test all schemas at:</span>
+                <span class="lang-he">בדקו את כל הסכמות ב:</span>
+                <a href="https://search.google.com/test/rich-results" target="_blank" style="color: #667eea;">Google Rich Results Test</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+    // Copy schema function
+    function copySchema(btn) {
+        const codeBlock = btn.previousElementSibling;
+        const text = codeBlock.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy Schema', 2000);
+        });
+    }
+
+    // Language toggle function
+    function setLanguage(lang) {
+        const body = document.body;
+        const btnHe = document.getElementById('btn-he');
+        const btnEn = document.getElementById('btn-en');
+
+        if (lang === 'en') {
+            body.classList.add('english');
+            body.setAttribute('dir', 'ltr');
+            btnEn.classList.add('active');
+            btnHe.classList.remove('active');
+        } else {
+            body.classList.remove('english');
+            body.setAttribute('dir', 'rtl');
+            btnHe.classList.add('active');
+            btnEn.classList.remove('active');
+        }
+    }
+    </script>
+</body>
+</html>
