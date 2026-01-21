@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missing Organization Schemas - 8 Sites | Nadav Digital</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid rgba(121, 132, 192, 0.3);
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #7984c0;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .header p { color: #a0a0a0; font-size: 1.1rem; }
+        .summary-box {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-box h2 { color: #ffc107; margin-bottom: 15px; }
+        .summary-box ul { list-style: none; }
+        .summary-box li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .summary-box li:last-child { border-bottom: none; }
+        .priority-high { color: #ff6b6b; font-weight: bold; }
+        .priority-medium { color: #ffc107; }
+        .priority-low { color: #4ecdc4; }
+        .schema-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(121, 132, 192, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .schema-card h2 {
+            color: #7984c0;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .schema-card .site-url {
+            color: #4ecdc4;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .schema-card .site-url a { color: #4ecdc4; text-decoration: none; }
+        .schema-card .site-url a:hover { text-decoration: underline; }
+        .schema-type {
+            display: inline-block;
+            background: rgba(121, 132, 192, 0.2);
+            color: #7984c0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .info-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .info-item label {
+            color: #7984c0;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info-item span { color: #fff; font-size: 0.95rem; }
+        .code-container { position: relative; margin-top: 20px; }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .code-header h3 { color: #7984c0; font-size: 1rem; }
+        .copy-btn {
+            background: #7984c0;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover { background: #5a6aa0; transform: translateY(-2px); }
+        .copy-btn.copied { background: #4ecdc4; }
+        pre {
+            background: #0d1117;
+            border: 1px solid rgba(121, 132, 192, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        code { color: #c9d1d9; font-family: 'Monaco', 'Menlo', monospace; }
+        .string { color: #a5d6ff; }
+        .property { color: #7ee787; }
+        .warning-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .warning-box h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .warning-box p { color: #ffb3b3; font-size: 0.9rem; }
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        .unverified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(121, 132, 192, 0.3);
+            margin-top: 40px;
+            color: #666;
+        }
+        .back-link {
+            display: inline-block;
+            color: #7984c0;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .notes-section {
+            background: rgba(121, 132, 192, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .notes-section h4 { color: #7984c0; margin-bottom: 10px; font-size: 0.9rem; }
+        .notes-section ul { padding-left: 20px; }
+        .notes-section li { color: #a0a0a0; font-size: 0.85rem; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">&larr; Back to Dashboard</a>
+
+        <div class="header">
+            <h1>Missing Organization Schemas</h1>
+            <p>8 Sites Requiring Schema Implementation | Verified GMB Data</p>
+        </div>
+
+        <div class="summary-box">
+            <h2>Priority Implementation List</h2>
+            <ul>
+                <li><span class="priority-high">HIGH:</span> manpower.co.il, manpowergroup.co.il, manpowercare.co.il, experis.co.il</li>
+                <li><span class="priority-medium">MEDIUM:</span> cheryisrael.co.il, leumit.co.il, deasy.co.il</li>
+                <li><span class="priority-low">LOW:</span> justsocial.io (limited data available)</li>
+            </ul>
+        </div>
+
+        <!-- 1. MANPOWER ISRAEL -->
+        <div class="schema-card" id="manpower">
+            <h2>Manpower Israel <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://manpower.co.il" target="_blank">https://manpower.co.il</a></div>
+            <span class="schema-type">EmploymentAgency</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Address</label>
+                    <span>Yigal Alon 110, Tel Aviv 6789149</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>+972-3-5639999</span>
+                </div>
+                <div class="info-item">
+                    <label>Hours</label>
+                    <span>Sun-Thu 08:00-17:00</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>Facebook, Instagram, LinkedIn, TikTok</span>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-manpower')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-manpower">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EmploymentAgency",
+  "@id": "https://manpower.co.il/#organization",
+  "name": "Manpower Israel",
+  "alternateName": "מנפאור ישראל",
+  "url": "https://manpower.co.il",
+  "logo": "https://manpowercontent.manpower.co.il/wp-content/uploads/2024/05/Manpower-logo-horizontal.svg",
+  "image": "https://manpowercontent.manpower.co.il/wp-content/uploads/2024/05/Manpower-logo-horizontal.svg",
+  "description": "Manpower Israel - מובילה עולמית בפתרונות משאבי אנוש, השמה זמנית וקבועה, גיוס בכירים וייעוץ ניהולי",
+  "telephone": "+972-3-5639999",
+  "email": "manpower@manpower.co.il",
+  "foundingDate": "1968",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Yigal Alon 110",
+    "addressLocality": "Tel Aviv",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0618,
+    "longitude": 34.7922
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-5639999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/",
+    "https://www.tiktok.com/@manpower.co.il"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "ManpowerGroup",
+    "url": "https://www.manpowergroup.com"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 2. MANPOWERGROUP ISRAEL -->
+        <div class="schema-card" id="manpowergroup">
+            <h2>ManpowerGroup Israel <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://manpowergroup.co.il" target="_blank">https://manpowergroup.co.il</a></div>
+            <span class="schema-type">EmploymentAgency</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Address</label>
+                    <span>Yigal Alon 110, Tel Aviv 6789149</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>+972-3-5639999</span>
+                </div>
+                <div class="info-item">
+                    <label>Parent Company</label>
+                    <span>ManpowerGroup (Global)</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>LinkedIn, Facebook, Instagram, YouTube</span>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-manpowergroup')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-manpowergroup">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EmploymentAgency",
+  "@id": "https://manpowergroup.co.il/#organization",
+  "name": "ManpowerGroup Israel",
+  "alternateName": "מנפאור גרופ ישראל",
+  "url": "https://manpowergroup.co.il",
+  "logo": "https://go.manpowergroup.com/hubfs/MPG_Logo_RGB_HOR-3.svg",
+  "image": "https://go.manpowergroup.com/hubfs/MPG_Logo_RGB_HOR-3.svg",
+  "description": "ManpowerGroup Israel - פתרונות כוח אדם וניהול משאבי אנוש מתקדמים לארגונים בישראל",
+  "telephone": "+972-3-5639999",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Yigal Alon 110",
+    "addressLocality": "Tel Aviv",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0618,
+    "longitude": 34.7922
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-5639999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "08:00",
+      "closes": "17:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.linkedin.com/company/manpowergroup/",
+    "https://www.facebook.com/ManpowerGroup",
+    "https://www.youtube.com/manpowergroup"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "ManpowerGroup",
+    "url": "https://www.manpowergroup.com"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 3. MANPOWER CARE -->
+        <div class="schema-card" id="manpowercare">
+            <h2>Manpower Care <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://manpowercare.co.il" target="_blank">https://manpowercare.co.il</a></div>
+            <span class="schema-type">EmploymentAgency</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Address</label>
+                    <span>Sokolov 62, Ramat HaSharon 4723527</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>+972-3-5404533 / *9055</span>
+                </div>
+                <div class="info-item">
+                    <label>Fax</label>
+                    <span>+972-3-5404566</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>Facebook</span>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-manpowercare')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-manpowercare">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EmploymentAgency",
+  "@id": "https://manpowercare.co.il/#organization",
+  "name": "Manpower Care",
+  "alternateName": "מנפאור קר",
+  "url": "https://manpowercare.co.il",
+  "logo": "https://manpowercare.co.il/wp-content/uploads/2024/08/Manpower-Care-Logo.png",
+  "image": "https://manpowercare.co.il/wp-content/uploads/2024/08/Manpower-Care-Logo.png",
+  "description": "Manpower Care - שירותי כוח אדם וטיפול סיעודי מקצועי בישראל",
+  "telephone": "+972-3-5404533",
+  "faxNumber": "+972-3-5404566",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Sokolov 62",
+    "addressLocality": "Ramat HaSharon",
+    "postalCode": "4723527",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.1461,
+    "longitude": 34.8394
+  },
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "+972-3-5404533",
+      "contactType": "customer service",
+      "areaServed": "IL",
+      "availableLanguage": ["he", "en"]
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "*9055",
+      "contactType": "customer service",
+      "areaServed": "IL",
+      "availableLanguage": ["he"]
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/ManpowerCare/"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "ManpowerGroup Israel",
+    "url": "https://manpowergroup.co.il"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 4. EXPERIS ISRAEL -->
+        <div class="schema-card" id="experis">
+            <h2>Experis Israel <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://experis.co.il" target="_blank">https://experis.co.il</a></div>
+            <span class="schema-type">EmploymentAgency</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Address</label>
+                    <span>Yigal Alon 90, Tel Aviv 6789130</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>+972-3-5686400</span>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <span>info@experis.co.il</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>Facebook, Instagram, LinkedIn</span>
+                </div>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-experis')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-experis">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "EmploymentAgency",
+  "@id": "https://experis.co.il/#organization",
+  "name": "Experis Israel",
+  "alternateName": "אקספריס ישראל",
+  "url": "https://experis.co.il",
+  "logo": "https://experiscontent.experis.co.il/wp-content/uploads/2024/02/EXP_Logo_RGB_HOR.png",
+  "image": "https://experiscontent.experis.co.il/wp-content/uploads/2024/02/EXP_Logo_RGB_HOR.png",
+  "description": "Experis Israel - מומחים בגיוס והשמת אנשי מקצוע בתחומי הטכנולוגיה, פיתוח תוכנה, סייבר ו-IT",
+  "telephone": "+972-3-5686400",
+  "email": "info@experis.co.il",
+  "foundingDate": "1999",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Yigal Alon 90",
+    "addressLocality": "Tel Aviv",
+    "postalCode": "6789130",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0618,
+    "longitude": 34.7906
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-5686400",
+    "email": "info@experis.co.il",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "sameAs": [
+    "https://www.facebook.com/ExperisIL",
+    "https://www.instagram.com/experis.israel/",
+    "https://www.linkedin.com/company/experis-israel/"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "ManpowerGroup",
+    "url": "https://www.manpowergroup.com"
+  },
+  "knowsAbout": [
+    "Software Development",
+    "IT Staffing",
+    "Cyber Security",
+    "Technology Recruitment"
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 5. CHERY ISRAEL -->
+        <div class="schema-card" id="chery">
+            <h2>Chery Israel <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://cheryisrael.co.il" target="_blank">https://cheryisrael.co.il</a></div>
+            <span class="schema-type">AutoDealer</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Main Showroom</label>
+                    <span>HaYozma 1, Rishon LeZion (Freesbe Center)</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>*3511</span>
+                </div>
+                <div class="info-item">
+                    <label>Importer</label>
+                    <span>Freesbe (Israel's oldest vehicle importer)</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>Facebook, Instagram, YouTube</span>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h4>Implementation Notes:</h4>
+                <ul>
+                    <li>Chery is imported by Freesbe, Israel's oldest automotive group (since 1933)</li>
+                    <li>13 showroom locations across Israel</li>
+                    <li>Consider adding LocalBusiness schemas for each showroom location</li>
+                </ul>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-chery')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-chery">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  "@id": "https://cheryisrael.co.il/#organization",
+  "name": "Chery Israel",
+  "alternateName": "צ'רי ישראל",
+  "url": "https://cheryisrael.co.il",
+  "logo": "https://cheryisrael.co.il/wp-content/themes/zemingo-cars-18-12-2022/new-styles-set/images/chery-logo.png",
+  "image": "https://cheryisrael.co.il/wp-content/themes/zemingo-cars-18-12-2022/new-styles-set/images/chery-logo.png",
+  "description": "Chery Israel - היבואן הרשמי של רכבי צ'רי בישראל. מגוון דגמים חדשים עם טכנולוגיה מתקדמת",
+  "telephone": "*3511",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "HaYozma 1, Freesbe Center",
+    "addressLocality": "Rishon LeZion",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 31.9730,
+    "longitude": 34.8046
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "*3511",
+    "contactType": "sales",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "08:30",
+      "closes": "18:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Friday",
+      "opens": "08:30",
+      "closes": "13:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/cheryisrael1/",
+    "https://www.instagram.com/chery__israel/",
+    "https://www.youtube.com/@CheryIsrael"
+  ],
+  "brand": {
+    "@type": "Brand",
+    "name": "Chery",
+    "url": "https://www.cheryinternational.com"
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Freesbe",
+    "url": "https://www.freesbe.com"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 6. LEUMIT HEALTH SERVICES -->
+        <div class="schema-card" id="leumit">
+            <h2>Leumit Health Services <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://leumit.co.il" target="_blank">https://leumit.co.il</a></div>
+            <span class="schema-type">MedicalBusiness</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Headquarters</label>
+                    <span>Sprintzak 23, Tel Aviv 6473817</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>*507 / 1700-507-507</span>
+                </div>
+                <div class="info-item">
+                    <label>Founded</label>
+                    <span>1933</span>
+                </div>
+                <div class="info-item">
+                    <label>Social</label>
+                    <span>Facebook, Instagram</span>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h4>Implementation Notes:</h4>
+                <ul>
+                    <li>One of Israel's four Kupot Holim (health funds)</li>
+                    <li>Over 700,000 members as of 2020</li>
+                    <li>Consider using MedicalOrganization or HealthInsuranceOrganization as alternative types</li>
+                </ul>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-leumit')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-leumit">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalBusiness",
+  "@id": "https://leumit.co.il/#organization",
+  "name": "Leumit Health Services",
+  "alternateName": "לאומית שירותי בריאות",
+  "url": "https://leumit.co.il",
+  "logo": "https://www.leumit.co.il/media/h55dy50v/36467_113985_leumit_website_bnrs_logo_208x52_06.png",
+  "image": "https://www.leumit.co.il/media/h55dy50v/36467_113985_leumit_website_bnrs_logo_208x52_06.png",
+  "description": "לאומית שירותי בריאות - קופת חולים המספקת שירותי בריאות איכותיים לחבריה בכל רחבי ישראל",
+  "telephone": "+972-1700-507-507",
+  "foundingDate": "1933",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Sprintzak 23",
+    "addressLocality": "Tel Aviv",
+    "postalCode": "6473817",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0750,
+    "longitude": 34.7850
+  },
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "*507",
+      "contactType": "customer service",
+      "areaServed": "IL",
+      "availableLanguage": ["he", "en", "ar", "ru"]
+    },
+    {
+      "@type": "ContactPoint",
+      "telephone": "+972-1700-507-507",
+      "contactType": "customer service",
+      "areaServed": "IL",
+      "availableLanguage": ["he", "en", "ar", "ru"]
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/leumit",
+    "https://www.instagram.com/leumit_healthcare/"
+  ],
+  "medicalSpecialty": [
+    "General Practice",
+    "Family Medicine",
+    "Pediatrics"
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 7. DIESENHAUS (DEASY) -->
+        <div class="schema-card" id="deasy">
+            <h2>Diesenhaus (Deasy) <span class="verified-badge">Verified</span></h2>
+            <div class="site-url"><a href="https://deasy.co.il" target="_blank">https://deasy.co.il</a></div>
+            <span class="schema-type">TravelAgency</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Headquarters</label>
+                    <span>Prof. Yehezkel Kaufmann 6, Tel Aviv 6801298</span>
+                </div>
+                <div class="info-item">
+                    <label>Phone</label>
+                    <span>*2288</span>
+                </div>
+                <div class="info-item">
+                    <label>Email</label>
+                    <span>deasyweb@diesenhaus.co.il</span>
+                </div>
+                <div class="info-item">
+                    <label>Founded</label>
+                    <span>1926</span>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h4>Implementation Notes:</h4>
+                <ul>
+                    <li>Israel's oldest travel company (founded 1926 on Dizengoff St.)</li>
+                    <li>Multiple branches: Eilat, Jerusalem, Ramat Gan, Bnei Brak</li>
+                    <li>Hours: Sun-Thu 09:00-17:00, Fri 09:00-13:00</li>
+                </ul>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-deasy')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-deasy">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  "@id": "https://deasy.co.il/#organization",
+  "name": "Diesenhaus",
+  "alternateName": "דיזנהאוז",
+  "url": "https://deasy.co.il",
+  "logo": "https://www.diesenhaus-group.com/wp-content/uploads/2022/12/logo-Copy-2.png",
+  "image": "https://www.diesenhaus-group.com/wp-content/uploads/2022/12/logo-Copy-2.png",
+  "description": "דיזנהאוז - חברת התיירות הוותיקה בישראל. תיירות יוצאת, תיירות נכנסת, כנסים ואירועים בינלאומיים",
+  "telephone": "*2288",
+  "email": "deasyweb@diesenhaus.co.il",
+  "foundingDate": "1926",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Professor Yehezkel Kaufmann 6",
+    "addressLocality": "Tel Aviv",
+    "postalCode": "6801298",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0680,
+    "longitude": 34.7700
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "*2288",
+    "email": "deasyweb@diesenhaus.co.il",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "09:00",
+      "closes": "17:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Friday",
+      "opens": "09:00",
+      "closes": "13:00"
+    }
+  ],
+  "sameAs": [
+    "https://x.com/Diesenhaus",
+    "https://www.diesenhaus-group.com"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Diesenhaus Group",
+    "url": "https://www.diesenhaus-group.com"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <!-- 8. JUSTSOCIAL.IO -->
+        <div class="schema-card" id="justsocial">
+            <h2>JustSocial.io <span class="unverified-badge">Limited Data</span></h2>
+            <div class="site-url"><a href="https://justsocial.io" target="_blank">https://justsocial.io</a></div>
+            <span class="schema-type">Organization</span>
+
+            <div class="warning-box">
+                <h4>Data Availability Warning</h4>
+                <p>JustSocial.io appears to be a political movement website promoting direct democracy, led by Yuval D. Vered. Limited business contact information is publicly available. The schema below uses minimal verified data. Manual verification recommended before implementation.</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Type</label>
+                    <span>Political Movement / Non-Profit</span>
+                </div>
+                <div class="info-item">
+                    <label>Focus</label>
+                    <span>Direct Democracy</span>
+                </div>
+                <div class="info-item">
+                    <label>Founder</label>
+                    <span>Yuval D. Vered</span>
+                </div>
+                <div class="info-item">
+                    <label>Contact</label>
+                    <span>Via website contact form</span>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h4>Recommendations:</h4>
+                <ul>
+                    <li>Contact site owner to obtain verified business details</li>
+                    <li>May not be a traditional business - consider if Organization schema is appropriate</li>
+                    <li>Alternative types: NGO, PoliticalOrganization (not official Schema.org types)</li>
+                    <li>Consider using Organization with additionalType for more specificity</li>
+                </ul>
+            </div>
+
+            <div class="code-container">
+                <div class="code-header">
+                    <h3>JSON-LD Schema (Minimal - Verify Before Use)</h3>
+                    <button class="copy-btn" onclick="copySchema(this, 'schema-justsocial')">Copy Schema</button>
+                </div>
+                <pre><code id="schema-justsocial">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://justsocial.io/#organization",
+  "name": "JustSocial",
+  "url": "https://justsocial.io",
+  "description": "JustSocial - Political movement promoting continuous direct democracy",
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "founder": {
+    "@type": "Person",
+    "name": "Yuval D. Vered"
+  }
+}
+&lt;/script&gt;</code></pre>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Nadav Digital SEO Agency &copy; 2024</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #555;">
+                Generated with verified GMB data | December 2025
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copySchema(btn, elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Schema';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Schema';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
