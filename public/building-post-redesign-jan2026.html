@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת SEO לאחר עיצוב מחדש - building.org.il | ינואר 2026</title>
+    <style>
+        :root {
+            --fixed: #10b981;
+            --fixed-bg: #ecfdf5;
+            --not-fixed: #dc2626;
+            --not-fixed-bg: #fef2f2;
+            --worse: #7c3aed;
+            --worse-bg: #f5f3ff;
+            --new-issue: #f59e0b;
+            --new-issue-bg: #fffbeb;
+            --critical: #dc2626;
+            --high: #ea580c;
+            --medium: #ca8a04;
+            --low: #16a34a;
+            --primary: #1e40af;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-700: #374151;
+            --gray-900: #111827;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.6;
+            direction: rtl;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        header {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 40px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }
+
+        header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        header .meta { opacity: 0.95; font-size: 1rem; }
+
+        .status-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .status-card.fixed { border-right: 5px solid var(--fixed); }
+        .status-card.not-fixed { border-right: 5px solid var(--not-fixed); }
+        .status-card.worse { border-right: 5px solid var(--worse); }
+        .status-card.new-issue { border-right: 5px solid var(--new-issue); }
+
+        .status-number { font-size: 2.5rem; font-weight: bold; }
+        .status-card.fixed .status-number { color: var(--fixed); }
+        .status-card.not-fixed .status-number { color: var(--not-fixed); }
+        .status-card.worse .status-number { color: var(--worse); }
+        .status-card.new-issue .status-number { color: var(--new-issue); }
+
+        .status-label { color: var(--gray-700); font-size: 0.9rem; margin-top: 5px; }
+
+        section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table th {
+            background: var(--gray-100);
+            padding: 12px 15px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: top;
+        }
+
+        .comparison-table tr:hover { background: var(--gray-50); }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.fixed { background: var(--fixed-bg); color: var(--fixed); }
+        .status-badge.not-fixed { background: var(--not-fixed-bg); color: var(--not-fixed); }
+        .status-badge.worse { background: var(--worse-bg); color: var(--worse); }
+        .status-badge.new-issue { background: var(--new-issue-bg); color: var(--new-issue); }
+
+        .page-audit {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .page-audit h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .page-audit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .audit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .audit-item.pass { border-right: 3px solid var(--fixed); }
+        .audit-item.fail { border-right: 3px solid var(--not-fixed); }
+        .audit-item.warning { border-right: 3px solid var(--new-issue); }
+
+        .priority-list {
+            list-style: none;
+        }
+
+        .priority-list li {
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .priority-list li.critical { background: #fef2f2; border-right: 4px solid var(--critical); }
+        .priority-list li.high { background: #fff7ed; border-right: 4px solid var(--high); }
+        .priority-list li.medium { background: #fefce8; border-right: 4px solid var(--medium); }
+
+        .priority-number {
+            background: var(--primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .priority-content h4 { margin-bottom: 5px; color: var(--gray-900); }
+        .priority-content p { color: var(--gray-700); font-size: 0.9rem; }
+
+        code {
+            background: var(--gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .risk-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .risk-box.high { background: #fef2f2; border-right: 4px solid var(--critical); }
+        .risk-box.medium { background: #fefce8; border-right: 4px solid var(--medium); }
+        .risk-box.low { background: #ecfdf5; border-right: 4px solid var(--fixed); }
+
+        .risk-box h4 { margin-bottom: 8px; }
+
+        .action-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .action-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            text-align: right;
+        }
+
+        .action-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: top;
+        }
+
+        .action-table tr:nth-child(even) { background: var(--gray-50); }
+
+        .severity-tag {
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .severity-tag.critical { background: var(--critical); color: white; }
+        .severity-tag.high { background: var(--high); color: white; }
+        .severity-tag.medium { background: var(--medium); color: white; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.6rem; }
+            .status-summary { grid-template-columns: repeat(2, 1fr); }
+            .comparison-table { font-size: 0.8rem; }
+            .comparison-table th, .comparison-table td { padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>בדיקת SEO לאחר עיצוב מחדש</h1>
+            <div class="meta">
+                <strong>אתר:</strong> building.org.il |
+                <strong>תאריך בדיקה:</strong> 21 בינואר 2026 |
+                <strong>השוואה ל:</strong> ביקורת מ-15 בינואר 2026
+            </div>
+        </header>
+
+        <!-- סיכום סטטוס -->
+        <div class="status-summary">
+            <div class="status-card fixed">
+                <div class="status-number">1</div>
+                <div class="status-label">בעיות שתוקנו</div>
+            </div>
+            <div class="status-card not-fixed">
+                <div class="status-number">6</div>
+                <div class="status-label">בעיות שלא תוקנו</div>
+            </div>
+            <div class="status-card worse">
+                <div class="status-number">2</div>
+                <div class="status-label">בעיות שהחמירו</div>
+            </div>
+            <div class="status-card new-issue">
+                <div class="status-number">3</div>
+                <div class="status-label">בעיות חדשות</div>
+            </div>
+        </div>
+
+        <!-- סיכום מנהלים -->
+        <section>
+            <h2>סיכום מנהלים</h2>
+            <p style="font-size: 1.05rem; margin-bottom: 20px;">
+                בוצעה בדיקת אימות SEO לאתר building.org.il לאחר השקת העיצוב החדש.
+                <strong style="color: var(--fixed);">חדשות טובות:</strong> סכמות מובנות (Structured Data) הותקנו ופועלות כראוי.
+                <strong style="color: var(--not-fixed);">חדשות רעות:</strong> רוב הבעיות מהביקורת הקודמת לא תוקנו, וחלקן אף החמירו.
+            </p>
+
+            <div class="risk-box high">
+                <h4>סיכון מיידי לדירוג</h4>
+                <p>עמוד הבית מכיל <strong>17 תגיות H1</strong> במקום אחת. זו בעיה קריטית שיכולה לפגוע בדירוג מילות מפתח ראשיות.</p>
+            </div>
+        </section>
+
+        <!-- השוואה לביקורת קודמת -->
+        <section>
+            <h2>השוואה לביקורת קודמת</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>בעיה</th>
+                        <th>ביקורת קודמת (15/1)</th>
+                        <th>מצב נוכחי (21/1)</th>
+                        <th>סטטוס</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>סכמות מובנות (Schema)</strong></td>
+                        <td>0 עמודים - אין סכמות כלל</td>
+                        <td>Organization, WebSite, BreadcrumbList, WebPage - פועל</td>
+                        <td><span class="status-badge fixed">תוקן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>404 - הגנת אימייל Cloudflare</strong></td>
+                        <td>/cdn-cgi/l/email-protection - 138 קישורים</td>
+                        <td>עדיין מחזיר 404</td>
+                        <td><span class="status-badge not-fixed">לא תוקן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Meta Description חסר</strong></td>
+                        <td>249 עמודים (76.85%) חסרים</td>
+                        <td>6 מתוך 8 עמודים מרכזיים חסרים</td>
+                        <td><span class="status-badge not-fixed">לא תוקן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>H1 מרובה</strong></td>
+                        <td>110 עמודים עם יותר מ-H1 אחד</td>
+                        <td>דף הבית: 17 H1 | כנסים: 13 H1</td>
+                        <td><span class="status-badge worse">החמיר</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>H1 חסר</strong></td>
+                        <td>75 עמודים ללא H1</td>
+                        <td>מכללה, צור קשר - ללא H1</td>
+                        <td><span class="status-badge not-fixed">לא תוקן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>301 Redirect בפוטר</strong></td>
+                        <td>/articles/קורס-קבלני-אינסטלציה/ - 2,805 מופעים</td>
+                        <td>עדיין מפנה (301)</td>
+                        <td><span class="status-badge not-fixed">לא תוקן</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>תמונות כבדות 100KB+</strong></td>
+                        <td>5,396 תמונות (53.52%)</td>
+                        <td>לא נבדק מחדש (דורש סריקה מלאה)</td>
+                        <td><span class="status-badge" style="background:#e5e7eb;color:#374151;">לבדיקה</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- בדיקת עמודים מרכזיים -->
+        <section>
+            <h2>בדיקת עמודים מרכזיים לאחר העיצוב</h2>
+
+            <div class="page-audit">
+                <h4>דף הבית - building.org.il/</h4>
+                <div class="page-audit-grid">
+                    <div class="audit-item pass">Title Tag: מכללת מרכז הבנייה...</div>
+                    <div class="audit-item pass">Meta Description: קיים</div>
+                    <div class="audit-item pass">Canonical: תקין</div>
+                    <div class="audit-item pass">Schema: WebPage, Organization</div>
+                    <div class="audit-item fail">H1: 17 תגיות (בעיה קריטית!)</div>
+                    <div class="audit-item pass">robots: index, follow</div>
+                </div>
+            </div>
+
+            <div class="page-audit">
+                <h4>עמוד המכללה - /building-college/</h4>
+                <div class="page-audit-grid">
+                    <div class="audit-item warning">Title: חוזר על עצמו (לא אופטימלי)</div>
+                    <div class="audit-item fail">Meta Description: חסר!</div>
+                    <div class="audit-item pass">Canonical: תקין</div>
+                    <div class="audit-item pass">Schema: WebPage, BreadcrumbList</div>
+                    <div class="audit-item fail">H1: חסר לחלוטין!</div>
+                    <div class="audit-item pass">robots: index, follow</div>
+                </div>
+            </div>
+
+            <div class="page-audit">
+                <h4>עמוד אודות - /about/</h4>
+                <div class="page-audit-grid">
+                    <div class="audit-item pass">Title: אודות - מרכז הבנייה</div>
+                    <div class="audit-item pass">Meta Description: קיים ותקין</div>
+                    <div class="audit-item pass">Canonical: תקין</div>
+                    <div class="audit-item pass">Schema: WebPage, BreadcrumbList</div>
+                    <div class="audit-item pass">H1: יחיד ותקין</div>
+                    <div class="audit-item pass">robots: index, follow</div>
+                </div>
+            </div>
+
+            <div class="page-audit">
+                <h4>עמוד כנסים - /conferences/</h4>
+                <div class="page-audit-grid">
+                    <div class="audit-item pass">Title: כנסים וסמינרים...</div>
+                    <div class="audit-item fail">Meta Description: חסר!</div>
+                    <div class="audit-item pass">Canonical: תקין</div>
+                    <div class="audit-item pass">Schema: WebPage</div>
+                    <div class="audit-item fail">H1: 13 תגיות (בעיה!)</div>
+                    <div class="audit-item pass">robots: index, follow</div>
+                </div>
+            </div>
+
+            <div class="page-audit">
+                <h4>עמוד צור קשר - /contact/</h4>
+                <div class="page-audit-grid">
+                    <div class="audit-item pass">Title: צור קשר - מרכז הבנייה</div>
+                    <div class="audit-item fail">Meta Description: חסר!</div>
+                    <div class="audit-item pass">Canonical: תקין</div>
+                    <div class="audit-item pass">Schema: WebPage</div>
+                    <div class="audit-item fail">H1: חסר לחלוטין!</div>
+                    <div class="audit-item pass">robots: index, follow</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- סיכוני דירוג -->
+        <section>
+            <h2>הערכת סיכוני דירוג</h2>
+
+            <div class="risk-box high">
+                <h4>סיכון קריטי: מבנה H1 בדף הבית</h4>
+                <p>17 תגיות H1 בדף הבית מבלבלות את Google לגבי נושא העמוד הראשי. זה עלול לפגוע בדירוג עבור מילות מפתח כמו "מכללת בנייה", "קורסים בנייה", "לימודי בנייה".</p>
+            </div>
+
+            <div class="risk-box high">
+                <h4>סיכון גבוה: עמוד המכללה ללא H1 ו-Meta</h4>
+                <p>עמוד /building-college/ הוא עמוד מפתח לדירוג, אך חסרים בו H1 ו-Meta Description. Google לא מקבל אותות ברורים לגבי תוכן העמוד.</p>
+            </div>
+
+            <div class="risk-box medium">
+                <h4>סיכון בינוני: Meta Description חסר ב-75% מהעמודים</h4>
+                <p>Google יוצר snippet אוטומטי שלא בהכרח אופטימלי. זה פוגע ב-CTR בתוצאות החיפוש.</p>
+            </div>
+        </section>
+
+        <!-- רשימת תעדוף מעודכנת -->
+        <section>
+            <h2>רשימת תיקונים מעודכנת - לפי עדיפות</h2>
+
+            <ol class="priority-list">
+                <li class="critical">
+                    <span class="priority-number">1</span>
+                    <div class="priority-content">
+                        <h4>תקן את מבנה H1 בדף הבית - מיידי</h4>
+                        <p>שנה את כל הכותרות מ-H1 ל-H2/H3 מלבד כותרת ראשית אחת. כרגע יש 17 H1 - צריך להיות רק אחד כמו "מכללת מרכז הבנייה הישראלי".</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="priority-number">2</span>
+                    <div class="priority-content">
+                        <h4>הוסף H1 ו-Meta Description לעמוד המכללה</h4>
+                        <p>עמוד <code>/building-college/</code> חייב H1 כמו "מכללת מרכז הבנייה הישראלי" ותיאור מטא ייחודי.</p>
+                    </div>
+                </li>
+                <li class="critical">
+                    <span class="priority-number">3</span>
+                    <div class="priority-content">
+                        <h4>תקן 404 של Cloudflare Email Protection</h4>
+                        <p>138 קישורים פנימיים מצביעים ל-<code>/cdn-cgi/l/email-protection</code> שמחזיר 404. בדוק הגדרות Cloudflare או הסר קישורים.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="priority-number">4</span>
+                    <div class="priority-content">
+                        <h4>תקן מבנה H1 בעמוד כנסים</h4>
+                        <p>עמוד <code>/conferences/</code> מכיל 13 H1 - כל כותרת אירוע מוגדרת כ-H1. שנה ל-H2/H3.</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="priority-number">5</span>
+                    <div class="priority-content">
+                        <h4>הוסף Meta Description לכל העמודים המרכזיים</h4>
+                        <p>עמודים חסרים: /building-college/, /contact/, /conferences/, /events/, /magazine/, /blog/</p>
+                    </div>
+                </li>
+                <li class="high">
+                    <span class="priority-number">6</span>
+                    <div class="priority-content">
+                        <h4>הוסף H1 לעמוד צור קשר</h4>
+                        <p>עמוד <code>/contact/</code> חסר H1 לחלוטין. הוסף כותרת כמו "צור קשר - מרכז הבנייה הישראלי".</p>
+                    </div>
+                </li>
+                <li class="medium">
+                    <span class="priority-number">7</span>
+                    <div class="priority-content">
+                        <h4>עדכן קישור 301 בפוטר</h4>
+                        <p>הקישור <code>/articles/קורס-קבלני-אינסטלציה/</code> מפנה ל-URL ארוך יותר. עדכן ישירות ל-URL הסופי.</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <!-- טבלת פעולות למפתחים -->
+        <section>
+            <h2>טבלת פעולות למפתחים</h2>
+            <table class="action-table">
+                <thead>
+                    <tr>
+                        <th>עמוד</th>
+                        <th>בעיה</th>
+                        <th>חומרה</th>
+                        <th>מה לתקן בפועל</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/</td>
+                        <td>17 תגיות H1</td>
+                        <td><span class="severity-tag critical">קריטי</span></td>
+                        <td>ב-Elementor: שנה את ה-Heading Widget מ-H1 ל-H2 לכל הכותרות מלבד אחת</td>
+                    </tr>
+                    <tr>
+                        <td>/building-college/</td>
+                        <td>חסר H1</td>
+                        <td><span class="severity-tag critical">קריטי</span></td>
+                        <td>הוסף Heading Widget עם H1 בתחילת העמוד</td>
+                    </tr>
+                    <tr>
+                        <td>/building-college/</td>
+                        <td>חסר Meta Description</td>
+                        <td><span class="severity-tag critical">קריטי</span></td>
+                        <td>ב-Yoast/Rank Math: מלא שדה Meta Description (120-155 תווים)</td>
+                    </tr>
+                    <tr>
+                        <td>/conferences/</td>
+                        <td>13 תגיות H1</td>
+                        <td><span class="severity-tag high">גבוה</span></td>
+                        <td>שנה כותרות אירועים מ-H1 ל-H2 בתבנית הלולאה</td>
+                    </tr>
+                    <tr>
+                        <td>/contact/</td>
+                        <td>חסר H1</td>
+                        <td><span class="severity-tag high">גבוה</span></td>
+                        <td>הוסף H1 "צור קשר" בתחילת העמוד</td>
+                    </tr>
+                    <tr>
+                        <td>/contact/</td>
+                        <td>חסר Meta Description</td>
+                        <td><span class="severity-tag high">גבוה</span></td>
+                        <td>הוסף תיאור: "צור קשר עם מרכז הבנייה הישראלי - טלפון, אימייל, כתובת והרשמה לקורסים"</td>
+                    </tr>
+                    <tr>
+                        <td>/events/</td>
+                        <td>חסר Meta Description</td>
+                        <td><span class="severity-tag medium">בינוני</span></td>
+                        <td>הוסף תיאור לעמוד האירועים</td>
+                    </tr>
+                    <tr>
+                        <td>/magazine/</td>
+                        <td>חסר Meta Description</td>
+                        <td><span class="severity-tag medium">בינוני</span></td>
+                        <td>הוסף תיאור לעמוד המגזין</td>
+                    </tr>
+                    <tr>
+                        <td>/blog/</td>
+                        <td>חסר Meta Description</td>
+                        <td><span class="severity-tag medium">בינוני</span></td>
+                        <td>הוסף תיאור לעמוד הבלוג</td>
+                    </tr>
+                    <tr>
+                        <td>כל האתר</td>
+                        <td>404 Email Protection</td>
+                        <td><span class="severity-tag critical">קריטי</span></td>
+                        <td>בדוק הגדרות Cloudflare Email Obfuscation או הסר קישורים מהתבנית</td>
+                    </tr>
+                    <tr>
+                        <td>פוטר</td>
+                        <td>301 Redirect</td>
+                        <td><span class="severity-tag medium">בינוני</span></td>
+                        <td>עדכן הקישור ל: /articles/קורס-קבלני-אינסטלציה-לחיילים-משוחררי/</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- מה תוקן בהצלחה -->
+        <section>
+            <h2>מה תוקן בהצלחה</h2>
+            <div style="background: var(--fixed-bg); padding: 20px; border-radius: 8px; border-right: 4px solid var(--fixed);">
+                <h4 style="color: var(--fixed); margin-bottom: 10px;">סכמות מובנות (Structured Data) - הותקנו!</h4>
+                <p>כל העמודים כוללים כעת:</p>
+                <ul style="margin-top: 10px; margin-right: 20px;">
+                    <li><strong>Organization Schema</strong> - מידע על הארגון</li>
+                    <li><strong>WebSite Schema</strong> - עם SearchAction לחיפוש</li>
+                    <li><strong>BreadcrumbList Schema</strong> - ניווט פירורי לחם</li>
+                    <li><strong>WebPage Schema</strong> - מידע על כל עמוד</li>
+                </ul>
+                <p style="margin-top: 10px; color: var(--gray-700);">זה שיפור משמעותי שיאפשר הצגת Rich Snippets בתוצאות החיפוש.</p>
+            </div>
+        </section>
+
+        <!-- המלצות נוספות -->
+        <section>
+            <h2>המלצות נוספות</h2>
+            <ul style="list-style: none;">
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--gray-200);">
+                    <strong>1. בצע סריקה מלאה חדשה</strong> - יש לבצע סריקת Screaming Frog מלאה לאחר התיקונים לאמת שכל הבעיות תוקנו
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--gray-200);">
+                    <strong>2. הוסף Course Schema</strong> - עמודי הקורסים צריכים סכמת Course לשיפור הנראות בחיפוש
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--gray-200);">
+                    <strong>3. בדוק תמונות</strong> - ודא שהתמונות נדחסו והומרו ל-WebP לשיפור Core Web Vitals
+                </li>
+                <li style="padding: 10px 0;">
+                    <strong>4. עקוב ב-GSC</strong> - עקוב אחרי דו"ח הכיסוי ב-Google Search Console לזיהוי בעיות אינדוקס
+                </li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>דו"ח זה הופק על ידי Nadav Digital | 21 בינואר 2026</p>
+            <p>דו"ח מקורי: <a href="https://report.n-c.digital/building-seo-audit-jan2026.html">building-seo-audit-jan2026.html</a></p>
+        </footer>
+    </div>
+</body>
+</html>
