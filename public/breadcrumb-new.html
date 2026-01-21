@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Breadcrumb Schemas - 4 Sites | Nadav Digital</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .back-link {
+            display: inline-block;
+            color: #7984c0;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover { text-decoration: underline; }
+        .header {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 { color: #ef4444; font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { color: #a0a0a0; font-size: 1.1rem; }
+        .header .subtitle { color: #666; margin-top: 10px; font-size: 0.95rem; }
+        .rules-box {
+            background: rgba(121, 132, 192, 0.1);
+            border: 1px solid rgba(121, 132, 192, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .rules-box h3 { color: #7984c0; margin-bottom: 15px; }
+        .rules-box ul { padding-right: 20px; }
+        .rules-box li { margin-bottom: 10px; }
+        .rules-box code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            direction: ltr;
+        }
+        .site-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .site-section h2 {
+            color: #ef4444;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .site-section h2 a {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .site-section h2 a:hover { text-decoration: underline; }
+        .platform-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .platform-badge.nextjs { background: rgba(0, 0, 0, 0.5); color: #fff; }
+        .platform-badge.umbraco { background: rgba(60, 166, 84, 0.3); color: #3ca654; }
+        .platform-badge.hubspot { background: rgba(255, 122, 89, 0.3); color: #ff7a59; }
+        .site-section .description {
+            color: #a0a0a0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            margin-bottom: 15px;
+        }
+        .schema-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .schema-block h3 {
+            background: rgba(121, 132, 192, 0.2);
+            color: #7984c0;
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .schema-block pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+            direction: ltr;
+            text-align: left;
+        }
+        .copy-btn {
+            background: #4ecdc4;
+            color: #1a1a2e;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #3dbdb5; transform: scale(1.05); }
+        .copy-btn.copied { background: #22c55e; }
+        .implementation-note {
+            background: rgba(121, 132, 192, 0.1);
+            border: 1px solid rgba(121, 132, 192, 0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 15px;
+            color: #7984c0;
+            font-size: 0.9rem;
+        }
+        .implementation-note strong { color: #a0b0e0; }
+        .validation-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .validation-box h3 { color: #22c55e; margin-bottom: 15px; }
+        .validation-box ul { padding-right: 20px; }
+        .validation-box li { margin-bottom: 10px; }
+        .validation-box a { color: #4ecdc4; }
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(121, 132, 192, 0.3);
+            margin-top: 40px;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .site-section { padding: 20px; }
+            .schema-block pre { font-size: 0.75rem; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">&larr; Back to Dashboard</a>
+
+        <div class="header">
+            <h1>New Breadcrumb Schemas</h1>
+            <p>Copy & Paste Schemas for 4 Sites Missing BreadcrumbList</p>
+            <div class="subtitle">These sites have NO breadcrumb schema - implement from scratch</div>
+        </div>
+
+        <div class="rules-box">
+            <h3>Breadcrumb Schema Rules</h3>
+            <ul>
+                <li><strong>Dynamic Per Page:</strong> Each page must have its OWN breadcrumb path. These are TEMPLATES - adapt for each page.</li>
+                <li><strong>Last Item No URL:</strong> The current page (last item) should NOT have an <code>"item"</code> property.</li>
+                <li><strong>Sequential Positions:</strong> Position values must be 1, 2, 3... with no gaps.</li>
+                <li><strong>Absolute URLs:</strong> All URLs must be complete (start with <code>https://</code>).</li>
+            </ul>
+        </div>
+
+        <!-- MANPOWER.CO.IL -->
+        <div class="site-section">
+            <h2>
+                <span class="platform-badge nextjs">Next.js</span>
+                www.manpower.co.il
+                <a href="https://www.manpower.co.il" target="_blank">Visit Site &rarr;</a>
+            </h2>
+            <span class="priority-badge">HIGH PRIORITY</span>
+            <p class="description">Main Manpower Israel employment site (uses www subdomain). Next.js requires implementing breadcrumbs in page components using next/head or next-seo package.</p>
+
+            <div class="schema-block">
+                <h3>
+                    Homepage
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Job Seekers Page (/job-seekers/job-seekers)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מחפשי עבודה"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Job Search Page (/search)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "חיפוש משרות"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Employers Page (/employers/employers)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מעסיקים"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    About Page (/about-us/about-us)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודות"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Contact Page (/contact-us/contact-us)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "מנפאואר ישראל",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "צור קשר"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="implementation-note">
+                <strong>Next.js Implementation:</strong> Create a Breadcrumb component using <code>next/head</code> or install <code>next-seo</code> package. Generate breadcrumb data dynamically from route parameters. <strong>IMPORTANT:</strong> Use <code>www.manpower.co.il</code> domain in all URLs.
+            </div>
+        </div>
+
+        <!-- MANPOWERGROUP.CO.IL -->
+        <div class="site-section">
+            <h2>
+                <span class="platform-badge hubspot">HubSpot</span>
+                manpowergroup.co.il
+                <a href="https://manpowergroup.co.il" target="_blank">Visit Site &rarr;</a>
+            </h2>
+            <span class="priority-badge">HIGH PRIORITY</span>
+            <p class="description">Has visual CSS breadcrumb (<code>.hs-breadcrumb-menu</code>) but NO JSON-LD schema. Search engines cannot parse CSS-only breadcrumbs. Must add matching structured data.</p>
+
+            <div class="schema-block">
+                <h3>
+                    Homepage
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ManpowerGroup Israel"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Our Solutions Page (/our-solutions)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ManpowerGroup Israel",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "הפתרונות שלנו"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    About Us Page (/about-us)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ManpowerGroup Israel",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Candidates Page (/candidates)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ManpowerGroup Israel",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מועמדים"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Contact Page (/contacts)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ManpowerGroup Israel",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "צרו קשר"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="implementation-note">
+                <strong>HubSpot Implementation:</strong> Add schema via Settings &rarr; Website &rarr; Pages &rarr; Advanced. Or create a custom HubL module that outputs JSON-LD. Ensure schema matches the visual breadcrumb path exactly.
+            </div>
+        </div>
+
+        <!-- EXPERIS.CO.IL -->
+        <div class="site-section">
+            <h2>
+                <span class="platform-badge nextjs">Next.js</span>
+                experis.co.il
+                <a href="https://experis.co.il" target="_blank">Visit Site &rarr;</a>
+            </h2>
+            <span class="priority-badge">HIGH PRIORITY</span>
+            <p class="description">Main Experis IT staffing site. Note: /academy/ and /cyber/ subsites already have proper breadcrumbs - use same implementation approach on main site for consistency.</p>
+
+            <div class="schema-block">
+                <h3>
+                    Homepage
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Careers Page (/careers)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "קריירה"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Job Search Page (/search)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "דרושים הייטק"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Services Page (/our-services/services)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "שירותים"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    About Page (/about-us)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודות"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Contact Page (/contact-us)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "צור קשר"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="implementation-note">
+                <strong>Reference:</strong> Check <code>/academy/</code> or <code>/cyber/</code> subsites for working breadcrumb implementation. Copy the same component/logic to the main site for consistency across all Experis properties.
+            </div>
+        </div>
+
+        <!-- LEUMIT.CO.IL -->
+        <div class="site-section">
+            <h2>
+                <span class="platform-badge umbraco">Umbraco CMS</span>
+                leumit.co.il
+                <a href="https://leumit.co.il" target="_blank">Visit Site &rarr;</a>
+            </h2>
+            <span class="priority-badge">HIGH PRIORITY</span>
+            <p class="description">Large healthcare site built on Umbraco CMS. Breadcrumbs are critical for navigating doctors, clinics, health information, and services. Will significantly improve search result appearance.</p>
+
+            <div class="schema-block">
+                <h3>
+                    Homepage
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Doctor Search Page (/doctorssearch/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "חיפוש רופא"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Medical Centers Search (/medicalcenterssearch/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מרכזים רפואיים"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Rights Finder (/lobby-rights/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "איתור זכאויות"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Women's Health (/womens-health/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "בריאות האישה"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Diseases Info (/diseases/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "מחלות ומידע רפואי"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="schema-block">
+                <h3>
+                    Contact Page (/contact-us/)
+                    <button class="copy-btn" onclick="copySchema(this)">Copy</button>
+                </h3>
+                <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "לאומית שירותי בריאות",
+      "item": "https://leumit.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "צור קשר"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            </div>
+
+            <div class="implementation-note">
+                <strong>Umbraco Implementation:</strong> Add breadcrumb schema via Umbraco's document type properties or create a custom partial view that generates JSON-LD based on content tree hierarchy. Alternatively, inject via the site's master template.
+            </div>
+        </div>
+
+        <!-- VALIDATION -->
+        <div class="validation-box">
+            <h3>After Implementation - Validation Steps</h3>
+            <ul>
+                <li><strong>Step 1:</strong> Test each page at <a href="https://search.google.com/test/rich-results" target="_blank">Google Rich Results Test</a></li>
+                <li><strong>Step 2:</strong> Verify no errors in Google Search Console &rarr; Enhancements &rarr; Breadcrumbs</li>
+                <li><strong>Step 3:</strong> Check multiple page types (homepage, category, detail pages) to confirm dynamic implementation</li>
+                <li><strong>Step 4:</strong> Ensure the last breadcrumb item has NO "item" property</li>
+                <li><strong>Step 5:</strong> Monitor for 2-4 weeks for breadcrumb appearance in search results</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Nadav Digital SEO Agency &copy; 2024</p>
+            <p style="margin-top: 10px; font-size: 0.8rem; color: #555;">
+                New Breadcrumb Schemas - 4 Missing Sites | December 2025
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function copySchema(btn) {
+            const pre = btn.closest('.schema-block').querySelector('pre code');
+            const text = pre.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
