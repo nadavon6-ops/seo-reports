@@ -3,412 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ManpowerGroup Israel - מדריך יישום BreadcrumbList</title>
+    <title>ManpowerGroup Israel - BreadcrumbList Implementation Guide</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .logo {
-            font-size: 48px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 20px;
-            color: #a0a0a0;
-            margin-bottom: 20px;
-        }
-
-        .meta-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .meta-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        .section {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .section-title {
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: #00d4ff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 30px;
-            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
-            border-radius: 2px;
-        }
-
-        .hierarchy-tree {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 30px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 2;
-            direction: ltr;
-            text-align: left;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #ffffff; min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 50px; }
+        .logo { font-size: 48px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+        .subtitle { font-size: 20px; color: #a0a0a0; margin-bottom: 20px; }
+        .meta-info { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .meta-item { background: rgba(255, 255, 255, 0.05); padding: 10px 20px; border-radius: 20px; font-size: 14px; }
+        .section { background: rgba(255, 255, 255, 0.03); border-radius: 20px; padding: 30px; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .section-title { font-size: 24px; margin-bottom: 25px; color: #00d4ff; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 30px; background: linear-gradient(180deg, #00d4ff, #7b2cbf); border-radius: 2px; }
+        .hierarchy-tree { background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 30px; font-family: 'Courier New', monospace; font-size: 16px; line-height: 2; direction: ltr; text-align: left; }
         .tree-home { color: #ffd700; }
         .tree-level1 { color: #00d4ff; }
         .tree-level2 { color: #a78bfa; }
         .tree-approved { color: #10b981; }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1));
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-        }
-
-        .summary-number {
-            font-size: 42px;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .summary-label {
-            font-size: 14px;
-            color: #a0a0a0;
-            margin-top: 5px;
-        }
-
-        .approved-badge {
-            display: inline-block;
-            background: linear-gradient(90deg, #10b981, #059669);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .schema-box {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-right: 4px solid #00d4ff;
-        }
-
-        .schema-title {
-            font-size: 18px;
-            color: #ffffff;
-            margin-bottom: 10px;
-        }
-
-        .schema-path {
-            color: #a78bfa;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .code-block {
-            background: #0d1117;
-            border-radius: 8px;
-            padding: 20px;
-            overflow-x: auto;
-            direction: ltr;
-            text-align: left;
-        }
-
-        .code-block pre {
-            margin: 0;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #c9d1d9;
-        }
-
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .summary-card { background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 44, 191, 0.1)); border-radius: 15px; padding: 25px; text-align: center; border: 1px solid rgba(0, 212, 255, 0.2); }
+        .summary-number { font-size: 42px; font-weight: 700; background: linear-gradient(90deg, #00d4ff, #7b2cbf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .summary-label { font-size: 14px; color: #a0a0a0; margin-top: 5px; }
+        .approved-badge { display: inline-block; background: linear-gradient(90deg, #10b981, #059669); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
+        .schema-box { background: rgba(0, 0, 0, 0.4); border-radius: 10px; padding: 20px; margin-bottom: 20px; border-right: 4px solid #00d4ff; }
+        .schema-title { font-size: 18px; color: #ffffff; margin-bottom: 10px; }
+        .schema-path { color: #a78bfa; font-size: 14px; margin-bottom: 15px; }
+        .code-block { background: #0d1117; border-radius: 8px; padding: 20px; overflow-x: auto; direction: ltr; text-align: left; position: relative; }
+        .code-block pre { margin: 0; font-family: 'Fira Code', 'Courier New', monospace; font-size: 13px; line-height: 1.6; color: #c9d1d9; }
         .json-key { color: #7ee787; }
         .json-string { color: #a5d6ff; }
         .json-number { color: #ffa657; }
-
-        .pages-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .pages-table th,
-        .pages-table td {
-            padding: 15px;
-            text-align: right;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .pages-table th {
-            background: rgba(0, 212, 255, 0.1);
-            font-weight: 600;
-            color: #00d4ff;
-        }
-
-        .pages-table tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .level-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .level-1 {
-            background: rgba(0, 212, 255, 0.2);
-            color: #00d4ff;
-        }
-
-        .level-2 {
-            background: rgba(167, 139, 250, 0.2);
-            color: #a78bfa;
-        }
-
+        .pages-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .pages-table th, .pages-table td { padding: 15px; text-align: right; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .pages-table th { background: rgba(0, 212, 255, 0.1); font-weight: 600; color: #00d4ff; }
+        .pages-table tr:hover { background: rgba(255, 255, 255, 0.02); }
+        .level-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .level-1 { background: rgba(0, 212, 255, 0.2); color: #00d4ff; }
+        .level-2 { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
         .status-approved { color: #10b981; }
-
         .instruction-steps { counter-reset: step; }
-
-        .instruction-step {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
-        }
-
-        .step-number {
-            flex-shrink: 0;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .step-content h4 {
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-
-        .step-content p {
-            color: #a0a0a0;
-            font-size: 14px;
-        }
-
+        .instruction-step { display: flex; gap: 20px; margin-bottom: 20px; padding: 20px; background: rgba(255, 255, 255, 0.02); border-radius: 10px; }
+        .step-number { flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #00d4ff, #7b2cbf); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; }
+        .step-content h4 { color: #ffffff; margin-bottom: 5px; }
+        .step-content p { color: #a0a0a0; font-size: 14px; }
         .checklist { list-style: none; }
-
-        .checklist li {
-            padding: 12px 15px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .checklist li::before {
-            content: '☐';
-            font-size: 18px;
-            color: #00d4ff;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 212, 255, 0.2);
-            border: 1px solid rgba(0, 212, 255, 0.3);
-            color: #00d4ff;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-        }
-
-        .copy-btn:hover {
-            background: rgba(0, 212, 255, 0.3);
-        }
-
+        .checklist li { padding: 12px 15px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.02); border-radius: 8px; display: flex; align-items: center; gap: 12px; }
+        .checklist li::before { content: ''; font-size: 18px; color: #00d4ff; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: rgba(0, 212, 255, 0.2); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+        .copy-btn:hover { background: rgba(0, 212, 255, 0.3); }
         .schema-wrapper { position: relative; }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #a0a0a0;
-        }
-
-        .footer-link {
-            color: #00d4ff;
-            text-decoration: none;
-        }
-
+        footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); color: #a0a0a0; }
+        .footer-link { color: #00d4ff; text-decoration: none; }
         .footer-link:hover { text-decoration: underline; }
+
+        /* Language Toggle Button */
+        .lang-toggle { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 5px; background: rgba(0, 0, 0, 0.5); padding: 5px; border-radius: 30px; backdrop-filter: blur(10px); }
+        .lang-btn { padding: 10px 20px; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s; }
+        .lang-btn.active { background: linear-gradient(90deg, #00d4ff, #7b2cbf); color: white; }
+        .lang-btn:not(.active) { background: transparent; color: #a0a0a0; }
+        .lang-btn:hover:not(.active) { color: #ffffff; }
+
+        /* LTR mode for English */
+        body.lang-en { direction: ltr; }
+        body.lang-en .pages-table th, body.lang-en .pages-table td { text-align: left; }
+        body.lang-en .schema-box { border-right: none; border-left: 4px solid #00d4ff; }
+        body.lang-en .instruction-step { flex-direction: row; }
 
         @media (max-width: 768px) {
             .logo { font-size: 32px; }
             .meta-info { flex-direction: column; align-items: center; }
             .hierarchy-tree { font-size: 12px; padding: 15px; }
             .code-block pre { font-size: 11px; }
+            .lang-toggle { top: 10px; right: 10px; }
+            .lang-btn { padding: 8px 15px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" id="btn-he" onclick="setLanguage('he')">עברית</button>
+        <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">English</button>
+    </div>
+
     <div class="container">
         <header>
             <div class="logo">ManpowerGroup Israel</div>
-            <div class="subtitle">מדריך יישום BreadcrumbList Schema</div>
+            <div class="subtitle" data-he="מדריך יישום BreadcrumbList Schema" data-en="BreadcrumbList Schema Implementation Guide"></div>
             <div class="meta-info">
                 <div class="meta-item">manpowergroup.co.il</div>
                 <div class="meta-item">HubSpot Platform</div>
-                <div class="meta-item">עברית (he-IL)</div>
-                <div class="meta-item">ינואר 2026</div>
+                <div class="meta-item" data-he="עברית (he-IL)" data-en="Hebrew (he-IL)"></div>
+                <div class="meta-item" data-he="ינואר 2026" data-en="January 2026"></div>
             </div>
         </header>
 
         <section class="section">
-            <h2 class="section-title">סיכום מהיר</h2>
+            <div class="section-title" data-he="סיכום מהיר" data-en="Quick Summary"></div>
             <div class="summary-grid">
                 <div class="summary-card">
                     <div class="summary-number">11</div>
-                    <div class="summary-label">עמודים לעדכון</div>
+                    <div class="summary-label" data-he="עמודים לעדכון" data-en="Pages to Update"></div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-number">4</div>
-                    <div class="summary-label">עמודי רמה 1 (2 שכבות)</div>
+                    <div class="summary-label" data-he="עמודי רמה 1 (2 שכבות)" data-en="Level 1 Pages (2 layers)"></div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-number">7</div>
-                    <div class="summary-label">עמודי רמה 2 (3 שכבות)</div>
+                    <div class="summary-label" data-he="עמודי רמה 2 (3 שכבות)" data-en="Level 2 Pages (3 layers)"></div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-number">1</div>
-                    <div class="summary-label">סכמה מאושרת</div>
+                    <div class="summary-label" data-he="סכמה מאושרת" data-en="Approved Schema"></div>
                 </div>
             </div>
         </section>
 
         <section class="section">
-            <h2 class="section-title">מפת היררכיית האתר</h2>
+            <div class="section-title" data-he="מפת היררכיית האתר" data-en="Site Hierarchy Map"></div>
             <div class="hierarchy-tree">
 <span class="tree-home">manpowergroup.co.il (Homepage)</span>
-│
-├── <span class="tree-level1">אודותינו (About Us)</span> ─────────────── /about-us
-│   ├── <span class="tree-level2">חזון וערכים</span> ───────────────────── /vision-and-values
-│   ├── <span class="tree-level2">הכרה בהישגים ובמצוינות</span> ─────────── /recognition
-│   ├── <span class="tree-level2">קיימות ואחריות תאגידית</span> ────────── /sustainability_
-│   └── <span class="tree-level2">הנהלת הקבוצה</span> ───────────────────── /הנהלה
-│
-├── <span class="tree-level1">הפתרונות שלנו (Our Solutions)</span> ────── /our-solutions
-│
-├── <span class="tree-level1">סקרים ותובנות (Surveys)</span> ─────────── blog.manpowergroup.co.il/...
-│   ├── <span class="tree-approved">סקר צפי תעסוקה ✅ APPROVED</span> ────── /meos
-│   ├── <span class="tree-level2">מחסור בכישרונות 2025</span> ────────────── /talent_shorage_2025
-│   └── <span class="tree-level2">מגמות בכוח העבודה 2025</span> ───────────── /workforce-trends-report-2025
-│
-├── <span class="tree-level1">מועמדים (Candidates)</span> ───────────── /candidates
-│
-└── <span class="tree-level1">צרו קשר (Contact)</span> ─────────────── /contact
+<span class="tree-level1">│ ├── אודותינו (About Us) ─────────────── /about-us</span>
+<span class="tree-level2">│ ├── חזון וערכים ───────────────────── /vision-and-values</span>
+<span class="tree-level2">│ ├── הכרה בהישגים ובמצוינות ─────────── /recognition</span>
+<span class="tree-level2">│ ├── קיימות ואחריות תאגידית ────────── /sustainability</span>
+<span class="tree-level2">│ └── הנהלת הקבוצה ───────────────────── /הנהלה</span>
+<span class="tree-level1">│ ├── הפתרונות שלנו (Our Solutions) ────── /our-solutions</span>
+<span class="tree-level1">│ ├── סקרים ותובנות (Surveys) ─────────── blog.manpowergroup.co.il/...</span>
+<span class="tree-approved">│ ├── סקר צפי תעסוקה ✅ APPROVED ────── /meos</span>
+<span class="tree-level2">│ ├── מחסור בכישרונות 2025 ────────────── /talent_shorage_2025</span>
+<span class="tree-level2">│ └── מגמות בכוח העבודה 2025 ───────────── /workforce-trends-report-2025</span>
+<span class="tree-level1">│ ├── מועמדים (Candidates) ───────────── /candidates</span>
+<span class="tree-level1">│ └── צרו קשר (Contact) ─────────────── /contact</span>
             </div>
         </section>
 
         <section class="section">
-            <h2 class="section-title">סכמות מאושרות מהלקוח</h2>
+            <div class="section-title" data-he="סכמות מאושרות מהלקוח" data-en="Client-Approved Schemas"></div>
 
             <div class="schema-box">
-                <div class="approved-badge">TEMPLATE - תבנית בסיס</div>
-                <div class="schema-title">תבנית כללית לכל העמודים</div>
-                <div class="schema-path">השתמש בתבנית זו והחלף את המשתנים</div>
+                <div class="approved-badge">TEMPLATE</div>
+                <div class="schema-title" data-he="תבנית כללית לכל העמודים" data-en="General Template for All Pages"></div>
+                <div class="schema-path" data-he="השתמש בתבנית זו והחלף את המשתנים" data-en="Use this template and replace the variables"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('template-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('template-schema')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
                         <pre id="template-schema">{
-  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org"</span>,
-  <span class="json-key">"@type"</span>: <span class="json-string">"BreadcrumbList"</span>,
-  <span class="json-key">"itemListElement"</span>: [
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
     {
-      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-      <span class="json-key">"position"</span>: <span class="json-number">1</span>,
-      <span class="json-key">"name"</span>: <span class="json-string">"{HOME_NAME}"</span>,
-      <span class="json-key">"item"</span>: <span class="json-string">"{HOME_URL}"</span>
+      "@type": "ListItem",
+      "position": 1,
+      "name": "{HOME_NAME}",
+      "item": "{HOME_URL}"
     },
     {
-      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-      <span class="json-key">"position"</span>: <span class="json-number">2</span>,
-      <span class="json-key">"name"</span>: <span class="json-string">"{LEVEL_2_NAME}"</span>,
-      <span class="json-key">"item"</span>: <span class="json-string">"{LEVEL_2_URL}"</span>
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{LEVEL_2_NAME}",
+      "item": "{LEVEL_2_URL}"
     },
     {
-      <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-      <span class="json-key">"position"</span>: <span class="json-number">3</span>,
-      <span class="json-key">"name"</span>: <span class="json-string">"{CURRENT_PAGE_NAME}"</span>
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{CURRENT_PAGE_NAME}"
     }
   ]
 }</pre>
@@ -416,30 +177,30 @@
                 </div>
             </div>
 
-            <div class="schema-box" style="border-right-color: #10b981;">
-                <div class="approved-badge">✅ APPROVED - מאושר ליישום</div>
-                <div class="schema-title">סקר צפי תעסוקה (Employment Survey)</div>
-                <div class="schema-path">בית → סקרים ותובנות → סקר צפי תעסוקה</div>
+            <div class="schema-box">
+                <div class="approved-badge" data-he="✅ מאושר ליישום" data-en="✅ APPROVED for Implementation"></div>
+                <div class="schema-title" data-he="סקר צפי תעסוקה (Employment Survey)" data-en="Employment Survey (סקר צפי תעסוקה)"></div>
+                <div class="schema-path" data-he="בית → סקרים ותובנות → סקר צפי תעסוקה" data-en="Home → Surveys & Insights → Employment Survey"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('approved-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('approved-schema')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
                         <pre id="approved-schema">{
-  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org/"</span>,
-  <span class="json-key">"@type"</span>: <span class="json-string">"BreadcrumbList"</span>,
-  <span class="json-key">"itemListElement"</span>: [{
-    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-    <span class="json-key">"position"</span>: <span class="json-number">1</span>,
-    <span class="json-key">"name"</span>: <span class="json-string">"בית"</span>,
-    <span class="json-key">"item"</span>: <span class="json-string">"https://manpowergroup.co.il/"</span>
+  "@context": "https://schema.org/",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "בית",
+    "item": "https://manpowergroup.co.il/"
   },{
-    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-    <span class="json-key">"position"</span>: <span class="json-number">2</span>,
-    <span class="json-key">"name"</span>: <span class="json-string">"סקרים ותובנות"</span>,
-    <span class="json-key">"item"</span>: <span class="json-string">"https://blog.manpowergroup.co.il/%D7%9E%D7%92%D7%96%D7%99%D7%9F-%D7%A1%D7%A7%D7%A8%D7%99%D7%9D-%D7%92%D7%9C%D7%95%D7%91%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%95%D7%AA%D7%95%D7%91%D7%A0%D7%95%D7%AA-%D7%91%D7%AA%D7%97%D7%95%D7%9D-%D7%9E%D7%A9%D7%90%D7%91%D7%99-%D7%94%D7%90%D7%A0%D7%95%D7%A9"</span>
+    "@type": "ListItem",
+    "position": 2,
+    "name": "סקרים ותובנות",
+    "item": "https://blog.manpowergroup.co.il/%D7%9E%D7%92%D7%96%D7%99%D7%9F-%D7%A1%D7%A7%D7%A8%D7%99%D7%9D-%D7%92%D7%9C%D7%95%D7%91%D7%90%D7%9C%D7%99%D7%99%D7%9D-%D7%95%D7%AA%D7%95%D7%91%D7%A0%D7%95%D7%AA-%D7%91%D7%AA%D7%97%D7%95%D7%9D-%D7%9E%D7%A9%D7%90%D7%91%D7%99-%D7%94%D7%90%D7%A0%D7%95%D7%A9"
   },{
-    <span class="json-key">"@type"</span>: <span class="json-string">"ListItem"</span>,
-    <span class="json-key">"position"</span>: <span class="json-number">3</span>,
-    <span class="json-key">"name"</span>: <span class="json-string">"סקר צפי תעסוקה"</span>
+    "@type": "ListItem",
+    "position": 3,
+    "name": "סקר צפי תעסוקה"
   }]
 }</pre>
                     </div>
@@ -448,17 +209,17 @@
         </section>
 
         <section class="section">
-            <h2 class="section-title">סכמות לכל העמודים</h2>
+            <div class="section-title" data-he="סכמות לכל העמודים" data-en="Schemas for All Pages"></div>
 
-            <h3 style="color: #00d4ff; margin-bottom: 20px; font-size: 18px;">רמה 1 - עמודים ראשיים (2 שכבות)</h3>
+            <h3 style="color: #a78bfa; margin-bottom: 20px;" data-he="רמה 1 - עמודים ראשיים (2 שכבות)" data-en="Level 1 - Main Pages (2 layers)"></h3>
 
             <div class="schema-box">
-                <div class="schema-title">אודותינו (About Us)</div>
-                <div class="schema-path">בית → אודותינו</div>
+                <div class="schema-title" data-he="אודותינו (About Us)" data-en="About Us (אודותינו)"></div>
+                <div class="schema-path" data-he="בית → אודותינו" data-en="Home → About Us"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('about-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-about')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="about-schema">{
+                        <pre id="schema-about">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -480,12 +241,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">הפתרונות שלנו (Our Solutions)</div>
-                <div class="schema-path">בית → הפתרונות שלנו</div>
+                <div class="schema-title" data-he="הפתרונות שלנו (Our Solutions)" data-en="Our Solutions (הפתרונות שלנו)"></div>
+                <div class="schema-path" data-he="בית → הפתרונות שלנו" data-en="Home → Our Solutions"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('solutions-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-solutions')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="solutions-schema">{
+                        <pre id="schema-solutions">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -507,12 +268,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">מועמדים (Candidates)</div>
-                <div class="schema-path">בית → מועמדים</div>
+                <div class="schema-title" data-he="מועמדים (Candidates)" data-en="Candidates (מועמדים)"></div>
+                <div class="schema-path" data-he="בית → מועמדים" data-en="Home → Candidates"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('candidates-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-candidates')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="candidates-schema">{
+                        <pre id="schema-candidates">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -534,12 +295,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">צרו קשר (Contact)</div>
-                <div class="schema-path">בית → צרו קשר</div>
+                <div class="schema-title" data-he="צרו קשר (Contact)" data-en="Contact (צרו קשר)"></div>
+                <div class="schema-path" data-he="בית → צרו קשר" data-en="Home → Contact"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('contact-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-contact')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="contact-schema">{
+                        <pre id="schema-contact">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -560,15 +321,15 @@
                 </div>
             </div>
 
-            <h3 style="color: #a78bfa; margin: 40px 0 20px; font-size: 18px;">רמה 2 - תתי עמודים (3 שכבות)</h3>
+            <h3 style="color: #a78bfa; margin: 30px 0 20px 0;" data-he="רמה 2 - תתי עמודים (3 שכבות)" data-en="Level 2 - Sub Pages (3 layers)"></h3>
 
             <div class="schema-box">
-                <div class="schema-title">חזון וערכים (Vision & Values)</div>
-                <div class="schema-path">בית → אודותינו → חזון וערכים</div>
+                <div class="schema-title" data-he="חזון וערכים (Vision & Values)" data-en="Vision & Values (חזון וערכים)"></div>
+                <div class="schema-path" data-he="בית → אודותינו → חזון וערכים" data-en="Home → About Us → Vision & Values"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('vision-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-vision')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="vision-schema">{
+                        <pre id="schema-vision">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -596,12 +357,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">הכרה בהישגים ובמצוינות (Recognition)</div>
-                <div class="schema-path">בית → אודותינו → הכרה בהישגים ובמצוינות</div>
+                <div class="schema-title" data-he="הכרה בהישגים ובמצוינות (Recognition)" data-en="Recognition (הכרה בהישגים ובמצוינות)"></div>
+                <div class="schema-path" data-he="בית → אודותינו → הכרה בהישגים ובמצוינות" data-en="Home → About Us → Recognition"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('recognition-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-recognition')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="recognition-schema">{
+                        <pre id="schema-recognition">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -629,12 +390,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">קיימות ואחריות תאגידית (Sustainability)</div>
-                <div class="schema-path">בית → אודותינו → קיימות ואחריות תאגידית</div>
+                <div class="schema-title" data-he="קיימות ואחריות תאגידית (Sustainability)" data-en="Sustainability (קיימות ואחריות תאגידית)"></div>
+                <div class="schema-path" data-he="בית → אודותינו → קיימות ואחריות תאגידית" data-en="Home → About Us → Sustainability"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('sustainability-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-sustainability')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="sustainability-schema">{
+                        <pre id="schema-sustainability">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -662,12 +423,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">הנהלת הקבוצה (Leadership)</div>
-                <div class="schema-path">בית → אודותינו → הנהלת הקבוצה</div>
+                <div class="schema-title" data-he="הנהלת הקבוצה (Leadership)" data-en="Leadership (הנהלת הקבוצה)"></div>
+                <div class="schema-path" data-he="בית → אודותינו → הנהלת הקבוצה" data-en="Home → About Us → Leadership"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('leadership-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-leadership')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="leadership-schema">{
+                        <pre id="schema-leadership">{
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
@@ -695,12 +456,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">מחסור בכישרונות 2025 (Talent Shortage)</div>
-                <div class="schema-path">בית → סקרים ותובנות → מחסור בכישרונות 2025</div>
+                <div class="schema-title" data-he="מחסור בכישרונות 2025 (Talent Shortage)" data-en="Talent Shortage 2025 (מחסור בכישרונות 2025)"></div>
+                <div class="schema-path" data-he="בית → סקרים ותובנות → מחסור בכישרונות 2025" data-en="Home → Surveys & Insights → Talent Shortage 2025"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('talent-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-talent')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="talent-schema">{
+                        <pre id="schema-talent">{
   "@context": "https://schema.org/",
   "@type": "BreadcrumbList",
   "itemListElement": [{
@@ -724,12 +485,12 @@
             </div>
 
             <div class="schema-box">
-                <div class="schema-title">מגמות בכוח העבודה 2025 (Workforce Trends)</div>
-                <div class="schema-path">בית → סקרים ותובנות → מגמות בכוח העבודה 2025</div>
+                <div class="schema-title" data-he="מגמות בכוח העבודה 2025 (Workforce Trends)" data-en="Workforce Trends 2025 (מגמות בכוח העבודה 2025)"></div>
+                <div class="schema-path" data-he="בית → סקרים ותובנות → מגמות בכוח העבודה 2025" data-en="Home → Surveys & Insights → Workforce Trends 2025"></div>
                 <div class="schema-wrapper">
-                    <button class="copy-btn" onclick="copySchema('workforce-schema')">העתק</button>
+                    <button class="copy-btn" onclick="copySchema('schema-workforce')" data-he="העתק" data-en="Copy"></button>
                     <div class="code-block">
-                        <pre id="workforce-schema">{
+                        <pre id="schema-workforce">{
   "@context": "https://schema.org/",
   "@type": "BreadcrumbList",
   "itemListElement": [{
@@ -754,37 +515,37 @@
         </section>
 
         <section class="section">
-            <h2 class="section-title">הוראות יישום ב-HubSpot</h2>
+            <div class="section-title" data-he="הוראות יישום ב-HubSpot" data-en="HubSpot Implementation Instructions"></div>
             <div class="instruction-steps">
                 <div class="instruction-step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <h4>כניסה ל-HubSpot</h4>
-                        <p>היכנס ל-Marketing → Website → Website Pages</p>
+                        <h4 data-he="כניסה ל-HubSpot" data-en="Log into HubSpot"></h4>
+                        <p data-he="היכנס ל-Marketing → Website → Website Pages" data-en="Go to Marketing → Website → Website Pages"></p>
                     </div>
                 </div>
                 <div class="instruction-step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h4>בחירת העמוד</h4>
-                        <p>בחר את העמוד שברצונך לערוך</p>
+                        <h4 data-he="בחירת העמוד" data-en="Select the Page"></h4>
+                        <p data-he="בחר את העמוד שברצונך לערוך" data-en="Choose the page you want to edit"></p>
                     </div>
                 </div>
                 <div class="instruction-step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h4>פתיחת הגדרות מתקדמות</h4>
-                        <p>לחץ על Settings → Advanced options</p>
+                        <h4 data-he="פתיחת הגדרות מתקדמות" data-en="Open Advanced Settings"></h4>
+                        <p data-he="לחץ על Settings → Advanced options" data-en="Click on Settings → Advanced options"></p>
                     </div>
                 </div>
                 <div class="instruction-step">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h4>הוספת הסכמה</h4>
-                        <p>הדבק את הסכמה בשדה Head HTML בתוך תגית script:</p>
+                        <h4 data-he="הוספת הסכמה" data-en="Add the Schema"></h4>
+                        <p data-he="הדבק את הסכמה בשדה Head HTML בתוך תגית script:" data-en="Paste the schema in the Head HTML field inside a script tag:"></p>
                         <div class="code-block" style="margin-top: 10px;">
                             <pre>&lt;script type="application/ld+json"&gt;
-{הסכמה כאן}
+{schema here}
 &lt;/script&gt;</pre>
                         </div>
                     </div>
@@ -792,145 +553,170 @@
                 <div class="instruction-step">
                     <div class="step-number">5</div>
                     <div class="step-content">
-                        <h4>פרסום</h4>
-                        <p>לחץ על Publish לפרסום השינויים</p>
+                        <h4 data-he="פרסום" data-en="Publish"></h4>
+                        <p data-he="לחץ על Publish לפרסום השינויים" data-en="Click Publish to save the changes"></p>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="section">
-            <h2 class="section-title">רשימת בדיקה לאימות</h2>
+            <div class="section-title" data-he="רשימת בדיקה לאימות" data-en="Validation Checklist"></div>
             <ul class="checklist">
-                <li>@context הוא "https://schema.org" או "https://schema.org/"</li>
-                <li>@type הוא "BreadcrumbList"</li>
-                <li>position רץ ברצף: 1, 2, 3...</li>
-                <li>כל ה-URLs מלאים (כולל https://)</li>
-                <li>הפריט האחרון ללא "item" - רק "name"</li>
-                <li>כל הפריטים האמצעיים עם "item"</li>
-                <li>טקסט בעברית לכל ערכי ה-name</li>
-                <li>בדיקה ב-Google Rich Results Test</li>
+                <li data-he="@context הוא 'https://schema.org' או 'https://schema.org/'" data-en="@context is 'https://schema.org' or 'https://schema.org/'"></li>
+                <li data-he="@type הוא 'BreadcrumbList'" data-en="@type is 'BreadcrumbList'"></li>
+                <li data-he="position רץ ברצף: 1, 2, 3..." data-en="position runs sequentially: 1, 2, 3..."></li>
+                <li data-he="כל ה-URLs מלאים (כולל https://)" data-en="All URLs are complete (including https://)"></li>
+                <li data-he="הפריט האחרון ללא 'item' - רק 'name'" data-en="Last item has no 'item' property - only 'name'"></li>
+                <li data-he="כל הפריטים האמצעיים עם 'item'" data-en="All middle items include 'item' property"></li>
+                <li data-he="טקסט בעברית לכל ערכי ה-name" data-en="Hebrew text for all 'name' values"></li>
+                <li data-he="בדיקה ב-Google Rich Results Test" data-en="Test with Google Rich Results Test"></li>
             </ul>
         </section>
 
         <section class="section">
-            <h2 class="section-title">טבלת סיכום - כל העמודים</h2>
+            <div class="section-title" data-he="טבלת סיכום - כל העמודים" data-en="Summary Table - All Pages"></div>
             <table class="pages-table">
                 <thead>
                     <tr>
-                        <th>עמוד</th>
-                        <th>נתיב Breadcrumb</th>
-                        <th>רמה</th>
-                        <th>סטטוס</th>
+                        <th data-he="עמוד" data-en="Page"></th>
+                        <th data-he="נתיב Breadcrumb" data-en="Breadcrumb Path"></th>
+                        <th data-he="רמה" data-en="Level"></th>
+                        <th data-he="סטטוס" data-en="Status"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>אודותינו</td>
                         <td>בית → אודותינו</td>
-                        <td><span class="level-badge level-1">רמה 1</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-1" data-he="רמה 1" data-en="Level 1"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>חזון וערכים</td>
                         <td>בית → אודותינו → חזון וערכים</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>הכרה בהישגים</td>
                         <td>בית → אודותינו → הכרה בהישגים</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>קיימות ואחריות</td>
                         <td>בית → אודותינו → קיימות ואחריות</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>הנהלת הקבוצה</td>
                         <td>בית → אודותינו → הנהלת הקבוצה</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>הפתרונות שלנו</td>
                         <td>בית → הפתרונות שלנו</td>
-                        <td><span class="level-badge level-1">רמה 1</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-1" data-he="רמה 1" data-en="Level 1"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
-                    <tr style="background: rgba(16, 185, 129, 0.1);">
+                    <tr>
                         <td>סקר צפי תעסוקה</td>
                         <td>בית → סקרים ותובנות → סקר צפי תעסוקה</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td class="status-approved">✅ מאושר</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td><span class="status-approved" data-he="✅ מאושר" data-en="✅ Approved"></span></td>
                     </tr>
                     <tr>
                         <td>מחסור בכישרונות 2025</td>
                         <td>בית → סקרים ותובנות → מחסור בכישרונות</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>מגמות בכוח העבודה</td>
                         <td>בית → סקרים ותובנות → מגמות בכוח העבודה</td>
-                        <td><span class="level-badge level-2">רמה 2</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-2" data-he="רמה 2" data-en="Level 2"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>מועמדים</td>
                         <td>בית → מועמדים</td>
-                        <td><span class="level-badge level-1">רמה 1</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-1" data-he="רמה 1" data-en="Level 1"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                     <tr>
                         <td>צרו קשר</td>
                         <td>בית → צרו קשר</td>
-                        <td><span class="level-badge level-1">רמה 1</span></td>
-                        <td>ממתין</td>
+                        <td><span class="level-badge level-1" data-he="רמה 1" data-en="Level 1"></span></td>
+                        <td data-he="ממתין" data-en="Pending"></td>
                     </tr>
                 </tbody>
             </table>
         </section>
 
+        <!-- Developer Note Section -->
+        <section class="section" style="background: rgba(0, 212, 255, 0.05); border: 2px dashed rgba(0, 212, 255, 0.3);">
+            <div class="section-title" data-he="הערה למפתחים" data-en="Developer Note"></div>
+            <div style="padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;">
+                <p style="color: #a0a0a0; line-height: 1.8;" data-he="חשוב: הטקסט העברי בתוך הסכמות (JSON) הוא התוכן בפועל שיוצג בגוגל ואסור לשנות אותו. השתמשו בכפתור 'English' למעלה כדי לראות את ההוראות באנגלית." data-en="Important: The Hebrew text inside the schemas (JSON) is the actual content that will appear in Google and must NOT be modified. The Hebrew values in the 'name' fields are intentional - they represent the actual page names in Hebrew as they should appear in search results. Only copy and paste the schemas as-is."></p>
+            </div>
+        </section>
+
         <footer>
-            <p>הוכן על ידי צוות SEO של Nadav Digital</p>
-            <p style="margin-top: 10px;">
-                <a href="https://docs.google.com/document/d/13dLG7zAy4s1NjmPInzMJeKi2LaxNQZk_s6jZP6PL20U/edit" class="footer-link" target="_blank">
-                    מסמך הסכמות המאושרות
-                </a>
-                &nbsp;|&nbsp;
-                <a href="https://search.google.com/test/rich-results" class="footer-link" target="_blank">
-                    Google Rich Results Test
-                </a>
-            </p>
-            <p style="margin-top: 15px; font-size: 12px; color: #666;">עודכן לאחרונה: ינואר 2026</p>
+            <p data-he="הוכן על ידי צוות SEO של Nadav Digital" data-en="Prepared by Nadav Digital SEO Team"></p>
+            <div style="margin-top: 15px; gap: 20px; display: flex; justify-content: center;">
+                <a href="https://docs.google.com/document/d/13dLG7zAy4s1NjmPInzMJeKi2LaxNQZk_s6jZP6PL20U/edit" class="footer-link" target="_blank" data-he="מסמך הסכמות המאושרות" data-en="Approved Schemas Document"></a>
+                <span>|</span>
+                <a href="https://search.google.com/test/rich-results" class="footer-link" target="_blank">Google Rich Results Test</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 12px;" data-he="עודכן לאחרונה: ינואר 2026" data-en="Last updated: January 2026"></p>
         </footer>
     </div>
 
     <script>
+        let currentLang = 'he';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+
+            // Update button states
+            document.getElementById('btn-he').classList.toggle('active', lang === 'he');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+
+            // Update body direction
+            document.body.classList.toggle('lang-en', lang === 'en');
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-he][data-en]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+        }
+
         function copySchema(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
-
             navigator.clipboard.writeText(text).then(() => {
                 const btn = event.target;
                 const originalText = btn.textContent;
-                btn.textContent = 'הועתק!';
+                btn.textContent = currentLang === 'he' ? 'הועתק!' : 'Copied!';
                 btn.style.background = 'rgba(16, 185, 129, 0.3)';
                 btn.style.borderColor = 'rgba(16, 185, 129, 0.5)';
                 btn.style.color = '#10b981';
-
                 setTimeout(() => {
-                    btn.textContent = originalText;
+                    btn.textContent = currentLang === 'he' ? 'העתק' : 'Copy';
                     btn.style.background = 'rgba(0, 212, 255, 0.2)';
                     btn.style.borderColor = 'rgba(0, 212, 255, 0.3)';
                     btn.style.color = '#00d4ff';
                 }, 2000);
             });
         }
+
+        // Initialize with Hebrew
+        setLanguage('he');
     </script>
 </body>
 </html>
