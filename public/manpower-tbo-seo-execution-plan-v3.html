@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANPOWER TBO - תוכנית SEO מעודכנת לפי משוב לקוח | Page-Level Execution Plan v3</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+        }
+        body {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #8b5cf6 100%);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 15px 0;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p { margin: 8px 0; opacity: 0.95; font-size: 18px; }
+        .header .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .header .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #475569;
+        }
+        .stat-card .number {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-card.red .number { color: #ef4444; }
+        .stat-card.orange .number { color: #f59e0b; }
+        .stat-card.green .number { color: #22c55e; }
+        .stat-card.blue .number { color: #3b82f6; }
+        .stat-card.purple .number { color: #8b5cf6; }
+
+        /* Page Section */
+        .page-section {
+            background: #1e293b;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .page-header {
+            background: linear-gradient(90deg, #334155, #475569);
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .page-header h2 {
+            margin: 0;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .page-number {
+            background: #3b82f6;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .page-url {
+            background: #1e293b;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #94a3b8;
+            direction: ltr;
+        }
+        .page-content {
+            padding: 30px;
+        }
+
+        /* Subsections */
+        .subsection {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subsection h4 {
+            margin: 20px 0 12px 0;
+            font-size: 15px;
+            color: #94a3b8;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        th {
+            background: #334155;
+            padding: 14px 12px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid #475569;
+        }
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #334155;
+            vertical-align: top;
+        }
+        tr:hover { background: #1e293b; }
+
+        /* Current vs Recommended */
+        .current-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .current-box::before {
+            content: "נוכחי";
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .recommended-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px solid #22c55e;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 12px 0;
+        }
+        .recommended-box::before {
+            content: "מומלץ";
+            background: #22c55e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* Keywords */
+        .keyword-tag {
+            display: inline-block;
+            background: #1e3a5f;
+            color: #60a5fa;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 3px;
+        }
+        .keyword-tag.add {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px dashed #22c55e;
+        }
+        .keyword-tag.missing {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px dashed #ef4444;
+        }
+
+        /* Competitor Gap */
+        .competitor-gap {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+        .competitor-gap h5 {
+            color: #f59e0b;
+            margin: 0 0 12px 0;
+        }
+
+        /* Action Items Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .action-item {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 18px;
+            border-right: 4px solid;
+        }
+        .action-item.critical { border-color: #ef4444; }
+        .action-item.high { border-color: #f59e0b; }
+        .action-item.medium { border-color: #3b82f6; }
+        .action-item h5 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .action-item p {
+            margin: 0;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* New: Client Updates Box */
+        .client-update {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(59, 130, 246, 0.1));
+            border: 2px solid #8b5cf6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .client-update h4 {
+            color: #a78bfa;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .exec-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1>MANPOWER TBO - תוכנית SEO מעודכנת v3.0</h1>
+    <p>ניהול פרויקטים ותפעול מקצה לקצה | End-to-End Project Management and Operations</p>
+    <p>ינואר 2026 | כולל ביצועים + Backlinks + Technical Audit | Nadav Digital SEO Agency</p>
+    <div class="badge-row">
+        <span class="badge">7 עמודים נותחו</span>
+        <span class="badge">35 FAQ (5 לעמוד)</span>
+        <span class="badge">UX/CRO המלצות</span>
+        <span class="badge">Backlink Analysis</span>
+        <span class="badge">Technical Audit</span>
+    </div>
+</div>
+
+<!-- ==================== PERFORMANCE DATA SECTION ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #ef4444, #f97316);">
+        <h2>נתוני ביצועים - Analytics (6 חודשים אחרונים)</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">01/07/25 - 26/01/26</span>
+    </div>
+    <div class="page-content">
+        <div class="exec-summary">
+            <div class="stat-card red">
+                <div>Avg. Engagement Time</div>
+                <div class="number">18s</div>
+                <div>עמוד הבית - נמוך מאוד!</div>
+            </div>
+            <div class="stat-card orange">
+                <div>Total Views (TBO)</div>
+                <div class="number">3,393</div>
+                <div>0.24% מסך הצפיות</div>
+            </div>
+            <div class="stat-card blue">
+                <div>Active Users</div>
+                <div class="number">2,171</div>
+                <div>0.66% מסך המשתמשים</div>
+            </div>
+            <div class="stat-card purple">
+                <div>Key Events</div>
+                <div class="number">489</div>
+                <div>0.62% מסך האירועים</div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">התפלגות עמודי TBO לפי ביצועים</h3>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>עמוד</th>
+                    <th>Views</th>
+                    <th>Active Users</th>
+                    <th>Avg. Engagement</th>
+                    <th>הערות</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>ניהול פרויקטים במיקור חוץ – Manpower TBO</td>
+                    <td>1,568 (46%)</td>
+                    <td>1,098</td>
+                    <td style="color: #ef4444;"><strong>18s</strong></td>
+                    <td style="color: #ef4444;">נמוך מאוד - דורש שיפור UX</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>TBO ניהול פעילויות במיקור חוץ - Manpower</td>
+                    <td>1,052 (31%)</td>
+                    <td>721</td>
+                    <td>25s</td>
+                    <td>צריך שיפור</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Manpower TBO - הנהלה - Manpower</td>
+                    <td>480 (14%)</td>
+                    <td>292</td>
+                    <td style="color: #22c55e;"><strong>51s</strong></td>
+                    <td style="color: #22c55e;">הכי טוב!</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>TBO יועצ/ת השמה - Manpower</td>
+                    <td>96 (3%)</td>
+                    <td>96</td>
+                    <td style="color: #ef4444;"><strong>4s</strong></td>
+                    <td style="color: #ef4444;">בעייתי מאוד</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>TBO צור קשר - Manpower</td>
+                    <td>58 (2%)</td>
+                    <td>43</td>
+                    <td>11s</td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== UX/CRO RECOMMENDATIONS ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #dc2626, #ea580c);">
+        <h2>המלצות UX/CRO - שיפור Hero Banner ושימור תנועה</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">Critical Priority</span>
+    </div>
+    <div class="page-content">
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">הבעיה: 18 שניות זמן ממוצע בעמוד הבית</h3>
+            <div class="current-box">
+                <p><strong>מה קורה:</strong></p>
+                <ul>
+                    <li>משתמשים מגיעים לעמוד ועוזבים תוך 18 שניות בממוצע</li>
+                    <li>אין מספיק hook ב-Hero Banner לשמור את תשומת הלב</li>
+                    <li>התוכן לא מעביר ערך מיידי (Value Proposition)</li>
+                    <li>אין CTA ברור וממוקד</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #22c55e;">המלצות לשיפור Hero Banner</h3>
+
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>1. כותרת עם Value Proposition ברורה</h5>
+                    <p><strong>במקום:</strong> "MANPOWER TBO"<br>
+                    <strong>מומלץ:</strong> "מיקור חוץ עם תפוקות מדידות - חיסכון של 30%+ בעלויות תפעול"</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>2. תת-כותרת עם יתרון ייחודי</h5>
+                    <p>"DO what you do BEST, OUTSOURCE the REST" + תרגום עברי: "התמקדו בליבת העסק - השאר עלינו"</p>
+                </div>
+                <div class="action-item high">
+                    <h5>3. Trust Badges בולטים</h5>
+                    <p>לוגואים של לקוחות מובילים (מגדל, אלביט, HP) ישירות ב-Hero</p>
+                </div>
+                <div class="action-item high">
+                    <h5>4. CTA ברור ובולט</h5>
+                    <p>"קבלו הצעה מותאמת" או "תאמו שיחה עם מומחה" - צבע בולט, גדול</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>5. Social Proof מיידי</h5>
+                    <p>"50,000+ עובדים בשנה | 7,000+ לקוחות | 40+ סניפים ארציים"</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>6. וידאו קצר (30-60 שניות)</h5>
+                    <p>סרטון שמסביר את השירות ב-60 שניות - מעלה Engagement משמעותית</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #3b82f6;">מבנה Hero Banner מומלץ</h3>
+            <div class="client-update">
+                <div style="background: #1e293b; padding: 25px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 14px; color: #94a3b8; margin-bottom: 10px;">MANPOWER TBO</div>
+                    <div style="font-size: 28px; color: white; font-weight: bold; margin-bottom: 15px;">מיקור חוץ עם תפוקות מדידות</div>
+                    <div style="font-size: 18px; color: #60a5fa; margin-bottom: 20px;">התמקדו בליבת העסק - הניהול והתפעול עלינו</div>
+                    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <span style="background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 8px 15px; border-radius: 20px;">50,000+ עובדים בשנה</span>
+                        <span style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 8px 15px; border-radius: 20px;">7,000+ לקוחות</span>
+                        <span style="background: rgba(139, 92, 246, 0.2); color: #a78bfa; padding: 8px 15px; border-radius: 20px;">KPIs מוגדרים מראש</span>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <button style="background: #22c55e; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">קבלו הצעה מותאמת</button>
+                        <button style="background: transparent; color: #60a5fa; padding: 15px 30px; border: 2px solid #60a5fa; border-radius: 8px; font-size: 16px; cursor: pointer;">צפו בסרטון</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #f59e0b;">המלצות נוספות לשיפור Engagement</h3>
+            <table>
+                <tr>
+                    <th>אלמנט</th>
+                    <th>בעיה</th>
+                    <th>פתרון</th>
+                    <th>השפעה צפויה</th>
+                </tr>
+                <tr>
+                    <td>Above the Fold</td>
+                    <td>אין מספיק מידע בלי גלילה</td>
+                    <td>הכל חשוב ב-Hero: כותרת, יתרון, CTA, Trust</td>
+                    <td>+20-30% Engagement</td>
+                </tr>
+                <tr>
+                    <td>Loading Speed</td>
+                    <td>עמוד איטי מרחיק משתמשים</td>
+                    <td>בדיקת Core Web Vitals, אופטימיזציית תמונות</td>
+                    <td>+10-15% Time on Page</td>
+                </tr>
+                <tr>
+                    <td>Mobile UX</td>
+                    <td>חוויה לא אופטימלית במובייל</td>
+                    <td>CTA גדול, טקסט קריא, Touch-friendly</td>
+                    <td>+25% Mobile Engagement</td>
+                </tr>
+                <tr>
+                    <td>Content Scanability</td>
+                    <td>בלוקים גדולים של טקסט</td>
+                    <td>Bullets, Icons, Subheadings, White Space</td>
+                    <td>+15% Time on Page</td>
+                </tr>
+                <tr>
+                    <td>Exit Intent</td>
+                    <td>משתמשים עוזבים ללא פעולה</td>
+                    <td>Pop-up עם הצעה (PDF guide / שיחה)</td>
+                    <td>+5-10% Conversions</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== BACKLINK ANALYSIS ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #7c3aed, #8b5cf6);">
+        <h2>ניתוח Backlinks - מצב נוכחי vs מתחרים</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">Competitor Analysis</span>
+    </div>
+    <div class="page-content">
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">מצב נוכחי - לינקים חלשים</h3>
+            <div class="current-box">
+                <p><strong>הבעיה:</strong> רוב הלינקים הנוכחיים מגיעים מאתרי חדשות מקומיים:</p>
+                <ul>
+                    <li>ashdod4u.co.il - אתר חדשות מקומי אשדוד</li>
+                    <li>ptnews.co.il - פורטל חדשות פתח תקוה</li>
+                    <li>blinker.co.il - אתר לוחות מודעות</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>למה זה בעייתי:</strong></p>
+                <ul>
+                    <li>DA נמוך (Domain Authority)</li>
+                    <li>לא רלוונטיים לתחום מיקור חוץ/HR</li>
+                    <li>לא מספיק חזקים למילות מפתח תחרותיות כמו "מיקור חוץ"</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #3b82f6;">ניתוח מתחרים - מאיפה הם מקבלים לינקים</h3>
+
+            <table>
+                <tr>
+                    <th>מתחרה</th>
+                    <th>סוגי לינקים</th>
+                    <th>דוגמאות</th>
+                    <th>יתרון</th>
+                </tr>
+                <tr>
+                    <td><strong>קבוצת מעוף</strong><br>(maof-hr.co.il)</td>
+                    <td>פרסומים עסקיים, כתבות</td>
+                    <td>מעריב (כתבה על גיוס חדשני)</td>
+                    <td>DA גבוה, רלוונטיות עסקית</td>
+                </tr>
+                <tr>
+                    <td><strong>קבוצת יעל</strong><br>(yaelgroup.com)</td>
+                    <td>תוכן מקצועי, שותפויות</td>
+                    <td>שותפויות Salesforce, Workday</td>
+                    <td>Brand Authority, Trust</td>
+                </tr>
+                <tr>
+                    <td><strong>NESS</strong><br>(ness-tech.co.il)</td>
+                    <td>Case Studies, מחקרים</td>
+                    <td>פרסומי IT, דוחות</td>
+                    <td>מומחיות, Thought Leadership</td>
+                </tr>
+            </table>
+
+            <div class="competitor-gap">
+                <h5>פער תחרותי מרכזי</h5>
+                <p>Manpower כבר מקבל סיקור ב-<strong>גלובס, כלכליסט, TheMarker</strong> - אבל לא מנצלים את זה מספיק לבניית לינקים איכותיים לעמודי TBO.</p>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #22c55e;">הזדמנויות Backlink - אסטרטגיה מומלצת</h3>
+
+            <h4>Tier 1: פרסומים עסקיים (High Priority)</h4>
+            <div class="action-grid">
+                <div class="action-item critical">
+                    <h5>גלובס / Globes</h5>
+                    <p>כבר יש קשר (מיכל דן-הראל "50 נשים משפיעות"). לנצל לכתבות על מיקור חוץ.</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>כלכליסט / Calcalist</h5>
+                    <p>סיגל עזריאל (CEO TBO) צוטטה על RPO. להרחיב לכתבות מקיפות על TBO.</p>
+                </div>
+                <div class="action-item critical">
+                    <h5>TheMarker / דהמרקר</h5>
+                    <p>היסטוריית סיקור (מיתוג מנפאואר). לקדם כתבות על מגמות אאוטסורסינג.</p>
+                </div>
+            </div>
+
+            <h4>Tier 2: אתרי HR ותעסוקה</h4>
+            <div class="action-grid">
+                <div class="action-item high">
+                    <h5>AllJobs / JobMaster</h5>
+                    <p>פרסום מאמרי מומחה על מיקור חוץ ושוק העבודה</p>
+                </div>
+                <div class="action-item high">
+                    <h5>HRus / HR פורטל</h5>
+                    <p>Guest posts על מגמות HR וניהול עובדים חיצוניים</p>
+                </div>
+                <div class="action-item high">
+                    <h5>The Marker Cafe</h5>
+                    <p>בלוגים של מנהלים - סיגל עזריאל יכולה לכתוב טור</p>
+                </div>
+            </div>
+
+            <h4>Tier 3: התאחדויות וארגונים מקצועיים</h4>
+            <div class="action-grid">
+                <div class="action-item medium">
+                    <h5>התאחדות התעשיינים</h5>
+                    <p>industry.org.il - שותפות/חסות לכנסים, מאמרים מקצועיים</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>לשכת המסחר</h5>
+                    <p>chamber.org.il - ספונסרשיפ, מדריכים לעסקים</p>
+                </div>
+                <div class="action-item medium">
+                    <h5>איגוד חברות ההייטק</h5>
+                    <p>IATI - מאמרים על Outsourcing בהייטק</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #f59e0b;">תוכן לבניית לינקים (Linkable Assets)</h3>
+            <table>
+                <tr>
+                    <th>סוג תוכן</th>
+                    <th>נושא מומלץ</th>
+                    <th>פוטנציאל לינקים</th>
+                </tr>
+                <tr>
+                    <td><strong>סקר שנתי</strong></td>
+                    <td>"סקר מיקור חוץ בישראל 2026" - מגמות, נתונים, תחזיות</td>
+                    <td style="color: #22c55e;">גבוה מאוד - עיתונאים אוהבים נתונים</td>
+                </tr>
+                <tr>
+                    <td><strong>מדריך מקיף</strong></td>
+                    <td>"המדריך המלא למיקור חוץ לעסקים" - PDF להורדה</td>
+                    <td>גבוה - תוכן evergreen</td>
+                </tr>
+                <tr>
+                    <td><strong>Case Studies</strong></td>
+                    <td>סיפורי הצלחה מפורטים (חברת החשמל, אלביט)</td>
+                    <td>בינוני-גבוה - מראה מומחיות</td>
+                </tr>
+                <tr>
+                    <td><strong>Calculator / Tool</strong></td>
+                    <td>"מחשבון חיסכון במיקור חוץ" - כלי אינטראקטיבי</td>
+                    <td style="color: #22c55e;">גבוה מאוד - ויראלי, שיתופי</td>
+                </tr>
+                <tr>
+                    <td><strong>Infographic</strong></td>
+                    <td>"5 סימנים שהעסק שלך צריך מיקור חוץ"</td>
+                    <td>בינוני - קל לשתף</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== DUPLICATE CONTENT AUDIT ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #dc2626, #b91c1c);">
+        <h2>אודיט תוכן כפול - Duplicate Content & Canonical Tags</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">Technical SEO Audit</span>
+    </div>
+    <div class="page-content">
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">בעיה: כותרות בשפות זרות ב-Analytics</h3>
+            <div class="current-box">
+                <p><strong>דוגמאות שנמצאו ב-GA4:</strong></p>
+                <table>
+                    <tr>
+                        <th>שפה</th>
+                        <th>Page Title שנרשם</th>
+                    </tr>
+                    <tr>
+                        <td>רוסית</td>
+                        <td>Аутсорсинг управления проектами – Manpower TBO</td>
+                    </tr>
+                    <tr>
+                        <td>רוסית</td>
+                        <td>Управление аутсорсингом TBO – Manpower</td>
+                    </tr>
+                    <tr>
+                        <td>רוסית</td>
+                        <td>Управление проектами аутсорсинга – Подбор персонала TBO</td>
+                    </tr>
+                    <tr>
+                        <td>טורקית</td>
+                        <td>TBO Dış Kaynak Yönetimi - İnsan Gücü</td>
+                    </tr>
+                    <tr>
+                        <td>ערבית</td>
+                        <td>الاستعانة بمصادر خارجية لإدارة المشاريع – Manpower TBO</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #3b82f6;">מקור הבעיה: Google Translate Proxy</h3>
+            <p>הבדיקה העלתה שמקור הבעיה הוא <strong>Google Translate</strong>. כאשר משתמשים מתרגמים את העמוד, נוצרת גרסה ב-URL כזה:</p>
+            <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin: 15px 0; direction: ltr; font-family: monospace; overflow-x: auto;">
+                https://www-manpower-co-il.translate.goog/employers/tbo?_x_tr_sl=auto&_x_tr_tl=ru&_x_tr_hl=iw
+            </div>
+            <p><strong>הבשורות הטובות:</strong></p>
+            <ul>
+                <li style="color: #22c55e;">גוגל לא מאנדקס את גרסאות translate.goog - הם רק ב-Analytics</li>
+                <li>בחיפוש site:manpower.co.il מופיעה רק הגרסה העברית</li>
+                <li>אין בעיית תוכן כפול אמיתית בסרפ</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #ef4444;">בעיה קריטית: חסר Canonical Tag!</h3>
+            <div class="current-box">
+                <p><strong>ממצאי הבדיקה של /employers/tbo:</strong></p>
+                <ul>
+                    <li style="color: #ef4444;"><strong>אין Canonical Tag</strong> - חסר לחלוטין!</li>
+                    <li style="color: #ef4444;"><strong>אין Hreflang Tags</strong> - אין הגדרת שפה</li>
+                    <li style="color: #f59e0b;">Meta Robots: index, follow (תקין)</li>
+                    <li style="color: #f59e0b;">URL Parameters לא מוגדרים ב-GSC</li>
+                </ul>
+            </div>
+
+            <div class="competitor-gap">
+                <h5>השוואה למתחרים</h5>
+                <p><strong>קבוצת יעל (yaelgroup.com)</strong> - יש להם:</p>
+                <ul>
+                    <li>Canonical Tag תקין</li>
+                    <li>BreadcrumbList Schema</li>
+                    <li>WebSite Schema with SearchAction</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #22c55e;">תיקונים נדרשים - Technical Implementation</h3>
+
+            <h4>1. הוספת Canonical Tag (קריטי)</h4>
+            <div style="background: #0f172a; border: 1px solid #22c55e; border-radius: 8px; padding: 15px; direction: ltr; text-align: left; margin: 10px 0;">
+<pre style="color: #22c55e; margin: 0; font-size: 13px;">&lt;link rel="canonical" href="https://www.manpower.co.il/employers/tbo" /&gt;</pre>
+            </div>
+            <p>להוסיף ב-<code>&lt;head&gt;</code> של כל עמודי TBO.</p>
+
+            <h4>2. הוספת Hreflang (מומלץ)</h4>
+            <div style="background: #0f172a; border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; direction: ltr; text-align: left; margin: 10px 0;">
+<pre style="color: #60a5fa; margin: 0; font-size: 13px;">&lt;link rel="alternate" hreflang="he" href="https://www.manpower.co.il/employers/tbo" /&gt;
+&lt;link rel="alternate" hreflang="x-default" href="https://www.manpower.co.il/employers/tbo" /&gt;</pre>
+            </div>
+            <p>מגדיר לגוגל שהעמוד בעברית ואין גרסאות בשפות אחרות.</p>
+
+            <h4>3. WebSite Schema (מומלץ)</h4>
+            <div style="background: #0f172a; border: 1px solid #8b5cf6; border-radius: 8px; padding: 15px; direction: ltr; text-align: left; margin: 10px 0;">
+<pre style="color: #a78bfa; margin: 0; font-size: 12px;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://www.manpower.co.il/#website",
+  "name": "Manpower Israel",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://www.manpower.co.il/#organization"
+  }
+}
+&lt;/script&gt;</pre>
+            </div>
+
+            <h4>4. BreadcrumbList Schema לעמודי TBO</h4>
+            <div style="background: #0f172a; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; direction: ltr; text-align: left; margin: 10px 0;">
+<pre style="color: #fbbf24; margin: 0; font-size: 12px;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "דף הבית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "למעסיקים",
+      "item": "https://www.manpower.co.il/employers/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "MANPOWER TBO"
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3 style="color: #f59e0b;">צ'קליסט תיקונים - Technical SEO</h3>
+            <table>
+                <tr>
+                    <th>עדיפות</th>
+                    <th>משימה</th>
+                    <th>עמודים</th>
+                    <th>סטטוס</th>
+                </tr>
+                <tr>
+                    <td style="color: #ef4444;">קריטי</td>
+                    <td>הוספת Canonical Tag</td>
+                    <td>כל 7 עמודי TBO</td>
+                    <td>📝 ליישום</td>
+                </tr>
+                <tr>
+                    <td style="color: #ef4444;">קריטי</td>
+                    <td>הגדרת URL Parameters ב-GSC</td>
+                    <td>?categories, ?_x_tr_*</td>
+                    <td>📝 ליישום</td>
+                </tr>
+                <tr>
+                    <td style="color: #f59e0b;">גבוה</td>
+                    <td>הוספת Hreflang Tags</td>
+                    <td>כל 7 עמודי TBO</td>
+                    <td>📝 ליישום</td>
+                </tr>
+                <tr>
+                    <td style="color: #f59e0b;">גבוה</td>
+                    <td>הוספת BreadcrumbList Schema</td>
+                    <td>כל 7 עמודי TBO</td>
+                    <td>📝 ליישום</td>
+                </tr>
+                <tr>
+                    <td style="color: #3b82f6;">בינוני</td>
+                    <td>הוספת WebSite Schema</td>
+                    <td>עמוד ראשי</td>
+                    <td>📝 ליישום</td>
+                </tr>
+                <tr>
+                    <td style="color: #3b82f6;">בינוני</td>
+                    <td>ניטור Crawl Errors ב-GSC</td>
+                    <td>-</td>
+                    <td>📝 ליישום</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== CLIENT FEEDBACK SECTION ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #8b5cf6, #a855f7);">
+        <h2>מענה למשוב הלקוח - עדכונים ושינויים</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">Client Feedback v2.0</span>
+    </div>
+    <div class="page-content">
+
+        <!-- TAGLINE RECOMMENDATION -->
+        <div class="subsection">
+            <h3 style="color: #22c55e;">1. המלצה לניסוח לצד הלוגו - ניתוח חשיפה</h3>
+
+            <p>נבדקו האפשרויות הבאות מבחינת חשיפה בחיפוש:</p>
+
+            <table>
+                <tr>
+                    <th>מונח</th>
+                    <th>חשיפה יחסית</th>
+                    <th>שימוש בשוק</th>
+                    <th>המלצה</th>
+                </tr>
+                <tr>
+                    <td><strong>מיקור חוץ</strong></td>
+                    <td style="color: #22c55e;">⬆️ גבוהה</td>
+                    <td>המונח העברי הנפוץ ביותר לאאוטסורסינג</td>
+                    <td style="color: #22c55e;">✅ מומלץ ראשי</td>
+                </tr>
+                <tr>
+                    <td>Managed Services / שירותים מנוהלים</td>
+                    <td style="color: #f59e0b;">→ בינונית</td>
+                    <td>נפוץ בעיקר בתחום ה-IT</td>
+                    <td style="color: #f59e0b;">⭕ משני</td>
+                </tr>
+                <tr>
+                    <td>Outsourcing / אאוטסורסינג</td>
+                    <td style="color: #f59e0b;">→ בינונית</td>
+                    <td>תעתיק אנגלי, פחות נפוץ מ"מיקור חוץ"</td>
+                    <td>⭕ משני</td>
+                </tr>
+                <tr>
+                    <td>Subcontracting / קבלנות משנה</td>
+                    <td style="color: #ef4444;">⬇️ נמוכה</td>
+                    <td>מקושר לבנייה/קבלנות, לא BPO</td>
+                    <td style="color: #ef4444;">❌ לא מומלץ</td>
+                </tr>
+            </table>
+
+            <div class="recommended-box">
+                <strong>המלצה סופית לניסוח ליד הלוגו:</strong><br><br>
+                <div style="font-size: 22px; text-align: center; padding: 15px; background: #1e293b; border-radius: 8px;">
+                    <strong style="color: #3b82f6;">MANPOWER TBO</strong><br>
+                    <span style="color: #94a3b8; font-size: 16px;">מיקור חוץ | ניהול פרויקטים ותפעול</span>
+                </div>
+                <br>
+                <p><strong>נימוק:</strong></p>
+                <ul>
+                    <li><strong>"מיקור חוץ"</strong> הוא המונח הנפוץ ביותר בעברית ומכסה את רוב החיפושים</li>
+                    <li>המצגת של הלקוח משתמשת ב"שירותים מנוהלים במיקור חוץ" - שילוב טוב</li>
+                    <li>מעוף ויעל (מתחרים מרכזיים) משתמשים ב"מיקור חוץ" כמונח ראשי</li>
+                    <li>"קבלנות משנה" מקושר לבנייה ולא ל-BPO - <strong>לא מומלץ</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- MISSING KEYWORDS -->
+        <div class="subsection">
+            <h3 style="color: #f59e0b;">2. מילות מפתח חסרות - להוספה לכל העמודים</h3>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>איפה להוסיף</th>
+                    <th>דגשים</th>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">שירותי מיקור חוץ</span></td>
+                    <td>H1, Meta Description, פסקה ראשונה</td>
+                    <td>שילוב טבעי בתיאור השירות</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">יתרונות מיקור חוץ</span></td>
+                    <td>H2 ייעודי, סעיף יתרונות, FAQ</td>
+                    <td>ליצור סקשן יתרונות בכל עמוד</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">חברת מיקור חוץ וניהול פרויקטים</span></td>
+                    <td>Meta Description, About section</td>
+                    <td><strong>חייב להופיע יחד!</strong></td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">עלויות מיקור חוץ</span></td>
+                    <td>FAQ, H2 ייעודי</td>
+                    <td><strong>ללא מספרים!</strong> דגש על חיסכון משאבים, התייעלות</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">תפוקות מדידות</span></td>
+                    <td>כל עמודי השירות, About</td>
+                    <td><strong>יתרון תחרותי מרכזי!</strong> הדגש בכל עמוד</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">BPO</span></td>
+                    <td>עמוד ראשי TBO, Meta</td>
+                    <td>לצד TBO, לא במקומו: "TBO/BPO"</td>
+                </tr>
+            </table>
+
+            <div class="client-update">
+                <h4>💡 דגש מיוחד מהלקוח: תפוקות מדידות</h4>
+                <p>ב-MANPOWER TBO אנו מדגישים תפוקות מדידות - זהו יתרון מרכזי על פני המתחרים. יש לשלב מסר זה בכל עמוד שירות:</p>
+                <div style="background: #1e293b; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <em>"MANPOWER TBO מתחייבת לתפוקות מדידות ותוצאות ברורות - KPIs מוגדרים מראש, דיווח שקוף, ואחריות מלאה על תוצרים."</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- BRANDING RULE -->
+        <div class="subsection">
+            <h3 style="color: #3b82f6;">3. כלל מיתוג - MANPOWER TBO תמיד יחד</h3>
+
+            <div class="current-box">
+                <strong>❌ לא נכון:</strong>
+                <ul>
+                    <li>MANPOWER (בנפרד)</li>
+                    <li>TBO (בנפרד)</li>
+                    <li>מנפאואר TBO</li>
+                    <li>Manpower tbo</li>
+                </ul>
+            </div>
+
+            <div class="recommended-box">
+                <strong>✅ נכון:</strong>
+                <ul>
+                    <li><strong>MANPOWER TBO</strong> - תמיד יחד, תמיד באותיות גדולות באנגלית</li>
+                    <li>בעברית: "מנפאואר TBO" או "MANPOWER TBO"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TITLE UPDATE -->
+        <div class="subsection">
+            <h3 style="color: #ef4444;">4. שינוי כותרת - הסרת "60 שנות מומחיות"</h3>
+
+            <div class="current-box">
+                <strong>נוכחי (לא מומלץ):</strong><br>
+                "MANPOWER TBO - 60 שנות מומחיות במיקור חוץ"
+            </div>
+
+            <div class="recommended-box">
+                <strong>מומלץ (לפי הלקוח):</strong><br>
+                <span style="font-size: 18px;"><strong>MANPOWER TBO – ניהול פרויקטים ותפעול מקצה לקצה</strong></span><br><br>
+                <span style="color: #94a3b8;">MANPOWER TBO – End-to-End Project Management and Operations</span>
+            </div>
+
+            <p><strong>נימוק:</strong> שנות ניסיון לא בהכרח מה שחשוב ללקוח. הדגש הוא על היכולת לספק פתרון מקצה לקצה.</p>
+        </div>
+
+        <!-- H2 CLARIFICATION -->
+        <div class="subsection">
+            <h3 style="color: #a855f7;">5. הבהרה: איפה ואיך להוסיף H2</h3>
+
+            <p><strong>מה זה H2?</strong><br>
+            H2 הם כותרות משנה (Subheadings) שמחלקות את התוכן לחלקים לוגיים. הם חשובים ל-SEO כי גוגל משתמש בהם להבין את מבנה העמוד.</p>
+
+            <table>
+                <tr>
+                    <th>מיקום בעמוד</th>
+                    <th>H2 מומלץ</th>
+                    <th>הסבר</th>
+                </tr>
+                <tr>
+                    <td>לאחר הפתיחה</td>
+                    <td><strong>&lt;h2&gt;שירותי מיקור חוץ של MANPOWER TBO&lt;/h2&gt;</strong></td>
+                    <td>מכיל את מילת המפתח הראשית</td>
+                </tr>
+                <tr>
+                    <td>סקשן יתרונות</td>
+                    <td><strong>&lt;h2&gt;יתרונות מיקור חוץ עם MANPOWER TBO&lt;/h2&gt;</strong></td>
+                    <td>מכסה את "יתרונות מיקור חוץ"</td>
+                </tr>
+                <tr>
+                    <td>סקשן תהליך</td>
+                    <td><strong>&lt;h2&gt;איך עובד תהליך מיקור החוץ?&lt;/h2&gt;</strong></td>
+                    <td>שאלה שמשתמשים מחפשים</td>
+                </tr>
+                <tr>
+                    <td>סקשן עלויות</td>
+                    <td><strong>&lt;h2&gt;עלויות מיקור חוץ - חיסכון והתייעלות&lt;/h2&gt;</strong></td>
+                    <td>מכסה "עלויות" בלי מספרים</td>
+                </tr>
+                <tr>
+                    <td>סקשן לקוחות</td>
+                    <td><strong>&lt;h2&gt;לקוחות MANPOWER TBO&lt;/h2&gt;</strong></td>
+                    <td>Social proof</td>
+                </tr>
+                <tr>
+                    <td>סקשן FAQ</td>
+                    <td><strong>&lt;h2&gt;שאלות נפוצות על [שם השירות]&lt;/h2&gt;</strong></td>
+                    <td>מבנה FAQ מתאים</td>
+                </tr>
+            </table>
+
+            <div class="client-update">
+                <h4>🎯 מבנה עמוד מומלץ עם H2</h4>
+                <div style="background: #1e293b; padding: 15px; border-radius: 8px; font-family: monospace; direction: ltr; text-align: left;">
+                    &lt;h1&gt;MANPOWER TBO - [שם השירות] במיקור חוץ&lt;/h1&gt;<br><br>
+                    [פסקת פתיחה עם מילות מפתח]<br><br>
+                    &lt;h2&gt;שירותי [שם השירות] - מה אנחנו מציעים&lt;/h2&gt;<br>
+                    [תיאור השירות]<br><br>
+                    &lt;h2&gt;יתרונות מיקור חוץ עם MANPOWER TBO&lt;/h2&gt;<br>
+                    [רשימת יתרונות כולל תפוקות מדידות]<br><br>
+                    &lt;h2&gt;איך עובד התהליך?&lt;/h2&gt;<br>
+                    [שלבי העבודה]<br><br>
+                    &lt;h2&gt;עלויות והתייעלות&lt;/h2&gt;<br>
+                    [ללא מספרים - דגש על חיסכון]<br><br>
+                    &lt;h2&gt;שאלות נפוצות&lt;/h2&gt;<br>
+                    [FAQ עם Schema]
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== UPDATED FAQ SCHEMAS (5 PER PAGE) ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #22c55e, #10b981);">
+        <h2>FAQ Schemas מעודכנים - 5 שאלות לכל עמוד</h2>
+        <span class="badge" style="background: rgba(255,255,255,0.3);">Client Request: Max 5</span>
+    </div>
+    <div class="page-content">
+
+        <!-- PAGE 1: TBO MAIN -->
+        <div class="subsection">
+            <h3>1. עמוד ראשי TBO - /employers/tbo</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה מיקור חוץ (Outsourcing) ומה MANPOWER TBO מציעה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מיקור חוץ הוא העברת תהליכים עסקיים לגוף חיצוני מתמחה. MANPOWER TBO היא חברת מיקור חוץ וניהול פרויקטים המספקת שירותים מנוהלים כולל מוקדים טלפוניים, לוגיסטיקה, ייצור, חדרים נקיים ושירותי IT - הכל עם תפוקות מדידות ותוצאות ברורות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה יתרונות מיקור חוץ עם MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות מיקור החוץ עם MANPOWER TBO כוללים: חיסכון בעלויות תפעול, התמקדות בליבת העסק, גישה למומחיות מקצועית, גמישות בהיקף הפעילות, ובעיקר - תפוקות מדידות עם KPIs מוגדרים מראש ודיווח שקוף."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה עולה מיקור חוץ עם MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עלויות מיקור חוץ משתנות לפי היקף ואופי הפעילות. היתרון המרכזי הוא חיסכון משמעותי בהשוואה לתפעול פנימי - חיסכון בהשקעה בתשתיות, כוח אדם ומערכות. MANPOWER TBO מציעה מודלים גמישים המותאמים לתקציב ולצרכי הלקוח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו שירותי מיקור חוץ מציעה MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מציעה מגוון שירותי מיקור חוץ: מוקדי שירות ומכירות, ניהול לוגיסטיקה ומחסנים, קווי ייצור ואריזה, חדרים נקיים לפרמצבטיקה וטכנולוגיה, שירותי Back Office, ושירותים לתעשיית ההייטק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי הלקוחות של MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO משרתת מגוון ארגונים - מסטארטאפים ועד תאגידים גדולים. בין לקוחותינו: מגדל, אלביט, רפאל, נתיבי ישראל, חברת החשמל, HP, אורבוטק ועוד. אנו מספקים ניהול פרויקטים ותפעול מקצה לקצה בפריסה ארצית."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 2: CALL CENTER -->
+        <div class="subsection">
+            <h3>2. מוקדים טלפוניים - /employers-solutions/service-center</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה היתרונות של מוקד טלפוני במיקור חוץ עם MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות מיקור חוץ למוקד טלפוני עם MANPOWER TBO: חיסכון בעלויות הקמה ותפעול, גמישות בהיקף הנציגים, מומחיות מקצועית בניהול מוקדים, תפוקות מדידות עם KPIs ברורים (First Response Time, Resolution Rate, CSAT), ודיווח שקוף."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו סוגי מוקדים MANPOWER TBO מפעילה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מפעילה מגוון מוקדים: מוקד שירות לקוחות (Inbound), מוקד מכירות יוצא (Outbound), מוקד תמיכה טכנית (Help Desk), מוקד טלמרקטינג, ומוקד Omnichannel משולב (טלפון, צ'אט, מייל, רשתות חברתיות)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם המוקד פועל 24/7?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, MANPOWER TBO מציעה שירות מוקד טלפוני 24/7, 365 ימים בשנה. אנו מתאימים את שעות הפעילות לצרכי הלקוח - משמרות יום בלבד, ערבים וסופי שבוע, או מענה מלא סביב השעון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו שפות המוקד נותן שירות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מוקדי MANPOWER TBO מספקים שירות בעברית, אנגלית, רוסית, ערבית ושפות נוספות לפי דרישה. אנו מגייסים נציגים רב-לשוניים בהתאם לצורכי קהל היעד של הלקוח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מודדים את ביצועי המוקד?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מתחייבת לתפוקות מדידות עם KPIs מוגדרים: First Response Time, Resolution Rate, Customer Satisfaction (CSAT), Average Handle Time, ו-Service Level. כל המדדים מדווחים בשקיפות מלאה."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 3: CLEAN ROOMS -->
+        <div class="subsection">
+            <h3>3. חדרים נקיים - /employers-solutions/cleanrooms</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה חדר נקי ומה MANPOWER TBO מציעה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חדר נקי הוא סביבה מבוקרת עם רמת חלקיקים מינימלית לפי תקן ISO 14644. MANPOWER TBO מספקת שירותי מיקור חוץ לניהול ותחזוקת חדרים נקיים לתעשיות הפרמצבטיקה, סמיקונדקטור, מכשור רפואי ותעופה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו תקנים MANPOWER TBO עומדת לחדרים נקיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO עומדת בכל התקנים הנדרשים: ISO 14644-1/2/3 לסיווג וניטור, GMP (Good Manufacturing Practice) לפרמצבטיקה, FDA 21 CFR לתקני ארה\"ב, ו-EU Annex 1 לתקני אירופה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו תעשיות זקוקות לשירותי חדרים נקיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התעשיות המרכזיות: פרמצבטיקה וביוטכנולוגיה, סמיקונדקטור ואלקטרוניקה, מכשור רפואי, תעופה וחלל. MANPOWER TBO משרתת לקוחות כמו NOVA, אלביט ומפעלי פרמצבטיקה מובילים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרונות של מיקור חוץ לחדרים נקיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות מיקור חוץ לחדרים נקיים עם MANPOWER TBO: מומחיות מקצועית בתקנים מחמירים, חיסכון בהכשרה ושימור עובדים מתמחים, גמישות בהיקף, ותפוקות מדידות עם דיווח על עמידה בתקנים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כולל שירות ניהול חדרים נקיים של MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "השירות כולל: איוש וניהול צוותים מקצועיים, ניקיון לפי תקני GMP, בקרה וניטור רציפים, הכשרת עובדים, דיווח ותיעוד לפי דרישות רגולטוריות. עם יותר מ-60 עובדים בפריסה ארצית וטכנולוגיית NFC לניהול."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 4: LOGISTICS -->
+        <div class="subsection">
+            <h3>4. לוגיסטיקה - /employers-solutions/logistics</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה מיקור חוץ לוגיסטי (3PL) ומה MANPOWER TBO מציעה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מיקור חוץ לוגיסטי (3PL) הוא העברת ניהול המחסן, השינוע וההפצה לספק חיצוני. MANPOWER TBO מספקת שירותי לוגיסטיקה במיקור חוץ כולל ניהול מחסנים, Fulfillment, ספירות מלאי וניהול שרשרת אספקה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרונות של מיקור חוץ ללוגיסטיקה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות מיקור חוץ ללוגיסטיקה עם MANPOWER TBO: חיסכון בהשקעה בתשתיות ומערכות WMS, גמישות בהיקפים משתנים, מומחיות מקצועית, מעקב בזמן אמת, ותפוקות מדידות - אחוזי דיוק, זמני אספקה ו-OTIF."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כולל שירות Fulfillment של MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שירות Fulfillment כולל: קליטת סחורה, אחסון מבוקר, Pick & Pack (ליקוט ואריזה), שילוח, ניהול החזרות, ודיווח בזמן אמת. מתאים לחנויות אונליין וחברות E-commerce עם אינטגרציה לפלטפורמות מובילות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש מעקב בזמן אמת על המלאי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, MANPOWER TBO מספקת גישה לדשבורד עם מעקב בזמן אמת: רמות מלאי, סטטוס הזמנות, Tracking משלוחים, ודוחות ביצועים. תפוקות מדידות עם דיווח שקוף על כל פרמטר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי הלקוחות של MANPOWER TBO בתחום הלוגיסטיקה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מספקת שירותי לוגיסטיקה במיקור חוץ ללקוחות כמו חברת החשמל (פריסה ארצית), גדיב בז\"ן, אדמה, ופרויקטים לאומיים כמו הרכבת מוני חשמל חכמים. ניהול פרויקטים ותפעול מקצה לקצה."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 5: MANUFACTURING -->
+        <div class="subsection">
+            <h3>5. ייצור ואריזה - /employers-solutions/manufacture</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה ייצור במיקור חוץ (Contract Manufacturing)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ייצור במיקור חוץ (Contract Manufacturing) הוא ייצור מוצרים על ידי גוף חיצוני. MANPOWER TBO מספקת שירותי ייצור, אריזה והרכבה במיקור חוץ לתעשיות מזון, קוסמטיקה, פרמצבטיקה ואלקטרוניקה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו תקני איכות MANPOWER TBO עומדת?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO עומדת בתקנים: ISO 9001 (ניהול איכות), HACCP ו-ISO 22000 (בטיחות מזון), GMP (ייצור תרופות וקוסמטיקה), ISO 13485 (מכשור רפואי), ותקני לקוח ספציפיים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרונות של ייצור במיקור חוץ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות ייצור במיקור חוץ עם MANPOWER TBO: חיסכון בהשקעה בציוד ותשתיות, גמישות בהיקפי ייצור, גישה למומחיות, קיצור Time-to-Market, והתמקדות בפיתוח ושיווק. תפוקות מדידות עם בקרת איכות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין Co-packing ל-Co-manufacturing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Co-packing מתמקד באריזה - הלקוח מספק מוצר מוגמר ואנחנו אורזים ומתייגים. Co-manufacturing כולל את כל תהליך הייצור מחומרי גלם ועד מוצר ארוז. MANPOWER TBO מציעה את שני השירותים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי הלקוחות של MANPOWER TBO בתחום הייצור?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO משרתת לקוחות כמו גדיב בז\"ן (אריזת חומרים כימיים), אדמה (ייצור ואריזה לחומרים מסוכנים), ומפעלי ייצור נוספים. ניהול של עשרות עובדים בכל פרויקט עם תפוקות מדידות."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 6: SERVICE PLANS -->
+        <div class="subsection">
+            <h3>6. מערכי שירות - /employers-solutions/service-plans</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה כולל שירות Help Desk במיקור חוץ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Help Desk במיקור חוץ עם MANPOWER TBO כולל: מענה לפניות טכניות (Tier 1-3), פתרון תקלות מרחוק, ניהול Tickets, אסקלציה לצוותים מתמחים, ודיווח על SLA וביצועים - עם תפוקות מדידות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה Back Office Outsourcing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Back Office Outsourcing הוא מיקור חוץ של פעילויות תפעוליות ואדמיניסטרטיביות: עיבוד נתונים, הקלדה ותיעוד, ניהול מסמכים, רכש, חשבונאות בסיסית, ותהליכים נוספים שאינם פונים ללקוח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם רמות השירות (SLA) שמנפאואר TBO מתחייבת אליהן?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מתחייבת ל-SLA מותאמים עם תפוקות מדידות: First Response Time של 15 דקות, Resolution Rate של 85%+, Customer Satisfaction של 90%+. כל ההתחייבויות נכתבות בחוזה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין Tier 1, 2 ו-3?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Tier 1: פניות בסיסיות, Reset passwords, הנחיות שימוש. Tier 2: בעיות טכניות מורכבות, התקנות, קונפיגורציה. Tier 3: בעיות מומחים, פיתוח, תשתיות. MANPOWER TBO מספקת את כל הרמות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי הלקוחות של MANPOWER TBO בתחום מערכי שירות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מנהלת מערכי שירות עבור: נתיבי ישראל (מוקד שליטה 24/7), רפאל (מוקדים תומכי תפעול), מנהרות הכרמל (מערך טולרים), ומגדל (מוקד מכירות ביטוחים). ניהול פרויקטים ותפעול מקצה לקצה."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+        <!-- PAGE 7: TECHNOLOGY -->
+        <div class="subsection">
+            <h3>7. תעשייה טכנולוגית - /employers-solutions/technology-industry</h3>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 15px; overflow-x: auto; direction: ltr; text-align: left;">
+<pre style="color: #22c55e; margin: 0; font-size: 12px; white-space: pre-wrap;">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה MANPOWER TBO מציעה לתעשייה הטכנולוגית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מספקת שירותי מיקור חוץ לתעשייה הטכנולוגית: קווי ייצור טכנולוגיים, חיווט והלחמות, ניהול חדרים נקיים, בקרת איכות, וניהול פרויקטים ותפעול מקצה לקצה לחברות הייטק וסמיקונדקטור."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרונות של מיקור חוץ לתעשיית ההייטק?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יתרונות מיקור חוץ לתעשיית ההייטק עם MANPOWER TBO: גישה לצוותים מיומנים בייצור טכנולוגי, גמישות בהיקפי פעילות, חיסכון בהשקעה בתשתיות, עמידה בתקנים מחמירים, ותפוקות מדידות עם בקרת איכות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו מודלי שיתוף פעולה מציעה MANPOWER TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מציעה מספר מודלים: Staff Augmentation (הרחבת צוות), Dedicated Team (צוות ייעודי), Project-Based (פרויקט מוגדר), ו-Managed Services (ניהול מלא). נתאים את המודל לצרכים שלכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי הלקוחות של MANPOWER TBO בתעשייה הטכנולוגית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO משרתת לקוחות טכנולוגיים מובילים: HP (ניהול מחלקות ייצור), אורבוטק (תמיכה בייצור), אלביט (מוקדים ולוגיסטיקה), NOVA (חדרים נקיים), ומפעלי שבבים בבאר שבע ודימונה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך MANPOWER TBO מבטיחה איכות בייצור טכנולוגי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MANPOWER TBO מבטיחה איכות באמצעות: צוותים מוכשרים ומוסמכים, עמידה בתקני ISO ו-GMP, תהליכי בקרת איכות מוגדרים, תפוקות מדידות עם KPIs ברורים, ודיווח שקוף ללקוח על כל פרמטר."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== KEYWORD INTEGRATION GUIDE ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #f59e0b, #f97316);">
+        <h2>מדריך שילוב מילות מפתח חדשות - לכל עמוד</h2>
+    </div>
+    <div class="page-content">
+
+        <div class="subsection">
+            <h3>עמוד ראשי TBO - /employers/tbo</h3>
+
+            <h4>Title Tag מומלץ:</h4>
+            <div class="recommended-box">
+                <strong>MANPOWER TBO - שירותי מיקור חוץ וניהול פרויקטים | BPO ישראל</strong>
+            </div>
+
+            <h4>Meta Description מומלץ:</h4>
+            <div class="recommended-box">
+                MANPOWER TBO - חברת מיקור חוץ וניהול פרויקטים מובילה בישראל. יתרונות מיקור חוץ: חיסכון בעלויות, תפוקות מדידות ותוצאות ברורות. מוקדים, לוגיסטיקה, ייצור וחדרים נקיים.
+            </div>
+
+            <h4>H1 מומלץ:</h4>
+            <div class="recommended-box">
+                <strong>MANPOWER TBO - ניהול פרויקטים ותפעול מקצה לקצה</strong>
+            </div>
+
+            <h4>H2 מומלצים:</h4>
+            <table>
+                <tr><th>H2</th><th>מילות מפתח משולבות</th></tr>
+                <tr><td>&lt;h2&gt;שירותי מיקור חוץ של MANPOWER TBO&lt;/h2&gt;</td><td>שירותי מיקור חוץ</td></tr>
+                <tr><td>&lt;h2&gt;יתרונות מיקור חוץ עם MANPOWER TBO&lt;/h2&gt;</td><td>יתרונות מיקור חוץ</td></tr>
+                <tr><td>&lt;h2&gt;עלויות והתייעלות - חיסכון אמיתי&lt;/h2&gt;</td><td>עלויות מיקור חוץ</td></tr>
+                <tr><td>&lt;h2&gt;תפוקות מדידות - היתרון שלנו&lt;/h2&gt;</td><td>תפוקות מדידות</td></tr>
+                <tr><td>&lt;h2&gt;לקוחות MANPOWER TBO&lt;/h2&gt;</td><td>MANPOWER TBO</td></tr>
+            </table>
+
+            <h4>תוכן מומלץ להוספה:</h4>
+            <div class="client-update">
+                <h4>💡 פסקה לשילוב בעמוד:</h4>
+                <p>"MANPOWER TBO היא חברת מיקור חוץ וניהול פרויקטים המספקת שירותים מנוהלים בפריסה ארצית. <strong>יתרונות מיקור חוץ</strong> עם MANPOWER TBO כוללים חיסכון משמעותי ב<strong>עלויות</strong> תפעול, גמישות מלאה, ובעיקר - <strong>תפוקות מדידות</strong> עם KPIs ברורים ודיווח שקוף. אנו מחויבים לתוצאות, לא רק לשעות עבודה."</p>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>מילות מפתח לשלב בכל עמודי השירות</h3>
+
+            <table>
+                <tr>
+                    <th>מילת מפתח</th>
+                    <th>משפט לשילוב</th>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">שירותי מיקור חוץ</span></td>
+                    <td>"MANPOWER TBO מספקת <strong>שירותי מיקור חוץ</strong> מקצועיים ב[תחום]."</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">יתרונות מיקור חוץ</span></td>
+                    <td>"<strong>יתרונות מיקור חוץ</strong> עם MANPOWER TBO: חיסכון, גמישות, תפוקות מדידות."</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">חברת מיקור חוץ וניהול פרויקטים</span></td>
+                    <td>"MANPOWER TBO היא <strong>חברת מיקור חוץ וניהול פרויקטים</strong> מובילה בישראל."</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">עלויות מיקור חוץ</span></td>
+                    <td>"<strong>עלויות מיקור חוץ</strong> מותאמות לצרכי הלקוח עם חיסכון משמעותי בהשוואה לתפעול פנימי."</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">תפוקות מדידות</span></td>
+                    <td>"MANPOWER TBO מתחייבת ל<strong>תפוקות מדידות</strong> - KPIs מוגדרים, דיווח שקוף, אחריות על תוצרים."</td>
+                </tr>
+                <tr>
+                    <td><span class="keyword-tag add">BPO</span></td>
+                    <td>"MANPOWER TBO מספקת שירותי <strong>TBO/BPO</strong> (Business Process Outsourcing) בפריסה ארצית."</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="page-section">
+    <div class="page-header" style="background: linear-gradient(90deg, #059669, #10b981);">
+        <h2>סיכום העדכונים</h2>
+    </div>
+    <div class="page-content">
+        <div class="exec-summary">
+            <div class="stat-card green">
+                <div>המלצת Tagline</div>
+                <div class="number" style="font-size: 24px;">מיקור חוץ</div>
+                <div>המונח הנפוץ ביותר</div>
+            </div>
+            <div class="stat-card blue">
+                <div>FAQ לעמוד</div>
+                <div class="number">5</div>
+                <div>במקום 4-5</div>
+            </div>
+            <div class="stat-card orange">
+                <div>מילות מפתח חדשות</div>
+                <div class="number">6</div>
+                <div>נוספו לכל עמוד</div>
+            </div>
+            <div class="stat-card purple">
+                <div>מיתוג</div>
+                <div class="number" style="font-size: 20px;">MANPOWER TBO</div>
+                <div>תמיד יחד</div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <h3>צ'קליסט יישום</h3>
+            <table>
+                <tr><th>משימה</th><th>סטטוס</th></tr>
+                <tr><td>שינוי כותרת מ"60 שנות מומחיות" ל"ניהול פרויקטים ותפעול מקצה לקצה"</td><td>📝 ליישום</td></tr>
+                <tr><td>עדכון כל מופעי MANPOWER / TBO ל-MANPOWER TBO</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת "שירותי מיקור חוץ" ל-H1 ו-Meta Description</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת סקשן "יתרונות מיקור חוץ" עם H2</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת סקשן "עלויות והתייעלות" (ללא מספרים)</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת פסקה על "תפוקות מדידות" בכל עמוד</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת BPO לצד TBO בעמוד ראשי</td><td>📝 ליישום</td></tr>
+                <tr><td>יישום FAQ Schema עם 5 שאלות לכל עמוד</td><td>📝 ליישום</td></tr>
+                <tr><td>הוספת H2 מובנים לפי ההנחיות</td><td>📝 ליישום</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <h3>MANPOWER TBO - תוכנית SEO מעודכנת v3.0</h3>
+    <p>כולל ביצועים + Backlink Analysis + Technical Audit | ינואר 2026</p>
+    <p style="margin-top: 15px;">Nadav Digital SEO Agency | www.n-c.digital</p>
+    <p style="color: #475569; margin-top: 10px;">מבוסס על נתוני Analytics, ניתוח מתחרים, אודיט טכני, ומשוב לקוח</p>
+</div>
+
+</body>
+</html>
