@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדריך יישום סכמות | מנפאואר ואקספריס ישראל</title>
+    <style>
+        :root {
+            --manpower-primary: #0033A0;
+            --manpower-secondary: #00A3E0;
+            --experis-primary: #6B2D5B;
+            --experis-secondary: #9B4D8B;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-600: #4B5563;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .lang-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: white;
+            transform: scale(1.05);
+        }
+
+        .header {
+            position: relative;
+
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1rem;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-tab {
+            padding: 20px 40px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .nav-tab:hover {
+            background: var(--gray-50);
+        }
+
+        .nav-tab.manpower {
+            color: var(--manpower-primary);
+        }
+
+        .nav-tab.manpower.active {
+            border-bottom-color: var(--manpower-primary);
+            background: rgba(0, 51, 160, 0.05);
+        }
+
+        .nav-tab.experis {
+            color: var(--experis-primary);
+        }
+
+        .nav-tab.experis.active {
+            border-bottom-color: var(--experis-primary);
+            background: rgba(107, 45, 91, 0.05);
+        }
+
+        .nav-tab.summary {
+            color: var(--gray-800);
+        }
+
+        .nav-tab.summary.active {
+            border-bottom-color: var(--gray-800);
+            background: var(--gray-50);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .client-header {
+            text-align: center;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .client-header.manpower {
+            background: linear-gradient(135deg, var(--manpower-primary) 0%, var(--manpower-secondary) 100%);
+        }
+
+        .client-header.experis {
+            background: linear-gradient(135deg, var(--experis-primary) 0%, var(--experis-secondary) 100%);
+        }
+
+        .client-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .client-header .url {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .section-title h3 {
+            font-size: 1.4rem;
+            color: var(--gray-900);
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.homepage {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+
+        .badge.required {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .badge.optional {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .badge.high-priority {
+            background: #DCFCE7;
+            color: #16A34A;
+        }
+
+        .badge.no-searchaction {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+
+        .badge.with-searchaction {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .schema-block {
+            margin: 20px 0;
+        }
+
+        .schema-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .schema-label span {
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .copy-btn {
+            background: var(--gray-800);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--gray-900);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        pre {
+            background: var(--gray-900);
+            color: #E5E7EB;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .page-url {
+            background: var(--gray-100);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            direction: ltr;
+            color: var(--gray-600);
+        }
+
+        .info-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-box.warning {
+            background: #FEF3C7;
+            border-right: 4px solid #F59E0B;
+        }
+
+        .info-box.success {
+            background: #D1FAE5;
+            border-right: 4px solid #10B981;
+        }
+
+        .info-box.info {
+            background: #DBEAFE;
+            border-right: 4px solid #3B82F6;
+        }
+
+        .info-box.danger {
+            background: #FEE2E2;
+            border-right: 4px solid #EF4444;
+        }
+
+        .info-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            padding: 14px 16px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .summary-table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .summary-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+
+        .status-dot.yes {
+            background: var(--success);
+        }
+
+        .status-dot.no {
+            background: var(--danger);
+        }
+
+        .faq-item {
+            background: var(--gray-50);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-right: 4px solid var(--gray-300);
+        }
+
+        .faq-item.manpower {
+            border-right-color: var(--manpower-primary);
+        }
+
+        .faq-item.experis {
+            border-right-color: var(--experis-primary);
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .faq-answer {
+            color: var(--gray-600);
+            line-height: 1.7;
+        }
+
+        .priority-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            background: var(--gray-50);
+            border-radius: 12px;
+        }
+
+        .priority-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gray-800);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .priority-item.high .priority-number {
+            background: var(--success);
+        }
+
+        .priority-item.medium .priority-number {
+            background: var(--warning);
+        }
+
+        .nextjs-code {
+            background: #1E1E1E;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .code-header {
+            background: #2D2D2D;
+            padding: 12px 16px;
+            color: #9CA3AF;
+            font-size: 0.85rem;
+            font-family: monospace;
+            direction: ltr;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-300);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-tab {
+                padding: 15px 20px;
+                font-size: 0.95rem;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            pre {
+                font-size: 0.75rem;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="lang-toggle" onclick="toggleLanguage()" id="langBtn">🌐 English</button>
+        <h1 data-he="מדריך יישום סכמות" data-en="Schema Implementation Guide">מדריך יישום סכמות</h1>
+        <p data-he="סכמות WebSite + SearchAction + FAQ לאתרי מנפאואר ואקספריס ישראל" data-en="WebSite + SearchAction + FAQ Schemas for Manpower & Experis Israel">סכמות WebSite + SearchAction + FAQ לאתרי מנפאואר ואקספריס ישראל</p>
+        <div class="meta-info">
+            <span class="meta-item" data-he="גרסה: 2.0 סופי" data-en="Version: 2.0 Final">גרסה: 2.0 סופי</span>
+            <span class="meta-item" data-he="נוצר: 6 בינואר 2026" data-en="Created: January 6, 2026">נוצר: 6 בינואר 2026</span>
+            <span class="meta-item" data-he="פלטפורמה: Next.js" data-en="Platform: Next.js">פלטפורמה: Next.js</span>
+            <span class="meta-item" data-he="איכות עברית: 10/10" data-en="Hebrew Quality: 10/10">איכות עברית: 10/10</span>
+        </div>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab summary active" onclick="showTab('summary')" data-he="סיכום מנהלים" data-en="Executive Summary">סיכום מנהלים</div>
+        <div class="nav-tab manpower" onclick="showTab('manpower')" data-he="מנפאואר ישראל" data-en="Manpower Israel">מנפאואר ישראל</div>
+        <div class="nav-tab experis" onclick="showTab('experis')" data-he="אקספריס ישראל" data-en="Experis Israel">אקספריס ישראל</div>
+    </div>
+
+    <div class="container">
+        <!-- SUMMARY TAB -->
+        <div id="summary" class="tab-content active">
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="תוצאות סקירת האתרים" data-en="Site Audit Results">תוצאות סקירת האתרים</h3>
+                </div>
+
+                <div class="info-box danger">
+                    <span class="info-icon">&#9888;</span>
+                    <div>
+                        <strong data-he="לא קיימות סכמות JSON-LD" data-en="NO JSON-LD SCHEMAS EXIST">לא קיימות סכמות JSON-LD</strong><br>
+                        <span data-he="לאתרי מנפאואר ואקספריס אין כרגע סכמות מובנות. כל הסכמות במדריך זה צריכות להיות מיושמות מאפס." data-en="Both Manpower and Experis sites currently have NO structured data schemas. All schemas in this guide need to be implemented from scratch.">לאתרי מנפאואר ואקספריס אין כרגע סכמות מובנות. כל הסכמות במדריך זה צריכות להיות מיושמות מאפס.</span>
+                    </div>
+                </div>
+
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="אתר" data-en="Website">אתר</th>
+                            <th data-he="סכמת WebSite" data-en="WebSite Schema">סכמת WebSite</th>
+                            <th>SearchAction</th>
+                            <th data-he="סכמת FAQ" data-en="FAQ Schema">סכמת FAQ</th>
+                            <th data-he="פעולה נדרשת" data-en="Action Required">פעולה נדרשת</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>www.manpower.co.il</strong></td>
+                            <td><span class="status-dot no"></span> <span data-he="חסר" data-en="Missing">חסר</span></td>
+                            <td><span class="badge with-searchaction" data-he="רלוונטי" data-en="APPLICABLE">רלוונטי</span></td>
+                            <td><span class="status-dot no"></span> <span data-he="חסר" data-en="Missing">חסר</span></td>
+                            <td data-he="הוסיפו סכמות WebSite + SearchAction + FAQ (6 עמודים)" data-en="Add WebSite + SearchAction + FAQ schemas (6 pages)">הוסיפו סכמות WebSite + SearchAction + FAQ (6 עמודים)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>www.experis.co.il</strong></td>
+                            <td><span class="status-dot no"></span> <span data-he="חסר" data-en="Missing">חסר</span></td>
+                            <td><span class="badge with-searchaction" data-he="רלוונטי" data-en="APPLICABLE">רלוונטי</span></td>
+                            <td><span class="status-dot no"></span> <span data-he="חסר" data-en="Missing">חסר</span></td>
+                            <td data-he="הוסיפו סכמות WebSite + SearchAction + FAQ (4 עמודים)" data-en="Add WebSite + SearchAction + FAQ schemas (4 pages)">הוסיפו סכמות WebSite + SearchAction + FAQ (4 עמודים)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="מטריצת החלטה - SearchAction" data-en="SearchAction Decision Matrix">מטריצת החלטה - SearchAction</h3>
+                </div>
+
+                <div class="info-box warning">
+                    <span class="info-icon">&#9888;</span>
+                    <div>
+                        <strong data-he="הודעת Google:" data-en="Google Deprecation Notice:">הודעת Google:</strong> <span data-he="Google ביטלה את תיבת החיפוש בסיטלינקס ב-21 בנובמבר 2024. SearchAction לא יפעיל תכונות גלויות בחיפוש Google אבל גם לא יגרום לשגיאות. בטוח ליישם היכן שמתאים." data-en="Google deprecated sitelinks search box on November 21, 2024. SearchAction won't trigger visible features in Google Search but won't cause errors either. Safe to implement where appropriate.">Google ביטלה את תיבת החיפוש בסיטלינקס ב-21 בנובמבר 2024. SearchAction לא יפעיל תכונות גלויות בחיפוש Google אבל גם לא יגרום לשגיאות. בטוח ליישם היכן שמתאים.</span>
+                    </div>
+                </div>
+
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="קריטריון" data-en="Criteria">קריטריון</th>
+                            <th>Manpower</th>
+                            <th>Experis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-he="יש שדה חיפוש גלוי" data-en="Has visible search input field">יש שדה חיפוש גלוי</td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן" data-en="Yes">כן</span></td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן" data-en="Yes">כן</span></td>
+                        </tr>
+                        <tr>
+                            <td data-he="משתמש בפרמטר חיפוש טקסט חופשי" data-en="Uses free-text search parameter">משתמש בפרמטר חיפוש טקסט חופשי</td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן (?search=)" data-en="Yes (?search=)">כן (?search=)</span></td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן (?search=)" data-en="Yes (?search=)">כן (?search=)</span></td>
+                        </tr>
+                        <tr>
+                            <td data-he="חיפוש מילות מפתח חופשי עובד" data-en="Free-text keyword search works">חיפוש מילות מפתח חופשי עובד</td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן" data-en="Yes">כן</span></td>
+                            <td><span class="status-dot yes"></span> <span data-he="כן" data-en="Yes">כן</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="לכלול SearchAction?" data-en="Include SearchAction?">לכלול SearchAction?</strong></td>
+                            <td><span class="badge with-searchaction" data-he="כן" data-en="YES">כן</span></td>
+                            <td><span class="badge with-searchaction" data-he="כן" data-en="YES">כן</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סדר עדיפויות ליישום" data-en="Implementation Priority">סדר עדיפויות ליישום</h3>
+                </div>
+
+                <div class="priority-list">
+                    <div class="priority-item high">
+                        <span class="priority-number">1</span>
+                        <div>
+                            <strong>עמוד הבית אקספריס</strong> - <span data-he="סכמות WebSite + SearchAction + FAQ" data-en="WebSite + SearchAction + FAQ schema">סכמות WebSite + SearchAction + FAQ</span><br>
+                            <small style="color: var(--gray-600);">מאמץ נמוך, השפעה גבוהה - יש אקורדיון FAQ קיים</small>
+                        </div>
+                    </div>
+                    <div class="priority-item high">
+                        <span class="priority-number">2</span>
+                        <div>
+                            <strong>אקדמיית אקספריס</strong> - <span data-he="סכמת FAQ לתוכן קיים" data-en="FAQ schema for existing content">סכמת FAQ לתוכן קיים</span><br>
+                            <small style="color: var(--gray-600);">מאמץ נמוך, השפעה גבוהה - יש 7 שאלות FAQ</small>
+                        </div>
+                    </div>
+                    <div class="priority-item high">
+                        <span class="priority-number">3</span>
+                        <div>
+                            <strong>עמוד הבית מנפאואר</strong> - <span data-he="סכמות WebSite + SearchAction + FAQ" data-en="WebSite + SearchAction + FAQ schema">סכמות WebSite + SearchAction + FAQ</span><br>
+                            <small style="color: var(--gray-600);" data-he="מאמץ נמוך, השפעה גבוהה" data-en="LOW effort, HIGH impact">מאמץ נמוך, השפעה גבוהה</small>
+                        </div>
+                    </div>
+                    <div class="priority-item medium">
+                        <span class="priority-number">4</span>
+                        <div>
+                            <strong>עמוד שאלות נפוצות מנפאואר</strong> - <span data-he="הוסיפו סכמה ל-16 שאלות קיימות" data-en="Add schema to existing 16 items">הוסיפו סכמה ל-16 שאלות קיימות</span><br>
+                            <small style="color: var(--gray-600);">מאמץ נמוך, השפעה בינונית</small>
+                        </div>
+                    </div>
+                    <div class="priority-item medium">
+                        <span class="priority-number">5</span>
+                        <div>
+                            <strong>מחשבון שכר מנפאואר</strong> - <span data-he="צרו FAQ + סכמה" data-en="Create FAQ + schema">צרו FAQ + סכמה</span><br>
+                            <small style="color: var(--gray-600);">מאמץ בינוני, כוונת משתמש גבוהה</small>
+                        </div>
+                    </div>
+                    <div class="priority-item">
+                        <span class="priority-number">6</span>
+                        <div>
+                            <strong>כל שאר העמודים</strong> - <span data-he="צרו תוכן FAQ + סכמה" data-en="Create FAQ content + schema">צרו תוכן FAQ + סכמה</span><br>
+                            <small style="color: var(--gray-600);">מאמץ בינוני - לפי יכולת</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סיכום כיסוי עמודים" data-en="Pages Coverage Summary">סיכום כיסוי עמודים</h3>
+                </div>
+
+                <h4 style="margin: 20px 0 15px; color: var(--manpower-primary);" data-he="מנפאואר ישראל (6 עמודים)" data-en="Manpower Israel (6 Pages)">מנפאואר ישראל (6 עמודים)</h4>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="עמוד" data-en="Page">עמוד</th>
+                            <th data-he="כתובת" data-en="URL">כתובת</th>
+                            <th>WebSite</th>
+                            <th data-he="שאלות FAQ" data-en="FAQ Items">שאלות FAQ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-he="עמוד הבית" data-en="Homepage">עמוד הבית</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/</td>
+                            <td><span class="badge homepage">YES</span></td>
+                            <td>5 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="עמוד שאלות נפוצות" data-en="FAQ Page">עמוד שאלות נפוצות</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/frequently-asked-questions/faq</td>
+                            <td>-</td>
+                            <td>8 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="אודות" data-en="About Us">אודות</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/about-us/about-us</td>
+                            <td>-</td>
+                            <td>5 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="מעסיקים" data-en="Employers">מעסיקים</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/employers/employers</td>
+                            <td>-</td>
+                            <td>5 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="מחשבון שכר" data-en="Salary Calculator">מחשבון שכר</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/salary-calculator</td>
+                            <td>-</td>
+                            <td>5 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="מקצועות" data-en="Professions">מקצועות</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/professions/professions</td>
+                            <td>-</td>
+                            <td>4 items</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 30px 0 15px; color: var(--experis-primary);" data-he="אקספריס ישראל (4 עמודים)" data-en="Experis Israel (4 Pages)">אקספריס ישראל (4 עמודים)</h4>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="עמוד" data-en="Page">עמוד</th>
+                            <th data-he="כתובת" data-en="URL">כתובת</th>
+                            <th>WebSite</th>
+                            <th>SearchAction</th>
+                            <th data-he="שאלות FAQ" data-en="FAQ Items">שאלות FAQ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-he="עמוד הבית" data-en="Homepage">עמוד הבית</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/</td>
+                            <td><span class="badge homepage">YES</span></td>
+                            <td><span class="badge with-searchaction">YES</span></td>
+                            <td>6 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="האקדמיה" data-en="Academy">האקדמיה</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/service/experis-academy</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>7 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="אודות" data-en="About Us">אודות</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/about-us</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>5 items</td>
+                        </tr>
+                        <tr>
+                            <td data-he="שירותים" data-en="Services">שירותים</td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/our-services/services</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>5 items</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ADDITIONAL HIGH-TRAFFIC PAGES ANALYSIS -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="ניתוח עמודים בעלי תנועה גבוהה" data-en="Additional High-Traffic Pages Analysis">ניתוח עמודים בעלי תנועה גבוהה</h3>
+                    <span class="badge high-priority" data-he="גילוי חדש" data-en="NEW DISCOVERY">גילוי חדש</span>
+                </div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong data-he="עמודים נוספים שזוהו:" data-en="Additional Pages Identified:">עמודים נוספים שזוהו:</strong> <span data-he="בהתבסס על ניתוח תנועה אורגנית, העמודים הבאים הם מועמדים בעדיפות גבוהה ליישום FAQ." data-en="Based on organic traffic analysis, the following pages are high-priority candidates for FAQ implementation.">בהתבסס על ניתוח תנועה אורגנית, העמודים הבאים הם מועמדים בעדיפות גבוהה ליישום FAQ.</span>
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px; color: var(--manpower-primary);">מנפאואר - עמודים נוספים</h4>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="עמוד" data-en="Page">עמוד</th>
+                            <th data-he="כתובת" data-en="URL">כתובת</th>
+                            <th data-he="יש FAQ?" data-en="Has FAQ?">יש FAQ?</th>
+                            <th data-he="המלצה" data-en="Recommendation">המלצה</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong data-he="חיפוש משרות" data-en="Job Search">חיפוש משרות</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/search</td>
+                            <td><span class="status-dot no"></span> <span data-he="לא" data-en="No">לא</span></td>
+                            <td><span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span> - High traffic page</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TBO מיקור חוץ</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/employers/tbo</td>
+                            <td><span class="status-dot yes"></span> Yes (4 items)</td>
+                            <td>הוסיפו סכמה בלבד</td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="עמוד יצירת קשר" data-en="Contact Page">עמוד יצירת קשר</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/contact-us</td>
+                            <td><span class="status-dot no"></span> <span data-he="לא" data-en="No">לא</span></td>
+                            <td>צרו FAQ + סכמה</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin: 30px 0 15px; color: var(--experis-primary);">אקספריס - עמודים נוספים</h4>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th data-he="עמוד" data-en="Page">עמוד</th>
+                            <th data-he="כתובת" data-en="URL">כתובת</th>
+                            <th data-he="יש FAQ?" data-en="Has FAQ?">יש FAQ?</th>
+                            <th data-he="המלצה" data-en="Recommendation">המלצה</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong data-he="שירותי סייבר" data-en="Cyber Service">שירותי סייבר</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/service/experis-cyber</td>
+                            <td><span class="status-dot yes"></span> Yes (7 items)</td>
+                            <td>הוסיפו סכמה בלבד</td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="גיוס IT" data-en="IT Resourcing">גיוס IT</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/service/experis-it-resourcing</td>
+                            <td><span class="status-dot yes"></span> Yes (7 items)</td>
+                            <td>הוסיפו סכמה בלבד</td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="מומחיות סייבר" data-en="Cyber Expertise">מומחיות סייבר</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/expertise/cyber-security</td>
+                            <td><span class="status-dot yes"></span> Yes (6 items)</td>
+                            <td>הוסיפו סכמה בלבד</td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="ענן ותשתיות" data-en="Cloud & Infrastructure">ענן ותשתיות</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/expertise/cloud-and-infrastructure</td>
+                            <td><span class="status-dot yes"></span> Yes (6 items)</td>
+                            <td>הוסיפו סכמה בלבד</td>
+                        </tr>
+                        <tr>
+                            <td><strong data-he="עמוד יצירת קשר" data-en="Contact Page">עמוד יצירת קשר</strong></td>
+                            <td style="direction:ltr; text-align:left; font-family:monospace; font-size:0.85rem;">/contact-us</td>
+                            <td><span class="status-dot no"></span> <span data-he="לא" data-en="No">לא</span></td>
+                            <td>צרו FAQ + סכמה</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MANPOWER TAB -->
+        <div id="manpower" class="tab-content">
+            <div class="client-header manpower">
+                <h2>מנפאואר ישראל</h2>
+                <p class="url">www.manpower.co.il</p>
+            </div>
+
+            <!-- MANPOWER WEBSITE SCHEMA -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת WebSite" data-en="WebSite Schema">סכמת WebSite</h3>
+                    <span class="badge homepage" data-he="עמוד הבית בלבד" data-en="Homepage Only">עמוד הבית בלבד</span>
+                    <span class="badge with-searchaction" data-he="עם SearchAction" data-en="WITH SearchAction">עם SearchAction</span>
+                </div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="SearchAction רלוונטי:" data-en="SearchAction Applicable:">SearchAction רלוונטי:</strong> <span data-he="מנפאואר ואקספריס בנויים על אותה מערכת Next.js + WordPress CMS. לשני האתרים יש חיפוש טקסט חופשי עם פרמטר ?search= שעובד באופן זהה." data-en="Manpower and Experis are built on the same Next.js + WordPress CMS system. Both sites have free-text search with ?search= parameter that works identically.">מנפאואר ואקספריס בנויים על אותה מערכת Next.js + WordPress CMS. לשני האתרים יש חיפוש טקסט חופשי עם פרמטר ?search= שעובד באופן זהה.</span>
+                    </div>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת WebSite + SearchAction בפורמט JSON-LD" data-en="WebSite + SearchAction Schema JSON-LD">סכמת WebSite + SearchAction בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-website')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-website">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://www.manpower.co.il/#website",
+  "name": "Manpower Israel",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "description": "חברת כוח אדם והשמה מובילה בישראל - 65 שנות ניסיון, 8,000 השמות בשנה, פתרונות תעסוקה לעובדים ומעסיקים",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://www.manpower.co.il/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.manpower.co.il/search?search={search_term_string}"
+    },
+    "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+    }
+  }
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER HOMEPAGE FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד הבית" data-en="Homepage FAQ Schema">סכמת FAQ - עמוד הבית</h3>
+                    <span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/</div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong data-he="המלצה:" data-en="Recommendation:">המלצה:</strong> <span data-he="הוסיפו אזור שאלות נפוצות לעמוד הבית עם תוכן זה. כרגע אין FAQ בעמוד הבית." data-en="Add FAQ section to homepage with this content. Currently no FAQ exists on homepage.">הוסיפו אזור שאלות נפוצות לעמוד הבית עם תוכן זה. כרגע אין FAQ בעמוד הבית.</span>
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;">תצוגה מקדימה של תוכן FAQ:</h4>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">מה עושה מנפאואר ישראל?</div>
+                    <div class="faq-answer">מנפאואר ישראל היא חברת השמה ותעסוקה מובילה הפועלת בארץ כבר 65 שנה. אנחנו מחברים בין מועמדים מוכשרים לבין אלפי ארגונים מעסיקים – מסטארטאפים ועד חברות ענק – ומציעים מגוון פתרונות תעסוקה: השמה קבועה, העסקה גמישה, שירותי שכר ומיקור חוץ של משאבי אנוש.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">למה לחפש עבודה דרך מנפאואר?</div>
+                    <div class="faq-answer">כי דרכנו תגיעו למשרות שפשוט לא קיימות במקום אחר. עם כ-2,000 ארגונים לקוחות וכ-8,000 השמות מוצלחות בשנה, אנחנו פותחים דלתות שקשה לפתוח לבד. בנוסף, תקבלו ליווי אישי מיועצי קריירה מנוסים שמכירים את השוק לעומק ויעזרו לכם למצוא בדיוק את מה שאתם מחפשים.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">איך מוצאים משרה באתר מנפאואר?</div>
+                    <div class="faq-answer">פשוט מאוד – היכנסו ללוח המשרות שלנו וסננו לפי תחום מקצועי, אזור גיאוגרפי ורמת ניסיון. המערכת תציג לכם את כל המשרות הרלוונטיות, ותוכלו להגיש מועמדות בקליק אחד. מומלץ גם להעלות קורות חיים מעודכנים כדי שהמגייסים שלנו יוכלו ליצור איתכם קשר יזום.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">אילו סוגי משרות מציעה מנפאואר?</div>
+                    <div class="faq-answer">מנפאואר מציעה משרות בכל הרמות ובמגוון רחב של תחומים: הייטק, פיננסים, לוגיסטיקה, שירות לקוחות, משאבי אנוש, מכירות, הנדסה ועוד. יש לנו משרות למתחילים ללא ניסיון, לבעלי ניסיון בינוני ולמנהלים בכירים – בתעסוקה מלאה, חלקית או זמנית – כל אחד ימצא את מה שמתאים לו.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">האם יש עלות עבור דורשי עבודה?</div>
+                    <div class="faq-answer">לא, השירות לדורשי עבודה חינמי לגמרי. אנחנו כאן כדי לעזור לכם למצוא את המשרה הבאה שלכם – בלי שום עלות מצדכם. העמלה שלנו משולמת על ידי הארגון המעסיק.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-homepage-faq')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-homepage-faq">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה עושה מנפאואר ישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מנפאואר ישראל היא חברת ההשמה והתעסוקה המובילה בארץ – כבר 65 שנה ברציפות. אנחנו מחברים אנשים מוכשרים עם אלפי מעסיקים, מסטארטאפים קטנים ועד תאגידי ענק. מה אנחנו מציעים? השמה לתפקידים קבועים, העסקה גמישה לפי צורך, שירותי שכר מלאים ומיקור חוץ של משאבי אנוש."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה לחפש עבודה דרך מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בגלל שאצלנו יש משרות שלא תמצאו בשום מקום אחר. עם 2,000 חברות לקוחות ו-8,000 השמות מוצלחות בשנה, יש לנו גישה לדלתות שקשה לפתוח לבד. וזה לא הכול – תקבלו ליווי צמוד מיועצי קריירה מנוסים שבאמת מכירים את השוק ויעזרו לכם למצוא את המשרה שמתאימה בדיוק לכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מוצאים משרה באתר מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "זה קל – נכנסים ללוח המשרות, מסננים לפי תחום, אזור ורמת ניסיון, והמערכת מציגה את כל מה שרלוונטי. הגשת מועמדות? קליק אחד וזהו. טיפ חשוב: כדאי להעלות קורות חיים מעודכנים כדי שהמגייסים שלנו יוכלו גם ליצור איתכם קשר ביוזמתם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו סוגי משרות מציעה מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש משרות בכל התחומים: הייטק, פיננסים, לוגיסטיקה, שירות לקוחות, משאבי אנוש, מכירות, הנדסה ועוד. ובכל הרמות – ממשרות כניסה למי שרק מתחיל, דרך תפקידים לבעלי ניסיון, ועד משרות ניהול בכירות. משרה מלאה, חלקית או זמנית – פה כל אחד מוצא את מה שמתאים לו."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש עלות עבור דורשי עבודה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ממש לא. השירות לדורשי עבודה חינמי לחלוטין. המטרה שלנו היא לעזור לכם למצוא את המשרה הבאה – בלי שקל מהכיס שלכם. החברות המעסיקות הן אלה שמשלמות לנו."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER FAQ PAGE -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד שאלות נפוצות" data-en="FAQ Page Schema">סכמת FAQ - עמוד שאלות נפוצות</h3>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/frequently-asked-questions/faq</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="תוכן FAQ קיים:" data-en="Existing FAQ Content:">תוכן FAQ קיים:</strong> <span data-he="בעמוד יש 11 שאלות ב-3 קטגוריות - צריך רק להוסיף את הסכמה." data-en="Page has 11 FAQ items in 3 categories - just needs schema markup added.">בעמוד יש 11 שאלות ב-3 קטגוריות - צריך רק להוסיף את הסכמה.</span>
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD (8 שאלות נבחרות)" data-en="FAQ Schema JSON-LD (8 selected items)">סכמת FAQ בפורמט JSON-LD (8 שאלות נבחרות)</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-faq-page')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-faq-page">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך מוצאים עבודה דרך Manpower?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש כמה אפשרויות: לחפש לבד בלוח המשרות שלנו, להעלות קו״ח למאגר ולחכות שמגייסים יפנו אליכם, או להירשם לסוכן החכם שלנו – הוא ישלח לכם משרות שמתאימות בדיוק לפרופיל שלכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה שווה לי לחפש עבודה דרך Manpower?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ראשית – זה בחינם. שנית – אתם מקבלים גישה למשרות שלא מפורסמות בשום מקום אחר. ובנוסף יש ליווי אישי מיועצים שמכינים אתכם לראיונות. עם 65 שנה בשוק ו-8,000 השמות מוצלחות כל שנה, אנחנו יודעים מה אנחנו עושים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך אנחנו עובדים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מהרגע ששולחים קו״ח, יועץ אישי נכנס לתמונה. הוא עוזר להתאים משרות, מכין אתכם לראיונות, ואפילו תומך במשא ומתן על התנאים. בקיצור – שותף לדרך מההתחלה ועד שמתחילים לעבוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו סוגי משרות יש אצלינו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אלפי משרות חדשות עולות לאתר כל יום. יש לכל הרמות – ממתחילים ללא ניסיון ועד מנהלים בכירים. משרות מלאות, חלקיות או זמניות, בכל התחומים ובכל רחבי הארץ."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם השירות כרוך בתשלום?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא, בכלל לא. השירות למחפשי עבודה חינמי לגמרי. אנחנו מקבלים תשלום מהחברות שמגייסות, לא מכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך כותבים קורות חיים טובים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לנו באתר מדריך מפורט לכתיבת קו״ח מנצח, וגם מחולל קורות חיים חינמי שעוזר לבנות קובץ מקצועי תוך דקות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "שלחתי קורות חיים, מה קורה עכשיו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "קו״ח שלכם נשמר במאגר שלנו. ברגע שעולה משרה שמתאימה – יועץ מטעמנו יתקשר. אבל אל תחכו – שווה גם לחפש משרות בעצמכם ולהגיש מועמדות ישירות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מצאתם לי עבודה, האם תמשיכו ללוות אותי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ברור! הקשר לא נגמר כשמתחילים לעבוד. אנחנו פה לכל שאלה, התלבטות או עזרה שתצטרכו גם אחרי ההשמה."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER ABOUT US -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד אודות" data-en="About Us Page FAQ Schema">סכמת FAQ - עמוד אודות</h3>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/about-us/about-us</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-about')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-about">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מתי הוקמה מנפאואר ישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מנפאואר ישראל נוסדה ב-1959 ומאז פועלת ברציפות – כבר 65 שנה. אנחנו חלק מ-ManpowerGroup הבינלאומית, קבוצת כוח האדם הגדולה בעולם עם נוכחות ב-80 מדינות. במהלך השנים צברנו ניסיון רב והבנה עמוקה של שוק העבודה הישראלי על כל גווניו."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היקף הפעילות של מנפאואר בישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מנפאואר היא שחקנית מפתח בשוק התעסוקה הישראלי. אנחנו מעסיקים אלפי עובדים, עובדים עם כ-2,000 ארגונים ומשלימים כ-8,000 השמות מוצלחות כל שנה. הצוות שלנו כולל מאות יועצי גיוס ו-HR שפזורים בכל רחבי הארץ."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו תחומים מנפאואר מתמחה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ההתמחות שלנו מכסה מגוון רחב: משאבי אנוש, פיננסים, לוגיסטיקה ושרשרת אספקה, שירות לקוחות, מכירות ושיווק, הנדסה ותעשייה. בכל תחום יש לנו צוות מומחים שחיים ונושמים את התחום, מכירים את הדרישות ואת השחקנים המובילים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין מנפאואר לאקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שתיהן חלק מאותה קבוצה – ManpowerGroup – אבל כל אחת עם פוקוס אחר. מנפאואר מתמחה בהשמה ותעסוקה במגוון רחב של תחומים, ואילו Experis מתמקדת בעולם הטכנולוגיה: גיוס אנשי הייטק, שירותי IT מנוהלים והכשרות טק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "היכן ממוקמים משרדי מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המשרדים הראשיים שלנו נמצאים בתל אביב ובירושלים, אבל הפריסה שלנו ארצית. יש לנו יועצים ונציגים בכל הארץ – מהצפון הרחוק ועד אילת – כי חשוב לנו להיות קרובים אליכם ולהכיר את שוק העבודה המקומי שלכם."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER EMPLOYERS -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד מעסיקים" data-en="Employers Page FAQ Schema">סכמת FAQ - עמוד מעסיקים</h3>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/employers/employers</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-employers')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-employers">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו שירותים מנפאואר מציעה למעסיקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לנו מעטפת שירותים מלאה לארגונים: גיוס והשמה לתפקידים קבועים, העסקה גמישה לפרויקטים או תקופות עומס, שירותי שכר מלאים, מיקור חוץ של תהליכי HR, וייעוץ ארגוני. אפשר לקחת שירות בודד או לבנות חבילה מותאמת אישית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרון בגיוס עובדים דרך מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לגייס דרכנו זה לחסוך זמן ומשאבים יקרים. אנחנו לוקחים את כל התהליך על עצמנו – מפרסום המשרה ועד ראיונות סופיים. הגישה שלנו למאגר מועמדים ענק, בשילוב 65 שנות ניסיון, מאפשרת לנו להביא לכם אנשים מתאימים ואיכותיים במהירות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "תוך כמה זמן אפשר לאייש משרה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי במשרה. תפקידים בתחומים נפוצים? לפעמים עניין של ימים עד שבועיים. משרות בכירות או מתמחות יותר לוקחות 3-6 שבועות. אנחנו מתחייבים לאיכות, לא רק למהירות – כי מועמד אחד מעולה שווה יותר מעשרה בינוניים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו שירותי משאבי אנוש נוספים מנפאואר מספקת?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בנוסף לגיוס יש לנו עוד הרבה: ניהול שכר מלא, ייעוץ בדיני עבודה, בניית תהליכי הערכת עובדים, הדרכות למנהלים וליווי ארגוני בתקופות שינוי וצמיחה. בעצם, אנחנו יכולים להיות מחלקת ה-HR החיצונית שלכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים לעבוד עם מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "משאירים פרטים בטופס או מתקשרים, ויועץ עסקי יחזור אליכם תוך יום עסקים. בפגישה קצרה נבין מה אתם צריכים, נציג פתרונות רלוונטיים ונתחיל לעבוד. הייעוץ הראשוני? בחינם ובלי התחייבות."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER SALARY CALCULATOR -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - מחשבון שכר" data-en="Salary Calculator Page FAQ Schema">סכמת FAQ - מחשבון שכר</h3>
+                    <span class="badge high-priority" data-he="כוונת משתמש גבוהה" data-en="High User Intent">כוונת משתמש גבוהה</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/salary-calculator</div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong>High Priority:</strong> This page has high user intent. Adding FAQ schema can significantly improve visibility in search results.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-salary')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-salary">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך עובד מחשבון השכר של מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רוצים לדעת כמה באמת נשאר בסוף החודש? פשוט מזינים את השכר ברוטו, והמחשבון מחשב הכול: מס הכנסה, ביטוח לאומי, ביטוח בריאות והפרשות לפנסיה. תוך שניות רואים בדיוק כמה נכנס לחשבון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין שכר ברוטו לשכר נטו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ברוטו זה מה שהמעסיק משלם לפני הניכויים – המספר שכתוב בהסכם. נטו זה מה שמגיע לחשבון בפועל, אחרי שמנכים מסים, ביטוח לאומי ופנסיה. ההפרש? בין 25% ל-40%, תלוי כמה מרוויחים. וכן, זה מפתיע כמעט את כולם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו ניכויים נלקחים בחשבון במחשבון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הכול נלקח בחשבון: מס הכנסה לפי המדרגות העדכניות, נקודות זיכוי, ביטוח לאומי, ביטוח בריאות והפרשות לפנסיה. אפשר גם להוסיף נתונים נוספים כמו ילדים או נסיעות לתוצאה מדויקת עוד יותר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה מדויקות תוצאות המחשבון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התוצאות מאוד קרובות למציאות, אבל זה לא תלוש רשמי. החישוב מבוסס על חקיקה עדכנית, אבל כל מקרה שונה – הסכמים קיבוציים, הטבות מעסיק או קרן השתלמות יכולים לשנות את התמונה. לחישוב סופי ומדויק, כדאי להתייעץ עם חשב שכר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באיזו תדירות מתעדכנים הנתונים במחשבון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המחשבון מתעדכן אוטומטית כל פעם שמשתנים התעריפים – מדרגות מס, ביטוח לאומי וכו׳. בדרך כלל זה בינואר, אבל גם אם יש שינוי באמצע השנה – אנחנו מעדכנים מיד."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER PROFESSIONS -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד מקצועות" data-en="Professions Page FAQ Schema">סכמת FAQ - עמוד מקצועות</h3>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/professions/professions</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-professions')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-professions">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "באילו תחומים מקצועיים מנפאואר מציעה משרות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לנו משרות בכל תחום שתחשבו עליו: הייטק, פיננסים, חשבונאות, HR, לוגיסטיקה, שרשרת אספקה, מכירות, שיווק, שירות לקוחות, הנדסה, תעשייה וייצור. לכל תחום יש צוות מומחים שחי ונושם את השוק הזה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מוצאים משרה בתחום מסוים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "נכנסים ללוח המשרות, בוחרים תחום מקצועי, מסננים לפי אזור ורמת ניסיון – וזהו. רוצים לקבל עדכונים? נרשמים לניוזלטר שלנו ומקבלים התראה ישר למייל ברגע שעולה משרה מתאימה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "יש משרות למי שאין לו ניסיון בתחום?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בטח! יש המון משרות למתחילים ולבוגרים טריים. הרבה מעסיקים דווקא מחפשים אנשים בתחילת הדרך, עם מוטיבציה גבוהה ורצון ללמוד. אפשר לסנן לפי 'ללא ניסיון נדרש' או לפנות ליועצים שלנו להכוונה אישית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה עושים אם התחום שלי לא מופיע ברשימה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גם אם התחום שלכם לא מופיע ברשימה – אל תוותרו. שלחו קו״ח והיועצים שלנו יבדקו התאמה למשרות קיימות או כאלה שעומדות להיפתח. לפעמים הכישורים שלכם מתאימים לתחומים שלא חשבתם עליהם. אפשר גם ליצור קשר ישיר לייעוץ קריירה אישי."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER JOB SEARCH PAGE - NEW HIGH-TRAFFIC -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד חיפוש משרות" data-en="Job Search Page FAQ Schema">סכמת FAQ - עמוד חיפוש משרות</h3>
+                    <span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span>
+                    <span class="badge required">Create Content</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/search</div>
+
+                <div class="info-box warning">
+                    <span class="info-icon">&#9888;</span>
+                    <div>
+                        <strong>High Traffic Page:</strong> Job search is a primary landing page. Adding FAQ content will improve user experience and SEO visibility.
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;">Recommended FAQ Content:</h4>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">איך מחפשים משרה באתר מנפאואר?</div>
+                    <div class="faq-answer">השתמשו בפילטרים כדי לצמצם את החיפוש – בחרו תחום מקצועי, אזור גיאוגרפי ורמת ניסיון. המערכת תציג לכם את כל המשרות הרלוונטיות. לחצו על משרה שמעניינת אתכם כדי לקרוא את הפרטים המלאים ולהגיש מועמדות.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">האם אפשר לשמור חיפושים ולקבל התראות?</div>
+                    <div class="faq-answer">כן! לאחר שמצאתם את הקריטריונים המתאימים, הירשמו לסוכן החכם שלנו. תקבלו התראה למייל ברגע שנפתחת משרה חדשה שמתאימה לפרופיל שהגדרתם – בלי לחזור לאתר כל יום.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">כמה זמן לוקח לקבל תשובה אחרי הגשת מועמדות?</div>
+                    <div class="faq-answer">בדרך כלל יועץ מטעמנו ייצור איתכם קשר תוך 3-5 ימי עסקים אם הפרופיל שלכם מתאים למשרה. אם לא קיבלתם מענה, מומלץ לבדוק משרות נוספות או לפנות אלינו ישירות.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">מה לעשות אם אין משרות שמתאימות לי?</div>
+                    <div class="faq-answer">העלו קורות חיים מעודכנים למאגר שלנו והירשמו לסוכן החכם. כשתיפתח משרה שמתאימה לפרופיל שלכם, נדאג ליצור איתכם קשר. חשוב לשמור על פרטי קשר עדכניים.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">יש משרות שלא מפורסמות באתר?</div>
+                    <div class="faq-answer">כן, חלק מהמשרות הן בלעדיות ולא מפורסמות בפומבי. לכן כדאי להעלות קורות חיים גם אם לא מצאתם משרה ספציפית – היועצים שלנו יכולים להציע לכם הזדמנויות שלא תמצאו במקום אחר.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-search')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-search">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך מחפשים משרה באתר מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הפילטרים עושים את העבודה: בוחרים תחום מקצועי, אזור ורמת ניסיון, והמערכת מציגה את כל מה שרלוונטי. רואים משהו מעניין? לוחצים, קוראים את הפרטים ומגישים מועמדות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם אפשר לשמור חיפושים ולקבל התראות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן! מגדירים את מה שמחפשים ונרשמים לסוכן החכם. מעכשיו תקבלו התראה ישר למייל כשעולה משרה מתאימה – בלי צורך להיכנס לאתר כל יום לבדוק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח לקבל תשובה אחרי הגשת מועמדות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אם הפרופיל מתאים, יועץ מטעמנו יתקשר תוך 3-5 ימי עסקים. לא קיבלתם מענה? שווה לבדוק משרות נוספות או לפנות אלינו ישירות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה לעשות אם אין משרות שמתאימות לי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שלחו קו״ח מעודכן והירשמו לסוכן החכם. ברגע שתעלה משרה שמתאימה לפרופיל – ניצור קשר. רק תוודאו שפרטי הקשר עדכניים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "יש משרות שלא מפורסמות באתר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בהחלט. יש לנו משרות בלעדיות שלא מפורסמות בשום מקום. לכן שווה לשלוח קו״ח גם אם לא מצאתם משהו ספציפי – היועצים שלנו יכולים להציע הזדמנויות שפשוט לא קיימות במקום אחר."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER TBO PAGE - EXISTING FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד TBO מיקור חוץ" data-en="TBO Outsourcing Page FAQ Schema">סכמת FAQ - עמוד TBO מיקור חוץ</h3>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/employers/tbo</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="תוכן FAQ קיים:" data-en="Existing FAQ Content:">תוכן FAQ קיים:</strong> Page has 4 FAQ items in accordion - just needs schema markup added.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span>FAQ Schema JSON-LD (from existing content)</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-tbo')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-tbo">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה TBO (מיקור חוץ מבוסס זמן)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TBO זה מודל העסקה גמיש: מנפאואר מספקת לכם עובדים מיומנים על בסיס שעות או ימי עבודה. העובדים שייכים אלינו מבחינת העסקה, אבל עובדים אצלכם. אתם משלמים רק על מה שצורכים – בלי התחייבויות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי כדאי לשקול מודל TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כשצריך גמישות: עומסים עונתיים, פרויקט עם תאריך סיום, מילוי מקום בזמן גיוס קבוע, או כשרוצים לבחון התאמה לפני קליטה ישירה. ככה מתאימים את כוח האדם בדיוק לצרכים של העסק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרון של TBO על גיוס ישיר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גמישות מלאה וחיסכון בכאב ראש. אתם לא מתעסקים עם שכר, ביטוחים, זכויות סוציאליות – מנפאואר מטפלת בהכול. צריכים להגדיל או להקטין צוות? פשוט וללא עלויות פיטורין."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו תחומים מנפאואר מספקת עובדי TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בכל התחומים: שירות לקוחות, לוגיסטיקה, מחסנים, HR, פיננסים, חשבונאות, מכירות, תמיכה טכנית, עבודות משרד ועוד. בכל תחום יש לנו מאגר של מועמדים מאומתים ומיומנים שמוכנים להתחיל."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER CONTACT PAGE - NEW -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד יצירת קשר" data-en="Contact Page FAQ Schema">סכמת FAQ - עמוד יצירת קשר</h3>
+                    <span class="badge required">Create Content</span>
+                </div>
+
+                <div class="page-url">https://www.manpower.co.il/contact-us</div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong data-he="המלצה:" data-en="Recommendation:">המלצה:</strong> Add FAQ section to help users find the right contact method quickly.
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;">Recommended FAQ Content:</h4>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">איך יוצרים קשר עם מנפאואר?</div>
+                    <div class="faq-answer">יש כמה דרכים: מילוי טופס יצירת קשר באתר, שיחה טלפונית למוקד השירות, או ביקור באחד מהסניפים שלנו. אנחנו מתחייבים לחזור לכל פונה תוך יום עסקים.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">מהן שעות הפעילות של מנפאואר?</div>
+                    <div class="faq-answer">משרדינו פתוחים בימים א'-ה' בין השעות 08:30-17:30. מוקד השירות הטלפוני פעיל באותן שעות. ניתן להשאיר הודעה בטופס יצירת הקשר בכל שעה ונחזור אליכם ביום העסקים הקרוב.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">היכן נמצאים משרדי מנפאואר?</div>
+                    <div class="faq-answer">המשרדים הראשיים שלנו ממוקמים בתל אביב ובירושלים. יש לנו גם נציגויות וסניפים בפריסה ארצית – בצפון, במרכז ובדרום. ניתן לתאם פגישה מראש באמצעות טופס יצירת הקשר.</div>
+                </div>
+
+                <div class="faq-item manpower">
+                    <div class="faq-question">לאן פונים מועמדים ולאן מעסיקים?</div>
+                    <div class="faq-answer">מועמדים המחפשים עבודה – השאירו פרטים בטופס או העלו קורות חיים ישירות ללוח המשרות. מעסיקים המחפשים עובדים – מלאו את טופס יצירת הקשר למעסיקים ויועץ עסקי יחזור אליכם.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'manpower-contact')">העתק סכמה</button>
+                    </div>
+                    <pre id="manpower-contact">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך יוצרים קשר עם מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כמה אפשרויות: טופס באתר, טלפון למוקד, או ביקור באחד הסניפים. מתחייבים לחזור לכל פונה תוך יום עסקים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהן שעות הפעילות של מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ימים א'-ה', 08:30-17:30. מוקד הטלפון פעיל באותן שעות. אפשר להשאיר הודעה בטופס בכל זמן – נחזור ביום העסקים הקרוב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "היכן נמצאים משרדי מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המשרדים הראשיים שלנו ממוקמים בתל אביב ובירושלים. יש לנו גם נציגויות וסניפים בפריסה ארצית – בצפון, במרכז ובדרום. ניתן לתאם פגישה מראש באמצעות טופס יצירת הקשר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "לאן פונים מועמדים ולאן מעסיקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מועמדים המחפשים עבודה – השאירו פרטים בטופס או העלו קורות חיים ישירות ללוח המשרות. מעסיקים המחפשים עובדים – מלאו את טופס יצירת הקשר למעסיקים ויועץ עסקי יחזור אליכם."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- MANPOWER IMPLEMENTATION CHECKLIST -->
+            <div class="section">
+                <div class="section-title">
+                    <h3>Implementation Checklist - Manpower</h3>
+                </div>
+
+                <ul class="checklist">
+                    <li><span class="checkbox"></span> Homepage - Add WebSite schema</li>
+                    <li><span class="checkbox"></span> Homepage - Add FAQ schema (5 items) + visible FAQ content</li>
+                    <li><span class="checkbox"></span> FAQ Page - Add FAQ schema to existing content (8 items)</li>
+                    <li><span class="checkbox"></span> About Us - Add FAQ content + schema (5 items)</li>
+                    <li><span class="checkbox"></span> Employers - Add FAQ content + schema (5 items)</li>
+                    <li><span class="checkbox"></span> Salary Calculator - Add FAQ content + schema (5 items)</li>
+                    <li><span class="checkbox"></span> Professions - Add FAQ content + schema (4 items)</li>
+                    <li><span class="checkbox"></span> <strong>חיפוש משרות</strong> - Add FAQ content + schema (5 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>TBO Page</strong> - Add FAQ schema to existing (4 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>עמוד יצירת קשר</strong> - Add FAQ content + schema (4 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> Test all pages with Google Rich Results Test</li>
+                    <li><span class="checkbox"></span> Verify schema appears in page source</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- EXPERIS TAB -->
+        <div id="experis" class="tab-content">
+            <div class="client-header experis">
+                <h2>אקספריס ישראל</h2>
+                <p class="url">www.experis.co.il</p>
+            </div>
+
+            <!-- EXPERIS WEBSITE SCHEMA -->
+            <div class="section">
+                <div class="section-title">
+                    <h3>WebSite Schema + SearchAction</h3>
+                    <span class="badge homepage" data-he="עמוד הבית בלבד" data-en="Homepage Only">עמוד הבית בלבד</span>
+                    <span class="badge with-searchaction" data-he="עם SearchAction" data-en="WITH SearchAction">עם SearchAction</span>
+                </div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong>SearchAction Appropriate:</strong> Experis has visible free-text search that accepts keyword input (e.g., "Full Stack", "DevOps") and uses the ?search= URL parameter.
+                    </div>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת WebSite + SearchAction בפורמט JSON-LD" data-en="WebSite + SearchAction Schema JSON-LD">סכמת WebSite + SearchAction בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-website')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-website">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://www.experis.co.il/#website",
+  "name": "Experis Israel",
+  "alternateName": "אקספריס ישראל",
+  "url": "https://www.experis.co.il/",
+  "description": "גיוס והשמה לתפקידים טכנולוגיים - משרות הייטק, פיתוח תוכנה, DevOps, סייבר, הכשרות מקצועיות",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://www.experis.co.il/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.experis.co.il/search?search={search_term_string}"
+    },
+    "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+    }
+  }
+}</pre>
+                </div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong>Test SearchAction URL:</strong><br>
+                        <code style="direction:ltr; display:block; margin-top:5px;">https://www.experis.co.il/search?search=Full+Stack</code>
+                        <code style="direction:ltr; display:block; margin-top:5px;">https://www.experis.co.il/search?search=DevOps</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPERIS HOMEPAGE FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד הבית" data-en="Homepage FAQ Schema">סכמת FAQ - עמוד הבית</h3>
+                    <span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong>Existing FAQ Accordion:</strong> Homepage has 6 FAQ items in accordion - just needs schema markup.
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;">תצוגה מקדימה של תוכן FAQ:</h4>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">למה כדאי לחפש עבודה בהייטק דרך אקספריס?</div>
+                    <div class="faq-answer">אקספריס היא לא עוד חברת השמה – אנחנו המומחים של עולם הטכנולוגיה. עם נוכחות ב-54 מדינות וקשרים עמוקים עם חברות הטק המובילות בישראל ובעולם, אנחנו פותחים דלתות שקשה לפתוח לבד.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">אילו סוגי משרות טכנולוגיות מציעה אקספריס?</div>
+                    <div class="faq-answer">אנחנו מגייסים לכל התחומים בעולם הטק: מפתחי תוכנה בכל השפות והפלטפורמות, DevOps ו-Cloud, אבטחת מידע וסייבר, Data Science ו-AI, אנליסטים, מנהלי פרויקטים טכנולוגיים, ארכיטקטים, QA, ועוד.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">איך מתחילים תהליך גיוס עם אקספריס?</div>
+                    <div class="faq-answer">הדרך הקלה ביותר היא לחפש משרות באתר ולהגיש מועמדות ישירות, או להעלות קורות חיים מעודכנים למאגר שלנו. גייס מתחום ההתמחות שלכם ייצור איתכם קשר.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-homepage-faq')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-homepage-faq">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "למה כדאי לחפש עבודה בהייטק דרך אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אקספריס היא לא עוד חברת השמה – אנחנו המומחים של עולם הטכנולוגיה. עם נוכחות ב-54 מדינות וקשרים עמוקים עם חברות הטק המובילות בישראל ובעולם, אנחנו פותחים דלתות שקשה לפתוח לבד. כשאתם מגיעים דרכנו, יש לכם יתרון אמיתי: גישה למשרות בלעדיות, ליווי מקצועי מגייסים שמבינים את התחום, והכנה ממוקדת לתהליך."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו סוגי משרות טכנולוגיות מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מגייסים לכל תחום בטק: מפתחים בכל שפה ופלטפורמה, DevOps, Cloud, סייבר ואבטחת מידע, Data Science, AI, אנליסטים, מנהלי פרויקטים, ארכיטקטים, QA ועוד. יש משרות לג'וניורים בתחילת הדרך ועד סניורים ומנהלים בכירים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים תהליך גיוס עם אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הכי פשוט? לחפש משרות באתר ולהגיש מועמדות, או להעלות קו״ח מעודכן למאגר. גייס מהתחום שלכם ייצור קשר, ילמד את הרקע שלכם ויתאים הזדמנויות. אנחנו לא מבזבזים זמן – יש התאמה? תשמעו מאיתנו מהר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרון לחברות שמגייסות דרך אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חוסכים לכם זמן יקר וגיוסים כושלים. הגייסים שלנו מבינים טכנולוגיה לעומק ויודעים לזהות התאמה אמיתית. יש לנו מאגר מועמדים ענק, כולל אנשים שלא מחפשים אקטיבית אבל פתוחים להצעות. ויש גמישות מלאה – העסקה ישירה דרככם או דרכנו."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אקספריס מציעה גם הכשרות מקצועיות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בטח! Experis Academy היא זרוע ההכשרה שלנו – בוטקמפים אינטנסיביים שמכשירים למקצועות הטק הכי מבוקשים. כבר הכשרנו יותר מ-2,000 בוגרים ב-168 מחזורים. התוכניות מותאמות לשוק, והרבה בוגרים מתחילים לעבוד עוד לפני שהקורס נגמר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך יוצרים קשר עם אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כמה אפשרויות: טופס באתר, מייל עם קו״ח, או הגשת מועמדות למשרה ספציפית. אפשר גם להתקשר או להגיע למשרדים. אנחנו חוזרים לכל פונה – כי מאחורי כל קו״ח יש בן אדם שמחפש את הצעד הבא."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS ACADEMY FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד האקדמיה" data-en="Academy Page FAQ Schema">סכמת FAQ - עמוד האקדמיה</h3>
+                    <span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/service/experis-academy</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong>Existing FAQ Accordion:</strong> Academy page has 7 FAQ items about training programs - just needs schema markup.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-academy-faq')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-academy-faq">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה אקספריס אקדמי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Experis Academy היא המכללה שלנו להכשרות טק. בוטקמפים אינטנסיביים שלוקחים אתכם מאפס לג'וניור מוכן לעבודה תוך חודשים ספורים. כבר הכשרנו יותר מ-2,000 בוגרים ב-168 מחזורים מוצלחים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו קורסים מציעה אקספריס אקדמי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש מסלולים במקצועות הכי מבוקשים: Full Stack (React, Node.js, Python), DevOps, Cloud, סייבר ואבטחת מידע, Data Science ועוד. התוכניות מתעדכנות כל הזמן לפי מה שהשוק צריך והמעסיקים מחפשים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן נמשכים הקורסים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי במסלול. בוטקמפ אינטנסיבי לוקח 4-6 חודשים בלימודים מלאים, או 6-9 חודשים אם לומדים בערבים או סופי שבוע. כל הקורסים כוללים פרויקטים אמיתיים, עבודת צוות ובניית פורטפוליו – ככה נכנסים לשוק עם ניסיון ביד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש התחייבות להשמה בעבודה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו לא רק מלמדים – אנחנו גם משלבים בעבודה. כחלק מ-ManpowerGroup יש לנו קשרים עם מאות חברות טק. מלווים את הבוגרים בחיפוש, מכינים לראיונות ומחברים להזדמנויות. הרבה בוגרים מוצאים עבודה עוד לפני שהקורס נגמר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה תנאי הקבלה לקורסים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "משתנה בין המסלולים, אבל תמיד יש תהליך מיון שבודק מוטיבציה, יכולת למידה וחשיבה אנליטית. לא תמיד צריך רקע טכני – יש מסלולים למתחילים מוחלטים. אחוז הקבלה? בערך 1.5%. אנחנו מחפשים אנשים שבאמת מחויבים להצליח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה עולים הקורסים ומה אפשרויות התשלום?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי במסלול ובמשך הלימודים. יש כמה אפשרויות: תשלום רגיל, פריסה לתשלומים, ולחלק מהמסלולים יש גם ״למד עכשיו, שלם אחרי״ – משלמים רק אחרי שמתחילים לעבוד. צרו קשר ונפרט על המסלול שמעניין אתכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "הקורסים פרונטליים או אונליין?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש את שני הפורמטים, תלוי במסלול. קורסים פרונטליים במשרדים, אונליין בשידור חי, או היברידי שמשלב. כל פורמט כולל תמיכה אישית ממנטורים, פרויקטים מעשיים ופרויקט גמר."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS ABOUT US -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד אודות" data-en="About Us Page FAQ Schema">סכמת FAQ - עמוד אודות</h3>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/about-us</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-about')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-about">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Experis היא חברת הטק של ManpowerGroup, קבוצת ה-HR הגדולה בעולם. אנחנו עושים הכול בטק: גיוס והשמה, שירותי IT מנוהלים, פתרונות סייבר והכשרות מקצועיות. פועלים ב-54 מדינות, ובישראל כבר שנים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "במה אקספריס שונה מחברות השמה אחרות בהייטק?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו חיים ונושמים טק, לא רק מגייסים. הגייסים שלנו באו מהתעשייה, מבינים את ההבדל בין React ל-Angular ויודעים לשאול את השאלות הנכונות. וכחלק מקבוצה גלובלית, יש לנו גישה לטרנדים ולהזדמנויות גם בחברות בינלאומיות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "עם אילו חברות אקספריס עובדת?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עובדים עם כולם: מסטארטאפים צעירים עד יוניקורנים ותאגידים גלובליים, כולל הבנקים הגדולים בארץ. חלק מהשמות חסויים, אבל מדובר בחברות הטק המובילות. מה זה אומר עליכם? גישה למשרות שלא תמצאו במקום אחר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו שירותים אקספריס מציעה למעסיקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הכול: גיוס טכנולוגי (קבוע או קבלני), IT מנוהל, צוותי פרויקט, הכשרות לעובדים קיימים וייעוץ טכנולוגי. אפשר עובד אחד למשימה ספציפית, או מאות אנשי IT לפרויקט ארוך טווח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך אקספריס שומרת על דיסקרטיות בתהליך הגיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הפרטיות שלכם חשובה לנו מאוד. קו״ח לא מועבר בלי הסכמה מפורשת, ושם המעסיק הנוכחי נשאר חסוי עד שתאשרו. התהליך כולו דיסקרטי והמידע מאובטח. אנחנו מבינים שחיפוש עבודה זה עניין רגיש."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS SERVICES -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד שירותים" data-en="Services Page FAQ Schema">סכמת FAQ - עמוד שירותים</h3>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/our-services/services</div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-services')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-services">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו שירותי גיוס טכנולוגי מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש מודלים גמישים: גיוס לקבועה (אנחנו מוצאים, אתם מעסיקים), Staff Augmentation (קבלנים דרכנו), גיוס קבוצתי לבניית צוותים, ו-Executive Search למשרות הנהלה. מסטארטאפ שמגייס את העובד הראשון ועד תאגיד שמקים מרכז פיתוח – מותאם לכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה שירותים מנוהלים (Managed Services)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "זה מודל שבו לוקחים עלינו אחריות על תחום טכנולוגי שלם אצלכם. תשתיות IT, Service Desk, ניהול פרויקטים או צוותי פיתוח מלאים – אתם מגדירים יעדים ותוצרים, אנחנו מביאים צוות, ניהול ומתודולוגיה. משלמים על תוצאות, לא שעות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו שירותי סייבר ואבטחת מידע מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מענה מלא בסייבר: גיוס מומחים (CISO, אנליסטים, Pen Testers), הקמה וניהול SOC, ייעוץ ותכנון ארכיטקטורת אבטחה, ובדיקות חדירות. יש לנו שותפויות עם ספקיות האבטחה הגדולות והכרות עמוקה של האיומים והפתרונות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים לעבוד עם אקספריס כמעסיק?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יוצרים קשר ונקבע פגישת היכרות – בלי התחייבות. נבין מה אתם צריכים: משרה בודדת, פרויקט או צורך מתמשך, ונתאים פתרון. הייעוץ הראשוני בחינם, והתנאים גמישים. אפשר להתחיל בקטן ולהרחיב, או להיכנס ישר לפרויקט גדול."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרון בעבודה עם אקספריס לעומת גיוס עצמאי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חוסכים זמן, כסף וגיוסים כושלים. יש לנו מאגר מועמדים ענק, כולל אנשים שלא מחפשים אקטיבית אבל פתוחים להצעות – כישרונות שלא הייתם מגיעים אליהם לבד. אנחנו מבינים טק לעומק ומציגים רק מועמדים רלוונטיים. לא מתאים? ממשיכים לחפש עד שמוצאים."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS CYBER SERVICE PAGE - EXISTING FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - שירותי סייבר" data-en="Cyber Service Page FAQ Schema">סכמת FAQ - שירותי סייבר</h3>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/service/experis-cyber</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="תוכן FAQ קיים:" data-en="Existing FAQ Content:">תוכן FAQ קיים:</strong> Page has 7 FAQ items in accordion - just needs schema markup added.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span>FAQ Schema JSON-LD (from existing content)</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-cyber-service')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-cyber-service">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו שירותי סייבר מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מגוון רחב: גיוס מומחי סייבר (CISO, אנליסטים, Pen Testers, מהנדסי SOC), הקמה וניהול SOC, ייעוץ ותכנון ארכיטקטורת אבטחה, בדיקות חדירות וניהול סיכונים. עובדים עם הטכנולוגיות והספקים המובילים בתחום."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה לבחור באקספריס לגיוס אנשי סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הגייסים שלנו באו מהתחום ומבינים את ההבדלים בין התמחויות סייבר. יש לנו מאגר ענק, כולל אנשים שלא מחפשים אקטיבית אבל פתוחים להזדמנויות. אנחנו יודעים לאתר כישרונות ולהתאים אותם בדיוק לצרכים שלכם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה שירות SOC מנוהל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SOC מנוהל זה שירות שבו אנחנו מקימים ומתפעלים עבורכם מרכז תפעול אבטחה. ניטור 24/7, תגובה לאירועים בזמן אמת, דוחות ותובנות. דרך לקבל הגנת סייבר ברמה גבוהה בלי להקים צוות פנימי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אקספריס עובדת עם סטארטאפים או רק עם ארגונים גדולים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עובדים עם שניהם. סטארטאפים שמגייסים CISO ראשון, חברות צמיחה שבונות צוותי אבטחה, ותאגידים גדולים שצריכים תגבור או מיקור חוץ של סייבר. הגודל לא קובע – ההתאמה לצרכים שלכם כן."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו הסמכות נדרשות לתפקידים בסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי בתפקיד. הנפוצות: CISSP, CISM, CEH, OSCP, CompTIA Security+ ועוד. אנחנו יכולים לעזור להבין מה קריטי לתפקיד שלכם, ולמצוא מועמדים עם ההסמכות הנכונות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח לגייס איש סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי בתפקיד. זוטרים-בינוניים? 2-4 שבועות. בכירים כמו CISO או ראש צוות? 4-8 שבועות. מתחייבים לתהליך יעיל ומהיר בלי להתפשר על איכות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים לעבוד עם אקספריס סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יוצרים קשר דרך הטופס או טלפון. נקבע פגישה, נבין את הצרכים – גיוס, שירות מנוהל או ייעוץ – ונבנה הצעה מותאמת. פגישה ראשונה? ללא התחייבות."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS IT RESOURCING PAGE - NEW HIGH-TRAFFIC -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - גיוס IT" data-en="IT Resourcing Page FAQ Schema">סכמת FAQ - גיוס IT</h3>
+                    <span class="badge high-priority" data-he="עדיפות גבוהה" data-en="High Priority">עדיפות גבוהה</span>
+                    <span class="badge existing" data-he="הוסף סכמה" data-en="Add Schema">הוסף סכמה</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/service/experis-it-resourcing</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <span data-he="בעמוד יש 7 שאלות קיימות - צריך רק להוסיף את הסכמה." data-en="Page has 7 existing FAQ items - just needs schema markup added.">בעמוד יש 7 שאלות קיימות - צריך רק להוסיף את הסכמה.</span>
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;" data-he="תוכן FAQ קיים בעמוד:" data-en="Existing FAQ Content on Page:">תוכן FAQ קיים בעמוד:</h4>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">מה כוללים שירותי ההשמה וההעסקה שלנו?</div>
+                    <div class="faq-answer">אנחנו מנהלים עבורכם את כל תהליך הגיוס וההעסקה מקצה לקצה – החל משלב איפיון המשרה, איתור מועמדים וסינון מקצועי, דרך קליטה בארגון ועד ניהול חוזים ותהליכי רווחה.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">באילו מודלי העסקה ניתן לעבוד איתנו?</div>
+                    <div class="faq-answer">אנחנו מציעים מודלים גמישים בהתאם לצרכים שלכם: השמה ישירה, מיקור-חוץ, איוש מהיר למשרות זמניות והקמת צוותים ייעודיים לפרויקטים.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">כיצד אנחנו מבטיחים איתור מדויק של מועמדים איכותיים?</div>
+                    <div class="faq-answer">המאגר שלנו כולל אלפי טאלנטים טכנולוגיים בישראל, לצד Head-Hunting אקטיבי למועמדים פאסיביים.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">כיצד התהליך איתנו מקצר את זמן הגיוס ומעלה את סיכויי ההצלחה?</div>
+                    <div class="faq-answer">אנחנו מגדירים יחד איתכם את צרכי התפקיד באופן מדויק כבר בתחילת הדרך.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">מה הערך של מומחיות טכנולוגית בתהליך השמה להייטק?</div>
+                    <div class="faq-answer">אנחנו מבינים לעומק תפקידים טכנולוגיים – פיתוח, DevOps, QA, סייבר ועוד.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">האם ניתן לגייס באמצעותנו טאלנטים שהוכשרו לתפקידים טכנולוגיים?</div>
+                    <div class="faq-answer">אתם מקבלים קדימות בגיוס בוגרי Experis Academy.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">מדוע ארגונים בוחרים ב-Experis IT Resourcing?</div>
+                    <div class="faq-answer">שילוב של מאגר מועמדים ענק, מומחיות טכנולוגית, תהליך גיוס מדויק ושירות אישי.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-it-resourcing')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-it-resourcing">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה כוללים שירותי ההשמה וההעסקה שלנו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו מנהלים עבורכם את כל תהליך הגיוס וההעסקה מקצה לקצה – החל משלב איפיון המשרה, איתור מועמדים וסינון מקצועי, דרך קליטה בארגון ועד ניהול חוזים ותהליכי רווחה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו מודלי העסקה ניתן לעבוד איתנו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו מציעים מודלים גמישים בהתאם לצרכים שלכם: השמה ישירה, מיקור-חוץ, איוש מהיר למשרות זמניות והקמת צוותים ייעודיים לפרויקטים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כיצד אנחנו מבטיחים איתור מדויק של מועמדים איכותיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המאגר שלנו כולל אלפי טאלנטים טכנולוגיים בישראל, לצד Head-Hunting אקטיבי למועמדים פאסיביים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כיצד התהליך איתנו מקצר את זמן הגיוס ומעלה את סיכויי ההצלחה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו מגדירים יחד איתכם את צרכי התפקיד באופן מדויק כבר בתחילת הדרך."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה הערך של מומחיות טכנולוגית בתהליך השמה להייטק?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו מבינים לעומק תפקידים טכנולוגיים – פיתוח, DevOps, QA, סייבר ועוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם ניתן לגייס באמצעותנו טאלנטים שהוכשרו לתפקידים טכנולוגיים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אתם מקבלים קדימות בגיוס בוגרי Experis Academy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מדוע ארגונים בוחרים ב-Experis IT Resourcing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שילוב של מאגר מועמדים ענק, מומחיות טכנולוגית, תהליך גיוס מדויק ושירות אישי."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS CYBER EXPERTISE PAGE - EXISTING FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - מומחיות סייבר" data-en="Cyber Expertise Page FAQ Schema">סכמת FAQ - מומחיות סייבר</h3>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/expertise/cyber-security</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="תוכן FAQ קיים:" data-en="Existing FAQ Content:">תוכן FAQ קיים:</strong> Page has 6 FAQ items in accordion - just needs schema markup added.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span>FAQ Schema JSON-LD (from existing content)</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-cyber-expertise')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-cyber-expertise">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו תפקידים יש בתחום הסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עולם מגוון מאוד: אנליסטי SOC שמנטרים איומים, Pen Testers שמחפשים חולשות, מהנדסי אבטחה שמתכננים ארכיטקטורות, חוקרי Threat Intelligence, מומחי GRC, CISO שמנהלים הכול – ועוד הרבה. לכל תפקיד יש מסלול קריירה משלו."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה הביקוש לאנשי סייבר בישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גבוה מאוד וממשיך לעלות. ישראל היא מעצמת סייבר עולמית עם מאות חברות מקומיות וכל השחקניות הגלובליות. יש מחסור אמיתי באנשים מיומנים, ומי שיש לו ניסיון והסמכות נהנה מתנאים מעולים והזדמנויות מגוונות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך נכנסים לתחום הסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כמה מסלולים: לימודי מדעי מחשב עם התמחות באבטחה, קורסים מקצועיים והסמכות (CompTIA Security+, CEH, CISSP), או מעבר מתפקידי IT אחרים. שירות ביחידות טכנולוגיות בצה״ל זה יתרון גדול. גם ב-Experis Academy יש הכשרות סייבר לכניסה לתחום."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה מרוויחים בתחום הסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שכר גבוה מהשוק הכללי. אנליסט SOC מתחיל? 15-20K. עם 3-5 שנות ניסיון? 25-35K. תפקידים בכירים כמו CISO? 50K ומעלה. תלוי בהתמחות, בחברה ובניסיון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו הסמכות חשובות בסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הכי מבוקשות: CISSP (לבכירים), CISM (לניהול אבטחה), CEH (להאקינג אתי), OSCP (ל-Pen Testing), CompTIA Security+ (לכניסה לתחום), CCSP (לאבטחת ענן). ההסמכה הנכונה תלויה לאן אתם מכוונים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אקספריס מגייסת לתפקידי סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בהחלט. יש לנו צוות גיוס שמתמחה ספציפית בסייבר ומבין את ההבדלים בין ההתמחויות. אנחנו עובדים עם חברות סייבר ישראליות מובילות, עם מחלקות אבטחה של ארגונים גדולים, ועם יחידות SOC. אם אתם מחפשים עבודה בסייבר – העלו קורות חיים ונחזור אליכם."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS CLOUD & INFRASTRUCTURE PAGE - EXISTING FAQ -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - ענן ותשתיות" data-en="Cloud & Infrastructure Page FAQ Schema">סכמת FAQ - ענן ותשתיות</h3>
+                    <span class="badge optional" data-he="תוכן קיים" data-en="Existing Content">תוכן קיים</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/expertise/cloud-and-infrastructure</div>
+
+                <div class="info-box success">
+                    <span class="info-icon">&#10003;</span>
+                    <div>
+                        <strong data-he="תוכן FAQ קיים:" data-en="Existing FAQ Content:">תוכן FAQ קיים:</strong> Page has 6 FAQ items in accordion - just needs schema markup added.
+                    </div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span>FAQ Schema JSON-LD (from existing content)</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-cloud')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-cloud">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו תפקידים יש בתחום Cloud ותשתיות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התחום כולל מגוון תפקידים: מהנדסי DevOps שבונים ומתחזקים תשתיות, Cloud Engineers שמתמחים בפלטפורמות AWS/Azure/GCP, מנהלי רשת וסיסטם, ארכיטקטים שמתכננים מערכות, מהנדסי SRE (Site Reliability Engineering), ומנהלי תשתיות IT. כל תפקיד דורש שילוב שונה של ידע בענן, אוטומציה וניהול מערכות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה הביקוש לאנשי Cloud בישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הביקוש גבוה מאוד. כמעט כל ארגון עובר לענן או כבר שם, וזה יוצר צורך מתמיד באנשי מקצוע שיודעים לנהל, לאבטח ולאפטם סביבות ענן. DevOps ו-Cloud Engineers הם מהתפקידים המבוקשים ביותר בשוק ההייטק הישראלי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו טכנולוגיות צריך להכיר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הבסיס כולל לפחות פלטפורמת ענן אחת (AWS, Azure או GCP), כלי אוטומציה כמו Terraform ו-Ansible, קונטיינריזציה עם Docker ו-Kubernetes, כלי CI/CD כמו Jenkins או GitLab, ושפות סקריפטים (Python, Bash). ככל שמתקדמים, נדרש עומק בארכיטקטורה ובאבטחת ענן."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך נכנסים לתחום DevOps?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רוב האנשים מגיעים מרקע של פיתוח תוכנה או ניהול מערכות. המעבר דורש לימוד עצמי או קורסים בכלי DevOps, הבנה של תהליכי CI/CD, וניסיון מעשי (גם פרויקטים אישיים נחשבים). הסמכות של ספקיות הענן (AWS Solutions Architect, Azure Administrator) מוסיפות ערך משמעותי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה מרוויחים בתחום?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "השכר בתחום גבוה. DevOps Engineer עם 2-3 שנות ניסיון מרוויח בין 25,000-35,000 ש\"ח. עם ניסיון של 5+ שנים או התמחות בארכיטקטורה, השכר יכול להגיע ל-40,000-50,000 ש\"ח ומעלה. הביקוש הגבוה מאפשר למיומנים לבחור את ההזדמנויות הטובות ביותר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אקספריס מגייסת לתפקידי Cloud ותשתיות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, זה אחד מתחומי ההתמחות שלנו. אנחנו עובדים עם חברות טכנולוגיה, סטארטאפים וארגונים גדולים שמחפשים DevOps, Cloud Engineers ואנשי תשתיות. הגייסים שלנו מבינים את הטכנולוגיות ויודעים להתאים בין דרישות לכישורים. שלחו לנו קורות חיים ונחזור אליכם."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS CONTACT PAGE - NEW -->
+            <div class="section">
+                <div class="section-title">
+                    <h3 data-he="סכמת FAQ - עמוד יצירת קשר" data-en="Contact Page FAQ Schema">סכמת FAQ - עמוד יצירת קשר</h3>
+                    <span class="badge required">Create Content</span>
+                </div>
+
+                <div class="page-url">https://www.experis.co.il/contact-us</div>
+
+                <div class="info-box info">
+                    <span class="info-icon">&#9432;</span>
+                    <div>
+                        <strong data-he="המלצה:" data-en="Recommendation:">המלצה:</strong> Add FAQ section to help users find the right contact method and understand the process.
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 15px;">Recommended FAQ Content:</h4>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">איך יוצרים קשר עם אקספריס?</div>
+                    <div class="faq-answer">יש כמה דרכים: מילוי טופס יצירת קשר באתר, שליחת קורות חיים ישירות למייל, או חיפוש משרה ספציפית והגשת מועמדות. הצוות שלנו גם זמין בטלפון ובמשרדים. אנחנו מתחייבים לחזור לכל פונה.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">תוך כמה זמן מקבלים תשובה?</div>
+                    <div class="faq-answer">אנחנו משתדלים לחזור לכל פונה תוך 2-3 ימי עסקים. אם הפרופיל שלכם מתאים למשרה פתוחה – לפעמים זה קורה עוד באותו יום. גם אם אין התאמה מיידית, אנחנו שומרים את הפרטים שלכם לעתיד.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">היכן נמצאים משרדי אקספריס?</div>
+                    <div class="faq-answer">המשרדים הראשיים שלנו נמצאים בתל אביב. אנחנו עובדים עם לקוחות וגמועמדים מכל רחבי הארץ, והרבה מהתקשורת מתנהלת דיגיטלית. ניתן לתאם פגישה במשרד באמצעות טופס יצירת הקשר.</div>
+                </div>
+
+                <div class="faq-item experis">
+                    <div class="faq-question">מי צריך ליצור קשר - מועמדים או מעסיקים?</div>
+                    <div class="faq-answer">שניהם מוזמנים! מועמדים שמחפשים עבודה בטק – העלו קורות חיים או חפשו משרות באתר. מעסיקים שמחפשים לגייס – מלאו טופס או התקשרו, ונקבע פגישת היכרות. הטיפול מותאם לכל סוג פנייה.</div>
+                </div>
+
+                <div class="schema-block">
+                    <div class="schema-label">
+                        <span data-he="סכמת FAQ בפורמט JSON-LD" data-en="FAQ Schema JSON-LD">סכמת FAQ בפורמט JSON-LD</span>
+                        <button class="copy-btn" onclick="copySchema(this, 'experis-contact')">העתק סכמה</button>
+                    </div>
+                    <pre id="experis-contact">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך יוצרים קשר עם אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש כמה דרכים: מילוי טופס יצירת קשר באתר, שליחת קורות חיים ישירות למייל, או חיפוש משרה ספציפית והגשת מועמדות. הצוות שלנו גם זמין בטלפון ובמשרדים. אנחנו מתחייבים לחזור לכל פונה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "תוך כמה זמן מקבלים תשובה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אנחנו משתדלים לחזור לכל פונה תוך 2-3 ימי עסקים. אם הפרופיל שלכם מתאים למשרה פתוחה – לפעמים זה קורה עוד באותו יום. גם אם אין התאמה מיידית, אנחנו שומרים את הפרטים שלכם לעתיד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "היכן נמצאים משרדי אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המשרדים הראשיים שלנו נמצאים בתל אביב. אנחנו עובדים עם לקוחות וגמועמדים מכל רחבי הארץ, והרבה מהתקשורת מתנהלת דיגיטלית. ניתן לתאם פגישה במשרד באמצעות טופס יצירת הקשר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי צריך ליצור קשר - מועמדים או מעסיקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שניהם מוזמנים! מועמדים שמחפשים עבודה בטק – העלו קורות חיים או חפשו משרות באתר. מעסיקים שמחפשים לגייס – מלאו טופס או התקשרו, ונקבע פגישת היכרות. הטיפול מותאם לכל סוג פנייה."
+      }
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+
+            <!-- EXPERIS IMPLEMENTATION CHECKLIST -->
+            <div class="section">
+                <div class="section-title">
+                    <h3>Implementation Checklist - Experis</h3>
+                </div>
+
+                <ul class="checklist">
+                    <li><span class="checkbox"></span> Homepage - Add WebSite + SearchAction schema</li>
+                    <li><span class="checkbox"></span> Homepage - Add FAQ schema to existing accordion (6 items)</li>
+                    <li><span class="checkbox"></span> Academy - Add FAQ schema to existing content (7 items)</li>
+                    <li><span class="checkbox"></span> About Us - Add FAQ content + schema (5 items)</li>
+                    <li><span class="checkbox"></span> Services - Add FAQ content + schema (5 items)</li>
+                    <li><span class="checkbox"></span> <strong>שירותי סייבר</strong> - Add FAQ schema to existing (7 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>גיוס IT</strong> - Add FAQ schema to existing (7 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>מומחיות סייבר</strong> - Add FAQ schema to existing (6 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>ענן ותשתיות</strong> - Add FAQ schema to existing (6 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> <strong>עמוד יצירת קשר</strong> - Add FAQ content + schema (4 items) <span class="badge high-priority">NEW</span></li>
+                    <li><span class="checkbox"></span> Test SearchAction URL works correctly</li>
+                    <li><span class="checkbox"></span> Test all pages with Google Rich Results Test</li>
+                    <li><span class="checkbox"></span> Verify schema appears in page source</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(nav => {
+                nav.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked nav tab
+            document.querySelector(`.nav-tab.${tabId}`).classList.add('active');
+        }
+
+        function copySchema(button, elementId) {
+            const schemaText = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(schemaText).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy Schema';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+
+    <script>
+        let currentLang = 'he';
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'he' ? 'en' : 'he';
+            const btn = document.getElementById('langBtn');
+            btn.textContent = currentLang === 'he' ? '🌐 English' : '🌐 עברית';
+            
+            // Toggle direction
+            document.documentElement.dir = currentLang === 'he' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+            
+            // Update all elements with data-he and data-en attributes
+            document.querySelectorAll('[data-he][data-en]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + currentLang);
+            });
+            
+            // Update copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                if (!btn.classList.contains('copied')) {
+                    btn.textContent = currentLang === 'he' ? 'העתק סכמה' : 'Copy Schema';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

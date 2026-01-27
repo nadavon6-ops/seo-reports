@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canonical Tag Implementation - www.manpower.co.il (v2 - Corrected)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #fff;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 1rem;
+        }
+        .subtitle {
+            color: #a1a1aa;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .version-badge {
+            display: inline-block;
+            background: #22c55e;
+            color: #052e16;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+        h2 {
+            color: #3b82f6;
+            margin: 2.5rem 0 1rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+        h3 {
+            color: #22d3ee;
+            margin: 1.5rem 0 0.75rem;
+            font-size: 1.1rem;
+        }
+        .code-block {
+            position: relative;
+            margin: 1rem 0;
+        }
+        .file-label {
+            background: #1e40af;
+            color: #bfdbfe;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            display: inline-block;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        }
+        pre {
+            background: #18181b;
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 8px;
+            overflow-x: auto;
+            border: 1px solid #27272a;
+            margin: 0;
+        }
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #27272a;
+            color: #a1a1aa;
+            border: 1px solid #3f3f46;
+            padding: 0.5rem 1rem;
+            border-radius: 0 8px 0 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+        .inline-code {
+            background: #27272a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: #f472b6;
+        }
+        .step-box {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .step-number {
+            background: #3b82f6;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: #18181b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #27272a;
+        }
+        th {
+            background: #1e3a5f;
+            color: #93c5fd;
+            font-weight: 600;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .alert-warning {
+            background: #422006;
+            border: 1px solid #92400e;
+            color: #fcd34d;
+        }
+        .alert-danger {
+            background: #450a0a;
+            border: 1px solid #991b1b;
+            color: #fca5a5;
+        }
+        .alert-success {
+            background: #052e16;
+            border: 1px solid #166534;
+            color: #86efac;
+        }
+        .alert-info {
+            background: #0c1929;
+            border: 1px solid #1e40af;
+            color: #93c5fd;
+        }
+        .alert-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        li {
+            margin: 0.5rem 0;
+        }
+        .divider {
+            height: 1px;
+            background: #27272a;
+            margin: 3rem 0;
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+        }
+        .check-icon {
+            color: #22c55e;
+            font-size: 1.2rem;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #27272a;
+            color: #71717a;
+            font-size: 0.9rem;
+        }
+        /* Syntax highlighting */
+        .kw { color: #c084fc; }
+        .str { color: #4ade80; }
+        .cmt { color: #6b7280; }
+        .fn { color: #60a5fa; }
+        .type { color: #f472b6; }
+        .option-card {
+            background: #18181b;
+            border: 2px solid #27272a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .option-card.recommended {
+            border-color: #22c55e;
+        }
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .option-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-green { background: #166534; color: #bbf7d0; }
+        .badge-yellow { background: #854d0e; color: #fef08a; }
+        .badge-blue { background: #1e40af; color: #bfdbfe; }
+        .toc {
+            background: #18181b;
+            border: 1px solid #27272a;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .toc-title {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+        .toc a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Canonical Tag Implementation <span class="version-badge">v2 CORRECTED</span></h1>
+    <p class="subtitle">Site-wide canonical for <strong>https://www.manpower.co.il</strong> | Next.js App Router</p>
+
+    <div class="alert alert-danger">
+        <div class="alert-title">Critical Finding from Fact-Check</div>
+        <p>The simple <code class="inline-code">canonical: './'</code> approach does <strong>NOT strip query parameters</strong> automatically.</p>
+        <p style="margin-top: 0.5rem;">If user visits <code class="inline-code">/jobs?page=2</code>, canonical will be <code class="inline-code">/jobs?page=2</code> (wrong!)</p>
+        <p style="margin-top: 0.5rem;"><strong>This guide provides the corrected solution.</strong></p>
+    </div>
+
+    <div class="toc">
+        <div class="toc-title">Choose Your Approach:</div>
+        <ul style="margin: 0;">
+            <li><a href="#option-a">Option A: Simple (if you don't use query params)</a></li>
+            <li><a href="#option-b">Option B: Recommended (strips all query params)</a> ⭐</li>
+            <li><a href="#option-c">Option C: Middleware (maximum control)</a></li>
+        </ul>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OPTION A -->
+    <h2 id="option-a">Option A: Simple Approach</h2>
+    <p><strong>Use if:</strong> Your site doesn't use query parameters for filtering/pagination</p>
+
+    <div class="option-card">
+        <div class="option-header">
+            <span class="option-badge badge-yellow">SIMPLE</span>
+            <span>Works for basic sites without query params</span>
+        </div>
+
+        <div class="code-block">
+            <div class="file-label">/app/layout.tsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+
+<span class="kw">export const</span> metadata: <span class="type">Metadata</span> = {
+  metadataBase: <span class="kw">new</span> <span class="fn">URL</span>(<span class="str">'https://www.manpower.co.il'</span>),
+  alternates: {
+    canonical: <span class="str">'./'</span>,
+  },
+}
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({
+  children,
+}: {
+  children: <span class="type">React.ReactNode</span>
+}) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"he"</span> dir=<span class="str">"rtl"</span>&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  )
+}</code></pre>
+        </div>
+
+        <div class="alert alert-warning" style="margin-top: 1rem;">
+            <div class="alert-title">Limitation</div>
+            Query parameters will NOT be stripped. If you use <code class="inline-code">?page=</code>, <code class="inline-code">?filter=</code>, or UTM params, use Option B instead.
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OPTION B -->
+    <h2 id="option-b">Option B: Recommended Approach ⭐</h2>
+    <p><strong>Use if:</strong> You want query parameters stripped on all pages (most common need)</p>
+
+    <div class="option-card recommended">
+        <div class="option-header">
+            <span class="option-badge badge-green">RECOMMENDED</span>
+            <span>Strips all query params, works on all pages</span>
+        </div>
+
+        <h3>Step 1: Create Utility Function</h3>
+        <div class="code-block">
+            <div class="file-label">/lib/metadata.ts (create this file)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+
+<span class="kw">const</span> BASE_URL = <span class="str">'https://www.manpower.co.il'</span>
+
+<span class="cmt">/**
+ * Generates a clean canonical URL
+ * Strips all query parameters and hash fragments
+ */</span>
+<span class="kw">export function</span> <span class="fn">getCanonicalUrl</span>(pathname: <span class="type">string</span>): <span class="type">string</span> {
+  <span class="cmt">// Remove query params and hash</span>
+  <span class="kw">let</span> cleanPath = pathname.<span class="fn">split</span>(<span class="str">'?'</span>)[0].<span class="fn">split</span>(<span class="str">'#'</span>)[0]
+
+  <span class="cmt">// Normalize: remove trailing slash (except for root)</span>
+  <span class="kw">if</span> (cleanPath !== <span class="str">'/'</span> && cleanPath.<span class="fn">endsWith</span>(<span class="str">'/'</span>)) {
+    cleanPath = cleanPath.<span class="fn">slice</span>(0, -1)
+  }
+
+  <span class="cmt">// Ensure starts with /</span>
+  <span class="kw">if</span> (!cleanPath.<span class="fn">startsWith</span>(<span class="str">'/'</span>)) {
+    cleanPath = <span class="str">'/'</span> + cleanPath
+  }
+
+  <span class="kw">return</span> BASE_URL + cleanPath
+}
+
+<span class="cmt">/**
+ * Creates metadata with canonical for a given path
+ */</span>
+<span class="kw">export function</span> <span class="fn">createMetadata</span>(pathname: <span class="type">string</span>, extra?: <span class="type">Partial</span>&lt;<span class="type">Metadata</span>&gt;): <span class="type">Metadata</span> {
+  <span class="kw">return</span> {
+    metadataBase: <span class="kw">new</span> <span class="fn">URL</span>(BASE_URL),
+    alternates: {
+      canonical: <span class="fn">getCanonicalUrl</span>(pathname),
+    },
+    ...extra,
+  }
+}</code></pre>
+        </div>
+
+        <h3>Step 2: Root Layout</h3>
+        <div class="code-block">
+            <div class="file-label">/app/layout.tsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+<span class="kw">import</span> { createMetadata } <span class="kw">from</span> <span class="str">'@/lib/metadata'</span>
+
+<span class="cmt">// Homepage canonical</span>
+<span class="kw">export const</span> metadata: <span class="type">Metadata</span> = <span class="fn">createMetadata</span>(<span class="str">'/'</span>)
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({
+  children,
+}: {
+  children: <span class="type">React.ReactNode</span>
+}) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"he"</span> dir=<span class="str">"rtl"</span>&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  )
+}</code></pre>
+        </div>
+
+        <h3>Step 3: Static Pages</h3>
+        <div class="code-block">
+            <div class="file-label">/app/jobs/page.tsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> { createMetadata } <span class="kw">from</span> <span class="str">'@/lib/metadata'</span>
+
+<span class="cmt">// Canonical: https://www.manpower.co.il/jobs</span>
+<span class="cmt">// Query params like ?page=2 will be stripped</span>
+<span class="kw">export const</span> metadata = <span class="fn">createMetadata</span>(<span class="str">'/jobs'</span>)
+
+<span class="kw">export default function</span> <span class="fn">JobsPage</span>() {
+  <span class="kw">return</span> &lt;div&gt;Jobs Page&lt;/div&gt;
+}</code></pre>
+        </div>
+
+        <h3>Step 4: Dynamic Routes</h3>
+        <div class="code-block">
+            <div class="file-label">/app/jobs/[slug]/page.tsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+<span class="kw">import</span> { createMetadata } <span class="kw">from</span> <span class="str">'@/lib/metadata'</span>
+
+<span class="kw">type</span> <span class="type">Props</span> = {
+  params: <span class="type">Promise</span>&lt;{ slug: <span class="type">string</span> }&gt;
+}
+
+<span class="kw">export async function</span> <span class="fn">generateMetadata</span>({ params }: <span class="type">Props</span>): <span class="type">Promise</span>&lt;<span class="type">Metadata</span>&gt; {
+  <span class="kw">const</span> { slug } = <span class="kw">await</span> params
+
+  <span class="cmt">// Canonical: https://www.manpower.co.il/jobs/developer</span>
+  <span class="kw">return</span> <span class="fn">createMetadata</span>(<span class="str">`/jobs/${slug}`</span>)
+}
+
+<span class="kw">export default async function</span> <span class="fn">JobPage</span>({ params }: <span class="type">Props</span>) {
+  <span class="kw">const</span> { slug } = <span class="kw">await</span> params
+  <span class="kw">return</span> &lt;div&gt;Job: {slug}&lt;/div&gt;
+}</code></pre>
+        </div>
+
+        <div class="alert alert-success" style="margin-top: 1rem;">
+            <div class="alert-title">Result</div>
+            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
+                <li><code class="inline-code">/jobs?page=2&filter=tech</code> → canonical: <code class="inline-code">https://www.manpower.co.il/jobs</code></li>
+                <li><code class="inline-code">/jobs/developer?ref=linkedin</code> → canonical: <code class="inline-code">https://www.manpower.co.il/jobs/developer</code></li>
+                <li>All query params and UTM tags stripped automatically</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- OPTION C -->
+    <h2 id="option-c">Option C: Middleware Approach</h2>
+    <p><strong>Use if:</strong> You need centralized control without modifying each page</p>
+
+    <div class="option-card">
+        <div class="option-header">
+            <span class="option-badge badge-blue">ADVANCED</span>
+            <span>Centralized, automatic, no per-page changes needed</span>
+        </div>
+
+        <h3>Step 1: Create Middleware</h3>
+        <div class="code-block">
+            <div class="file-label">/middleware.ts</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> { <span class="type">NextResponse</span> } <span class="kw">from</span> <span class="str">'next/server'</span>
+<span class="kw">import</span> <span class="kw">type</span> { <span class="type">NextRequest</span> } <span class="kw">from</span> <span class="str">'next/server'</span>
+
+<span class="kw">const</span> BASE_URL = <span class="str">'https://www.manpower.co.il'</span>
+
+<span class="kw">export function</span> <span class="fn">middleware</span>(request: <span class="type">NextRequest</span>) {
+  <span class="kw">const</span> response = <span class="type">NextResponse</span>.<span class="fn">next</span>()
+
+  <span class="cmt">// Get clean pathname (no query params)</span>
+  <span class="kw">let</span> pathname = request.nextUrl.pathname
+
+  <span class="cmt">// Normalize trailing slash</span>
+  <span class="kw">if</span> (pathname !== <span class="str">'/'</span> && pathname.<span class="fn">endsWith</span>(<span class="str">'/'</span>)) {
+    pathname = pathname.<span class="fn">slice</span>(0, -1)
+  }
+
+  <span class="cmt">// Set canonical URL in header for use in layout</span>
+  response.headers.<span class="fn">set</span>(<span class="str">'x-canonical-url'</span>, BASE_URL + pathname)
+
+  <span class="kw">return</span> response
+}
+
+<span class="kw">export const</span> config = {
+  matcher: [
+    <span class="cmt">// Match all paths except static files</span>
+    <span class="str">'/((?!_next/static|_next/image|favicon.ico|api|.*\\.).*)'</span>,
+  ],
+}</code></pre>
+        </div>
+
+        <h3>Step 2: Root Layout with Dynamic Metadata</h3>
+        <div class="code-block">
+            <div class="file-label">/app/layout.tsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy Code</button>
+            <pre><code><span class="kw">import</span> <span class="kw">type</span> { <span class="type">Metadata</span> } <span class="kw">from</span> <span class="str">'next'</span>
+<span class="kw">import</span> { headers } <span class="kw">from</span> <span class="str">'next/headers'</span>
+
+<span class="kw">const</span> BASE_URL = <span class="str">'https://www.manpower.co.il'</span>
+
+<span class="kw">export async function</span> <span class="fn">generateMetadata</span>(): <span class="type">Promise</span>&lt;<span class="type">Metadata</span>&gt; {
+  <span class="kw">const</span> headersList = <span class="kw">await</span> <span class="fn">headers</span>()
+  <span class="kw">const</span> canonicalUrl = headersList.<span class="fn">get</span>(<span class="str">'x-canonical-url'</span>) || BASE_URL
+
+  <span class="kw">return</span> {
+    metadataBase: <span class="kw">new</span> <span class="fn">URL</span>(BASE_URL),
+    alternates: {
+      canonical: canonicalUrl,
+    },
+  }
+}
+
+<span class="kw">export default function</span> <span class="fn">RootLayout</span>({
+  children,
+}: {
+  children: <span class="type">React.ReactNode</span>
+}) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"he"</span> dir=<span class="str">"rtl"</span>&gt;
+      &lt;body&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  )
+}</code></pre>
+        </div>
+
+        <div class="alert alert-warning" style="margin-top: 1rem;">
+            <div class="alert-title">Trade-off</div>
+            Using <code class="inline-code">headers()</code> forces dynamic rendering (SSR on each request). This may impact performance but guarantees correct canonicals on all pages automatically.
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>Comparison Table</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Option A</th>
+                <th>Option B ⭐</th>
+                <th>Option C</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Query params stripped</td>
+                <td style="color: #ef4444;">No</td>
+                <td style="color: #22c55e;">Yes</td>
+                <td style="color: #22c55e;">Yes</td>
+            </tr>
+            <tr>
+                <td>Static optimization</td>
+                <td style="color: #22c55e;">Yes</td>
+                <td style="color: #22c55e;">Yes</td>
+                <td style="color: #ef4444;">No (SSR)</td>
+            </tr>
+            <tr>
+                <td>Per-page setup needed</td>
+                <td style="color: #22c55e;">No</td>
+                <td style="color: #fbbf24;">Yes</td>
+                <td style="color: #22c55e;">No</td>
+            </tr>
+            <tr>
+                <td>Complexity</td>
+                <td>Low</td>
+                <td>Medium</td>
+                <td>Medium</td>
+            </tr>
+            <tr>
+                <td>Best for</td>
+                <td>Simple sites</td>
+                <td>Most sites</td>
+                <td>Complex sites</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="divider"></div>
+
+    <h2>Verification Checklist</h2>
+
+    <div class="check-item">
+        <span class="check-icon">&#10003;</span>
+        <span>Visit <code class="inline-code">/jobs?page=2</code> - canonical should be <code class="inline-code">https://www.manpower.co.il/jobs</code></span>
+    </div>
+    <div class="check-item">
+        <span class="check-icon">&#10003;</span>
+        <span>Visit <code class="inline-code">/?utm_source=google</code> - canonical should be <code class="inline-code">https://www.manpower.co.il/</code></span>
+    </div>
+    <div class="check-item">
+        <span class="check-icon">&#10003;</span>
+        <span>View page source and search for <code class="inline-code">rel="canonical"</code></span>
+    </div>
+    <div class="check-item">
+        <span class="check-icon">&#10003;</span>
+        <span>Test in Google Search Console URL Inspection tool</span>
+    </div>
+
+    <div class="alert alert-info" style="margin-top: 2rem;">
+        <div class="alert-title">Recommendation</div>
+        <p><strong>Use Option B</strong> for the best balance of correctness and performance. It guarantees query parameters are stripped while keeping static optimization.</p>
+    </div>
+
+    <footer>
+        <p><strong>Implementation for:</strong> www.manpower.co.il</p>
+        <p><strong>Framework:</strong> Next.js App Router (13.4+)</p>
+        <p><strong>Version:</strong> 2.0 (Corrected after fact-check)</p>
+        <p><strong>Generated:</strong> January 2026</p>
+    </footer>
+
+    <script>
+        function copyCode(btn) {
+            const pre = btn.parentElement.querySelector('pre');
+            const code = pre.querySelector('code');
+            const text = code.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = 'Copied!';
+                btn.style.background = '#22c55e';
+                btn.style.borderColor = '#22c55e';
+                setTimeout(() => {
+                    btn.textContent = 'Copy Code';
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            });
+        }
+    </script>
+
+</body>
+</html>
+</code>
