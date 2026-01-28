@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qilates - תוכנית SEO לדפי קורסים | ניתוח נפרד לכל דף</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --mat-color: #8b5cf6;
+            --reformer-color: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header-meta {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .alert-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-right: 5px solid var(--warning);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .alert-box h3 {
+            color: #92400e;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-box p {
+            color: #78350f;
+        }
+
+        /* Page Tabs */
+        .page-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .page-tab {
+            flex: 1;
+            min-width: 280px;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .page-tab.mat {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .page-tab.reformer {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+        }
+
+        .page-tab h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .page-tab .url {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            word-break: break-all;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .kpi-card.mat-theme {
+            border-top: 4px solid var(--mat-color);
+        }
+
+        .kpi-card.reformer-theme {
+            border-top: 4px solid var(--reformer-color);
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        /* Section Styles */
+        .page-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .page-section.mat-section {
+            border-right: 5px solid var(--mat-color);
+        }
+
+        .page-section.reformer-section {
+            border-right: 5px solid var(--reformer-color);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .section-icon.mat {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .section-icon.reformer {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        /* Priority Labels */
+        .priority-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .priority-urgent {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-high {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-medium {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        /* Task List */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border-right: 4px solid transparent;
+        }
+
+        .task-item.urgent {
+            border-right-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .task-item.high {
+            border-right-color: var(--warning);
+            background: #fffbeb;
+        }
+
+        .task-item.medium {
+            border-right-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .task-desc {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .comparison-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-missing {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-partial {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-exists {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        /* Schema Boxes */
+        .schema-box {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .schema-box pre {
+            color: #e2e8f0;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Competitor Insights */
+        .competitor-insight {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .competitor-insight h4 {
+            color: #065f46;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .competitor-insight ul {
+            margin-right: 20px;
+            color: #047857;
+        }
+
+        .competitor-insight li {
+            margin-bottom: 5px;
+        }
+
+        /* Backlink Section */
+        .backlink-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .backlink-box h4 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+
+        .backlink-targets {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .backlink-target {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        /* Implementation Timeline */
+        .timeline {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -24px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .timeline-item.urgent::before {
+            background: var(--danger);
+        }
+
+        .timeline-week {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-tasks {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        /* Course Details Box */
+        .course-details-box {
+            background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .course-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .course-detail-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .course-detail-item .label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .course-detail-item .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--mat-color);
+        }
+
+        /* FAQ Box */
+        .faq-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .faq-answer {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Icons Grid */
+        .icons-suggestion {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .icon-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+        }
+
+        .icon-item .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .icon-item .title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .page-section {
+                padding: 20px;
+            }
+
+            .task-title {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>תוכנית SEO + GEO מתוקנת לדפי קורסים</h1>
+        <p class="subtitle">Qilates - שמיים וארץ סטודיו | ניתוח נפרד לכל דף קורס</p>
+        <div class="header-meta">
+            <span class="meta-item">📅 ינואר 2026</span>
+            <span class="meta-item">🌐 qilates.co.il</span>
+            <span class="meta-item">📊 נתוני GSC אמיתיים - 6 חודשים</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Alert Box -->
+        <div class="alert-box">
+            <h3>⚠️ הבהרה חשובה</h3>
+            <p>דוח זה מתקן את הדוח הקודם. שני דפי הקורסים <strong>כן מקבלים תנועה וקליקים</strong> - הנתונים בדוח הקודם היו שגויים. להלן ניתוח נפרד ומדויק לכל דף בהתבסס על נתוני GSC אמיתיים וניתוח פערים מול המתחרים.</p>
+        </div>
+
+        <!-- Page Tabs -->
+        <div class="page-tabs">
+            <div class="page-tab mat">
+                <h3>🧘 קורס מדריכי פילאטיס מזרן</h3>
+                <div class="url">/קורס-פילאטיס-מזרן/</div>
+            </div>
+            <div class="page-tab reformer">
+                <h3>🏋️ קורס מדריכי פילאטיס מכשירים</h3>
+                <div class="url">/לימודי-פילאטיס/</div>
+            </div>
+        </div>
+
+        <!-- ==================== MAT PILATES SECTION ==================== -->
+        <div class="page-section mat-section">
+            <div class="section-header">
+                <div class="section-icon mat">🧘</div>
+                <h2 class="section-title">קורס מדריכי פילאטיס מזרן - ניתוח מלא</h2>
+            </div>
+
+            <!-- KPIs -->
+            <h3 style="margin-bottom: 15px; color: var(--mat-color);">📊 נתוני GSC - 6 חודשים אחרונים</h3>
+            <div class="kpi-grid">
+                <div class="kpi-card mat-theme">
+                    <div class="kpi-value">64</div>
+                    <div class="kpi-label">קליקים</div>
+                </div>
+                <div class="kpi-card mat-theme">
+                    <div class="kpi-value">10.3K</div>
+                    <div class="kpi-label">הופעות</div>
+                </div>
+                <div class="kpi-card mat-theme">
+                    <div class="kpi-value">0.6%</div>
+                    <div class="kpi-label">CTR</div>
+                </div>
+                <div class="kpi-card mat-theme">
+                    <div class="kpi-value">27</div>
+                    <div class="kpi-label">מיקום ממוצע</div>
+                </div>
+            </div>
+
+            <!-- Course Details -->
+            <div class="course-details-box">
+                <h4 style="color: #7c3aed; margin-bottom: 5px;">📋 פרטי הקורס (לשימוש בסכמות ובתוכן)</h4>
+                <div class="course-details-grid">
+                    <div class="course-detail-item">
+                        <div class="label">משך הקורס</div>
+                        <div class="value">~3 חודשים</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">מספר מפגשים</div>
+                        <div class="value">26 מפגשים</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">סה"כ שעות</div>
+                        <div class="value">~145 שעות</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">עלות</div>
+                        <div class="value">6,500 ₪</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">ימים</div>
+                        <div class="value">רביעי / שישי</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">שעות</div>
+                        <div class="value">11:00-15:00</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">פתיחה קרובה</div>
+                        <div class="value">11/13.2.2026</div>
+                    </div>
+                    <div class="course-detail-item">
+                        <div class="label">מדריכים</div>
+                        <div class="value">5 מומחים</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis -->
+            <div style="background: #faf5ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                <h4 style="color: #7c3aed; margin-bottom: 10px;">🔍 ניתוח מצב נוכחי</h4>
+                <ul style="margin-right: 20px; color: #6b21a8;">
+                    <li><strong>CTR נמוך (0.6%):</strong> למרות 10,300 הופעות, רק 64 קליקים - הכותרת והתיאור לא מושכים מספיק</li>
+                    <li><strong>מיקום 27:</strong> הדף בעמוד 3 בממוצע - יש פוטנציאל משמעותי לשיפור</li>
+                    <li><strong>חוסר בקישורים חיצוניים:</strong> הדף חסר לחלוטין באקלינקים - זו בעיה קריטית</li>
+                    <li><strong>תוכן לא מובנה:</strong> חסרים אקורדיונים, סילבוס מפורט, ו-FAQ</li>
+                    <li><strong>פער מול מתחרים:</strong> כל המתחרים מציגים סילבוס מפורט לפי מפגש - זה חסר</li>
+                </ul>
+            </div>
+
+            <!-- HIGH PRIORITY Tasks -->
+            <h3 style="margin-bottom: 15px; color: var(--danger);">🔴 משימות עדיפות גבוהה - ביצוע מיידי</h3>
+            <ul class="task-list">
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        הוספת אקורדיון עם סילבוס מפורט לפי מפגשים
+                    </div>
+                    <div class="task-desc">
+                        <strong>חסר קריטי:</strong> כל המתחרים מציגים "מה נלמד בכל מפגש" באקורדיון.<br>
+                        מבנה מומלץ: מפגש 1: היכרות עם שיטת פילאטיס | מפגשים 2-4: תרגילי בסיס | מפגשים 5-11: תרגילים מתקדמים | מפגש 12: תרגול הוראה | וכו'
+                    </div>
+                </li>
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        השגת באקלינקים מאתרי חדשות
+                    </div>
+                    <div class="task-desc">הדף חסר לחלוטין באקלינקים! מומלץ: MYNET, ערוץ 7, וואלה בריאות, מאקו כושר</div>
+                </li>
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        הוספת סעיף המלצות בוגרים
+                    </div>
+                    <div class="task-desc">
+                        <strong>חסר:</strong> המלצות מפורטות עם שמות, תמונות ותעודות מקצועיות.<br>
+                        נדרש: 3-5 ציטוטים אותנטיים (2-3 שורות כל אחד) עם דירוג כוכבים או מספר בוגרים ("300+ בוגרים")
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Icons Suggestion -->
+            <h3 style="margin: 25px 0 15px; color: var(--warning);">🟡 הוספת אייקונים בראש הדף</h3>
+            <p style="margin-bottom: 15px; color: var(--gray);">כמו אצל המתחרים (מרתה פילאטיס) - תצוגה ויזואלית של יתרונות הקורס:</p>
+            <div class="icons-suggestion">
+                <div class="icon-item">
+                    <div class="icon">👥</div>
+                    <div class="title">צוות מקצועי</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">🎯</div>
+                    <div class="title">ליווי אישי</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">📜</div>
+                    <div class="title">20+ שנות ניסיון</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">🏥</div>
+                    <div class="title">שילוב שיקום</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">🎓</div>
+                    <div class="title">תעודה מוכרת</div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <h3 style="margin: 25px 0 15px; color: var(--warning);">🟡 הוספת סעיף שאלות ותשובות (10 שאלות מומלצות)</h3>
+            <div class="faq-box">
+                <div class="faq-question">1. מהם תנאי הקבלה לקורס?</div>
+                <div class="faq-answer">הקורס פתוח לכל מי שמעוניין להפוך למדריך/ת פילאטיס מקצועי/ת...</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">2. כמה זמן נמשך הקורס?</div>
+                <div class="faq-answer">הקורס נמשך כ-3 חודשים, 26 מפגשים, סה"כ כ-145 שעות לימוד</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">3. מה עלות הקורס ואפשרויות התשלום?</div>
+                <div class="faq-answer">עלות הקורס 6,500 ₪ (כולל 450 ₪ דמי רישום). ניתן לשלם עד X תשלומים ללא ריבית</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">4. מי המדריכים בקורס?</div>
+                <div class="faq-answer">צוות של 5 מומחים: פיזיותרפיסטים, מדריכי פילאטיס בכירים, מומחי שיקום</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">5. מה כולל תוכן הלימודים?</div>
+                <div class="faq-answer">אנטומיה, עקרונות שיטת פילאטיס, תרגול מעשי, הוראה מודרכת...</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">6. האם יש התנסות מעשית?</div>
+                <div class="faq-answer">כן, הקורס כולל התנסות מעשית בהוראה תחת הנחיית המדריכים</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">7. איזו תעודה מקבלים?</div>
+                <div class="faq-answer">תעודת הסמכה כמדריך/ת פילאטיס מזרן מטעם סטודיו שמיים וארץ</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">8. האם יש ליווי לאחר הקורס?</div>
+                <div class="faq-answer">כן, מנטורינג מקצועי, השתלמויות, קהילת בוגרים, ייעוץ מקצועי</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">9. איך נרשמים?</div>
+                <div class="faq-answer">ניתן להירשם דרך טופס יצירת קשר באתר או בטלפון...</div>
+            </div>
+            <div class="faq-box">
+                <div class="faq-question">10. מה כלול בעלות הקורס?</div>
+                <div class="faq-answer">ספר פילאטיס מזרן, חומרי לימוד, שיעורי סטודיו ללא הגבלה, גישה לסטודיו 7:00-22:00, ליווי אישי</div>
+            </div>
+
+            <!-- MEDIUM PRIORITY Tasks -->
+            <h3 style="margin: 25px 0 15px; color: var(--primary);">🔵 משימות עדיפות בינונית</h3>
+            <ul class="task-list">
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת פרטי תשלום ותשלומים
+                    </div>
+                    <div class="task-desc">מספר תשלומים מקסימלי, אמצעי תשלום (אשראי/צ'קים), מדיניות ביטול. פורמט: "עד X תשלומים ללא ריבית"</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת סעיף ייעודי על הצוות
+                    </div>
+                    <div class="task-desc">כרגע המידע משולב בגוף הטקסט. צריך סעיף נפרד "הכירו את הצוות" עם פרופיל, ניסיון, התמחות ותמונה לכל מדריך</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת פרטי ליווי לאחר הקורס
+                    </div>
+                    <div class="task-desc">מנטורינג מקצועי, השתלמויות, קהילת בוגרים, שירותי ייעוץ</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת מידע על הכרה ותעודות
+                    </div>
+                    <div class="task-desc">התאמה לחברות ביטוח, תקנים מקצועיים, הכרה בינלאומית</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת מסלולי המשך והטבות לבוגרים
+                    </div>
+                    <div class="task-desc">הנחות לבוגרים, קורסי המשך, רענון ידע</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת הזדמנויות קריירה/תעסוקה
+                    </div>
+                    <div class="task-desc">כמו בדף קורס הריפורמר - מה עושים עם התעודה, איפה אפשר לעבוד</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת קישורים חיצוניים רלוונטיים
+                    </div>
+                    <div class="task-desc">לינקים לגופים מקצועיים, תקנים, משאבי פילאטיס/שיקום - לאמינות ו-SEO</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת Course Schema + Video Schema
+                    </div>
+                    <div class="task-desc">סכמות מובנות לגוגל - ראו פירוט בהמשך</div>
+                </li>
+            </ul>
+
+            <!-- Backlinks -->
+            <div class="backlink-box">
+                <h4>🔗 אסטרטגיית באקלינקים - דחוף!</h4>
+                <p>הדף חסר לחלוטין באקלינקים חיצוניים. זו בעיה קריטית לדירוג.</p>
+                <p style="margin-top: 10px;"><strong>יעדים מומלצים:</strong></p>
+                <div class="backlink-targets">
+                    <span class="backlink-target">MYNET בריאות</span>
+                    <span class="backlink-target">ערוץ 7 לייף</span>
+                    <span class="backlink-target">וואלה כושר</span>
+                    <span class="backlink-target">מאקו בריאות</span>
+                    <span class="backlink-target">פורומים מקצועיים</span>
+                </div>
+            </div>
+
+            <!-- Competitor Insights -->
+            <div class="competitor-insight">
+                <h4>💡 תובנות מהמתחרים (מרתה פילאטיס)</h4>
+                <ul>
+                    <li><strong>אייקונים בראש הדף:</strong> "למה לבחור מרתה פילאטיס?" עם 4 יתרונות ברורים + ✓</li>
+                    <li><strong>אקורדיון סילבוס:</strong> פירוט מפגש-מפגש עם תוכן כל שיעור - מפגש 1, מפגשים 2-4, וכו'</li>
+                    <li><strong>מבנה ויזואלי:</strong> עיצוב נקי, קל לקריאה, מותאם למובייל</li>
+                    <li><strong>תוצאות למידה ברורות:</strong> "מה נלמד בכל מפגש" - חסר לחלוטין בדף שלנו</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== REFORMER PILATES SECTION ==================== -->
+        <div class="page-section reformer-section">
+            <div class="section-header">
+                <div class="section-icon reformer">🏋️</div>
+                <h2 class="section-title">קורס מדריכי פילאטיס מכשירים/ריפורמר - ניתוח מלא</h2>
+            </div>
+
+            <!-- KPIs -->
+            <h3 style="margin-bottom: 15px; color: var(--reformer-color);">📊 נתוני GSC - 6 חודשים אחרונים</h3>
+            <div class="kpi-grid">
+                <div class="kpi-card reformer-theme">
+                    <div class="kpi-value">352</div>
+                    <div class="kpi-label">קליקים</div>
+                </div>
+                <div class="kpi-card reformer-theme">
+                    <div class="kpi-value">39.5K</div>
+                    <div class="kpi-label">הופעות</div>
+                </div>
+                <div class="kpi-card reformer-theme">
+                    <div class="kpi-value">0.9%</div>
+                    <div class="kpi-label">CTR</div>
+                </div>
+                <div class="kpi-card reformer-theme">
+                    <div class="kpi-value">11</div>
+                    <div class="kpi-label">מיקום ממוצע</div>
+                </div>
+            </div>
+
+            <!-- Analysis -->
+            <div style="background: #ecfeff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                <h4 style="color: #0891b2; margin-bottom: 10px;">🔍 ניתוח מצב נוכחי</h4>
+                <ul style="margin-right: 20px; color: #0e7490;">
+                    <li><strong>ביצועים טובים יותר מדף המזרן:</strong> 352 קליקים לעומת 64, מיקום 11 לעומת 27</li>
+                    <li><strong>CTR עדיין נמוך (0.9%):</strong> עם 39,500 הופעות יש פוטנציאל להרבה יותר קליקים</li>
+                    <li><strong>מיקום 11:</strong> ממש בסוף עמוד 1 / תחילת עמוד 2 - קרוב לפריצה משמעותית</li>
+                    <li><strong>רק 2 באקלינקים:</strong> צריך לחזק משמעותית את פרופיל הקישורים</li>
+                    <li><strong>יש FAQ Schema קיים:</strong> לפי הניתוח יש להסירו ולהוסיף Q&A חדש ומעודכן</li>
+                </ul>
+            </div>
+
+            <!-- HIGH PRIORITY Tasks -->
+            <h3 style="margin-bottom: 15px; color: var(--danger);">🔴 משימות עדיפות גבוהה</h3>
+            <ul class="task-list">
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        הסרת ה-FAQ Schema הקיים והוספת Q&A חדש
+                    </div>
+                    <div class="task-desc">להסיר את הסכמה הקיימת, להוסיף סעיף שאלות ותשובות חדש ומקיף + סכמה מעודכנת</div>
+                </li>
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        הוספת אקורדיון עם סילבוס מפורט לפי מפגשים
+                    </div>
+                    <div class="task-desc">פירוט מה נלמד בכל מפגש - כמו אצל המתחרים. ראו צילום מסך מרתה פילאטיס</div>
+                </li>
+                <li class="task-item urgent">
+                    <div class="task-title">
+                        <span class="priority-label priority-urgent">דחוף</span>
+                        הוספת מידע על הכרה בתעודה
+                    </div>
+                    <div class="task-desc"><strong>חסר קריטי:</strong> PMA (Pilates Method Alliance), הכרה ע"י חברות ביטוח, הסמכה מקצועית - מידע חיוני להחלטת רכישה</div>
+                </li>
+            </ul>
+
+            <!-- Icons Suggestion -->
+            <h3 style="margin: 25px 0 15px; color: var(--warning);">🟡 הוספת אייקונים בראש הדף</h3>
+            <p style="margin-bottom: 15px; color: var(--gray);">יתרונות ייחודיים של קורס הריפורמר בשמיים וארץ:</p>
+            <div class="icons-suggestion">
+                <div class="icon-item">
+                    <div class="icon">🏋️</div>
+                    <div class="title">מכשירי ריפורמר מקצועיים</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">👥</div>
+                    <div class="title">קבוצות קטנות</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">🎓</div>
+                    <div class="title">תעודה מוכרת</div>
+                </div>
+                <div class="icon-item">
+                    <div class="icon">💼</div>
+                    <div class="title">סיוע בהשמה</div>
+                </div>
+            </div>
+
+            <!-- MEDIUM PRIORITY Tasks -->
+            <h3 style="margin: 25px 0 15px; color: var(--primary);">🔵 משימות עדיפות בינונית</h3>
+            <ul class="task-list">
+                <li class="task-item high">
+                    <div class="task-title">
+                        <span class="priority-label priority-high">גבוה</span>
+                        הוספת אייקונים בראש הדף עם יתרונות הקורס
+                    </div>
+                    <div class="task-desc">כמו בדף המזרן - יתרונות ייחודיים בתצוגה ויזואלית</div>
+                </li>
+                <li class="task-item high">
+                    <div class="task-title">
+                        <span class="priority-label priority-high">גבוה</span>
+                        השקעה בבאקלינקים איכותיים
+                    </div>
+                    <div class="task-desc">הדף עם רק 2 באקלינקים - צריך חיזוק משמעותי לדירוג טוב יותר</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת פרטי תשלום ותשלומים
+                    </div>
+                    <div class="task-desc">מחיר, אפשרויות פריסה, מספר תשלומים</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת Video Schema
+                    </div>
+                    <div class="task-desc">אם יש סרטון בדף - להוסיף סכמה</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת Course Schema
+                    </div>
+                    <div class="task-desc">סכמת קורס מובנית - ראו דוגמה בהמשך</div>
+                </li>
+                <li class="task-item medium">
+                    <div class="task-title">
+                        <span class="priority-label priority-medium">בינוני</span>
+                        הוספת סעיף על המדריכים
+                    </div>
+                    <div class="task-desc">פרופיל של המדריכים המובילים עם תמונות וניסיון</div>
+                </li>
+            </ul>
+
+            <!-- Backlinks -->
+            <div class="backlink-box">
+                <h4>🔗 אסטרטגיית באקלינקים</h4>
+                <p>הדף עם רק 2 באקלינקים - צריך להגדיל משמעותית.</p>
+                <div class="backlink-targets">
+                    <span class="backlink-target">MYNET בריאות</span>
+                    <span class="backlink-target">ערוץ 7 לייף</span>
+                    <span class="backlink-target">וואלה כושר</span>
+                    <span class="backlink-target">בלוגים מקצועיים</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== COMPARISON TABLE ==================== -->
+        <div class="page-section">
+            <div class="section-header">
+                <div class="section-icon" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">📊</div>
+                <h2 class="section-title">השוואת שני הדפים</h2>
+            </div>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>מדד</th>
+                        <th style="color: var(--mat-color);">קורס מזרן</th>
+                        <th style="color: var(--reformer-color);">קורס ריפורמר</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>קליקים (6 חודשים)</td>
+                        <td>64</td>
+                        <td><strong>352</strong> ✓</td>
+                    </tr>
+                    <tr>
+                        <td>הופעות</td>
+                        <td>10,300</td>
+                        <td><strong>39,500</strong> ✓</td>
+                    </tr>
+                    <tr>
+                        <td>CTR</td>
+                        <td>0.6%</td>
+                        <td><strong>0.9%</strong> ✓</td>
+                    </tr>
+                    <tr>
+                        <td>מיקום ממוצע</td>
+                        <td>27 (עמוד 3)</td>
+                        <td><strong>11</strong> (עמוד 2) ✓</td>
+                    </tr>
+                    <tr>
+                        <td>באקלינקים</td>
+                        <td><span class="status-badge status-missing">0 - חסר!</span></td>
+                        <td><span class="status-badge status-partial">2 - חלקי</span></td>
+                    </tr>
+                    <tr>
+                        <td>FAQ Schema</td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                        <td><span class="status-badge status-partial">קיים - דורש עדכון</span></td>
+                    </tr>
+                    <tr>
+                        <td>סילבוס מפורט (אקורדיון)</td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                    </tr>
+                    <tr>
+                        <td>אייקוני יתרונות</td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                    </tr>
+                    <tr>
+                        <td>המלצות בוגרים</td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                        <td><span class="status-badge status-partial">חלקי</span></td>
+                    </tr>
+                    <tr>
+                        <td>הכרה בתעודה (PMA/ביטוח)</td>
+                        <td><span class="status-badge status-partial">חלקי</span></td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                    </tr>
+                    <tr>
+                        <td>Course Schema</td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                        <td><span class="status-badge status-missing">חסר</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ==================== SCHEMAS ==================== -->
+        <div class="page-section">
+            <div class="section-header">
+                <div class="section-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">🔧</div>
+                <h2 class="section-title">סכמות מומלצות להטמעה</h2>
+            </div>
+
+            <h3 style="margin-bottom: 15px; color: var(--mat-color);">Course Schema - קורס מזרן</h3>
+            <div class="schema-box">
+                <pre>{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "קורס מדריכי פילאטיס מזרן",
+  "description": "קורס הכשרת מדריכי פילאטיס מזרן בשיטת שמיים וארץ - 26 מפגשים, ~145 שעות הכשרה מקיפה הכוללת אנטומיה, תרגול מעשי ותעודת הסמכה",
+  "provider": {
+    "@type": "Organization",
+    "name": "שמיים וארץ - סטודיו לפילאטיס",
+    "sameAs": "https://www.qilates.co.il"
+  },
+  "educationalLevel": "Professional",
+  "inLanguage": "he",
+  "numberOfCredits": "145",
+  "occupationalCredentialAwarded": "תעודת מדריך פילאטיס מזרן",
+  "offers": {
+    "@type": "Offer",
+    "price": "6500",
+    "priceCurrency": "ILS",
+    "availability": "https://schema.org/InStock"
+  },
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "onsite",
+    "courseSchedule": {
+      "@type": "Schedule",
+      "byDay": ["Wednesday", "Friday"],
+      "startTime": "11:00",
+      "endTime": "15:00"
+    },
+    "location": {
+      "@type": "Place",
+      "name": "סטודיו שמיים וארץ",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IL"
+      }
+    }
+  }
+}</pre>
+            </div>
+
+            <h3 style="margin: 25px 0 15px; color: var(--reformer-color);">Course Schema - קורס ריפורמר</h3>
+            <div class="schema-box">
+                <pre>{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "קורס מדריכי פילאטיס מכשירים / ריפורמר",
+  "description": "קורס הכשרת מדריכי פילאטיס מכשירים וריפורמר בשיטת שמיים וארץ - הכשרה מקצועית מקיפה עם תעודה מוכרת",
+  "provider": {
+    "@type": "Organization",
+    "name": "שמיים וארץ - סטודיו לפילאטיס",
+    "sameAs": "https://www.qilates.co.il"
+  },
+  "educationalLevel": "Professional",
+  "inLanguage": "he",
+  "occupationalCredentialAwarded": "תעודת מדריך פילאטיס מכשירים",
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "onsite",
+    "location": {
+      "@type": "Place",
+      "name": "סטודיו שמיים וארץ"
+    }
+  }
+}</pre>
+            </div>
+
+            <h3 style="margin: 25px 0 15px;">FAQPage Schema - דוגמה (קורס מזרן)</h3>
+            <div class="schema-box">
+                <pre>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "כמה זמן נמשך קורס מדריכי פילאטיס מזרן?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "קורס מדריכי פילאטיס מזרן בשמיים וארץ נמשך כ-3 חודשים וכולל 26 מפגשים, סה\"כ כ-145 שעות לימוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה עלות קורס פילאטיס מזרן?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "עלות הקורס היא 6,500 ₪ (כולל 450 ₪ דמי רישום). ניתן לשלם בתשלומים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איזו תעודה מקבלים בסיום הקורס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בסיום הקורס מקבלים תעודת הסמכה כמדריך/ת פילאטיס מזרן מטעם סטודיו שמיים וארץ, המאפשרת תעסוקה מיידית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם תנאי הקבלה לקורס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הקורס פתוח לכל מי שמעוניין להפוך למדריך/ת פילאטיס מקצועי/ת. מומלץ ניסיון קודם בתרגול פילאטיס."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כלול בעלות הקורס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הקורס כולל: ספר פילאטיס מזרן, חומרי לימוד, שיעורי סטודיו ללא הגבלה, גישה לסטודיו 7:00-22:00, וליווי אישי לאורך כל הדרך."
+      }
+    }
+  ]
+}</pre>
+            </div>
+        </div>
+
+        <!-- ==================== UX RECOMMENDATIONS ==================== -->
+        <div class="page-section">
+            <div class="section-header">
+                <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">📱</div>
+                <h2 class="section-title">המלצות UX ומובייל</h2>
+            </div>
+
+            <div style="background: #fffbeb; padding: 20px; border-radius: 10px;">
+                <h4 style="color: #d97706; margin-bottom: 15px;">⚠️ נקודות לשיפור</h4>
+                <ul class="task-list">
+                    <li class="task-item high">
+                        <div class="task-title">סקירת עיצוב מנקודת מבט UX ומובייל</div>
+                        <div class="task-desc">התוכן ארוך מאוד ולא מובנה ויזואלית למשתמשי מובייל. מומלץ לבדוק עם גולש אמיתי או כלי UX</div>
+                    </li>
+                    <li class="task-item high">
+                        <div class="task-title">הוספת סעיף בדף הבית עם קורסים קרובים</div>
+                        <div class="task-desc">לינקים פנימיים לדף קורס המזרן מדף הבית - לחיזוק הדירוג והפניית תנועה</div>
+                    </li>
+                    <li class="task-item medium">
+                        <div class="task-title">שיפור מהירות טעינה</div>
+                        <div class="task-desc">לבדוק Core Web Vitals ולשפר LCP, CLS, INP</div>
+                    </li>
+                    <li class="task-item medium">
+                        <div class="task-title">בדיקה ב-Incognito</div>
+                        <div class="task-desc">לבדוק דירוג בחלון פרטי - לוודא שהתוצאות לא מושפעות מהיסטוריית גלישה</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ==================== IMPLEMENTATION TIMELINE ==================== -->
+        <div class="page-section">
+            <div class="section-header">
+                <div class="section-icon" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">📅</div>
+                <h2 class="section-title">לוח זמנים מומלץ ליישום</h2>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item urgent">
+                    <div class="timeline-week" style="color: var(--danger);">שבוע 1 - דחוף מאוד</div>
+                    <div class="timeline-tasks">
+                        <p><strong>שני הדפים:</strong></p>
+                        <ul style="margin-right: 20px;">
+                            <li>הוספת אקורדיון סילבוס מפורט לפי מפגשים (כמו מרתה פילאטיס)</li>
+                            <li>הוספת אייקוני יתרונות בראש כל דף</li>
+                            <li>דף ריפורמר: הסרת FAQ Schema הישן</li>
+                            <li>דף מזרן: הוספת המלצות בוגרים (3-5 ציטוטים)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">שבוע 2</div>
+                    <div class="timeline-tasks">
+                        <ul style="margin-right: 20px;">
+                            <li>הוספת סעיף Q&A חדש + FAQ Schema (שני הדפים)</li>
+                            <li>דף ריפורמר: הוספת מידע על הכרה בתעודה (PMA, ביטוח)</li>
+                            <li>הוספת פרטי תשלום ותשלומים</li>
+                            <li>הוספת סעיף מדריכים ייעודי</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">שבוע 3</div>
+                    <div class="timeline-tasks">
+                        <ul style="margin-right: 20px;">
+                            <li>הוספת Course Schema לשני הדפים</li>
+                            <li>הוספת Video Schema (אם רלוונטי)</li>
+                            <li>הוספת הזדמנויות קריירה (דף מזרן)</li>
+                            <li>הוספת ליווי לאחר הקורס + מסלולי המשך</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">שבוע 4 ואילך - קמפיין באקלינקים</div>
+                    <div class="timeline-tasks">
+                        <ul style="margin-right: 20px;">
+                            <li><strong>דף מזרן (עדיפות 1):</strong> התחלת קמפיין באקלינקים - MYNET, ערוץ 7</li>
+                            <li>דף ריפורמר: המשך חיזוק באקלינקים</li>
+                            <li>הוספת סעיף קורסים קרובים בדף הבית</li>
+                            <li>בדיקת UX ומובייל + שיפורים</li>
+                            <li>מעקב ומדידת תוצאות</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>דוח מתוקן | ינואר 2026 | נתוני GSC אמיתיים | ניתוח פערים מול מתחרים</p>
+            <p style="margin-top: 5px;">Qilates - שמיים וארץ סטודיו לפילאטיס</p>
+        </div>
+    </div>
+</body>
+</html>
