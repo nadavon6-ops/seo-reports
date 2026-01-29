@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מנפאואר ישראל - המלצות ברמת קוד | דוח סופי V3 (מאומת)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            min-height: 100vh;
+            color: #e8e8e8;
+            line-height: 1.8;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 2px solid #00d4aa;
+        }
+        h1 { font-size: 2.2rem; color: #fff; margin-bottom: 10px; }
+        .subtitle { color: #00d4aa; font-size: 1.1rem; margin-bottom: 15px; }
+        .badge-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .badge.verified { background: #00d4aa; color: #000; }
+        .badge.corrected { background: #ff6b6b; color: #fff; }
+        .badge.final { background: #6c5ce7; color: #fff; }
+
+        .proof-banner {
+            background: linear-gradient(90deg, rgba(0,212,170,0.2), rgba(0,212,170,0.05));
+            border: 1px solid #00d4aa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .proof-banner h3 { color: #00d4aa; margin-bottom: 10px; }
+        .proof-banner code {
+            background: #000;
+            padding: 4px 10px;
+            border-radius: 4px;
+            color: #ffd93d;
+            font-size: 0.85rem;
+            direction: ltr;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .summary-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .summary-card.implemented { border-color: #00d4aa; }
+        .summary-card.critical { border-color: #e84393; }
+        .summary-card.high { border-color: #ff6b6b; }
+        .summary-card.medium { border-color: #ffd93d; }
+        .summary-number { font-size: 2.5rem; font-weight: bold; margin-bottom: 5px; }
+        .summary-card.implemented .summary-number { color: #00d4aa; }
+        .summary-card.critical .summary-number { color: #e84393; }
+        .summary-card.high .summary-number { color: #ff6b6b; }
+        .summary-card.medium .summary-number { color: #ffd93d; }
+        .summary-label { color: #aaa; font-size: 0.85rem; }
+
+        section { margin-bottom: 35px; }
+        h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h2.implemented { color: #00d4aa; border-color: #00d4aa; }
+        h2.critical { color: #e84393; border-color: #e84393; }
+        h2.high { color: #ff6b6b; border-color: #ff6b6b; }
+        h2.medium { color: #ffd93d; border-color: #ffd93d; }
+
+        .item-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid;
+        }
+        .item-card.critical { border-color: #e84393; }
+        .item-card.high { border-color: #ff6b6b; }
+        .item-card.medium { border-color: #ffd93d; }
+        .item-card.implemented { border-color: #00d4aa; opacity: 0.8; }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .item-title { font-size: 1.1rem; font-weight: bold; color: #fff; }
+        .priority-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .priority-badge.critical { background: #e84393; color: #fff; }
+        .priority-badge.high { background: #ff6b6b; color: #000; }
+        .priority-badge.medium { background: #ffd93d; color: #000; }
+        .priority-badge.implemented { background: #00d4aa; color: #000; }
+        .priority-badge.verified { background: #6c5ce7; color: #fff; }
+
+        .item-detail { margin-bottom: 10px; font-size: 0.95rem; }
+        .item-detail strong { color: #00d4aa; display: inline-block; min-width: 100px; }
+        .item-detail code {
+            background: rgba(0,0,0,0.4);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+            color: #ffd93d;
+            font-size: 0.85rem;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .evidence-box {
+            background: #0a0a15;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            color: #888;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        .evidence-box .cmd { color: #6c5ce7; }
+        .evidence-box .output { color: #00d4aa; }
+        .evidence-box .error { color: #ff6b6b; }
+
+        .strikethrough { text-decoration: line-through; opacity: 0.5; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
+        th, td { padding: 10px 12px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { background: rgba(0,0,0,0.3); color: #00d4aa; font-weight: 600; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.6rem; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>מנפאואר ישראל - המלצות ברמת קוד</h1>
+            <p class="subtitle">דוח מאומת | ינואר 2026</p>
+        </header>
+
+        <!-- Summary -->
+        <section>
+            <div class="summary-grid">
+                <div class="summary-card implemented">
+                    <div class="summary-number">5</div>
+                    <div class="summary-label">מיושם</div>
+                </div>
+                <div class="summary-card critical">
+                    <div class="summary-number">2</div>
+                    <div class="summary-label">באגים קריטיים</div>
+                </div>
+                <div class="summary-card high">
+                    <div class="summary-number">4</div>
+                    <div class="summary-label">עדיפות גבוהה</div>
+                </div>
+                <div class="summary-card medium">
+                    <div class="summary-number">2</div>
+                    <div class="summary-label">עדיפות בינונית</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPLEMENTED -->
+        <section>
+            <h2 class="implemented">&#10003; מיושם - אין צורך בפעולה</h2>
+
+            <div class="item-card implemented">
+                <div class="item-header">
+                    <span class="item-title strikethrough">סכמת Organization</span>
+                    <span class="priority-badge implemented">מיושם</span>
+                </div>
+                <div class="item-detail"><strong>סטטוס:</strong> קיים (מקודד ב-HTML entities ב-Next.js)</div>
+                <div class="item-detail"><strong>כולל:</strong> שם, כתובת URL, לוגו, טלפון, כתובת, קישורים חברתיים</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ grep "organization-schema"</span><br>
+                    <span class="output">Found: id="organization-schema" with full company data</span>
+                </div>
+            </div>
+
+            <div class="item-card implemented">
+                <div class="item-header">
+                    <span class="item-title strikethrough">סכמת WebSite + SearchAction</span>
+                    <span class="priority-badge implemented">מיושם</span>
+                </div>
+                <div class="item-detail"><strong>סטטוס:</strong> קיים עם יעד חיפוש פעיל</div>
+            </div>
+
+            <div class="item-card implemented">
+                <div class="item-header">
+                    <span class="item-title strikethrough">סכמת BreadcrumbList</span>
+                    <span class="priority-badge implemented">מיושם</span>
+                </div>
+                <div class="item-detail"><strong>סטטוס:</strong> קיים בכל הדפים (2-3 רמות בהתאם למבנה האתר)</div>
+            </div>
+
+            <div class="item-card implemented">
+                <div class="item-header">
+                    <span class="item-title strikethrough">סכמת FAQPage בדפי מאמרים</span>
+                    <span class="priority-badge implemented">מיושם</span>
+                </div>
+                <div class="item-detail"><strong>סטטוס:</strong> קיים בדפי מאמרים (כגון /article/חיפוש-עבודה)</div>
+                <div class="item-detail"><strong>נותר:</strong> דף שאלות ותשובות /frequently-asked-questions/faq ללא FAQPage (ראה בהמשך)</div>
+            </div>
+
+            <div class="item-card implemented">
+                <div class="item-header">
+                    <span class="item-title strikethrough">כתובת URL מתוקנת למדעי החיים</span>
+                    <span class="priority-badge verified">חדש: תוקן</span>
+                </div>
+                <div class="item-detail"><strong>סטטוס:</strong> <code>/specializations/life-science</code> קיים ועובד</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl -sI /specializations/life-science</span><br>
+                    <span class="output">HTTP/2 200 OK</span><br>
+                    <span class="output">Title: "Specializations - LIFE SCIENCE - Manpower"</span>
+                </div>
+                <div class="item-detail" style="margin-top: 10px;"><strong>נותר:</strong> הפניה מכתובת עם שגיאת כתיב (ראה בהמשך)</div>
+            </div>
+        </section>
+
+        <!-- CRITICAL BUGS -->
+        <section>
+            <h2 class="critical">&#9888; באגים קריטיים - דורש פעולה מיידית</h2>
+
+            <div class="item-card critical">
+                <div class="item-header">
+                    <span class="item-title">תגיות Canonical: href="undefined/..."</span>
+                    <span class="priority-badge critical">P0 קריטי</span>
+                </div>
+                <div class="item-detail"><strong>היקף:</strong> כל הדפים באתר</div>
+                <div class="item-detail"><strong>השפעה:</strong> גוגל מאנדקס "undefined" ככתובת קנונית - נזק SEO חמור</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl homepage | grep canonical</span><br>
+                    <span class="error">&lt;link rel="canonical" href="undefined/"/&gt;</span><br><br>
+                    <span class="cmd">$ curl /search | grep canonical</span><br>
+                    <span class="error">&lt;link rel="canonical" href="undefined/search"/&gt;</span><br><br>
+                    <span class="cmd">$ curl /frequently-asked-questions/faq | grep canonical</span><br>
+                    <span class="error">&lt;link rel="canonical" href="undefined/frequently-asked-questions/faq"/&gt;</span>
+                </div>
+                <div class="item-detail" style="margin-top: 15px;"><strong>סיבה:</strong> משתנה סביבה NEXT_PUBLIC_SITE_URL לא מוגדר</div>
+                <div class="item-detail"><strong>תיקון:</strong> הגדר <code>NEXT_PUBLIC_SITE_URL=https://www.manpower.co.il</code> בקובץ .env</div>
+            </div>
+
+            <div class="item-card critical">
+                <div class="item-header">
+                    <span class="item-title">תגית Title ריקה בדף /search</span>
+                    <span class="priority-badge critical">P0 קריטי</span>
+                </div>
+                <div class="item-detail"><strong>היקף:</strong> דף <code>/search</code></div>
+                <div class="item-detail"><strong>השפעה:</strong> אין כותרת בתוצאות חיפוש, לשוניות דפדפן, סימניות</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl /search | grep '&lt;title'</span><br>
+                    <span class="error">&lt;title&gt;&lt;/title&gt;</span><br><br>
+                    <span class="cmd">הערה: og:title גם ריק</span><br>
+                    <span class="error">&lt;meta property="og:title" content=""/&gt;</span>
+                </div>
+                <div class="item-detail" style="margin-top: 15px;"><strong>הערה:</strong> תיאור מטא קיים ותקין - רק הכותרת שבורה</div>
+            </div>
+        </section>
+
+        <!-- HIGH PRIORITY -->
+        <section>
+            <h2 class="high">&#10007; עדיפות גבוהה - פריטים חסרים</h2>
+
+            <div class="item-card high">
+                <div class="item-header">
+                    <span class="item-title">סכמת FAQPage בדף שאלות ותשובות</span>
+                    <span class="priority-badge high">גבוה</span>
+                </div>
+                <div class="item-detail"><strong>היקף:</strong> <code>/frequently-asked-questions/faq</code></div>
+                <div class="item-detail"><strong>בעיה:</strong> הדף מכיל 11 זוגות שאלה-תשובה אבל ללא סכמת FAQPage</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl /frequently-asked-questions/faq | grep -i "FAQPage\|Question\|acceptedAnswer"</span><br>
+                    <span class="error">(אין פלט - סכמה לא נמצאה)</span><br><br>
+                    <span class="cmd">סכמות קיימות:</span><br>
+                    <span class="output">BreadcrumbList בלבד</span>
+                </div>
+            </div>
+
+            <div class="item-card high">
+                <div class="item-header">
+                    <span class="item-title">תיאור מטא בדף פיננסים</span>
+                    <span class="priority-badge high">גבוה</span>
+                </div>
+                <div class="item-detail"><strong>היקף:</strong> <code>/specializations/finance</code></div>
+                <div class="item-detail"><strong>בעיה:</strong> תגית תיאור מטא לא נמצאה</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl /specializations/finance | grep 'meta name="description"'</span><br>
+                    <span class="error">(אין פלט - תגית לא נמצאה)</span>
+                </div>
+            </div>
+
+            <div class="item-card high">
+                <div class="item-header">
+                    <span class="item-title">תיאור מטא בדף חבר מביא חבר</span>
+                    <span class="priority-badge high">גבוה</span>
+                </div>
+                <div class="item-detail"><strong>היקף:</strong> <code>/referral/refer-friend</code></div>
+                <div class="item-detail"><strong>בעיה:</strong> תגית תיאור מטא קיימת אבל התוכן ריק</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl /referral/refer-friend | grep 'meta name="description"'</span><br>
+                    <span class="error">&lt;meta name="description" content=""/&gt;</span>
+                </div>
+            </div>
+
+            <div class="item-card high">
+                <div class="item-header">
+                    <span class="item-title">הפניה מכתובת URL עם שגיאת כתיב (LIFE-SIENCE)</span>
+                    <span class="priority-badge high">גבוה</span>
+                </div>
+                <div class="item-detail"><strong>בעיה:</strong> כתובת עם שגיאת כתיב מחזירה 404 במקום להפנות לכתובת הנכונה</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl -sI /specializations/LIFE-SIENCE</span><br>
+                    <span class="error">HTTP/2 404</span><br><br>
+                    <span class="cmd">$ curl -sI /specializations/life-science</span><br>
+                    <span class="output">HTTP/2 200 (כתובת נכונה עובדת!)</span>
+                </div>
+                <div class="item-detail" style="margin-top: 10px;"><strong>תיקון:</strong> הוסף הפניה 301 מהכתובת עם השגיאה לכתובת הנכונה</div>
+            </div>
+        </section>
+
+        <!-- MEDIUM PRIORITY -->
+        <section>
+            <h2 class="medium">&#9888; עדיפות בינונית - דורש שיפור</h2>
+
+            <div class="item-card medium">
+                <div class="item-header">
+                    <span class="item-title">תגיות H1 כפולות</span>
+                    <span class="priority-badge medium">בינוני</span>
+                </div>
+                <div class="item-detail"><strong>אומת ב:</strong></div>
+                <table>
+                    <tr><th>דף</th><th>מספר H1</th><th>תוכן</th></tr>
+                    <tr>
+                        <td>/referral/refer-friend</td>
+                        <td style="color: #ff6b6b;">2</td>
+                        <td>"חברים שמחברים..." + "עוזרים לחבר/ה..."</td>
+                    </tr>
+                    <tr>
+                        <td>/specializations/finance</td>
+                        <td style="color: #ff6b6b;">2</td>
+                        <td>"טאלנטים פיננסים..." + "מצוינות פיננסית..."</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="item-card medium">
+                <div class="item-header">
+                    <span class="item-title">כתובת /jobs מחזירה 404</span>
+                    <span class="priority-badge medium">בינוני</span>
+                </div>
+                <div class="item-detail"><strong>בעיה:</strong> כתובת קצרה /jobs לא עובדת</div>
+                <div class="evidence-box">
+                    <span class="cmd">$ curl -sI /jobs</span><br>
+                    <span class="error">HTTP/2 404</span>
+                </div>
+                <div class="item-detail" style="margin-top: 10px;"><strong>הערה:</strong> כתובות חלופיות עובדות (/search, /job-seekers/job-seekers)</div>
+            </div>
+
+        </section>
+
+        <!-- Priority Table -->
+        <section>
+            <h2>&#9733; סדר עדיפויות ליישום</h2>
+            <table>
+                <tr>
+                    <th>עדיפות</th>
+                    <th>פריט</th>
+                    <th>סטטוס</th>
+                    <th>מאמץ</th>
+                </tr>
+                <tr>
+                    <td style="color: #e84393; font-weight: bold;">P0</td>
+                    <td>באג תגיות Canonical</td>
+                    <td>אומת שבור</td>
+                    <td>נמוך (משתנה סביבה)</td>
+                </tr>
+                <tr>
+                    <td style="color: #e84393; font-weight: bold;">P0</td>
+                    <td>כותרת ריקה ב-/search</td>
+                    <td>אומת ריק</td>
+                    <td>נמוך (הוסף כותרת)</td>
+                </tr>
+                <tr>
+                    <td style="color: #ff6b6b; font-weight: bold;">P1</td>
+                    <td>FAQPage בדף שאלות ותשובות</td>
+                    <td>אומת חסר</td>
+                    <td>נמוך (הוסף סכמה)</td>
+                </tr>
+                <tr>
+                    <td style="color: #ff6b6b; font-weight: bold;">P1</td>
+                    <td>הפניה מ-LIFE-SIENCE</td>
+                    <td>כתובת נכונה קיימת</td>
+                    <td>נמוך (הוסף 301)</td>
+                </tr>
+                <tr>
+                    <td style="color: #ff6b6b; font-weight: bold;">P1</td>
+                    <td>תיאורי מטא</td>
+                    <td>אומת ריקים</td>
+                    <td>נמוך (הוסף תוכן)</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd93d; font-weight: bold;">P2</td>
+                    <td>תגיות H1 כפולות</td>
+                    <td>אומת (2 לדף)</td>
+                    <td>נמוך</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd93d; font-weight: bold;">P2</td>
+                    <td>404 ב-/jobs</td>
+                    <td>אומת 404</td>
+                    <td>נמוך</td>
+                </tr>
+            </table>
+        </section>
+
+    </div>
+</body>
+</html>
