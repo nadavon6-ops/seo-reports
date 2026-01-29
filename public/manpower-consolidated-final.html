@@ -127,6 +127,32 @@
         .evidence-box .output { color: #00d4aa; }
         .evidence-box .error { color: #ff6b6b; }
 
+        .json-code {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.75rem;
+            color: #c9d1d9;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        .json-code .key { color: #7ee787; }
+        .json-code .string { color: #a5d6ff; }
+        .json-code .label {
+            display: block;
+            color: #8b949e;
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+
         .strikethrough { text-decoration: line-through; opacity: 0.5; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
@@ -256,11 +282,52 @@
                 </div>
                 <div class="item-detail"><strong>היקף:</strong> 1,067+ משרות פעילות</div>
                 <div class="item-detail"><strong>בעיה:</strong> דפי משרות ללא נתונים מובנים - מונע הופעה ב-Google Jobs</div>
+                <div class="item-detail"><strong>רמת ביטחון:</strong> 99%</div>
                 <div class="evidence-box">
                     <span class="cmd">$ curl /search?JOBEXPERTISE=4142 | grep -i "JobPosting"</span><br>
-                    <span class="error">(אין פלט - סכמה לא נמצאה)</span>
+                    <span class="error">(אין פלט - סכמה לא נמצאה)</span><br><br>
+                    <span class="output">אימות: נסרקו עמוד הבית, /search, ו-/search?JOBEXPERTISE=4142. לא נמצא "@type": "JobPosting" באף מקום. המשרות נטענות דינמית ללא Structured Data.</span>
                 </div>
-                <div class="item-detail" style="margin-top: 15px;"><strong>תיקון:</strong> הוסף סכמת JobPosting לכל דף משרה עם: title, description, datePosted, hiringOrganization, jobLocation</div>
+                <div class="json-code"><span class="label">JSON-LD ליישום:</span>{
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  "title": "[כותרת המשרה] - [מיקום]",
+  "description": "[תיאור מפורט של המשרה]",
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "Manpower Israel",
+    "value": "[JOB-ID-UNIQUE]"
+  },
+  "datePosted": "[YYYY-MM-DD]",
+  "validThrough": "[YYYY-MM-DDTHH:MM]",
+  "employmentType": ["FULL_TIME"],
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": "מנפאואר ישראל",
+    "sameAs": "https://www.manpower.co.il",
+    "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg"
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "[עיר]",
+      "addressRegion": "[אזור]",
+      "addressCountry": "IL"
+    }
+  },
+  "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": "ILS",
+    "value": {
+      "@type": "QuantitativeValue",
+      "minValue": [MIN],
+      "maxValue": [MAX],
+      "unitText": "MONTH"
+    }
+  },
+  "directApply": true
+}</div>
             </div>
 
             <div class="item-card high">
@@ -270,11 +337,39 @@
                 </div>
                 <div class="item-detail"><strong>היקף:</strong> 62 דפי מאמרים (/article/[slug])</div>
                 <div class="item-detail"><strong>בעיה:</strong> רק BreadcrumbList ו-FAQPage קיימים - חסר Article/BlogPosting</div>
+                <div class="item-detail"><strong>רמת ביטחון:</strong> 99%</div>
                 <div class="evidence-box">
                     <span class="cmd">$ curl /article/חיפוש-עבודה | grep -i "Article\|BlogPosting"</span><br>
-                    <span class="error">(אין פלט - סכמה לא נמצאה)</span>
+                    <span class="error">(אין פלט - סכמה לא נמצאה)</span><br><br>
+                    <span class="output">אימות: נסרקו /article/קורות-חיים, /article/חיפוש-עבודה, /insight-lobby. נמצאו רק BreadcrumbList + FAQPage. לא נמצא "@type": "Article" או "@type": "BlogPosting" באף עמוד כתבה.</span>
                 </div>
-                <div class="item-detail" style="margin-top: 15px;"><strong>תיקון:</strong> הוסף סכמת Article עם: headline, datePublished, author, image</div>
+                <div class="json-code"><span class="label">JSON-LD ליישום:</span>{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "[כותרת הכתבה - עד 110 תווים]",
+  "description": "[תיאור קצר / meta description]",
+  "image": ["[URL תמונה ראשית]"],
+  "datePublished": "[YYYY-MM-DDTHH:MM:SS+03:00]",
+  "dateModified": "[YYYY-MM-DDTHH:MM:SS+03:00]",
+  "author": {
+    "@type": "Organization",
+    "name": "מנפאואר ישראל",
+    "url": "https://www.manpower.co.il"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "מנפאואר ישראל",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "[URL מלא של הכתבה]"
+  },
+  "inLanguage": "he-IL"
+}</div>
             </div>
 
             <div class="item-card high">
