@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ביקורת ביצועים אורגניים מקיפה V2 | נדב דיגיטל</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: #e0e0e0;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        header h1 { font-size: 2.4em; color: white; margin-bottom: 10px; }
+        header p { color: rgba(255,255,255,0.9); font-size: 1.1em; }
+        .section { background: linear-gradient(145deg, #1e1e3f 0%, #151530 100%); border-radius: 16px; padding: 30px; margin-bottom: 25px; border: 1px solid rgba(102, 126, 234, 0.2); }
+        .section h2 { color: #667eea; margin-bottom: 20px; font-size: 1.5em; border-bottom: 2px solid rgba(102, 126, 234, 0.3); padding-bottom: 10px; }
+        .section h3 { color: #4ecdc4; margin: 20px 0 15px; font-size: 1.2em; }
+        .page-card { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 25px; margin-bottom: 25px; border-right: 4px solid #667eea; }
+        .page-url { font-family: monospace; background: #0d0d1a; padding: 8px 15px; border-radius: 6px; color: #4ecdc4; font-size: 0.9em; display: inline-block; margin-bottom: 15px; word-break: break-all; direction: ltr; text-align: left; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 15px 0; }
+        .metric { background: rgba(102, 126, 234, 0.1); padding: 12px; border-radius: 8px; text-align: center; }
+        .metric .value { font-size: 1.6em; font-weight: bold; color: #667eea; }
+        .metric .label { font-size: 0.8em; color: #888; }
+        .metric.bad .value { color: #e74c3c; }
+        .metric.good .value { color: #2ecc71; }
+        .queries-box { background: rgba(78, 205, 196, 0.1); padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .queries-box h4 { color: #4ecdc4; margin-bottom: 10px; font-size: 0.95em; }
+        .query-tag { display: inline-block; background: rgba(78, 205, 196, 0.2); padding: 5px 12px; border-radius: 15px; margin: 3px; font-size: 0.85em; direction: rtl; }
+        .audit-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.9em; }
+        .audit-table th { background: rgba(102, 126, 234, 0.2); color: #667eea; padding: 10px; text-align: right; }
+        .audit-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .pass { color: #2ecc71; font-weight: bold; }
+        .fail { color: #e74c3c; font-weight: bold; }
+        .partial { color: #f39c12; font-weight: bold; }
+        .recommendation-box { background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%); padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .recommendation-box h4 { color: #667eea; margin-bottom: 12px; }
+        .recommendation-box ul { list-style: none; }
+        .recommendation-box li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; gap: 10px; }
+        .recommendation-box li::before { content: ">"; color: #4ecdc4; font-weight: bold; }
+        .faq-suggestions { background: rgba(240, 147, 251, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .faq-suggestions h4 { color: #f093fb; margin-bottom: 12px; }
+        .faq-item { padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 8px 0; }
+        .faq-item strong { color: #f093fb; }
+        .h2-suggestions { background: rgba(46, 204, 113, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .h2-suggestions h4 { color: #2ecc71; margin-bottom: 12px; }
+        .h2-tag { display: block; background: rgba(46, 204, 113, 0.15); padding: 8px 15px; border-radius: 6px; margin: 5px 0; font-family: monospace; direction: rtl; }
+        .schema-box { background: rgba(241, 196, 15, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .schema-box h4 { color: #f1c40f; margin-bottom: 12px; }
+        .schema-tag { display: inline-block; background: rgba(241, 196, 15, 0.2); padding: 6px 14px; border-radius: 15px; margin: 4px; font-size: 0.85em; }
+        .schema-tag.implement { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .schema-tag.skip { background: rgba(231, 76, 60, 0.2); color: #e74c3c; text-decoration: line-through; }
+        .competitor-box { background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .competitor-box h4 { color: #e74c3c; margin-bottom: 12px; }
+        .competitor-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .priority-score { display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.85em; }
+        .priority-1 { background: #e74c3c; color: white; }
+        .priority-2 { background: #f39c12; color: white; }
+        .priority-3 { background: #3498db; color: white; }
+        .do-not-box { background: rgba(231, 76, 60, 0.15); border: 2px solid #e74c3c; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .do-not-box h4 { color: #e74c3c; margin-bottom: 12px; }
+        .implementation-guide { background: linear-gradient(145deg, #1a3a2a 0%, #0d2818 100%); border-radius: 16px; padding: 30px; margin-top: 30px; border: 1px solid rgba(46, 204, 113, 0.3); }
+        .implementation-guide h2 { color: #2ecc71; }
+        footer { text-align: center; padding: 30px; color: #666; }
+        .client-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+        .client-header h2 { margin: 0; border: none; padding: 0; }
+        .underperform-badge { padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
+        .underperform-critical { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .underperform-high { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+            .page-url { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ביקורת ביצועים אורגניים מקיפה</h1>
+            <p>ניתוח ברמת עמוד | נתוני GSC 1-28 בדצמבר 2025 | 60 עמודים עם ביצועים נמוכים</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.9;">נדב דיגיטל | ינואר 2026</p>
+        </header>
+
+        <!-- EXECUTIVE SUMMARY -->
+        <section class="section">
+            <h2>A. סיכום מנהלים</h2>
+            <div class="metrics-grid">
+                <div class="metric"><div class="value">6</div><div class="label">לקוחות נבדקו</div></div>
+                <div class="metric"><div class="value">60</div><div class="label">עמודים מפורטים</div></div>
+                <div class="metric"><div class="value">549</div><div class="label">סה"כ עמודים בעייתיים</div></div>
+                <div class="metric bad"><div class="value">0.8%</div><div class="label">CTR ממוצע</div></div>
+                <div class="metric bad"><div class="value">15.2</div><div class="label">מיקום ממוצע</div></div>
+            </div>
+            <h3>דפוסים מרכזיים שזוהו:</h3>
+            <ul style="padding-right: 20px; margin-top: 10px;">
+                <li><strong>CTR נמוך במיקומים טובים:</strong> CardioTeam - 26,422 חשיפות במיקום 6.4, רק 1.3% CTR</li>
+                <li><strong>תוכן דליל:</strong> Anbar, CardioTeam, Ultima - עמודים קריטיים עם פחות מ-1,000 מילים</li>
+                <li><strong>H1 חסרים:</strong> BeSpirit, Ultima School - אין תגי H1 סמנטיים</li>
+                <li><strong>Schema חסר:</strong> BeSpirit - אין structured data כלל</li>
+                <li><strong>מיקומים גרועים:</strong> Moya CBD Guide במיקום 36, Anbar משכנתא חוץ בנקאית במיקום 49</li>
+            </ul>
+        </section>
+
+        <!-- CLIENT 1: ANBAR -->
+        <section class="section">
+            <div class="client-header">
+                <h2>ענבר (anbar.co.il)</h2>
+                <span class="underperform-badge underperform-critical">10 עמודים בעייתיים</span>
+            </div>
+
+            <!-- Page 1 -->
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1</span>
+                <div class="page-url">https://anbar.co.il/loan-against-property/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">4</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">4,023</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.1%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">19.7</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">הלוואה כנגד נכס</span>
+                    <span class="query-tag">משכנתא כנגד נכס קיים</span>
+                    <span class="query-tag">משכנתא כנגד שעבוד נכס</span>
+                </div>
+
+                <h3>ביקורת 8 נקודות:</h3>
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>מילת מפתח בכותרת</td><td class="pass">עבר</td><td>"הלוואה כנגד נכס קיים - משכנתא לסגירת חובות"</td></tr>
+                    <tr><td>מילת מפתח ב-H1</td><td class="pass">עבר</td><td>"הלוואה כנגד נכס קיים – משכנתא לסגירת חובות"</td></tr>
+                    <tr><td>מילת מפתח ב-100 מילים ראשונות</td><td class="fail">נכשל</td><td>פותח עם הקשר כלכלי, מילת מפתח לא בולטת</td></tr>
+                    <tr><td>מבנה H2 (5+)</td><td class="fail">נכשל</td><td>רק 3 תגי H2</td></tr>
+                    <tr><td>מילת מפתח ב-2+ כותרות</td><td class="fail">נכשל</td><td>רק ב-H1, לא ב-H2/H3</td></tr>
+                    <tr><td>עומק תוכן (2000+ מילים)</td><td class="fail">נכשל</td><td>~800 מילים בלבד</td></tr>
+                    <tr><td>FAQ קיים</td><td class="fail">נכשל</td><td>אין סקשן FAQ</td></tr>
+                    <tr><td>Schema מתאים</td><td class="pass">עבר</td><td>Article, WebPage, Organization, BreadcrumbList</td></tr>
+                </table>
+
+                <div class="competitor-box">
+                    <h4>ניתוח מתחרים עבור "הלוואה כנגד נכס":</h4>
+                    <div class="competitor-item"><span><strong>#1:</strong> clalbit.co.il</span><span>4,500+ מילים, מחשבון, 8 FAQs</span></div>
+                    <div class="competitor-item"><span><strong>#2:</strong> fnx.co.il</span><span>17 שאלות נפוצות, טבלאות השוואה</span></div>
+                    <div class="competitor-item"><span><strong>#3:</strong> bankjerusalem.co.il</span><span>מחשבון הלוואה, 6 FAQs</span></div>
+                    <p style="margin-top: 10px; color: #e74c3c;"><strong>פער:</strong> תוכן דליל (800 vs 4,500 מילים), אין FAQ, אין מחשבון</p>
+                </div>
+
+                <div class="h2-suggestions">
+                    <h4>תגי H2 ספציפיים להוספה:</h4>
+                    <span class="h2-tag">&lt;h2&gt;מה זו הלוואה כנגד נכס ואיך היא עובדת?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;מי זכאי להלוואה כנגד נכס?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;הלוואה כנגד נכס - תנאים ודרישות&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;כמה אפשר לקבל בהלוואה כנגד נכס?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;הלוואה כנגד נכס vs משכנתא רגילה - השוואה&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;ריביות והחזרים בהלוואה כנגד נכס 2026&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;תהליך קבלת הלוואה כנגד נכס צעד אחר צעד&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;שאלות נפוצות על הלוואה כנגד נכס&lt;/h2&gt;</span>
+                </div>
+
+                <div class="faq-suggestions">
+                    <h4>שאלות נפוצות ספציפיות להוספה (עם FAQPage Schema):</h4>
+                    <div class="faq-item"><strong>Q:</strong> מה ההבדל בין הלוואה כנגד נכס למשכנתא רגילה?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם אני יכול לקבל הלוואה כנגד נכס אם יש לי משכנתא קיימת?</div>
+                    <div class="faq-item"><strong>Q:</strong> כמה זמן לוקח תהליך אישור הלוואה כנגד נכס?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה אחוז המימון המקסימלי בהלוואה כנגד נכס?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם הלוואה כנגד נכס מתאימה לסגירת חובות?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה הריביות הנוכחיות להלוואה כנגד נכס?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם צריך שמאי להלוואה כנגד נכס?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה הסיכונים בהלוואה כנגד נכס?</div>
+                </div>
+
+                <div class="schema-box">
+                    <h4>Schema להטמעה:</h4>
+                    <span class="schema-tag implement">FAQPage - בעמוד זה</span>
+                    <span class="schema-tag implement">HowTo - לתהליך האישור</span>
+                    <span class="schema-tag skip">Product - לא מתאים לשירות פיננסי</span>
+                    <span class="schema-tag skip">Review - אין המלצות בעמוד</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הרחב תוכן מ-800 ל-2,500+ מילים</li>
+                        <li>הוסף 8 תגי H2 המפורטים למעלה</li>
+                        <li>הוסף 8 שאלות נפוצות עם FAQPage schema</li>
+                        <li>הוסף טבלת השוואה: הלוואה כנגד נכס vs משכנתא vs הלוואה בנקאית</li>
+                        <li>שלב מילת מפתח ב-100 מילים ראשונות</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 2 -->
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1</span>
+                <div class="page-url">https://anbar.co.il/משכנתא-חוץ-בנקאית/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric bad"><div class="value">0</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">1,703</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">49.2</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">משכנתא חוץ בנקאית</span>
+                    <span class="query-tag">משכנתאות חוץ בנקאיות</span>
+                    <span class="query-tag">איך מתבצע תהליך אישור משכנתא חוץ בנקאית</span>
+                </div>
+
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>מיקום (טופ 10)</td><td class="fail">נכשל</td><td>מיקום 49.2 - עמוד 5 בגוגל</td></tr>
+                    <tr><td>CTR (מעל 2%)</td><td class="fail">נכשל</td><td>0% - אין קליקים כלל</td></tr>
+                </table>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>בדוק אם העמוד קיים ופעיל - 0 קליקים מ-1,703 חשיפות חריג</li>
+                        <li>שפר כותרת ותיאור מטא לבידול</li>
+                        <li>הוסף תוכן מקיף על משכנתא חוץ בנקאית (2,000+ מילים)</li>
+                        <li>בנה קישורים פנימיים מעמודים חזקים יותר</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 3 -->
+            <div class="page-card">
+                <span class="priority-score priority-2">עדיפות 2</span>
+                <div class="page-url">https://anbar.co.il/עד-איזה-גיל-ניתן-לקחת-משכנתא/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">7</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">3,931</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.18%</div><div class="label">CTR</div></div>
+                    <div class="metric good"><div class="value">6.6</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">עד איזה גיל נותנים משכנתא</span>
+                    <span class="query-tag">משכנתא מגיל 65</span>
+                    <span class="query-tag">משכנתא</span>
+                </div>
+
+                <p style="background: rgba(46, 204, 113, 0.1); padding: 15px; border-radius: 8px; margin: 15px 0; border-right: 3px solid #2ecc71;">
+                    <strong style="color: #2ecc71;">הזדמנות מהירה:</strong> מיקום 6.6 מצוין אבל CTR 0.18% בלבד. שיפור כותרת ותיאור מטא יכול להכפיל קליקים!
+                </p>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>שפר כותרת עם call-to-action: "עד איזה גיל ניתן לקחת משכנתא? [מדריך 2026]"</li>
+                        <li>שפר תיאור מטא עם מספרים ויתרונות</li>
+                        <li>הוסף FAQPage schema עם שאלות על גיל ומשכנתא</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT 2: CARDIOTEAM -->
+        <section class="section">
+            <div class="client-header">
+                <h2>קרדיוטים (cardioteam.co.il)</h2>
+                <span class="underperform-badge underperform-high">10 עמודים בעייתיים</span>
+            </div>
+
+            <!-- Page 1 - Highest Impact -->
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1 - השפעה גבוהה</span>
+                <div class="page-url">https://cardioteam.co.il/כאבים-בחזה-המדריך-המלא-19-סיבות-מאפייני/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">344</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">26,422</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">1.3%</div><div class="label">CTR</div></div>
+                    <div class="metric good"><div class="value">6.4</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">כאבים בחזה</span>
+                    <span class="query-tag">לחץ בחזה</span>
+                    <span class="query-tag">כאבים בבית החזה</span>
+                </div>
+
+                <p style="background: rgba(241, 196, 15, 0.1); padding: 15px; border-radius: 8px; margin: 15px 0; border-right: 3px solid #f1c40f;">
+                    <strong style="color: #f1c40f;">פוטנציאל עצום:</strong> 26,422 חשיפות בחודש! שיפור CTR מ-1.3% ל-3% = +450 קליקים נוספים בחודש!
+                </p>
+
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>מילת מפתח בכותרת</td><td class="pass">עבר</td><td>"כאבים בחזה - המדריך המלא"</td></tr>
+                    <tr><td>מיקום (טופ 10)</td><td class="pass">עבר</td><td>מיקום 6.4</td></tr>
+                    <tr><td>CTR (מעל 3%)</td><td class="fail">נכשל</td><td>1.3% - נמוך למיקום זה</td></tr>
+                    <tr><td>FAQPage Schema</td><td class="partial">חלקי</td><td>תוכן מסוג Q&A קיים, schema חסר</td></tr>
+                </table>
+
+                <div class="faq-suggestions">
+                    <h4>שאלות נפוצות ספציפיות להוספה:</h4>
+                    <div class="faq-item"><strong>Q:</strong> מתי כאבים בחזה מסוכנים?</div>
+                    <div class="faq-item"><strong>Q:</strong> איך מבדילים בין כאב בחזה לבבי לכאב שרירי?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם כאבים בחזה בצד שמאל תמיד קשורים ללב?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה לעשות אם יש לי כאבים בחזה?</div>
+                    <div class="faq-item"><strong>Q:</strong> כמה זמן נמשך כאב של התקף לב?</div>
+                </div>
+
+                <div class="schema-box">
+                    <h4>Schema להטמעה:</h4>
+                    <span class="schema-tag implement">FAQPage - קריטי לעמוד זה</span>
+                    <span class="schema-tag implement">MedicalWebPage - לאמון YMYL</span>
+                    <span class="schema-tag implement">MedicalCondition - לכאבים בחזה</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>שפר תיאור מטא עם "מתי לפנות לרופא? 19 סיבות לכאבים בחזה"</li>
+                        <li>הוסף FAQPage schema לשאלות הקיימות בתוכן</li>
+                        <li>הוסף MedicalWebPage schema לאמון YMYL</li>
+                        <li>הוסף תוכן וידאו קצר (אם אפשרי)</li>
+                        <li>הוסף featured snippet friendly list בתחילת העמוד</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 2 -->
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1</span>
+                <div class="page-url">https://cardioteam.co.il/כל-מה-שחשוב-לדעת-על-לחץ-דם-נמוך/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">149</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">13,762</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">1.08%</div><div class="label">CTR</div></div>
+                    <div class="metric good"><div class="value">6.7</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">לחץ דם נמוך</span>
+                    <span class="query-tag">לחץ דם נמוך אצל קשישים</span>
+                    <span class="query-tag">איך מעלים לחץ דם נמוך</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הוסף FAQPage schema עם שאלות על לחץ דם נמוך</li>
+                        <li>שפר תיאור מטא: "לחץ דם נמוך - סיבות, תסמינים וטיפול | מדריך רפואי"</li>
+                        <li>הוסף טבלת ערכי לחץ דם תקין/נמוך/גבוה</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Page 3 - Ablation -->
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1 - תוכן דליל</span>
+                <div class="page-url">https://cardioteam.co.il/אבלציה/</div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">אבלציה</span>
+                    <span class="query-tag">צריבה של הלב</span>
+                    <span class="query-tag">אבלציה לב</span>
+                </div>
+
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>מילת מפתח בכותרת</td><td class="pass">עבר</td><td>"צריבה (אבלציה) של הלב - מידע למטופל"</td></tr>
+                    <tr><td>מבנה H2 (5+)</td><td class="fail">נכשל</td><td>רק 3 תגי H2</td></tr>
+                    <tr><td>עומק תוכן (2000+ מילים)</td><td class="fail">נכשל</td><td>~800 מילים בלבד</td></tr>
+                    <tr><td>FAQ קיים</td><td class="fail">נכשל</td><td>אין סקשן FAQ בעמוד</td></tr>
+                    <tr><td>MedicalProcedure Schema</td><td class="fail">נכשל</td><td>חסר</td></tr>
+                </table>
+
+                <div class="h2-suggestions">
+                    <h4>תגי H2 ספציפיים להוספה:</h4>
+                    <span class="h2-tag">&lt;h2&gt;מה זו אבלציה ולמה היא נדרשת?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;סוגי אבלציה - רדיופרקוונסי, קריו ולייזר&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;הכנה לפני אבלציה - מה צריך לדעת?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;מהלך הפרוצדורה - צעד אחר צעד&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;אחוזי הצלחה וסיכונים באבלציה&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;החלמה לאחר אבלציה - לוח זמנים&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;שאלות נפוצות על אבלציה&lt;/h2&gt;</span>
+                </div>
+
+                <div class="faq-suggestions">
+                    <h4>שאלות נפוצות ספציפיות להוספה:</h4>
+                    <div class="faq-item"><strong>Q:</strong> האם אבלציה כואבת?</div>
+                    <div class="faq-item"><strong>Q:</strong> כמה זמן נמשכת פרוצדורת אבלציה?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה אחוזי ההצלחה של אבלציה?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם אבלציה מרפאת הפרעות קצב לצמיתות?</div>
+                    <div class="faq-item"><strong>Q:</strong> מתי אפשר לחזור לעבודה אחרי אבלציה?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה הסיכונים של אבלציה?</div>
+                </div>
+
+                <div class="schema-box">
+                    <h4>Schema להטמעה:</h4>
+                    <span class="schema-tag implement">MedicalProcedure - לתיאור הפרוצדורה</span>
+                    <span class="schema-tag implement">FAQPage - לשאלות נפוצות</span>
+                    <span class="schema-tag implement">HowTo - לשלבי ההכנה</span>
+                    <span class="schema-tag skip">Product - לא מתאים לפרוצדורה רפואית</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הרחב תוכן מ-800 ל-2,000+ מילים</li>
+                        <li>הוסף 7 תגי H2 המפורטים למעלה</li>
+                        <li>הוסף 6 שאלות נפוצות עם FAQPage schema</li>
+                        <li>הוסף MedicalProcedure schema</li>
+                        <li>הוסף נתוני הצלחה וסטטיסטיקות</li>
+                        <li>הוסף פרטי רופאים לאמון E-E-A-T</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT 3: ULTIMA SCHOOL -->
+        <section class="section">
+            <div class="client-header">
+                <h2>אולטימה (ultimaschool.co.il)</h2>
+                <span class="underperform-badge underperform-critical">10 עמודים בעייתיים</span>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1 - בעיה טכנית</span>
+                <div class="page-url">https://ultimaschool.co.il/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">66</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">4,994</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">1.32%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">28.6</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">אולטימה</span>
+                    <span class="query-tag">אולטימה עיצוב פנים</span>
+                    <span class="query-tag">מכללת אולטימה</span>
+                </div>
+
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>מילת מפתח בכותרת</td><td class="pass">עבר</td><td>"לימודי עיצוב פנים - אולטימה"</td></tr>
+                    <tr><td>H1 קיים</td><td class="fail">נכשל</td><td>לא זוהה H1 סמנטי - Elementor layout</td></tr>
+                    <tr><td>מבנה H2</td><td class="fail">נכשל</td><td>אין תגי H2 סמנטיים</td></tr>
+                    <tr><td>FAQ קיים</td><td class="fail">נכשל</td><td>אין סקשן FAQ</td></tr>
+                    <tr><td>תוכן נגיש</td><td class="partial">חלקי</td><td>תוכן מבוסס JavaScript - עלול להיות בעייתי לסריקה</td></tr>
+                </table>
+
+                <div class="h2-suggestions">
+                    <h4>H1 ו-H2 ספציפיים להוספה:</h4>
+                    <span class="h2-tag" style="background: rgba(102, 126, 234, 0.3);">&lt;h1&gt;מכללת אולטימה - לימודי עיצוב פנים מובילים בישראל&lt;/h1&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;הקורסים שלנו בעיצוב פנים&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;למה לבחור באולטימה?&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;בוגרים מספרים&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;תעודות והסמכות&lt;/h2&gt;</span>
+                    <span class="h2-tag">&lt;h2&gt;שאלות נפוצות על לימודי עיצוב פנים&lt;/h2&gt;</span>
+                </div>
+
+                <div class="faq-suggestions">
+                    <h4>שאלות נפוצות ספציפיות להוספה:</h4>
+                    <div class="faq-item"><strong>Q:</strong> כמה עולה קורס עיצוב פנים באולטימה?</div>
+                    <div class="faq-item"><strong>Q:</strong> כמה זמן לוקחים לימודי עיצוב פנים?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם צריך רקע קודם ללימודי עיצוב פנים?</div>
+                    <div class="faq-item"><strong>Q:</strong> איזו תעודה מקבלים בסיום הקורס?</div>
+                    <div class="faq-item"><strong>Q:</strong> מה ההבדל בין עיצוב פנים לאדריכלות?</div>
+                    <div class="faq-item"><strong>Q:</strong> האם יש התמחות באולטימה?</div>
+                    <div class="faq-item"><strong>Q:</strong> כמה מרוויח מעצב פנים?</div>
+                </div>
+
+                <div class="schema-box">
+                    <h4>Schema להטמעה:</h4>
+                    <span class="schema-tag implement">EducationalOrganization - קיים, לוודא שלם</span>
+                    <span class="schema-tag implement">FAQPage - חסר, להוסיף</span>
+                    <span class="schema-tag implement">Course - להוסיף לכל קורס</span>
+                    <span class="schema-tag skip">LocalBusiness - לא מתאים, זה מכללה</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li><strong>קריטי:</strong> הוסף תג H1 סמנטי לעמוד הבית</li>
+                        <li><strong>קריטי:</strong> הוסף תגי H2 סמנטיים לסקשנים</li>
+                        <li>הוסף FAQPage schema עם 7 שאלות נפוצות</li>
+                        <li>ודא שהתוכן נגיש לסריקה (SSR או prerendering)</li>
+                        <li>הוסף Course schema לכל קורס בעמוד הבית</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1</span>
+                <div class="page-url">https://ultimaschool.co.il/courses/interior-design/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">8</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">2,733</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.29%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">32.4</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">אולטימה עיצוב פנים</span>
+                    <span class="query-tag">קורס עיצוב פנים קצר</span>
+                    <span class="query-tag">מכללת אולטימה</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הוסף תג H1: "קורס עיצוב פנים - תעודה מוכרת | מכללת אולטימה"</li>
+                        <li>הוסף Course schema מלא עם duration, price (אם פומבי), provider</li>
+                        <li>הוסף FAQPage עם שאלות ספציפיות לקורס</li>
+                        <li>הרחב תוכן עם תוכנית לימודים מפורטת</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT 4: BESPIRIT -->
+        <section class="section">
+            <div class="client-header">
+                <h2>ביספיריט (bespirit.co.il)</h2>
+                <span class="underperform-badge underperform-critical">10 עמודים בעייתיים - אין SCHEMA!</span>
+            </div>
+
+            <div style="background: rgba(231, 76, 60, 0.15); padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px solid #e74c3c;">
+                <strong style="color: #e74c3c; font-size: 1.1em;">בעיה קריטית:</strong>
+                <p style="margin-top: 10px;">לא זוהה אף Schema markup באתר ביספיריט. זו בעיה קריטית לאמון ולדירוג. יש להוסיף EducationalOrganization, Course, FAQPage לכל העמודים.</p>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1</span>
+                <div class="page-url">https://bespirit.co.il/plans/psychotherapy/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">106</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">6,329</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">1.67%</div><div class="label">CTR</div></div>
+                    <div class="metric"><div class="value">10.4</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">מכללת כרכור</span>
+                    <span class="query-tag">פסיכותרפיה גופנית לימודים</span>
+                    <span class="query-tag">פסיכותרפיה גופנית</span>
+                </div>
+
+                <table class="audit-table">
+                    <tr><th>בדיקה</th><th>סטטוס</th><th>ראיות</th></tr>
+                    <tr><td>H1 קיים</td><td class="fail">נכשל</td><td>לא זוהה H1 סמנטי</td></tr>
+                    <tr><td>Schema קיים</td><td class="fail">נכשל</td><td>אין structured data כלל</td></tr>
+                    <tr><td>FAQ קיים</td><td class="fail">נכשל</td><td>אין סקשן FAQ</td></tr>
+                </table>
+
+                <div class="schema-box">
+                    <h4>Schema להטמעה (קריטי):</h4>
+                    <span class="schema-tag implement">EducationalOrganization - ברמת האתר</span>
+                    <span class="schema-tag implement">Course - לעמוד זה</span>
+                    <span class="schema-tag implement">FAQPage - להוסיף</span>
+                    <span class="schema-tag implement">BreadcrumbList - לניווט</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li><strong>קריטי:</strong> הוסף H1 "לימודי פסיכותרפיה גופנית | מכללת כרכור"</li>
+                        <li><strong>קריטי:</strong> הוסף EducationalOrganization schema ברמת האתר</li>
+                        <li><strong>קריטי:</strong> הוסף Course schema לעמוד זה</li>
+                        <li>הוסף FAQ עם שאלות על הקורס</li>
+                        <li>תקן בעיית מותג (BeSpirit vs מכללת כרכור)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT 5: MOYA CBD -->
+        <section class="section">
+            <div class="client-header">
+                <h2>מויה CBD (moya-cbd.com)</h2>
+                <span class="underperform-badge underperform-high">10 עמודים בעייתיים</span>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-1">עדיפות 1 - בעיית CTR</span>
+                <div class="page-url">https://moya-cbd.com/shop/oils/organic-20/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric bad"><div class="value">2</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">5,317</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.04%</div><div class="label">CTR</div></div>
+                    <div class="metric good"><div class="value">8.0</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">c b d</span>
+                    <span class="query-tag">c.b.d</span>
+                    <span class="query-tag">cantina cbd</span>
+                </div>
+
+                <p style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 8px; margin: 15px 0; border-right: 3px solid #e74c3c;">
+                    <strong style="color: #e74c3c;">CTR קריטי:</strong> מיקום 8 מצוין אבל 0.04% CTR (2 קליקים מ-5,317 חשיפות). משהו שבור בכותרת/תיאור!
+                </p>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li><strong>דחוף:</strong> בדוק וודא שהכותרת והתיאור מטא מופיעים נכון בגוגל</li>
+                        <li>שפר כותרת: "שמן CBD 20% אורגני | Moya - משלוח חינם"</li>
+                        <li>הוסף מחיר ודירוג לתיאור מטא (אם יש Product schema)</li>
+                        <li>ודא שאין בעיית canonical או redirect</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-2">עדיפות 2</span>
+                <div class="page-url">https://moya-cbd.com/info/full-cbd-guide/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">5</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">1,776</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.28%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">36.0</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הרחב מדריך CBD (מיקום 36 מצביע על תוכן לא מספק)</li>
+                        <li>הוסף FAQPage schema למדריך</li>
+                        <li>בנה קישורים פנימיים מעמודי מוצרים למדריך</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLIENT 6: MANPOWERCARE -->
+        <section class="section">
+            <div class="client-header">
+                <h2>מנפאואר קייר (manpowercare.co.il)</h2>
+                <span class="underperform-badge underperform-high">10 עמודים בעייתיים</span>
+            </div>
+
+            <div class="page-card">
+                <span class="priority-score priority-2">עדיפות 2</span>
+                <div class="page-url">https://manpowercare.co.il/מדריך-להעסקת-עובד-זר/</div>
+
+                <div class="metrics-grid">
+                    <div class="metric"><div class="value">10</div><div class="label">קליקים</div></div>
+                    <div class="metric"><div class="value">2,753</div><div class="label">חשיפות</div></div>
+                    <div class="metric bad"><div class="value">0.36%</div><div class="label">CTR</div></div>
+                    <div class="metric bad"><div class="value">25.8</div><div class="label">מיקום</div></div>
+                </div>
+
+                <div class="queries-box">
+                    <h4>אשכול מילות מפתח:</h4>
+                    <span class="query-tag">אגרה לעובד זר</span>
+                    <span class="query-tag">אגרת היתר להעסקת עובד זר בענף הסיעוד</span>
+                    <span class="query-tag">אגרת עובד זר</span>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>פעולות לביצוע:</h4>
+                    <ul>
+                        <li>הרחב מדריך העסקת עובד זר (מיקום 25.8 = עמוד 3)</li>
+                        <li>הוסף FAQPage schema עם שאלות על אגרות, היתרים, תהליך</li>
+                        <li>הוסף HowTo schema לתהליך קבלת היתר</li>
+                        <li>צור קישורים לאתר משרד הרווחה/פנים</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPLEMENTATION GUIDE -->
+        <section class="implementation-guide">
+            <h2>C. מדריך יישום</h2>
+
+            <h3>היכן להטמיע כל Schema:</h3>
+            <table class="audit-table" style="margin-top: 15px;">
+                <tr><th>סוג Schema</th><th>היכן</th><th>איך</th></tr>
+                <tr><td>EducationalOrganization</td><td>BeSpirit, Ultima - עמוד הבית</td><td>ב-&lt;head&gt; כ-JSON-LD, פעם אחת לאתר</td></tr>
+                <tr><td>Course</td><td>BeSpirit, Ultima - כל עמוד קורס</td><td>ב-&lt;head&gt; של כל עמוד קורס, עם provider מקושר</td></tr>
+                <tr><td>FAQPage</td><td>כל העמודים עם FAQ</td><td>ב-&lt;head&gt;, רק אם יש תוכן FAQ גלוי בעמוד</td></tr>
+                <tr><td>MedicalProcedure</td><td>CardioTeam - עמודי פרוצדורות</td><td>ב-&lt;head&gt;, עם howPerformed ו-preparation</td></tr>
+                <tr><td>FinancialService</td><td>Anbar - עמוד הבית</td><td>ב-&lt;head&gt;, עם hasOfferCatalog</td></tr>
+                <tr><td>Product</td><td>Moya CBD - עמודי מוצרים</td><td>ב-&lt;head&gt;, עם offers, price, availability</td></tr>
+            </table>
+
+            <div class="do-not-box">
+                <h4>מה לא לעשות ולמה:</h4>
+                <ul style="padding-right: 20px; margin-top: 10px;">
+                    <li><strong>לא להוסיף FAQPage schema בלי תוכן FAQ גלוי בעמוד</strong> - גוגל עלול להעניש על schema לא תואם לתוכן</li>
+                    <li><strong>לא להוסיף Review schema בלי ביקורות אמיתיות</strong> - הפרה של הנחיות גוגל</li>
+                    <li><strong>לא להוסיף LocalBusiness למכללות</strong> - EducationalOrganization מתאים יותר</li>
+                    <li><strong>לא להוסיף Product schema לשירותים</strong> - Service או ProfessionalService מתאימים יותר</li>
+                    <li><strong>לא להוסיף מחירים ל-schema אם לא מוצגים בעמוד</strong> - חייב להיות תואם לתוכן הגלוי</li>
+                    <li><strong>לא לשכפל schema בין עמודים</strong> - כל עמוד צריך schema ייחודי</li>
+                </ul>
+            </div>
+
+            <h3>סדר עדיפויות לפעולה:</h3>
+            <ol style="padding-right: 20px; margin-top: 15px;">
+                <li><strong>תיקוני H1 (BeSpirit, Ultima)</strong> - בעיה טכנית קריטית שפוגעת בכל העמודים</li>
+                <li><strong>הוספת Schema ל-BeSpirit</strong> - אתר ללא structured data כלל</li>
+                <li><strong>CTR fixes (CardioTeam, Moya CBD)</strong> - מיקומים טובים עם CTR נמוך = quick wins</li>
+                <li><strong>הרחבת תוכן דליל (Anbar, CardioTeam)</strong> - עמודים עם פחות מ-1,000 מילים</li>
+                <li><strong>FAQPage schema</strong> - לכל העמודים עם שאלות נפוצות</li>
+            </ol>
+        </section>
+
+        <footer>
+            <p>ביקורת ביצועים אורגניים מקיפה V2 | נדב דיגיטל | ינואר 2026</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">
+                נתונים מ-GSC: 1-28 דצמבר 2025 |
+                <a href="https://search.google.com/test/rich-results" target="_blank" style="color: #667eea;">בדיקת Schema</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
