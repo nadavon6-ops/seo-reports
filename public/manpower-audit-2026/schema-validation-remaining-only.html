@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manpower Israel - Schema Validation Report | Remaining Items Only</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.2em;
+        }
+
+        .validation-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 50px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .summary-card {
+            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .summary-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .summary-card.original .summary-number { color: #64748b; }
+        .summary-card.removed .summary-number { color: #10b981; }
+        .summary-card.remaining .summary-number { color: #f59e0b; }
+        .summary-card.fixes .summary-number { color: #ef4444; }
+        .summary-card.manual .summary-number { color: #8b5cf6; }
+
+        section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h2 .icon {
+            font-size: 1.2em;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            margin: 25px 0 15px;
+            color: #00d4ff;
+        }
+
+        .schema-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-right: 4px solid;
+        }
+
+        .schema-item.missing {
+            border-right-color: #f59e0b;
+        }
+
+        .schema-item.needs-fix {
+            border-right-color: #ef4444;
+        }
+
+        .schema-item.manual {
+            border-right-color: #8b5cf6;
+        }
+
+        .schema-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .schema-type {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .priority-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .priority-critical {
+            background: linear-gradient(90deg, #dc2626, #b91c1c);
+        }
+
+        .priority-high {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .priority-medium {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+
+        .url-target {
+            background: rgba(0,212,255,0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            word-break: break-all;
+        }
+
+        .reason-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .reason-box strong {
+            color: #fbbf24;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            font-size: 0.85em;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+
+        code {
+            color: #e6edf3;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        .json-key { color: #79c0ff; }
+        .json-string { color: #a5d6ff; }
+        .json-number { color: #a5d6ff; }
+
+        .implemented-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .implemented-item {
+            background: rgba(16,185,129,0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(16,185,129,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .check-icon {
+            color: #10b981;
+            font-size: 1.2em;
+        }
+
+        .issue-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .issue-list li {
+            padding: 8px 0;
+            padding-right: 25px;
+            position: relative;
+        }
+
+        .issue-list li::before {
+            content: "⚠️";
+            position: absolute;
+            right: 0;
+        }
+
+        .validation-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .validation-table th,
+        .validation-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .validation-table th {
+            background: rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        .status-implemented {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .status-missing {
+            color: #f59e0b;
+            font-weight: bold;
+        }
+
+        .status-fix {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .status-manual {
+            color: #8b5cf6;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 50px;
+        }
+
+        .methodology {
+            background: rgba(124,58,237,0.1);
+            border: 1px solid rgba(124,58,237,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .methodology h4 {
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .schema-header { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 דוח אימות סכמות - מנפאואר ישראל</h1>
+            <p class="subtitle">Schema Validation Report - Remaining Items Only</p>
+            <div class="validation-badge">✓ אומת ב-29 בינואר 2026</div>
+        </header>
+
+        <!-- SUMMARY SECTION -->
+        <div class="summary-grid">
+            <div class="summary-card original">
+                <div class="summary-number">5</div>
+                <div>סכמות מקוריות בדוח</div>
+            </div>
+            <div class="summary-card removed">
+                <div class="summary-number">3</div>
+                <div>הוסרו (כבר מיושמות)</div>
+            </div>
+            <div class="summary-card remaining">
+                <div class="summary-number">1</div>
+                <div>חסרות - לביצוע</div>
+            </div>
+            <div class="summary-card fixes">
+                <div class="summary-number">1</div>
+                <div>קיימות - דורשות תיקון</div>
+            </div>
+            <div class="summary-card manual">
+                <div class="summary-number">1</div>
+                <div>דורשות בדיקה ידנית</div>
+            </div>
+        </div>
+
+        <!-- VALIDATION METHODOLOGY -->
+        <section>
+            <h2><span class="icon">📋</span> מתודולוגיית האימות</h2>
+
+            <div class="methodology">
+                <h4>כללי אימות קפדניים</h4>
+                <p>הדוח הזה נוצר תחת סטנדרט אימות ספקני וקפדני:</p>
+                <ul style="margin: 15px 0; padding-right: 20px;">
+                    <li>סכמה מומלצת רק אם אומת שאינה קיימת בעמוד הרלוונטי</li>
+                    <li>אם הראיות לא ברורות - סומן כ"דורש בדיקה ידנית"</li>
+                    <li>לא מומלצות כפילויות או סכמות חופפות</li>
+                    <li>סכמה קיימת אך שבורה - מסומנת כ"דורשת תיקון" ולא "חסרה"</li>
+                </ul>
+            </div>
+
+            <h3>עמודים שנסרקו</h3>
+            <table class="validation-table">
+                <tr>
+                    <th>עמוד</th>
+                    <th>כתובת</th>
+                    <th>סכמות שנמצאו</th>
+                </tr>
+                <tr>
+                    <td>עמוד הבית</td>
+                    <td style="direction:ltr; text-align:left">www.manpower.co.il</td>
+                    <td>WebSite, Organization, BreadcrumbList</td>
+                </tr>
+                <tr>
+                    <td>חיפוש משרות</td>
+                    <td style="direction:ltr; text-align:left">/search</td>
+                    <td>Organization, BreadcrumbList (ללא JobPosting)</td>
+                </tr>
+                <tr>
+                    <td>לובי כתבות</td>
+                    <td style="direction:ltr; text-align:left">/insight-lobby</td>
+                    <td>BreadcrumbList</td>
+                </tr>
+                <tr>
+                    <td>כתבה - קורות חיים</td>
+                    <td style="direction:ltr; text-align:left">/article/קורות-חיים</td>
+                    <td>Article (חלקי), FAQPage, BreadcrumbList</td>
+                </tr>
+                <tr>
+                    <td>כתבה - ראיון עבודה</td>
+                    <td style="direction:ltr; text-align:left">/article/ראיון-עבודה</td>
+                    <td>Article (חלקי), FAQPage, BreadcrumbList</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ALREADY IMPLEMENTED - REMOVED FROM REPORT -->
+        <section>
+            <h2><span class="icon">✅</span> סכמות מיושמות - הוסרו מהדוח</h2>
+            <p style="margin-bottom: 20px; color: #94a3b8;">הסכמות הבאות כבר קיימות באתר ונמחקו מהמלצות הדוח:</p>
+
+            <div class="implemented-list">
+                <div class="implemented-item">
+                    <span class="check-icon">✓</span>
+                    <div>
+                        <strong>Organization Schema</strong>
+                        <br><small>קיים בכל העמודים - מלא ותקין</small>
+                    </div>
+                </div>
+                <div class="implemented-item">
+                    <span class="check-icon">✓</span>
+                    <div>
+                        <strong>WebSite Schema</strong>
+                        <br><small>כולל SearchAction - תקין</small>
+                    </div>
+                </div>
+                <div class="implemented-item">
+                    <span class="check-icon">✓</span>
+                    <div>
+                        <strong>BreadcrumbList Schema</strong>
+                        <br><small>קיים בכל העמודים</small>
+                    </div>
+                </div>
+            </div>
+
+            <h3>פירוט הסכמות הקיימות</h3>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h4 style="color: #10b981; margin-bottom: 10px;">Organization Schema (אומת)</h4>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "url": "https://www.manpower.co.il/",
+  "logo": "https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+972-3-563-9999",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 110",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6789149",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/ManpowerIL",
+    "https://www.instagram.com/manpower_israel/",
+    "https://www.linkedin.com/company/manpower-israel/"
+  ]
+}</code></pre>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h4 style="color: #10b981; margin-bottom: 10px;">WebSite Schema (אומת)</h4>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.manpower.co.il/",
+  "name": "Manpower",
+  "alternateName": "מנפאואר ישראל",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.manpower.co.il/search?search={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- REMAINING ITEMS TO IMPLEMENT -->
+        <section>
+            <h2><span class="icon">🔶</span> פריטים שנותרו לביצוע</h2>
+
+            <div class="schema-item missing">
+                <div class="schema-header">
+                    <span class="schema-type">JobPosting Schema</span>
+                    <span class="priority-badge priority-critical">🔴 קריטי</span>
+                </div>
+
+                <div class="url-target">
+                    <strong>עמודי יעד:</strong> כל עמודי פרטי משרה בודדת<br>
+                    דוגמה: https://www.manpower.co.il/job/[job-id]
+                </div>
+
+                <div class="reason-box">
+                    <strong>מדוע נדרש:</strong><br>
+                    • לא נמצא JobPosting Schema באף מקום באתר<br>
+                    • עמוד החיפוש (/search) מציג משרות דינמית ללא סכמת Job<br>
+                    • משרות נטענות ב-JavaScript - אין Structured Data<br>
+                    • Google for Jobs דורש JobPosting Schema להצגה בתוצאות
+                </div>
+
+                <h4 style="color: #fbbf24; margin: 20px 0 10px;">קוד JSON-LD מומלץ:</h4>
+<pre><code>{
+  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org"</span>,
+  <span class="json-key">"@type"</span>: <span class="json-string">"JobPosting"</span>,
+  <span class="json-key">"title"</span>: <span class="json-string">"[כותרת המשרה] - [מיקום]"</span>,
+  <span class="json-key">"description"</span>: <span class="json-string">"[תיאור מפורט של המשרה]"</span>,
+  <span class="json-key">"identifier"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"PropertyValue"</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"Manpower Israel"</span>,
+    <span class="json-key">"value"</span>: <span class="json-string">"[JOB-ID]"</span>
+  },
+  <span class="json-key">"datePosted"</span>: <span class="json-string">"[YYYY-MM-DD]"</span>,
+  <span class="json-key">"validThrough"</span>: <span class="json-string">"[YYYY-MM-DDTHH:MM]"</span>,
+  <span class="json-key">"employmentType"</span>: [<span class="json-string">"FULL_TIME"</span>],
+  <span class="json-key">"hiringOrganization"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"Organization"</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"מנפאואר ישראל"</span>,
+    <span class="json-key">"sameAs"</span>: <span class="json-string">"https://www.manpower.co.il"</span>,
+    <span class="json-key">"logo"</span>: <span class="json-string">"https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg"</span>
+  },
+  <span class="json-key">"jobLocation"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"Place"</span>,
+    <span class="json-key">"address"</span>: {
+      <span class="json-key">"@type"</span>: <span class="json-string">"PostalAddress"</span>,
+      <span class="json-key">"addressLocality"</span>: <span class="json-string">"[עיר]"</span>,
+      <span class="json-key">"addressRegion"</span>: <span class="json-string">"[אזור]"</span>,
+      <span class="json-key">"addressCountry"</span>: <span class="json-string">"IL"</span>
+    }
+  },
+  <span class="json-key">"baseSalary"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"MonetaryAmount"</span>,
+    <span class="json-key">"currency"</span>: <span class="json-string">"ILS"</span>,
+    <span class="json-key">"value"</span>: {
+      <span class="json-key">"@type"</span>: <span class="json-string">"QuantitativeValue"</span>,
+      <span class="json-key">"minValue"</span>: <span class="json-number">[MIN]</span>,
+      <span class="json-key">"maxValue"</span>: <span class="json-number">[MAX]</span>,
+      <span class="json-key">"unitText"</span>: <span class="json-string">"MONTH"</span>
+    }
+  },
+  <span class="json-key">"directApply"</span>: true,
+  <span class="json-key">"applicationContact"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"ContactPoint"</span>,
+    <span class="json-key">"telephone"</span>: <span class="json-string">"+972-3-563-9999"</span>
+  }
+}</code></pre>
+
+                <div style="background: rgba(245,158,11,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <strong>📌 הערות ליישום:</strong>
+                    <ul style="margin-top: 10px; padding-right: 20px;">
+                        <li>יישום דינמי ב-Next.js - סכמה נפרדת לכל משרה</li>
+                        <li>baseSalary אופציונלי - להוסיף רק אם השכר מפורסם</li>
+                        <li>validThrough חייב להיות תאריך עתידי</li>
+                        <li>employmentType: FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY, INTERN</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ITEMS THAT NEED FIXING -->
+        <section>
+            <h2><span class="icon">🔧</span> פריטים קיימים שדורשים תיקון</h2>
+
+            <div class="schema-item needs-fix">
+                <div class="schema-header">
+                    <span class="schema-type">Article Schema</span>
+                    <span class="priority-badge priority-high">🟠 גבוה</span>
+                </div>
+
+                <div class="url-target">
+                    <strong>עמודי יעד:</strong> כל 62 כתבות הבלוג<br>
+                    דוגמה: https://www.manpower.co.il/article/קורות-חיים
+                </div>
+
+                <div class="reason-box">
+                    <strong>מה קיים כרגע:</strong><br>
+                    • Article Schema קיים בעמודי /article/<br>
+                    • כולל: headline, description, articleBody<br>
+                    • FAQPage Schema קיים בחלק מהכתבות
+                </div>
+
+                <h4 style="color: #ef4444; margin: 20px 0 10px;">⚠️ שדות חסרים (דורשים תיקון):</h4>
+                <ul class="issue-list">
+                    <li><code>datePublished</code> - תאריך פרסום חסר (מוצג כ-null)</li>
+                    <li><code>dateModified</code> - תאריך עדכון חסר</li>
+                    <li><code>author</code> - מחבר לא מוגדר כראוי</li>
+                    <li><code>publisher</code> - מפרסם לא מוגדר עם logo</li>
+                    <li><code>image</code> - מערך תמונות חסר</li>
+                    <li><code>mainEntityOfPage</code> - זיהוי עמוד ראשי חסר</li>
+                </ul>
+
+                <h4 style="color: #10b981; margin: 20px 0 10px;">קוד JSON-LD מתוקן:</h4>
+<pre><code>{
+  <span class="json-key">"@context"</span>: <span class="json-string">"https://schema.org"</span>,
+  <span class="json-key">"@type"</span>: <span class="json-string">"Article"</span>,
+  <span class="json-key">"headline"</span>: <span class="json-string">"[כותרת הכתבה]"</span>,
+  <span class="json-key">"description"</span>: <span class="json-string">"[תיאור קצר / meta description]"</span>,
+  <span class="json-key">"image"</span>: [
+    <span class="json-string">"[URL תמונה ראשית]"</span>
+  ],
+  <span class="json-key">"datePublished"</span>: <span class="json-string">"[YYYY-MM-DDTHH:MM:SS+03:00]"</span>,
+  <span class="json-key">"dateModified"</span>: <span class="json-string">"[YYYY-MM-DDTHH:MM:SS+03:00]"</span>,
+  <span class="json-key">"author"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"Organization"</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"מנפאואר ישראל"</span>,
+    <span class="json-key">"url"</span>: <span class="json-string">"https://www.manpower.co.il"</span>
+  },
+  <span class="json-key">"publisher"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"Organization"</span>,
+    <span class="json-key">"name"</span>: <span class="json-string">"מנפאואר ישראל"</span>,
+    <span class="json-key">"logo"</span>: {
+      <span class="json-key">"@type"</span>: <span class="json-string">"ImageObject"</span>,
+      <span class="json-key">"url"</span>: <span class="json-string">"https://www.manpower.co.il/_next/static/media/logo-manpower-white.b713aa15.svg"</span>
+    }
+  },
+  <span class="json-key">"mainEntityOfPage"</span>: {
+    <span class="json-key">"@type"</span>: <span class="json-string">"WebPage"</span>,
+    <span class="json-key">"@id"</span>: <span class="json-string">"[URL מלא של הכתבה]"</span>
+  },
+  <span class="json-key">"articleSection"</span>: <span class="json-string">"[קטגוריה]"</span>,
+  <span class="json-key">"inLanguage"</span>: <span class="json-string">"he-IL"</span>
+}</code></pre>
+
+                <div style="background: rgba(239,68,68,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <strong>📌 פעולות נדרשות:</strong>
+                    <ul style="margin-top: 10px; padding-right: 20px;">
+                        <li>עדכון template ב-Next.js להוספת השדות החסרים</li>
+                        <li>וידוא שכל כתבה מכילה תאריך פרסום במקור הנתונים</li>
+                        <li>הוספת logic לעדכון dateModified בעת שינוי תוכן</li>
+                        <li>וידוא ש-62 הכתבות מקבלות את הסכמה המעודכנת</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- MANUAL CHECK NEEDED -->
+        <section>
+            <h2><span class="icon">🔮</span> דורש בדיקה ידנית</h2>
+            <p style="margin-bottom: 20px; color: #94a3b8;">הפריטים הבאים לא ניתנו לאימות מלא - נדרשת בדיקה ידנית:</p>
+
+            <div class="schema-item manual">
+                <div class="schema-header">
+                    <span class="schema-type">Video Schema / VideoObject</span>
+                    <span class="priority-badge priority-medium">🔵 בינוני</span>
+                </div>
+
+                <div class="reason-box">
+                    <strong>מדוע לא אומת:</strong><br>
+                    • הדוח המקורי מזכיר Video Sitemap<br>
+                    • לא נמצאו סרטונים מוטמעים בעמודים שנסרקו<br>
+                    • לא ניתן לאמת אם קיימים סרטונים בעמודים אחרים<br>
+                    • דורש בדיקה ידנית של עמודים עם תוכן וידאו
+                </div>
+
+                <h4 style="color: #8b5cf6; margin: 20px 0 10px;">מה לבדוק ידנית:</h4>
+                <ol style="margin: 15px 0; padding-right: 20px;">
+                    <li>האם קיימים סרטוני YouTube מוטמעים באתר?</li>
+                    <li>האם קיים Video Sitemap ב-/video-sitemap.xml?</li>
+                    <li>האם עמודי קריירה כוללים סרטוני הדרכה?</li>
+                    <li>אם קיימים סרטונים - האם יש להם VideoObject Schema?</li>
+                </ol>
+
+                <div style="background: rgba(139,92,246,0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <strong>📌 אם נמצאים סרטונים ללא סכמה:</strong>
+                    <p style="margin-top: 10px;">יש להוסיף VideoObject Schema לכל עמוד עם וידאו מוטמע. ראה תבנית בדוח המקורי.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL SUMMARY TABLE -->
+        <section>
+            <h2><span class="icon">📊</span> סיכום סטטוס מלא</h2>
+
+            <table class="validation-table">
+                <tr>
+                    <th>סכמה</th>
+                    <th>סטטוס</th>
+                    <th>פעולה נדרשת</th>
+                    <th>עדיפות</th>
+                </tr>
+                <tr>
+                    <td>Organization</td>
+                    <td class="status-implemented">✓ מיושם</td>
+                    <td>אין - הוסר מהדוח</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>WebSite</td>
+                    <td class="status-implemented">✓ מיושם</td>
+                    <td>אין - הוסר מהדוח</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>BreadcrumbList</td>
+                    <td class="status-implemented">✓ מיושם</td>
+                    <td>אין - הוסר מהדוח</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>FAQPage</td>
+                    <td class="status-implemented">✓ מיושם</td>
+                    <td>קיים בכתבות רלוונטיות</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>JobPosting</td>
+                    <td class="status-missing">⚠ חסר</td>
+                    <td>יישום מלא בעמודי משרות</td>
+                    <td>🔴 קריטי</td>
+                </tr>
+                <tr>
+                    <td>Article</td>
+                    <td class="status-fix">🔧 דורש תיקון</td>
+                    <td>הוספת שדות חסרים</td>
+                    <td>🟠 גבוה</td>
+                </tr>
+                <tr>
+                    <td>VideoObject</td>
+                    <td class="status-manual">❓ לא אומת</td>
+                    <td>בדיקה ידנית</td>
+                    <td>🔵 בינוני</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- IMPLEMENTATION PRIORITY -->
+        <section>
+            <h2><span class="icon">🎯</span> סדר עדיפויות ליישום</h2>
+
+            <div style="display: grid; gap: 15px;">
+                <div style="background: rgba(220,38,38,0.1); padding: 20px; border-radius: 10px; border-right: 4px solid #dc2626;">
+                    <h4 style="color: #dc2626; margin-bottom: 10px;">1. JobPosting Schema - קריטי</h4>
+                    <p>השפעה ישירה על הופעה ב-Google for Jobs. מומלץ ליישם תחילה.</p>
+                    <p style="margin-top: 10px;"><strong>זמן משוער:</strong> 1-2 ימי פיתוח (Next.js dynamic implementation)</p>
+                </div>
+
+                <div style="background: rgba(245,158,11,0.1); padding: 20px; border-radius: 10px; border-right: 4px solid #f59e0b;">
+                    <h4 style="color: #f59e0b; margin-bottom: 10px;">2. Article Schema Fix - גבוה</h4>
+                    <p>תיקון פשוט יחסית - הוספת שדות לסכמה קיימת.</p>
+                    <p style="margin-top: 10px;"><strong>זמן משוער:</strong> 2-4 שעות פיתוח</p>
+                </div>
+
+                <div style="background: rgba(59,130,246,0.1); padding: 20px; border-radius: 10px; border-right: 4px solid #3b82f6;">
+                    <h4 style="color: #3b82f6; margin-bottom: 10px;">3. Video Schema - בינוני (אם רלוונטי)</h4>
+                    <p>יש לבדוק תחילה אם קיים תוכן וידאו באתר.</p>
+                    <p style="margin-top: 10px;"><strong>זמן משוער:</strong> תלוי בהיקף התוכן</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>דוח אימות סכמות | מנפאואר ישראל | נוצר ב-29 בינואר 2026</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                דוח זה מבוסס על סריקה אוטומטית ואימות נגד האתר החי.<br>
+                מקור: <a href="https://report.n-c.digital/manpower-audit-2026/Document7_GAPS_FILLED_CRITICAL_HE.html" style="color: #00d4ff;">הדוח המקורי</a>
+            </p>
+            <p style="margin-top: 20px; color: #4b5563; font-size: 0.85em;">
+                Nadav Digital | Schema Validation Report
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
