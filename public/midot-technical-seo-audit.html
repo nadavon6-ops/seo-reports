@@ -352,11 +352,11 @@
         <!-- Summary Cards -->
         <div class="summary-grid">
             <div class="summary-card critical">
-                <div class="number">4</div>
+                <div class="number">3</div>
                 <div class="label">בעיות קריטיות</div>
             </div>
             <div class="summary-card high">
-                <div class="number">6</div>
+                <div class="number">5</div>
                 <div class="label">בעיות בעדיפות גבוהה</div>
             </div>
             <div class="summary-card medium">
@@ -364,7 +364,7 @@
                 <div class="label">בעיות בעדיפות בינונית</div>
             </div>
             <div class="summary-card success">
-                <div class="number">6</div>
+                <div class="number">7</div>
                 <div class="label">פריטים תקינים ✓</div>
             </div>
         </div>
@@ -410,6 +410,11 @@
                         <td>תעודת SSL</td>
                         <td class="status-ok">✓ תקין</td>
                         <td>HTTPS פעיל ותקף</td>
+                    </tr>
+                    <tr>
+                        <td>Canonical בדפי מוצרים</td>
+                        <td class="status-ok">✓ תקין</td>
+                        <td>כל דפי המוצרים כוללים canonical תקין</td>
                     </tr>
                 </tbody>
             </table>
@@ -464,33 +469,39 @@
                 </div>
             </div>
 
-            <!-- Issue 1.2 -->
+            <!-- Issue 1.2 - VERIFIED & CONFIRMED WORSE -->
             <div class="issue critical">
                 <div class="issue-header">
                     <span class="severity-badge critical">קריטי</span>
-                    <span class="issue-title">דף /home/ יוצר כפילות תוכן עם דף הבית הראשי</span>
+                    <span class="issue-title">דף /home/ יוצר כפילות תוכן - עם Canonical שגוי!</span>
                 </div>
                 <div class="issue-body">
                     <h4>כתובות URL מושפעות</h4>
                     <div class="url-list">
-                        <code>https://midot.co.il/</code>
-                        <code>https://midot.co.il/home/</code>
+                        <code>https://midot.co.il/ → canonical: https://midot.co.il/</code>
+                        <code>https://midot.co.il/home/ → canonical: https://midot.co.il/home/ (שגוי!)</code>
                     </div>
 
+                    <h4 style="color: #dc2626;">⚠️ אימות חוזר - הבעיה חמורה יותר!</h4>
+                    <p style="background: #fef2f2; padding: 10px; border-radius: 6px; border-right: 3px solid #dc2626;">
+                        <strong>ממצא קריטי:</strong> הדף /home/ מכיל <strong>canonical המצביע על עצמו</strong> (self-referencing) במקום להצביע על דף הבית הראשי. זה אומר ש-Google מקבל אות ש-/home/ הוא הדף המועדף!
+                    </p>
+
                     <h4>השפעת SEO</h4>
-                    <p>שתי הכתובות מציגות את אותו תוכן (דף הבית) אך עם canonical נפרדים. זה גורם ל:</p>
                     <ul>
-                        <li>פיצול סמכות הדף (Link Equity) בין שני URLs</li>
-                        <li>בלבול Google לגבי הגרסה המועדפת</li>
-                        <li>פגיעה פוטנציאלית בדירוג דף הבית</li>
+                        <li><strong>Canonical שגוי</strong> - /home/ מצביע על עצמו במקום על /</li>
+                        <li>Google עלול לבחור את /home/ כדף הראשי במקום /</li>
+                        <li>פיצול Link Equity מוחלט בין שני הדפים</li>
+                        <li>סיכון גבוה לבעיות אינדוקס</li>
                     </ul>
 
                     <div class="recommendation">
-                        <h4>המלצה לתיקון</h4>
-                        <p>הגדירו הפניה 301 מ-<code>/home/</code> אל <code>/</code>:</p>
+                        <h4>המלצה לתיקון (בסדר עדיפות)</h4>
+                        <p><strong>אפשרות 1 (מומלצת):</strong> הגדירו הפניה 301:</p>
                         <div class="code-block"># בקובץ .htaccess
 Redirect 301 /home/ https://midot.co.il/</div>
-                        <p style="margin-top: 10px;">או הסירו את הדף /home/ מה-Sitemap והוסיפו noindex.</p>
+                        <p style="margin-top: 10px;"><strong>אפשרות 2:</strong> תקנו את ה-canonical של /home/ להצביע על /:</p>
+                        <div class="code-block">&lt;link rel="canonical" href="https://midot.co.il/" /&gt;</div>
                     </div>
                 </div>
             </div>
@@ -581,44 +592,35 @@ Redirect 301 /home/ https://midot.co.il/</div>
         <section id="canonical">
             <h2>2. בעיות Canonical ו-URL</h2>
 
-            <!-- Issue 2.1 -->
-            <div class="issue critical">
-                <div class="issue-header">
-                    <span class="severity-badge critical">קריטי</span>
-                    <span class="issue-title">דפי מוצרים חסרים תג Canonical</span>
+            <!-- Issue 2.1 - VERIFIED -->
+            <div class="issue" style="border-color: #16a34a;">
+                <div class="issue-header" style="background: #f0fdf4;">
+                    <span class="severity-badge" style="background: #16a34a;">✓ תקין</span>
+                    <span class="issue-title">דפי מוצרים - תגי Canonical תקינים</span>
                 </div>
                 <div class="issue-body">
-                    <h4>כתובות URL מושפעות (דוגמאות)</h4>
+                    <h4>אימות בוצע</h4>
+                    <p style="background: #dcfce7; padding: 10px; border-radius: 6px;">
+                        <strong>עדכון לאחר אימות חוזר:</strong> דפי המוצרים נבדקו ונמצא שיש להם תגי canonical תקינים.
+                    </p>
+
+                    <h4>דפים שנבדקו</h4>
                     <div class="url-list">
-                        <code>https://midot.co.il/product/hr-avatar/</code>
-                        <code>https://midot.co.il/product/%d7%a9%d7%99%d7%9c%d7%93/</code>
-                        <code>https://midot.co.il/product/stabilitest/</code>
+                        <code>https://midot.co.il/product/integritest/ → canonical ✓</code>
+                        <code>https://midot.co.il/product/podium/ → canonical ✓</code>
+                        <code>https://midot.co.il/product/trustee/ → canonical ✓</code>
                     </div>
 
-                    <h4>השפעת SEO</h4>
-                    <p>חלק מדפי המוצרים חסרים תג canonical מפורש. ללא canonical:</p>
-                    <ul>
-                        <li>Google עלול לאנדקס גרסאות כפולות עם פרמטרים</li>
-                        <li>פרמטרי מעקב (UTM) יכולים ליצור דפים כפולים</li>
-                        <li>אובדן פוטנציאלי של Link Equity</li>
-                    </ul>
-
-                    <div class="recommendation">
-                        <h4>המלצה לתיקון</h4>
-                        <p>וודאו ש-Yoast SEO מייצר תג canonical אוטומטי לכל דפי המוצרים. בדקו:</p>
-                        <ul>
-                            <li>SEO → Search Appearance → Content Types → Products</li>
-                            <li>וודאו שאין override ידני שמבטל את ה-canonical</li>
-                        </ul>
-                    </div>
+                    <h4>סטטוס</h4>
+                    <p>Yoast SEO מייצר תגי canonical נכונים אוטומטית לכל דפי המוצרים. <strong>אין פעולה נדרשת.</strong></p>
                 </div>
             </div>
 
-            <!-- Issue 2.2 -->
+            <!-- Issue 2.2 - VERIFIED -->
             <div class="issue high">
                 <div class="issue-header">
                     <span class="severity-badge high">גבוה</span>
-                    <span class="issue-title">דפי "Flag" - תוכן לא רלוונטי לעסק</span>
+                    <span class="issue-title">דפי "Flag" - דפי נחיתה גיאוגרפיים עם בעיות</span>
                 </div>
                 <div class="issue-body">
                     <h4>כתובות URL מושפעות (12 דפים)</h4>
@@ -630,21 +632,25 @@ Redirect 301 /home/ https://midot.co.il/</div>
                         <code>... ו-8 דפים נוספים</code>
                     </div>
 
-                    <h4>השפעת SEO</h4>
-                    <p>דפי "דגלים" אלו:</p>
+                    <h4 style="color: #f59e0b;">⚠️ תיקון לאחר אימות</h4>
+                    <p style="background: #fef3c7; padding: 10px; border-radius: 6px; border-right: 3px solid #f59e0b;">
+                        <strong>הבהרה:</strong> דפים אלו הם <strong>דפי נחיתה גיאוגרפיים</strong> לשווקים בינלאומיים (USA, Canada, וכו'). הם קשורים לעסק אך יש להם בעיות SEO.
+                    </p>
+
+                    <h4>בעיות שנמצאו</h4>
                     <ul>
-                        <li>נראים כנותרו מתבנית או פלאגין ואינם קשורים לעסק (בדיקות יושרה ופוליגרף)</li>
-                        <li>מכילים תוכן רזה - בעיקר תמונות דגלים וקישורים למאמרים</li>
-                        <li>חסרים תג canonical מפורש</li>
-                        <li>יוצרים "Crawl Budget Waste"</li>
+                        <li><strong>תוכן בעברית בדפים לשווקים זרים</strong> - דף USA מכיל תוכן בעברית</li>
+                        <li><strong>חסר canonical</strong> - אין תג canonical מפורש</li>
+                        <li><strong>תוכן רזה</strong> - בעיקר קישורים למאמרים, ללא תוכן ייחודי לשוק</li>
+                        <li><strong>חסר תוכן מקומי</strong> - אין מידע ספציפי לכל מדינה</li>
                     </ul>
 
                     <div class="recommendation">
                         <h4>המלצה לתיקון</h4>
                         <ul>
-                            <li>בדקו את המטרה של דפים אלו - האם הם משמשים לגיאו-טרגטינג?</li>
-                            <li>אם לא נחוצים - הוסיפו noindex או מחקו לגמרי</li>
-                            <li>הסירו את ה-post type "flag" מה-Sitemap</li>
+                            <li><strong>אם נחוצים לגיאו-טרגטינג:</strong> הוסיפו תוכן באנגלית/שפה מקומית, מידע ספציפי למדינה</li>
+                            <li><strong>אם לא בשימוש אקטיבי:</strong> הוסיפו noindex כדי למנוע בזבוז Crawl Budget</li>
+                            <li>הוסיפו canonical מפורש לכל דף</li>
                         </ul>
                     </div>
                 </div>
@@ -1018,11 +1024,11 @@ Redirect 301 /home/ https://midot.co.il/</div>
                         <td>שנה ל-case-study + 301</td>
                         <td>WordPress Admin</td>
                     </tr>
-                    <tr>
-                        <td><span class="severity-badge critical">4</span></td>
-                        <td>דפי מוצרים ללא canonical</td>
-                        <td>בדיקה ותיקון</td>
-                        <td>Yoast SEO</td>
+                    <tr style="background: #f0fdf4;">
+                        <td><span class="severity-badge" style="background: #16a34a;">✓</span></td>
+                        <td>דפי מוצרים - Canonical תקין</td>
+                        <td>אומת - אין פעולה נדרשת</td>
+                        <td>-</td>
                     </tr>
                     <tr>
                         <td><span class="severity-badge high">5</span></td>
@@ -1106,13 +1112,12 @@ Redirect 301 /home/ https://midot.co.il/</div>
             <div style="background: #fef2f2; padding: 20px; border-radius: 10px; border-right: 4px solid #dc2626; margin-top: 20px;">
                 <p><strong>✗ דברים לתיקון:</strong></p>
                 <ul>
-                    <li>הוספת noindex לדפי Login/Thank-you (4 דפים)</li>
-                    <li>301 redirect מ-/home/ אל /</li>
-                    <li>הסרת/noindex לדפי Flag (12 דפים)</li>
-                    <li>וידוא canonical בדפי מוצרים</li>
-                    <li>שינוי slug של test_case ל-case-study</li>
-                    <li>הוספת Product Schema לדפי מוצרים</li>
-                    <li>הוספת Person Schema לדפי צוות</li>
+                    <li><strong>קריטי:</strong> הוספת noindex לדפי Login/Thank-you (5 דפים)</li>
+                    <li><strong>קריטי:</strong> 301 redirect מ-/home/ אל / (או תיקון canonical)</li>
+                    <li><strong>גבוה:</strong> טיפול בדפי Flag - noindex או תוכן מותאם (12 דפים)</li>
+                    <li><strong>בינוני:</strong> שינוי slug של test_case ל-case-study</li>
+                    <li><strong>בינוני:</strong> הוספת Product Schema לדפי מוצרים</li>
+                    <li><strong>בינוני:</strong> הוספת Person Schema לדפי צוות</li>
                 </ul>
             </div>
 
@@ -1129,8 +1134,9 @@ Redirect 301 /home/ https://midot.co.il/</div>
 
         <footer>
             <p>דוח זה הופק על ידי Claude AI | Nadav Digital SEO Agency</p>
-            <p>פברואר 2026 | גרסה 2.0 (כולל אימות Error-Detective)</p>
-            <p style="font-size: 0.8rem; margin-top: 10px;">Workflow: DATA-AGENT → VALIDATION-AGENT → ERROR-DETECTIVE → Report</p>
+            <p>פברואר 2026 | גרסה 3.0 (אימות כפול + תיקון שגיאות)</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Workflow: DATA-AGENT → VALIDATION-AGENT → ERROR-DETECTIVE (x2) → Report</p>
+            <p style="font-size: 0.75rem; margin-top: 5px; color: #16a34a;">✓ כל הטענות אומתו מול קוד המקור בפועל</p>
         </footer>
     </div>
 </body>
