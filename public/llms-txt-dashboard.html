@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>דשבורד ביקורת llms.txt | נדב דיגיטל</title>
+    <title>דשבורד קבצי llms.txt | נדב דיגיטל</title>
     <style>
         * {
             margin: 0;
@@ -13,28 +13,28 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
             color: #fff;
             min-height: 100vh;
-            padding: 20px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         header {
             text-align: center;
-            padding: 40px 0;
-            margin-bottom: 40px;
-            background: rgba(255,255,255,0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.03);
             border-radius: 20px;
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 10px;
             background: linear-gradient(90deg, #00d4ff, #7b68ee);
             -webkit-background-clip: text;
@@ -42,39 +42,30 @@
         }
 
         .subtitle {
-            font-size: 1.2em;
             color: #888;
+            font-size: 1em;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
         }
 
-        .stat-card {
-            background: rgba(255,255,255,0.08);
-            padding: 30px;
-            border-radius: 15px;
+        .stat-item {
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 3em;
+        .stat-num {
+            font-size: 2em;
             font-weight: bold;
-            margin-bottom: 10px;
         }
 
         .stat-label {
+            font-size: 0.85em;
             color: #888;
-            font-size: 0.9em;
         }
 
         .green { color: #00ff88; }
@@ -82,64 +73,123 @@
         .yellow { color: #ffd700; }
         .orange { color: #ff8c00; }
         .red { color: #ff4757; }
-        .purple { color: #a390ff; }
 
-        .section-title {
-            font-size: 1.8em;
-            margin: 40px 0 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
 
-        .client-grid {
+        .filter-tab {
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .filter-tab:hover {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(90deg, #00d4ff, #7b68ee);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Search Box */
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #00d4ff;
+        }
+
+        .search-box input::placeholder {
+            color: #666;
+        }
+
+        /* Client Cards Grid */
+        .clients-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
             gap: 20px;
         }
 
+        @media (max-width: 600px) {
+            .clients-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Client Card */
         .client-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 20px;
+            background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
             transition: all 0.3s;
         }
 
         .client-card:hover {
-            background: rgba(255,255,255,0.08);
             border-color: rgba(0,212,255,0.3);
+        }
+
+        .client-card.expanded {
+            grid-column: 1 / -1;
         }
 
         .client-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            padding: 20px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .client-header:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .client-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .client-name {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: bold;
         }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-
-        .status-ready { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
-        .status-exists { background: #00d4ff20; color: #00d4ff; border: 1px solid #00d4ff; }
-        .status-pending { background: #ffd70020; color: #ffd700; border: 1px solid #ffd700; }
-        .status-needs-fix { background: #ff475720; color: #ff4757; border: 1px solid #ff4757; }
-        .status-excellent { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
-        .status-inaccessible { background: #88888820; color: #888888; border: 1px solid #888888; }
 
         .client-domain {
             color: #888;
             font-size: 0.9em;
-            margin-bottom: 10px;
         }
 
         .client-industry {
@@ -148,776 +198,1552 @@
             color: #a390ff;
             padding: 3px 10px;
             border-radius: 10px;
-            font-size: 0.8em;
-            margin-bottom: 15px;
-        }
-
-        .client-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            font-size: 0.85em;
-            color: #aaa;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .tier-badge {
-            padding: 2px 8px;
-            border-radius: 5px;
             font-size: 0.75em;
+            margin-top: 5px;
         }
 
-        .tier-1 { background: #ffd70030; color: #ffd700; }
-        .tier-2 { background: #c0c0c030; color: #c0c0c0; }
-        .tier-3 { background: #cd7f3230; color: #cd7f32; }
+        .client-badges {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-        .grade-badge {
-            padding: 3px 10px;
-            border-radius: 8px;
-            font-size: 0.85em;
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
             font-weight: bold;
         }
 
-        .grade-a { background: #00ff8830; color: #00ff88; }
-        .grade-c { background: #ffd70030; color: #ffd700; }
-        .grade-d { background: #ff8c0030; color: #ff8c00; }
-        .grade-f { background: #ff475730; color: #ff4757; }
-        .grade-na { background: #88888830; color: #888888; }
+        .status-ready { background: #00ff8820; color: #00ff88; border: 1px solid #00ff88; }
+        .status-fixed { background: #ffd70020; color: #ffd700; border: 1px solid #ffd700; }
+        .status-needs-fix { background: #ff475720; color: #ff4757; border: 1px solid #ff4757; }
+        .status-inaccessible { background: #88888820; color: #888888; border: 1px solid #888888; }
 
-        .workflow-section {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 40px;
+        .expand-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+            color: #888;
         }
 
-        .workflow-steps {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
+        .client-card.expanded .expand-icon {
+            transform: rotate(180deg);
         }
 
-        .workflow-step {
-            flex: 1;
-            min-width: 200px;
-            text-align: center;
+        /* Client Content */
+        .client-content {
+            display: none;
             padding: 20px;
+        }
+
+        .client-card.expanded .client-content {
+            display: block;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+        }
+
+        .btn-copy {
+            background: linear-gradient(90deg, #00d4ff, #7b68ee);
+            color: white;
+        }
+
+        .btn-copy:hover {
+            opacity: 0.8;
+        }
+
+        .btn-path {
+            background: rgba(255,255,255,0.1);
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-path:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .file-content {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            line-height: 1.6;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .file-content::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .file-content::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+
+        .file-content::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        /* Notes Section */
+        .client-notes {
+            margin-top: 15px;
+            padding: 15px;
             background: rgba(255,255,255,0.03);
             border-radius: 10px;
-            position: relative;
+            border-right: 3px solid #00d4ff;
         }
 
-        .step-number {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00d4ff, #7b68ee);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-weight: bold;
-        }
-
-        .step-title {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .step-desc {
-            font-size: 0.85em;
-            color: #888;
-        }
-
-        .improvement-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-right: 4px solid;
-        }
-
-        .improvement-card.grade-a-border { border-right-color: #00ff88; }
-        .improvement-card.grade-c-border { border-right-color: #ffd700; }
-        .improvement-card.grade-d-border { border-right-color: #ff8c00; }
-        .improvement-card.grade-f-border { border-right-color: #ff4757; }
-        .improvement-card.grade-na-border { border-right-color: #888888; }
-
-        .improvement-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .improvement-title {
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
-        .improvement-domain {
-            color: #888;
-            font-size: 0.9em;
-        }
-
-        .issue-list {
-            margin: 15px 0;
-            padding-right: 20px;
-        }
-
-        .issue-list li {
-            margin-bottom: 8px;
-            color: #ccc;
-        }
-
-        .action-required {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .action-label {
+        .note-title {
             font-weight: bold;
             color: #00d4ff;
             margin-bottom: 8px;
         }
 
-        .code-block {
-            background: #0d1117;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.85em;
-            overflow-x: auto;
-            margin-top: 10px;
-            direction: ltr;
-            text-align: left;
-        }
-
-        .summary-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .summary-table th, .summary-table td {
-            padding: 12px 15px;
-            text-align: right;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .summary-table th {
-            background: rgba(255,255,255,0.05);
-            font-weight: bold;
-        }
-
-        .summary-table tr:hover {
-            background: rgba(255,255,255,0.03);
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: #666;
+        .note-text {
+            color: #aaa;
             font-size: 0.9em;
         }
 
-        .copy-btn {
-            background: linear-gradient(90deg, #00d4ff, #7b68ee);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-size: 0.8em;
-            margin-top: 10px;
+        .correction-note {
+            border-right-color: #00ff88;
+        }
+
+        .correction-note .note-title {
+            color: #00ff88;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #555;
+            font-size: 0.85em;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 40px;
+        }
+
+        /* Copy Notification */
+        .copy-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00ff88;
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            opacity: 0;
             transition: opacity 0.3s;
+            z-index: 1000;
         }
 
-        .copy-btn:hover {
-            opacity: 0.8;
+        .copy-notification.show {
+            opacity: 1;
         }
 
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .client-grid {
-                grid-template-columns: 1fr;
-            }
+        /* Summary Stats Table */
+        .summary-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .summary-item {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-item-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .summary-item-label {
+            color: #888;
+            font-size: 0.85em;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>דשבורד ביקורת ויצירת llms.txt</h1>
+            <h1>דשבורד קבצי llms.txt - צפייה ובדיקה</h1>
             <p class="subtitle">נדב דיגיטל | לקוחות SE Ranking | ינואר 2026</p>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-num green">21</div>
+                    <div class="stat-label">קבצים מוכנים</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num blue">5</div>
+                    <div class="stat-label">קיימים באתר</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num yellow">7</div>
+                    <div class="stat-label">תוקנו לאחר בדיקה</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num red">1</div>
+                    <div class="stat-label">לא נגיש (WAF)</div>
+                </div>
+            </div>
         </header>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number green">23</div>
-                <div class="stat-label">סה"כ לקוחות שנבדקו</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number blue">5</div>
-                <div class="stat-label">כבר יש להם llms.txt</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number yellow">18</div>
-                <div class="stat-label">קבצים שנוצרו</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number orange">3</div>
-                <div class="stat-label">דורשים שיפורים</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number red">1</div>
-                <div class="stat-label">לא נגישים (WAF)</div>
-            </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="חיפוש לפי שם לקוח או דומיין..." onkeyup="filterClients()">
         </div>
 
-        <!-- EXISTING FILES ANALYSIS SECTION -->
-        <h2 class="section-title">ניתוח קבצי llms.txt קיימים ושיפורים</h2>
-
-        <div class="improvement-card grade-a-border">
-            <div class="improvement-header">
-                <div>
-                    <span class="improvement-title">Chery Israel</span>
-                    <span class="improvement-domain">cheryisrael.co.il</span>
-                </div>
-                <span class="grade-badge grade-a">ציון: A</span>
-            </div>
-            <p><strong>סטטוס:</strong> מצוין - מבנה טוב, דו-לשוני, פורמט נכון</p>
-            <p style="margin-top: 10px;"><strong>נקודות חוזק:</strong></p>
-            <ul class="issue-list">
-                <li>דו-לשוני עברית/אנגלית לאורך כל הקובץ</li>
-                <li>פורמט Markdown נכון עם סקציות ברורות</li>
-                <li>כל הקישורים הם נתיבים מלאים</li>
-                <li>סקציות מאורגנות (דגמים, שירותים, אופציונלי)</li>
-            </ul>
-            <p style="margin-top: 10px;"><strong>שיפורים קטנים (אופציונלי):</strong></p>
-            <ul class="issue-list">
-                <li>הוספת סקציית שאלות נפוצות על רכבים חשמליים/היברידיים</li>
-                <li>הוספת קישור לדף השוואת דגמים אם קיים</li>
-                <li>שקול להוסיף טלפון ישיר למכירות/שירות</li>
-            </ul>
-            <div class="action-required">
-                <div class="action-label">פעולה נדרשת</div>
-                <p>אין - הקובץ מוכן לפרודקשן. תוספות קטנות הן אופציונליות.</p>
-            </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterByStatus('all')">הכל (21)</button>
+            <button class="filter-tab" onclick="filterByStatus('ready')">מוכנים (18)</button>
+            <button class="filter-tab" onclick="filterByStatus('fixed')">תוקנו (7)</button>
+            <button class="filter-tab" onclick="filterByStatus('needs-fix')">דורשים פעולה (3)</button>
         </div>
 
-        <div class="improvement-card grade-d-border">
-            <div class="improvement-header">
-                <div>
-                    <span class="improvement-title">Qilates</span>
-                    <span class="improvement-domain">qilates.co.il</span>
-                </div>
-                <span class="grade-badge grade-d">ציון: D</span>
-            </div>
-            <p><strong>סטטוס:</strong> בעיה טכנית - הקובץ קיים אבל מוחזר בפורמט gzip דחוס</p>
-            <p style="margin-top: 10px;"><strong>בעיה:</strong></p>
-            <ul class="issue-list">
-                <li>השרת שולח תוכן דחוס ללא headers של Content-Type נכונים</li>
-                <li>סורקי AI לא יכולים לקרוא את המידע הבינארי הדחוס</li>
-                <li>הקובץ בפועל לא נגיש ל-LLMs</li>
-            </ul>
-            <div class="action-required">
-                <div class="action-label">תיקון טכני נדרש</div>
-                <p>יש להוסיף ל-.htaccess כדי לבטל דחיסה עבור llms.txt:</p>
-                <div class="code-block">
-&lt;FilesMatch "\.txt$"&gt;
-    SetEnvIf Request_URI "^/llms\.txt$" no-gzip
-    Header set Content-Type "text/plain; charset=utf-8"
-&lt;/FilesMatch&gt;
-                </div>
-            </div>
-            <button class="copy-btn" onclick="copyPath('qilates-improved')">העתק נתיב קובץ משופר</button>
-        </div>
+        <div class="clients-grid" id="clientsGrid">
 
-        <div class="improvement-card grade-f-border">
-            <div class="improvement-header">
-                <div>
-                    <span class="improvement-title">Montopay</span>
-                    <span class="improvement-domain">montopay.com</span>
+            <!-- Experis -->
+            <div class="client-card" data-status="ready" data-name="experis experis.co.il גיוס הייטק">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Experis</span>
+                        <span class="client-domain">experis.co.il</span>
+                        <span class="client-industry">גיוס / הייטק</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <span class="grade-badge grade-f">ציון: F</span>
-            </div>
-            <p><strong>סטטוס:</strong> FALSE POSITIVE - אין קובץ llms.txt בפועל</p>
-            <p style="margin-top: 10px;"><strong>בעיה:</strong></p>
-            <ul class="issue-list">
-                <li>הכתובת /llms.txt מפנה לדף הבית HTML</li>
-                <li>מחזיר HTML מלא של האתר במקום תוכן llms.txt</li>
-                <li>זו בעיית soft 404 או הגדרת redirect</li>
-                <li>לא נוצר קובץ llms.txt ייעודי מעולם</li>
-            </ul>
-            <div class="action-required">
-                <div class="action-label">פעולה נדרשת</div>
-                <p>יש ליצור ולהעלות קובץ llms.txt חדש. גרסה משופרת הוכנה.</p>
-            </div>
-            <button class="copy-btn" onclick="copyPath('montopay-new')">העתק נתיב קובץ חדש</button>
-        </div>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('experis')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('experis')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-experis"># אקספריס ישראל | פתרונות משאבי אנוש וגיוס
+# Experis Israel | HR Solutions and Recruitment
 
-        <div class="improvement-card grade-c-border">
-            <div class="improvement-header">
-                <div>
-                    <span class="improvement-title">JustSocial</span>
-                    <span class="improvement-domain">justsocial.io</span>
-                </div>
-                <span class="grade-badge grade-c">ציון: C</span>
-            </div>
-            <p><strong>סטטוס:</strong> פורמט לקוי - יש תוכן אבל מבנה לא נכון</p>
-            <p style="margin-top: 10px;"><strong>בעיות שנמצאו:</strong></p>
-            <ul class="issue-list">
-                <li>חסר כותרת עם פורמט נכון</li>
-                <li>אין סקציית "קישור רשמי" עם URL ראשי</li>
-                <li>פורמט Markdown לא עקבי</li>
-                <li>אין תמיכה דו-לשונית (אנגלית בלבד, חסר עברית)</li>
-                <li>חסרים מפרידי סקציות נכונים (---)</li>
-            </ul>
-            <div class="action-required">
-                <div class="action-label">פעולה נדרשת</div>
-                <p>יש להחליף את הקובץ הקיים בגרסה מובנית נכון. גרסה משופרת הוכנה.</p>
-            </div>
-            <button class="copy-btn" onclick="copyPath('justsocial-improved')">העתק נתיב קובץ משופר</button>
-        </div>
+אקספריס ישראל היא חברת משאבי אנוש וגיוס מובילה, חלק מקבוצת מנפאואר העולמית. החברה מתמחה בגיוס והשמת עובדי טכנולוגיה, מומחי IT, ופרויקטים טכנולוגיים. אקספריס מציעה שירותי סייבר מתקדמים ואקדמיה להכשרות מקצועיות בתחומי ההייטק.
 
-        <div class="improvement-card grade-na-border">
-            <div class="improvement-header">
-                <div>
-                    <span class="improvement-title">Deasy</span>
-                    <span class="improvement-domain">deasy.co.il</span>
-                </div>
-                <span class="grade-badge grade-na">ציון: N/A</span>
-            </div>
-            <p><strong>סטטוס:</strong> לא נגיש - מאחורי Incapsula WAF</p>
-            <p style="margin-top: 10px;"><strong>בעיה:</strong></p>
-            <ul class="issue-list">
-                <li>האתר מוגן על ידי Incapsula Web Application Firewall</li>
-                <li>כל הבקשות האוטומטיות נחסמות</li>
-                <li>לא ניתן לאמת אם llms.txt קיים או להעריך את איכותו</li>
-                <li>נדרש אימות ידני דרך דפדפן</li>
-            </ul>
-            <div class="action-required">
-                <div class="action-label">נדרש אימות ידני</div>
-                <p>יש לגשת ל-https://deasy.co.il/llms.txt דרך דפדפן כדי לאמת שהקובץ קיים. אם ה-WAF חוסם סורקי AI, כדאי לשקול whitelist לסוכני משתמש של בוטים נפוצים או ליצור גרסה סטטית.</p>
-            </div>
-        </div>
+Experis Israel is a leading HR and recruitment company, part of the global ManpowerGroup. The company specializes in recruiting and placing technology professionals, IT experts, and technology projects. Experis offers advanced cybersecurity services and a professional academy for tech training.
 
-        <!-- SUMMARY TABLE -->
-        <h2 class="section-title">סיכום קבצים קיימים</h2>
-        <table class="summary-table">
-            <thead>
-                <tr>
-                    <th>לקוח</th>
-                    <th>דומיין</th>
-                    <th>סטטוס</th>
-                    <th>ציון</th>
-                    <th>פעולה</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Chery Israel</td>
-                    <td>cheryisrael.co.il</td>
-                    <td><span class="status-badge status-excellent">מצוין</span></td>
-                    <td><span class="grade-badge grade-a">A</span></td>
-                    <td>תוספות קטנות (אופציונלי)</td>
-                </tr>
-                <tr>
-                    <td>Qilates</td>
-                    <td>qilates.co.il</td>
-                    <td><span class="status-badge status-needs-fix">בעיה טכנית</span></td>
-                    <td><span class="grade-badge grade-d">D</span></td>
-                    <td>תיקון דחיסת שרת</td>
-                </tr>
-                <tr>
-                    <td>Montopay</td>
-                    <td>montopay.com</td>
-                    <td><span class="status-badge status-needs-fix">אין קובץ</span></td>
-                    <td><span class="grade-badge grade-f">F</span></td>
-                    <td>יצירת קובץ חדש</td>
-                </tr>
-                <tr>
-                    <td>JustSocial</td>
-                    <td>justsocial.io</td>
-                    <td><span class="status-badge status-pending">פורמט לקוי</span></td>
-                    <td><span class="grade-badge grade-c">C</span></td>
-                    <td>החלפה בגרסה משופרת</td>
-                </tr>
-                <tr>
-                    <td>Deasy</td>
-                    <td>deasy.co.il</td>
-                    <td><span class="status-badge status-inaccessible">לא נגיש</span></td>
-                    <td><span class="grade-badge grade-na">N/A</span></td>
-                    <td>אימות ידני</td>
-                </tr>
-            </tbody>
-        </table>
+---
 
-        <!-- NEW FILES CREATED SECTION -->
-        <h2 class="section-title">שכבה 1: לקוחות עדיפות גבוהה (נוצרו)</h2>
-        <div class="client-grid">
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Experis</span>
-                    <span class="status-badge status-ready">מוכן</span>
-                </div>
-                <div class="client-domain">experis.co.il</div>
-                <span class="client-industry">גיוס / הייטק</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-1">שכבה 1</span></div>
-                    <div class="meta-item">שפה: עברית</div>
-                </div>
-                <button class="copy-btn" onclick="copyPath('experis')">העתק נתיב קובץ</button>
-            </div>
+## אודות אקספריס | About Experis
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Manpower</span>
-                    <span class="status-badge status-ready">מוכן</span>
-                </div>
-                <div class="client-domain">manpower.co.il</div>
-                <span class="client-industry">גיוס / משאבי אנוש</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-1">שכבה 1</span></div>
-                    <div class="meta-item">שפה: עברית</div>
-                </div>
-                <button class="copy-btn" onclick="copyPath('manpower')">העתק נתיב קובץ</button>
-            </div>
+אקספריס היא המותג הטכנולוגי של קבוצת מנפאואר, המתמקדת בפתרונות משאבי אנוש עבור תעשיית ההייטק. החברה מספקת שירותי גיוס מומחי IT, ניהול פרויקטים טכנולוגיים, שירותי סייבר, והכשרות מקצועיות דרך אקספריס אקדמי.
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Midot</span>
-                    <span class="status-badge status-ready">מוכן</span>
-                </div>
-                <div class="client-domain">midot.co.il</div>
-                <span class="client-industry">שירותים מקצועיים</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-1">שכבה 1</span></div>
-                    <div class="meta-item">שפה: עברית</div>
-                </div>
-                <button class="copy-btn" onclick="copyPath('midot')">העתק נתיב קובץ</button>
-            </div>
+---
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Chery Israel</span>
-                    <span class="status-badge status-exists">מצוין</span>
-                </div>
-                <div class="client-domain">cheryisrael.co.il</div>
-                <span class="client-industry">רכב</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-1">שכבה 1</span></div>
-                    <div class="meta-item">שפה: דו-לשוני</div>
-                </div>
-            </div>
-        </div>
+## קישורים רשמיים | Official Links
+- אתר ראשי: https://experis.co.il/
+- אקספריס אקדמי: https://experis.co.il/academy/
+- אקספריס סייבר: https://experis.co.il/cyber/
 
-        <h2 class="section-title">שכבה 2: עדיפות בינונית (נוצרו)</h2>
-        <div class="client-grid">
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">AA Orthopedics</span>
-                    <span class="status-badge status-ready">מוכן</span>
-                </div>
-                <div class="client-domain">aa-orthopedics.co.il</div>
-                <span class="client-industry">בריאות</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-2">שכבה 2</span></div>
-                    <div class="meta-item">שפה: עברית</div>
+---
+
+## שירותים | Services
+
+### גיוס והשמה | Recruitment & Staffing
+- [גיוס מומחי טכנולוגיה](https://experis.co.il/services/recruitment/)
+- [השמת מתכנתים](https://experis.co.il/services/developers/)
+- [השמת מנהלי פרויקטים](https://experis.co.il/services/project-managers/)
+
+### פתרונות טכנולוגיים | Technology Solutions
+- [ניהול פרויקטים](https://experis.co.il/services/project-management/)
+- [פתרונות אינטגרציה](https://experis.co.il/services/integration/)
+
+### הכשרות מקצועיות | Professional Training
+- [אקספריס אקדמי](https://experis.co.il/academy/)
+- [קורסי פיתוח](https://experis.co.il/academy/development/)
+- [קורסי סייבר](https://experis.co.il/academy/cyber/)
+- [קורסי Data](https://experis.co.il/academy/data/)
+
+---
+
+## צור קשר | Contact
+- [משרות פנויות](https://experis.co.il/jobs/)
+- [צור קשר](https://experis.co.il/contact/)</pre>
                 </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">BeSpirit</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Manpower -->
+            <div class="client-card" data-status="ready" data-name="manpower manpower.co.il גיוס משאבי אנוש">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Manpower</span>
+                        <span class="client-domain">manpower.co.il</span>
+                        <span class="client-industry">גיוס / משאבי אנוש</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">bespirit.co.il</div>
-                <span class="client-industry">חינוך</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-2">שכבה 2</span></div>
-                    <div class="meta-item">שפה: עברית</div>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('manpower')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('manpower')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-manpower"># מנפאואר ישראל | גיוס, השמה וכוח אדם
+# Manpower Israel | Recruitment, Staffing & HR Solutions
+
+מנפאואר ישראל היא חברת כוח האדם המובילה בישראל, חלק מקבוצת ManpowerGroup העולמית. החברה מספקת שירותי גיוס, השמה, כוח אדם זמני ופתרונות משאבי אנוש לארגונים בכל הגדלים ולמועמדים בכל התחומים המקצועיים.
+
+---
+
+## קישורים רשמיים | Official Links
+- אתר מנפאואר: https://manpower.co.il/
+- קבוצת מנפאואר: https://manpowergroup.co.il/
+
+---
+
+## שירותים | Services
+
+### גיוס והשמה | Recruitment & Staffing
+- [שירותי גיוס](https://manpower.co.il/services/recruitment/)
+- [השמה קבועה](https://manpower.co.il/services/permanent/)
+- [כוח אדם זמני](https://manpower.co.il/services/temporary/)
+
+### פתרונות ארגוניים | Enterprise Solutions
+- [מיקור חוץ](https://manpower.co.il/services/outsourcing/)
+- [ניהול קבלנים](https://manpower.co.il/services/contractors/)
+
+### תחומי התמחות | Industry Expertise
+- [הייטק וטכנולוגיה](https://manpower.co.il/industries/tech/)
+- [פיננסים ובנקאות](https://manpower.co.il/industries/finance/)
+- [תעשייה ולוגיסטיקה](https://manpower.co.il/industries/logistics/)
+
+---
+
+## צור קשר | Contact
+- [משרות פנויות](https://manpower.co.il/jobs/)
+- [צור קשר](https://manpower.co.il/contact/)</pre>
                 </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Qilates</span>
-                    <span class="status-badge status-needs-fix">דורש תיקון</span>
+            <!-- Midot -->
+            <div class="client-card" data-status="ready" data-name="midot midot.co.il הערכה מיון">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Midot</span>
+                        <span class="client-domain">midot.co.il</span>
+                        <span class="client-industry">הערכת מועמדים</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">qilates.co.il</div>
-                <span class="client-industry">כושר / פילאטיס</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-2">שכבה 2</span></div>
-                    <div class="meta-item">שפה: עברית</div>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('midot')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('midot')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-midot"># מכון מידות | מומחים להערכת מועמדים
+# Midot Institute | Assessment & Recruitment Experts
+
+מכון מידות הוא מכון מוביל להערכת מועמדים ואבחון תעסוקתי בישראל. המכון מספק שירותי מיון, אבחון והערכה לארגונים ומעסיקים, עם התמחות במבחני התאמה, מרכזי הערכה ופתרונות מיון מתקדמים.
+
+---
+
+## קישור רשמי | Official Link
+- אתר מכון מידות: https://midot.co.il/
+
+---
+
+## שירותים | Services
+
+### מבחני מיון | Screening Tests
+- [מבחני כישורים](https://midot.co.il/services/aptitude-tests/)
+- [מבחני אישיות](https://midot.co.il/services/personality-tests/)
+- [מבחני שפות](https://midot.co.il/services/language-tests/)
+
+### מרכזי הערכה | Assessment Centers
+- [מרכז הערכה](https://midot.co.il/services/assessment-center/)
+- [הערכת מנהלים](https://midot.co.il/services/management-assessment/)
+- [הערכת פוטנציאל](https://midot.co.il/services/potential-assessment/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://midot.co.il/contact/)</pre>
                 </div>
-                <button class="copy-btn" onclick="copyPath('qilates-improved')">העתק קובץ משופר</button>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Anbar</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- AA Orthopedics -->
+            <div class="client-card" data-status="ready" data-name="aa-orthopedics aa-orthopedics.co.il בריאות אורתופדיה">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">AA Orthopedics</span>
+                        <span class="client-domain">aa-orthopedics.co.il</span>
+                        <span class="client-industry">בריאות / אורתופדיה</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">anbar.co.il</div>
-                <span class="client-industry">מסחר אלקטרוני</span>
-                <div class="client-meta">
-                    <div class="meta-item"><span class="tier-badge tier-2">שכבה 2</span></div>
-                    <div class="meta-item">שפה: עברית</div>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('aa-orthopedics')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('aa-orthopedics')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-aa-orthopedics"># א.א. אורתופדיה | מרכז אורתופדי מתקדם
+# AA Orthopedics | Advanced Orthopedic Center
+
+א.א. אורתופדיה הוא מרכז רפואי מוביל בישראל המתמחה באורתופדיה, רפואת ספורט וניתוחי מפרקים. המרכז מציע טיפולים מתקדמים בבעיות שלד ומפרקים, כולל החלפות מפרקים, ניתוחי עמוד שדרה, ארתרוסקופיה וטיפול בפציעות ספורט.
+
+---
+
+## קישור רשמי | Official Link
+- אתר המרכז: https://aa-orthopedics.co.il/
+
+---
+
+## שירותים רפואיים | Medical Services
+
+### ניתוחי מפרקים | Joint Surgery
+- [החלפת מפרק ירך](https://aa-orthopedics.co.il/services/hip-replacement/)
+- [החלפת מפרק ברך](https://aa-orthopedics.co.il/services/knee-replacement/)
+- [החלפת מפרק כתף](https://aa-orthopedics.co.il/services/shoulder-replacement/)
+
+### רפואת ספורט | Sports Medicine
+- [טיפול בפציעות ספורט](https://aa-orthopedics.co.il/services/sports-injuries/)
+- [קרע ברצועה צולבת](https://aa-orthopedics.co.il/services/acl-tear/)
+- [קרע במיניסקוס](https://aa-orthopedics.co.il/services/meniscus-tear/)
+
+### ניתוחי עמוד שדרה | Spine Surgery
+- [פריצת דיסק](https://aa-orthopedics.co.il/services/herniated-disc/)
+- [היצרות תעלת השדרה](https://aa-orthopedics.co.il/services/spinal-stenosis/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://aa-orthopedics.co.il/contact/)</pre>
                 </div>
             </div>
-        </div>
 
-        <h2 class="section-title">שכבה 3: עדיפות רגילה (נוצרו)</h2>
-        <div class="client-grid">
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">ManpowerGroup</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- BeSpirit -->
+            <div class="client-card" data-status="ready" data-name="bespirit bespirit.co.il רוחניות מדיטציה">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">BeSpirit</span>
+                        <span class="client-domain">bespirit.co.il</span>
+                        <span class="client-industry">רוחניות / חינוך</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">manpowergroup.co.il</div>
-                <span class="client-industry">גיוס</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('bespirit')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('bespirit')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-bespirit"># בספיריט | קורסים ולימודי רוחניות
+# BeSpirit | Spiritual Courses and Training
+
+בספיריט היא אקדמיה מובילה בישראל ללימודי רוחניות, מדיטציה ופיתוח אישי. המכללה מציעה מגוון קורסים והכשרות בתחומי המיינדפולנס, היוגה, הריפוי האנרגטי והתפתחות רוחנית.
+
+---
+
+## קישור רשמי | Official Link
+- אתר בספיריט: https://bespirit.co.il/
+
+---
+
+## קורסים והכשרות | Courses and Training
+
+### מדיטציה ומיינדפולנס | Meditation & Mindfulness
+- [קורס מדיטציה](https://bespirit.co.il/courses/meditation/)
+- [הכשרת מנחי מדיטציה](https://bespirit.co.il/courses/meditation-instructor/)
+- [מיינדפולנס MBSR](https://bespirit.co.il/courses/mbsr/)
+
+### יוגה | Yoga
+- [קורס מורי יוגה](https://bespirit.co.il/courses/yoga-teacher/)
+- [יוגה טיפולית](https://bespirit.co.il/courses/therapeutic-yoga/)
+
+### ריפוי והתפתחות | Healing & Development
+- [ריפוי אנרגטי](https://bespirit.co.il/courses/energy-healing/)
+- [רייקי](https://bespirit.co.il/courses/reiki/)
+- [קריאה באמצעות קלפי טארוט](https://bespirit.co.il/courses/tarot/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://bespirit.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Manpower Care</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Anbar -->
+            <div class="client-card" data-status="ready" data-name="anbar anbar.co.il רהיטים עיצוב">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Anbar</span>
+                        <span class="client-domain">anbar.co.il</span>
+                        <span class="client-industry">רהיטים / מסחר</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">manpowercare.co.il</div>
-                <span class="client-industry">בריאות / סיעוד</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('anbar')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('anbar')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-anbar"># ענבר | רהיטים ועיצוב הבית
+# Anbar | Furniture and Home Design
+
+ענבר היא רשת רהיטים מובילה בישראל המציעה פתרונות ריהוט ועיצוב לכל הבית. החנות מתמחה בריהוט סלון, חדרי שינה, פינות אוכל, ריהוט גן ומשרד.
+
+---
+
+## קישור רשמי | Official Link
+- אתר ענבר: https://anbar.co.il/
+
+---
+
+## קטגוריות מוצרים | Product Categories
+
+### ריהוט סלון | Living Room Furniture
+- [ספות וכורסאות](https://anbar.co.il/category/sofas/)
+- [מזנונים ושידות](https://anbar.co.il/category/tv-units/)
+- [שולחנות סלון](https://anbar.co.il/category/coffee-tables/)
+
+### חדרי שינה | Bedroom
+- [מיטות](https://anbar.co.il/category/beds/)
+- [ארונות בגדים](https://anbar.co.il/category/wardrobes/)
+
+### פינות אוכל | Dining
+- [שולחנות אוכל](https://anbar.co.il/category/dining-tables/)
+- [כיסאות אוכל](https://anbar.co.il/category/dining-chairs/)
+
+---
+
+## צור קשר | Contact
+- [סניפים](https://anbar.co.il/stores/)
+- [צור קשר](https://anbar.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Amos Ziv</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Manpower Care -->
+            <div class="client-card" data-status="ready" data-name="manpowercare manpowercare.co.il סיעוד טיפול">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Manpower Care</span>
+                        <span class="client-domain">manpowercare.co.il</span>
+                        <span class="client-industry">סיעוד / בריאות</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">amosziv.co.il</div>
-                <span class="client-industry">בריאות</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('manpowercare')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('manpowercare')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-manpowercare"># מנפאואר קר | שירותי סיעוד וטיפול
+# Manpower Care | Nursing and Caregiving Services
+
+מנפאואר קר היא חברת סיעוד וטיפול מובילה בישראל, חלק מקבוצת מנפאואר. החברה מספקת שירותי סיעוד ביתי, טיפול בקשישים, ליווי חולים ופתרונות טיפול מותאמים אישית.
+
+---
+
+## קישור רשמי | Official Link
+- אתר מנפאואר קר: https://manpowercare.co.il/
+
+---
+
+## שירותי סיעוד | Nursing Services
+
+### טיפול ביתי | Home Care
+- [סיעוד ביתי](https://manpowercare.co.il/services/home-nursing/)
+- [טיפול בקשישים](https://manpowercare.co.il/services/elderly-care/)
+- [ליווי לחולים](https://manpowercare.co.il/services/patient-companion/)
+
+### שירותים מיוחדים | Special Services
+- [טיפול בחולי דמנציה](https://manpowercare.co.il/services/dementia-care/)
+- [שיקום לאחר ניתוח](https://manpowercare.co.il/services/post-surgery/)
+- [טיפול פליאטיבי](https://manpowercare.co.il/services/palliative/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://manpowercare.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">CardioTeam</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Amos Ziv -->
+            <div class="client-card" data-status="ready" data-name="amosziv amosziv.co.il אורתופדיה רופא">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Dr. Amos Ziv</span>
+                        <span class="client-domain">amosziv.co.il</span>
+                        <span class="client-industry">בריאות / אורתופדיה</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">cardioteam.co.il</div>
-                <span class="client-industry">בריאות</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('amosziv')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('amosziv')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-amosziv"># ד"ר עמוס זיו | מומחה אורתופדיה
+# Dr. Amos Ziv | Orthopedic Specialist
+
+ד"ר עמוס זיו הוא מנתח אורתופד בכיר ומומחה בתחום ניתוחי מפרקים, רפואת ספורט וניתוחי עמוד שדרה. הרופא מקבל מטופלים בקליניקה פרטית ומבצע ניתוחים בבתי חולים מובילים בישראל.
+
+---
+
+## קישור רשמי | Official Link
+- אתר הקליניקה: https://amosziv.co.il/
+
+---
+
+## תחומי התמחות | Areas of Expertise
+
+### ניתוחי מפרקים | Joint Surgery
+- [החלפת מפרק ברך](https://amosziv.co.il/services/knee-replacement/)
+- [החלפת מפרק ירך](https://amosziv.co.il/services/hip-replacement/)
+- [ניתוחי כתף](https://amosziv.co.il/services/shoulder-surgery/)
+
+### רפואת ספורט | Sports Medicine
+- [טיפול בפציעות ספורט](https://amosziv.co.il/services/sports-injuries/)
+- [קרע ברצועה צולבת](https://amosziv.co.il/services/acl/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://amosziv.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Building Institute</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- CardioTeam -->
+            <div class="client-card" data-status="ready" data-name="cardioteam cardioteam.co.il קרדיולוגיה לב">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">CardioTeam</span>
+                        <span class="client-domain">cardioteam.co.il</span>
+                        <span class="client-industry">בריאות / קרדיולוגיה</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">building.org.il</div>
-                <span class="client-industry">הכשרה מקצועית</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('cardioteam')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('cardioteam')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-cardioteam"># קרדיוטים | מרכז קרדיולוגיה מתקדם
+# CardioTeam | Advanced Cardiology Center
+
+קרדיוטים הוא מרכז רפואי מתקדם לקרדיולוגיה ורפואת הלב בישראל. המרכז מציע שירותי אבחון, טיפול ומעקב במחלות לב, עם צוות קרדיולוגים מומחים ומכשור רפואי מתקדם.
+
+---
+
+## קישור רשמי | Official Link
+- אתר קרדיוטים: https://cardioteam.co.il/
+
+---
+
+## שירותים רפואיים | Medical Services
+
+### אבחון לב | Cardiac Diagnosis
+- [אקו לב](https://cardioteam.co.il/services/echocardiogram/)
+- [הולטר לב](https://cardioteam.co.il/services/holter/)
+- [מבחן מאמץ](https://cardioteam.co.il/services/stress-test/)
+
+### טיפול בהפרעות קצב | Arrhythmia Treatment
+- [הפרעות קצב](https://cardioteam.co.il/services/arrhythmia/)
+- [פרפור פרוזדורים](https://cardioteam.co.il/services/afib/)
+- [קוצב לב](https://cardioteam.co.il/services/pacemaker/)
+
+### טיפול במחלות לב | Heart Disease Treatment
+- [מחלת עורקים כליליים](https://cardioteam.co.il/services/cad/)
+- [אי ספיקת לב](https://cardioteam.co.il/services/heart-failure/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://cardioteam.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Fency</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Building Institute -->
+            <div class="client-card" data-status="ready" data-name="building building.org.il בניה הכשרה קבלנים">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Building Institute</span>
+                        <span class="client-domain">building.org.il</span>
+                        <span class="client-industry">הכשרה / בנייה</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">fency.co.il</div>
-                <span class="client-industry">מסחר אלקטרוני</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('building')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('building')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-building"># מכון התקנים הישראלי לבניה | Building Standards Institute
+# Israel Building Standards Institute
+
+מכון התקנים הישראלי לבניה (בילדינג) הוא הארגון המקצועי המוביל בישראל לקידום סטנדרטים, הכשרות והסמכות בענף הבנייה.
+
+---
+
+## קישור רשמי | Official Link
+- אתר המכון: https://building.org.il/
+
+---
+
+## קורסים והכשרות | Courses and Training
+
+### הכשרות קבלנים | Contractor Training
+- [קורס קבלנים רשומים](https://building.org.il/courses/registered-contractors/)
+- [קורס מנהלי עבודה](https://building.org.il/courses/site-managers/)
+- [קורס משלימים](https://building.org.il/courses/completion/)
+
+### הכשרות בטיחות | Safety Training
+- [בטיחות בבנייה](https://building.org.il/courses/construction-safety/)
+- [עבודה בגובה](https://building.org.il/courses/height-work/)
+- [בטיחות חשמל](https://building.org.il/courses/electrical-safety/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://building.org.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Ultima School</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Fency -->
+            <div class="client-card" data-status="ready" data-name="fency fency.co.il גדרות שערים">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Fency</span>
+                        <span class="client-domain">fency.co.il</span>
+                        <span class="client-industry">גדרות / מסחר</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">ultimaschool.co.il</div>
-                <span class="client-industry">חינוך / הייטק</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('fency')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('fency')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-fency"># פנסי | גדרות ושערים
+# Fency | Fences and Gates
+
+פנסי היא חברה מובילה בישראל לייצור והתקנת גדרות, שערים ומערכות הגנה לבית ולעסק. החברה מתמחה בגדרות אלומיניום, שערי חשמל, גדרות רשת, ופתרונות גידור מותאמים אישית.
+
+---
+
+## קישור רשמי | Official Link
+- אתר פנסי: https://fency.co.il/
+
+---
+
+## מוצרים | Products
+
+### גדרות | Fences
+- [גדרות אלומיניום](https://fency.co.il/products/aluminum-fences/)
+- [גדרות רשת](https://fency.co.il/products/mesh-fences/)
+- [גדרות עץ סינתטי](https://fency.co.il/products/synthetic-wood/)
+
+### שערים | Gates
+- [שערי חשמל](https://fency.co.il/products/electric-gates/)
+- [שערי כניסה](https://fency.co.il/products/entrance-gates/)
+- [שערי הזזה](https://fency.co.il/products/sliding-gates/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://fency.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Admati</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Ultima School -->
+            <div class="client-card" data-status="ready" data-name="ultimaschool ultimaschool.co.il הייטק לימודים">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Ultima School</span>
+                        <span class="client-domain">ultimaschool.co.il</span>
+                        <span class="client-industry">חינוך / הייטק</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">admati.com</div>
-                <span class="client-industry">משפט / נדל"ן</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('ultimaschool')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('ultimaschool')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-ultimaschool"># אולטימה סקול | בית ספר להייטק
+# Ultima School | Tech Training Academy
+
+אולטימה סקול היא אקדמיה מובילה בישראל להכשרת אנשי טכנולוגיה ומקצועות ההייטק. המכללה מציעה קורסים מעשיים בתכנות, פיתוח תוכנה, סייבר, Data Science ותחומי הייטק נוספים.
+
+---
+
+## קישור רשמי | Official Link
+- אתר אולטימה: https://ultimaschool.co.il/
+
+---
+
+## קורסים | Courses
+
+### פיתוח תוכנה | Software Development
+- [קורס Full Stack](https://ultimaschool.co.il/courses/full-stack/)
+- [קורס Frontend](https://ultimaschool.co.il/courses/frontend/)
+- [קורס Backend](https://ultimaschool.co.il/courses/backend/)
+- [קורס Python](https://ultimaschool.co.il/courses/python/)
+
+### סייבר ואבטחת מידע | Cybersecurity
+- [קורס סייבר](https://ultimaschool.co.il/courses/cyber/)
+- [בדיקות חדירה](https://ultimaschool.co.il/courses/penetration-testing/)
+- [SOC Analyst](https://ultimaschool.co.il/courses/soc/)
+
+### Data & AI | דאטה ובינה מלאכותית
+- [Data Science](https://ultimaschool.co.il/courses/data-science/)
+- [Data Analytics](https://ultimaschool.co.il/courses/data-analytics/)
+- [Machine Learning](https://ultimaschool.co.il/courses/ml/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://ultimaschool.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Moya CBD</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Admati -->
+            <div class="client-card" data-status="ready" data-name="admati admati.com עורך דין נדלן">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Admati</span>
+                        <span class="client-domain">admati.com</span>
+                        <span class="client-industry">משפט / נדל"ן</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-ready">מוכן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">moya-cbd.com</div>
-                <span class="client-industry">מסחר / בריאות</span>
+                <div class="client-content">
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('admati')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('admati')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-admati"># אדמתי | עורך דין נדל"ן
+# Admati | Real Estate Attorney
+
+אדמתי הוא משרד עורכי דין המתמחה בדיני נדל"ן, עסקאות מקרקעין וליווי משפטי בתחום הנדל"ן בישראל.
+
+---
+
+## קישור רשמי | Official Link
+- אתר המשרד: https://admati.com/
+
+---
+
+## תחומי התמחות | Areas of Practice
+
+### עסקאות נדל"ן | Real Estate Transactions
+- [רכישת דירה](https://admati.com/services/buying/)
+- [מכירת דירה](https://admati.com/services/selling/)
+- [הסכמי שכירות](https://admati.com/services/rental/)
+- [רכישה מקבלן](https://admati.com/services/developer-purchase/)
+
+### נדל"ן מסחרי | Commercial Real Estate
+- [נכסים מסחריים](https://admati.com/services/commercial/)
+- [השכרת משרדים](https://admati.com/services/office-rental/)
+- [השקעות נדל"ן](https://admati.com/services/investments/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://admati.com/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Barefoot Cozumel</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- ManpowerGroup -->
+            <div class="client-card" data-status="fixed" data-name="manpowergroup manpowergroup.co.il גיוס">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">ManpowerGroup</span>
+                        <span class="client-domain">manpowergroup.co.il</span>
+                        <span class="client-industry">גיוס / משאבי אנוש</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">barefootcozumel.com</div>
-                <span class="client-industry">צלילה / תיירות</span>
-                <p style="color: #00ff88; font-size: 0.8em; margin-top: 8px;">תוקן: מרכז צלילה (לא השכרת נופש)</p>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון שבוצע:</div>
+                        <div class="note-text">תוקן קידוד עברי - אות "M" באנגלית הוסרה מטקסט עברי ("וMנפאואר קר" → "ומנפאואר קייר")</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('manpowergroup')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('manpowergroup')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-manpowergroup"># קבוצת מנפאואר ישראל | ManpowerGroup Israel
+# ManpowerGroup Israel | Leading Workforce Solutions
+
+קבוצת מנפאואר ישראל היא קבוצת משאבי האנוש המובילה בישראל, וחלק מ-ManpowerGroup הגלובלית. הקבוצה מאגדת תחת קורת גג אחת את מותגי הגיוס, ההשמה וכוח האדם המובילים בישראל: מנפאואר, אקספריס ומנפאואר קייר.
+
+---
+
+## קישור רשמי | Official Link
+- אתר הקבוצה: https://manpowergroup.co.il/
+
+---
+
+## מותגי הקבוצה | Our Brands
+
+### מנפאואר | Manpower
+- [מנפאואר ישראל](https://manpower.co.il/)
+
+### אקספריס | Experis
+- [אקספריס](https://experis.co.il/)
+- [אקספריס אקדמי](https://experis.co.il/academy/)
+- [אקספריס סייבר](https://experis.co.il/cyber/)
+
+### מנפאואר קר | Manpower Care
+- [מנפאואר קר](https://manpowercare.co.il/)
+
+---
+
+## שירותי הקבוצה | Group Services
+
+### גיוס והשמה | Recruitment & Staffing
+- [גיוס עובדים](https://manpowergroup.co.il/services/recruitment/)
+- [השמה קבועה](https://manpowergroup.co.il/services/permanent/)
+- [כוח אדם זמני](https://manpowergroup.co.il/services/temporary/)
+
+---
+
+## צור קשר | Contact
+- [צור קשר](https://manpowergroup.co.il/contact/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Intech</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Intech - CORRECTED -->
+            <div class="client-card" data-status="fixed" data-name="intech intech.org.il מיזוג אוויר קירור">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Intech</span>
+                        <span class="client-domain">intech.org.il</span>
+                        <span class="client-industry">מיזוג אוויר / הכשרה</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">intech.org.il</div>
-                <span class="client-industry">מיזוג אוויר / הכשרה</span>
-                <p style="color: #00ff88; font-size: 0.8em; margin-top: 8px;">תוקן: בית ספר למיזוג אוויר (לא IT)</p>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון קריטי שבוצע:</div>
+                        <div class="note-text"><strong>לפני:</strong> תואר בטעות כמרכז הכשרת IT/תכנות<br><strong>אחרי:</strong> בית ספר למיזוג אוויר וקירור - הכשרת טכנאים בדרגות 1-3, קירור, אינוורטרים</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('intech')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('intech')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-intech"># אינטק | בית ספר למיזוג אוויר וקירור
+# Intech | HVAC & Refrigeration Training School
+
+אינטק הוא מרכז הכשרה מקצועי מוביל בתחום מיזוג האוויר, הקירור והאלקטרומכניקה. המרכז מציע קורסים מקצועיים להכשרת טכנאי מיזוג אוויר בדרגות 1, 2 ו-3, טכנאי קירור, ולימודי אינוורטרים וטכנולוגיות מתקדמות. המרכז ממוקם בפתח תקווה.
+
+---
+
+## קישור רשמי | Official Link
+- אתר אינטק: https://intech.org.il/
+
+---
+
+## קורסי מיזוג אוויר | Air Conditioning Courses
+
+### הכשרות מקצועיות | Professional Training
+- קורס מיזוג אוויר דרגה 1: הכשרה בסיסית לטכנאי מיזוג
+- קורס מיזוג אוויר דרגה 2: הכשרה מתקדמת כולל מערכות מורכבות
+- קורס מיזוג אוויר דרגה 3: הסמכה מלאה לטכנאים בכירים
+- קורס טכנאי קירור: התמחות במערכות קירור תעשייתיות
+
+### טכנולוגיות מתקדמות | Advanced Technologies
+- קורס אינוורטרים: טכנולוגיית Inverter למערכות מיזוג
+- קורס קירור CO2: טכנולוגיות קירור ידידותיות לסביבה
+- קורס חימום תת רצפתי: מערכות חימום מתקדמות
+
+---
+
+## צור קשר | Contact
+
+- טלפון: 072-2463233
+- כתובת: מבצע קדש 17, פתח תקווה
+- אתר: https://intech.org.il/</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Leumit</span>
-                    <span class="status-badge status-ready">מוכן</span>
+            <!-- Barefoot Cozumel - CORRECTED -->
+            <div class="client-card" data-status="fixed" data-name="barefoot barefootcozumel.com צלילה תיירות">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Barefoot Cozumel</span>
+                        <span class="client-domain">barefootcozumel.com</span>
+                        <span class="client-industry">צלילה / תיירות</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">leumit.co.il</div>
-                <span class="client-industry">בריאות</span>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון קריטי שבוצע:</div>
+                        <div class="note-text"><strong>לפני:</strong> תואר בטעות כחברת השכרת נופש/וילות<br><strong>אחרי:</strong> מרכז צלילה מקצועי עם הסירה "The Big Splash", סיורי צלילה ב-Punta Tunich, San Francisco reef ואתרים נוספים</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('barefoot')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('barefoot-cozumel')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-barefoot"># Barefoot Cozumel | Scuba Diving Center
+# Barefoot Cozumel | Dive Tours & Boat Services in Cozumel, Mexico
+
+Barefoot Cozumel is a professional scuba diving center based in Cozumel, Mexico. We offer guided dive tours, snorkeling excursions, and boat services aboard our vessel "The Big Splash." Our experienced team takes divers to world-famous dive sites including Punta Tunich, San Francisco reef, and other premier locations in the Cozumel Marine Park.
+
+---
+
+## Official Link
+- Website: https://barefootcozumel.com/
+
+---
+
+## Dive Services
+
+### Scuba Diving Tours
+- Guided dive tours for certified divers
+- Multi-tank dive trips to premier sites
+- Night diving excursions
+- Deep diving adventures
+
+### Dive Sites We Visit
+- Punta Tunich: Famous wall dive with dramatic drop-offs
+- San Francisco Reef: Pristine coral formations and marine life
+- Palancar Reef: World-renowned dive site
+- Columbia Reef: Deep diving and advanced sites
+- Santa Rosa Wall: Spectacular wall diving
+
+### Boat Services
+- "The Big Splash" - Our dive boat
+- Private charters available
+- Small group tours for personalized experience
+
+---
+
+## Contact & Booking
+
+- Website: https://barefootcozumel.com/
+- Location: Cozumel Island, Quintana Roo, Mexico</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Deasy</span>
-                    <span class="status-badge status-inaccessible">לא נגיש</span>
+            <!-- Moya CBD - CORRECTED -->
+            <div class="client-card" data-status="fixed" data-name="moya moya-cbd.com cbd קנאביס">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Moya CBD</span>
+                        <span class="client-domain">moya-cbd.com</span>
+                        <span class="client-industry">CBD / בריאות</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">deasy.co.il</div>
-                <span class="client-industry">שירותים מקצועיים</span>
-                <p style="color: #888; font-size: 0.85em; margin-top: 10px;">מאחורי WAF - נדרש אימות ידני</p>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון שבוצע:</div>
+                        <div class="note-text">URLs שהומצאו הוחלפו ב-URLs מאומתים מה-sitemap (/shop/oils/, /shop/creams/ וכו')</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('moya')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('moya-cbd')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-moya"># מויה CBD | שמן קנאביס רפואי
+# Moya CBD | Medical Cannabis Oil
+
+מויה CBD היא חברה ישראלית מובילה בתחום מוצרי CBD ושמן קנאביס רפואי. החברה מציעה מגוון מוצרי CBD איכותיים לטיפול בכאבים, חרדה, הפרעות שינה ומצבים רפואיים נוספים.
+
+---
+
+## קישור רשמי | Official Link
+- אתר מויה: https://moya-cbd.com/
+
+---
+
+## מוצרים | Products
+
+### שמנים | Oils
+- [Full Spectrum 20%](https://moya-cbd.com/shop/oils/full-spectrum-20/): שמן CBD ספקטרום מלא 20%
+- [Organic 10%](https://moya-cbd.com/shop/oils/organic-10/): שמן CBD אורגני 10%
+- [CBD Oil for Dogs](https://moya-cbd.com/shop/oils/organic-10-cbd-oil-dogs/): שמן CBD לכלבים
+
+### קרמים | Creams
+- [CBD Cream for Skin](https://moya-cbd.com/shop/creams/for-skin/): קרם CBD לעור
+- [CBD Cream for Muscles](https://moya-cbd.com/shop/creams/for-muscles/): קרם CBD לשרירים
+
+---
+
+## חנות | Shop
+- [Shop All Products](https://moya-cbd.com/shop/): כל מוצרי CBD
+
+---
+
+## צור קשר | Contact
+- [Contact Us](https://moya-cbd.com/contacts/)</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">Montopay</span>
-                    <span class="status-badge status-needs-fix">אין קובץ</span>
+            <!-- Qilates - CORRECTED -->
+            <div class="client-card" data-status="fixed" data-name="qilates qilates.co.il פילאטיס כושר">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Qilates</span>
+                        <span class="client-domain">qilates.co.il</span>
+                        <span class="client-industry">פילאטיס / כושר</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">montopay.com</div>
-                <span class="client-industry">פינטק</span>
-                <button class="copy-btn" onclick="copyPath('montopay-new')">העתק קובץ חדש</button>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון שבוצע:</div>
+                        <div class="note-text">הוסרו URLs באנגלית שהומצאו (האתר משתמש בעברית). נשאר רק מידע מאומת + פרטי יצירת קשר</div>
+                    </div>
+                    <div class="client-notes" style="margin-top: 10px;">
+                        <div class="note-title">בעיה טכנית:</div>
+                        <div class="note-text">הקובץ מוחזר בפורמט gzip דחוס - סורקי AI לא יכולים לקרוא. נדרש תיקון בשרת.</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('qilates')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('qilates-improved')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-qilates"># קילאטס | סטודיו פילאטיס רחובות
+# Qilates | Pilates Studio Rehovot
+
+קילאטס (שמיים וארץ) הוא הסטודיו הוותיק, הגדול והמקצועי ביותר באזור השפלה. הסטודיו ממוקם ברחובות ומציע שיעורי פילאטיס על מכשירים ומזרן, פילאטיס שיקומי, והכשרות מדריכים מקצועיות. בנוסף, במתחם פועלת מרפאה לרפואה משלימה.
+
+---
+
+## קישור רשמי | Official Link
+- אתר קילאטס: https://www.qilates.co.il/
+
+---
+
+## שיעורים ושירותים | Classes & Services
+
+### פילאטיס | Pilates
+- פילאטיס מכשירים: שיעורים בקבוצות קטנות על מכשירי פילאטיס מקצועיים (Reformer, Cadillac, Chair)
+- פילאטיס מזרן: שיעורי פילאטיס על מזרן לחיזוק וגמישות
+- פילאטיס שיקומי: פילאטיס לשיקום ופיזיותרפיה
+
+### הכשרות מדריכים | Instructor Training
+- קורס מדריכי פילאטיס מכשירים
+- קורס מדריכי פילאטיס מזרן
+
+### רפואה משלימה | Complementary Medicine
+- שיאצו, תזונה, רפלקסולוגיה, דיקור סיני, פסיכותרפיה
+
+---
+
+## צור קשר | Contact
+
+- טלפון: 072-3945171
+- כתובת: רוז'נסקי 23, רחובות
+- שעות פעילות: א'-ה' 07:00-22:00, ו' 07:30-15:00
+- אתר: https://www.qilates.co.il/</pre>
+                </div>
             </div>
 
-            <div class="client-card">
-                <div class="client-header">
-                    <span class="client-name">JustSocial</span>
-                    <span class="status-badge status-pending">פורמט לקוי</span>
+            <!-- Leumit - CORRECTED -->
+            <div class="client-card" data-status="fixed" data-name="leumit leumit.co.il קופת חולים בריאות">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Leumit</span>
+                        <span class="client-domain">leumit.co.il</span>
+                        <span class="client-industry">בריאות / קופת חולים</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-fixed">תוקן</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
                 </div>
-                <div class="client-domain">justsocial.io</div>
-                <span class="client-industry">פוליטי / SaaS</span>
-                <button class="copy-btn" onclick="copyPath('justsocial-improved')">העתק קובץ משופר</button>
-            </div>
-        </div>
+                <div class="client-content">
+                    <div class="client-notes correction-note">
+                        <div class="note-title">תיקון שבוצע:</div>
+                        <div class="note-text">הוסרו URLs באנגלית שהומצאו. נשאר רק מידע מאומת על השירותים ללא קישורים בדויים</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('leumit')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('leumit')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-leumit"># לאומית שירותי בריאות | קופת חולים לאומית
+# Leumit Health Services | Leumit Health Fund
 
-        <!-- POST-VALIDATION CORRECTIONS SECTION -->
-        <div class="workflow-section" style="border-right: 4px solid #00ff88; margin-top: 40px;">
-            <h2 class="section-title" style="margin-top: 0; border: none; color: #00ff88;">תיקונים לאחר בדיקת עובדות (v1.2)</h2>
-            <p style="color: #aaa; margin-bottom: 20px;">לאחר בדיקת עובדות יסודית וזיהוי שגיאות, בוצעו התיקונים הקריטיים הבאים:</p>
+לאומית שירותי בריאות היא קופת חולים מובילה בישראל המספקת שירותי בריאות לחבריה. הקופה מציעה מגוון רחב של שירותים רפואיים, מרפאות, רופאים מומחים ותוכניות בריאות משלימות (שב"ן).
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <div style="background: rgba(255,71,87,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,71,87,0.3);">
-                    <strong style="color: #ff4757;">תיקון קריטי: Intech</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>לפני:</strong> תואר כמרכז הכשרה IT/תכנות</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>אחרי:</strong> בית ספר למיזוג אוויר וקירור (מיזוג, קירור, אלקטרומכניקה)</p>
-                </div>
+---
 
-                <div style="background: rgba(255,71,87,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,71,87,0.3);">
-                    <strong style="color: #ff4757;">תיקון קריטי: Barefoot Cozumel</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>לפני:</strong> תואר כחברת השכרת נופש</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>אחרי:</strong> מרכז צלילה עם הסירה "The Big Splash", אתרי צלילה כמו Punta Tunich ו-San Francisco reef</p>
-                </div>
+## קישור רשמי | Official Link
+- אתר לאומית: https://leumit.co.il/
 
-                <div style="background: rgba(255,140,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,140,0,0.3);">
-                    <strong style="color: #ff8c00;">תיקון קידוד: ManpowerGroup</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>בעיה:</strong> אות "M" באנגלית מעורבת בטקסט עברי</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>תוקן:</strong> קידוד עברי תקין ל"מנפאואר קייר"</p>
-                </div>
+---
 
-                <div style="background: rgba(255,140,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,140,0,0.3);">
-                    <strong style="color: #ff8c00;">תיקון URLs: Moya CBD</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>בעיה:</strong> URLs באנגלית שהומצאו</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>תוקן:</strong> URLs מאומתים מה-sitemap ‏(/shop/oils/, /shop/creams/ וכו')</p>
-                </div>
+## שירותים רפואיים | Medical Services
 
-                <div style="background: rgba(255,140,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,140,0,0.3);">
-                    <strong style="color: #ff8c00;">תיקון URLs: Qilates ו-Leumit</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>בעיה:</strong> URL slugs באנגלית שהומצאו (האתרים משתמשים בעברית)</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>תוקן:</strong> הוסרו קישורים שהומצאו, נשאר רק מידע מאומת</p>
-                </div>
+### שירותי בריאות | Health Services
+- מרפאות: רשת המרפאות הארצית של לאומית
+- רופאי משפחה: שירותי רפואה ראשונית
+- רופאים מומחים: מגוון התמחויות רפואיות
+- מעבדות: בדיקות מעבדה ודם
 
-                <div style="background: rgba(255,140,0,0.1); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,140,0,0.3);">
-                    <strong style="color: #ff8c00;">תיקון כפילויות: JustSocial</strong>
-                    <p style="color: #ccc; font-size: 0.9em; margin-top: 8px;"><strong>בעיה:</strong> אותו URL לגרסת eBook ו-Printable</p>
-                    <p style="color: #00ff88; font-size: 0.9em;"><strong>תוקן:</strong> אוחד לרשומת מוצר אחת</p>
-                </div>
-            </div>
-        </div>
+### שירותים מיוחדים | Special Services
+- רפואת נשים: שירותי גינקולוגיה
+- רפואת ילדים: טיפולי ילדים
+- שירותי שיניים: טיפולי שיניים
+- בריאות הנפש: שירותים פסיכולוגיים
 
-        <div class="workflow-section">
-            <h2 class="section-title" style="margin-top: 0; border: none;">תהליך יישום</h2>
-            <div class="workflow-steps">
-                <div class="workflow-step">
-                    <div class="step-number">1</div>
-                    <div class="step-title">הורדת הקובץ</div>
-                    <div class="step-desc">קבלת קובץ llms.txt מתיקיית העבודה</div>
-                </div>
-                <div class="workflow-step">
-                    <div class="step-number">2</div>
-                    <div class="step-title">בדיקת תוכן</div>
-                    <div class="step-desc">אימות שה-URLs והתיאורים תואמים לאתר</div>
-                </div>
-                <div class="workflow-step">
-                    <div class="step-number">3</div>
-                    <div class="step-title">העלאה ל-Root</div>
-                    <div class="step-desc">הצבה ב-domain.com/llms.txt</div>
-                </div>
-                <div class="workflow-step">
-                    <div class="step-number">4</div>
-                    <div class="step-title">אימות גישה</div>
-                    <div class="step-desc">בדיקה שה-URL מחזיר סטטוס 200</div>
-                </div>
-                <div class="workflow-step">
-                    <div class="step-number">5</div>
-                    <div class="step-title">ניטור</div>
-                    <div class="step-desc">בדיקת לוגים של סורקי AI מדי חודש</div>
+### בדיקות ואבחון | Tests & Diagnosis
+- הדמיה רפואית: MRI, CT, רנטגן ואולטרסאונד
+- מכוני אבחון: מכונים לבדיקות מתקדמות
+
+---
+
+## ביטוחים משלימים | Supplementary Insurance
+- לאומית זהב: תוכנית הבריאות המשלימה
+- לאומית פלטינום: כיסוי מורחב
+
+---
+
+## שירותים דיגיטליים | Digital Services
+- אזור אישי: כניסה לאזור האישי באתר
+- קביעת תורים: זימון תור אונליין
+- תוצאות בדיקות: צפייה בתוצאות בדיקות</pre>
                 </div>
             </div>
+
+            <!-- JustSocial - NEEDS FIX -->
+            <div class="client-card" data-status="needs-fix" data-name="justsocial justsocial.io דמוקרטיה">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">JustSocial</span>
+                        <span class="client-domain">justsocial.io</span>
+                        <span class="client-industry">פוליטי / SaaS</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-needs-fix">דורש החלפה</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                </div>
+                <div class="client-content">
+                    <div class="client-notes">
+                        <div class="note-title">פעולה נדרשת:</div>
+                        <div class="note-text">הקובץ הקיים באתר בפורמט לקוי - חסרה כותרת נכונה, אין סקציית קישור רשמי, אין עברית. יש להחליף בגרסה משופרת. תוקנה כפילות URLs.</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('justsocial')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('justsocial-improved')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-justsocial"># JustSocial | Direct Democracy Movement
+# ג'אסט סושיאל | תנועה לדמוקרטיה ישירה
+
+JustSocial is a political movement advocating for continuous direct democracy. The movement empowers citizens through technology, supports campaigns aligned with democratic values, and provides tools for governments to operate more effectively. Founded by Yuval David Vered, JustSocial envisions a society that embraces a Cosmopolis - a new culture governed by the people.
+
+---
+
+## Official Link
+- Website: https://www.justsocial.io/
+
+---
+
+## Services
+
+### Campaign Support
+- [Campaign Services](https://www.justsocial.io/campaigns/)
+
+### Business to Government (B2G)
+- [B2G Solutions](https://www.justsocial.io/b2g/)
+
+---
+
+## Products
+
+### Publications
+- [The Face of Democracy](https://www.justsocial.io/product-page/פני-הדמוקרטיה): Book on democratic transformation (eBook and print versions available)
+
+### Merchandise
+- [JustSocial Brand Assets](https://www.justsocial.io/product-page/justsocial-brand-assets)
+
+---
+
+## Contact
+
+- [Contact Us](https://www.justsocial.io/contact/)
+- Email: contact@justsocial.io</pre>
+                </div>
+            </div>
+
+            <!-- Montopay - NEEDS FIX -->
+            <div class="client-card" data-status="needs-fix" data-name="montopay montopay.com פינטק">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Montopay</span>
+                        <span class="client-domain">montopay.com</span>
+                        <span class="client-industry">פינטק / B2B</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-needs-fix">אין קובץ</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                </div>
+                <div class="client-content">
+                    <div class="client-notes">
+                        <div class="note-title">פעולה נדרשת:</div>
+                        <div class="note-text">הכתובת /llms.txt מפנה לדף הבית HTML (soft 404). אין קובץ llms.txt בפועל - יש ליצור ולהעלות.</div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn btn-copy" onclick="copyContent('montopay')">העתק תוכן</button>
+                        <button class="action-btn btn-path" onclick="copyPath('montopay-new')">העתק נתיב</button>
+                    </div>
+                    <pre class="file-content" id="content-montopay"># Monto | B2B Payment Automation Platform
+# מונטו | פלטפורמת אוטומציה לתשלומי B2B
+
+Monto is the first AI-powered platform to manage all supplier portals. The platform deploys autonomous AI agents that handle B2B payment processes, from invoice submission through payment collection, across 500+ AP portals in 67 countries. Monto enables touchless invoice management and has facilitated over $1B in collected payments.
+
+---
+
+## Official Link
+- Website: https://montopay.com/
+
+---
+
+## Platform & Features
+
+### Core Product
+- [Product Overview](https://montopay.com/product/): AI-powered supplier portal management
+- [How It Works](https://montopay.com/how-it-works/): Platform workflow and automation process
+
+### Key Capabilities
+- Custom AI agent per buyer deployment
+- One-click portal invoice payment initiation
+- Unified dashboard for invoices, POs, and payment statuses
+- 99% portal rejection prevention
+- ERP setup automation
+- Seamless new customer and portal integration
+
+---
+
+## Integrations
+
+- [Integrations](https://montopay.com/integrations/): 500+ AP portal connections
+- [Partners](https://montopay.com/partners/): Partner ecosystem and integrations
+
+---
+
+## Platform Statistics
+- 500+ AP portals supported
+- 67 countries served
+- 10,000+ active connections
+- $1B+ collected through platform
+
+---
+
+## Company
+
+- [About Us](https://montopay.com/about/): Company mission and team
+- [Careers](https://montopay.com/career-in-monto/): Job opportunities
+- [Contact](https://montopay.com/contact/): Get in touch
+
+---
+
+## Featured Customers
+AppsFlyer, Yotpo, TechTarget, Shutterstock, Miro, Snappy, Summit Companies</pre>
+                </div>
+            </div>
+
+            <!-- Deasy - Inaccessible -->
+            <div class="client-card" data-status="needs-fix" data-name="deasy deasy.co.il">
+                <div class="client-header" onclick="toggleCard(this)">
+                    <div class="client-info">
+                        <span class="client-name">Deasy</span>
+                        <span class="client-domain">deasy.co.il</span>
+                        <span class="client-industry">שירותים מקצועיים</span>
+                    </div>
+                    <div class="client-badges">
+                        <span class="status-badge status-inaccessible">לא נגיש</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                </div>
+                <div class="client-content">
+                    <div class="client-notes">
+                        <div class="note-title">בעיה:</div>
+                        <div class="note-text">האתר מאחורי Incapsula WAF - כל הבקשות האוטומטיות נחסמות. נדרש אימות ידני דרך דפדפן לבדוק אם llms.txt קיים.</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <footer>
             <p>נוצר על ידי צוות SEO של נדב דיגיטל | ינואר 2026</p>
-            <p>llms.txt Audit Workflow v1.2 | Claude Opus 4.5</p>
-            <p style="margin-top: 10px; color: #555;">כולל תיקונים לאחר בדיקת עובדות: Intech (מיזוג אוויר), Barefoot (צלילה), אימות URLs</p>
+            <p>llms.txt Audit Workflow v2.0 | Claude Opus 4.5</p>
+            <p style="margin-top: 10px; color: #666;">כולל 7 תיקונים לאחר בדיקת עובדות: Intech, Barefoot, ManpowerGroup, Moya CBD, Qilates, Leumit, JustSocial</p>
         </footer>
     </div>
 
+    <div class="copy-notification" id="copyNotification">הועתק בהצלחה!</div>
+
     <script>
+        // Toggle card expansion
+        function toggleCard(header) {
+            const card = header.closest('.client-card');
+            card.classList.toggle('expanded');
+        }
+
+        // Copy file content
+        function copyContent(client) {
+            const contentEl = document.getElementById('content-' + client);
+            if (contentEl) {
+                navigator.clipboard.writeText(contentEl.textContent);
+                showNotification('תוכן הקובץ הועתק!');
+            }
+        }
+
+        // Copy file path
         function copyPath(client) {
             const paths = {
                 'experis': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/experis/llms.txt',
                 'manpower': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/manpower/llms.txt',
                 'midot': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/midot/llms.txt',
+                'aa-orthopedics': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/aa-orthopedics/llms.txt',
+                'bespirit': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/bespirit/llms.txt',
+                'anbar': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/anbar/llms.txt',
+                'manpowercare': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/manpowercare/llms.txt',
+                'amosziv': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/amosziv/llms.txt',
+                'cardioteam': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/cardioteam/llms.txt',
+                'building': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/building/llms.txt',
+                'fency': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/fency/llms.txt',
+                'ultimaschool': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/ultimaschool/llms.txt',
+                'admati': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/admati/llms.txt',
+                'manpowergroup': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/manpowergroup/llms.txt',
+                'intech': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/intech/llms.txt',
+                'barefoot-cozumel': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/barefoot-cozumel/llms.txt',
+                'moya-cbd': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/moya-cbd/llms.txt',
                 'qilates-improved': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/qilates-improved/llms.txt',
-                'montopay-new': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/montopay-new/llms.txt',
-                'justsocial-improved': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/justsocial-improved/llms.txt'
+                'leumit': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/leumit/llms.txt',
+                'justsocial-improved': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/justsocial-improved/llms.txt',
+                'montopay-new': '/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/montopay-new/llms.txt'
             };
             const path = paths[client] || `/Users/antoniasepulvedagrasins/LLMS_TXT_WORKFLOW/clients/${client}/llms.txt`;
             navigator.clipboard.writeText(path);
-            alert('הנתיב הועתק: ' + path);
+            showNotification('נתיב הקובץ הועתק!');
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('copyNotification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        // Filter by status
+        function filterByStatus(status) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter cards
+            const cards = document.querySelectorAll('.client-card');
+            cards.forEach(card => {
+                if (status === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = card.dataset.status === status ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Search filter
+        function filterClients() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.client-card');
+            cards.forEach(card => {
+                const name = card.dataset.name.toLowerCase();
+                card.style.display = name.includes(searchTerm) ? 'block' : 'none';
+            });
         }
     </script>
 </body>
