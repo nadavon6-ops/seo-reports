@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical SEO + GEO Audit | anbar.co.il | February 2026</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #ed8936;
+            --success: #38a169;
+            --warning: #d69e2e;
+            --danger: #e53e3e;
+            --bg: #f7fafc;
+            --card-bg: #ffffff;
+            --text: #2d3748;
+            --text-light: #718096;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            direction: ltr;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        header .date {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .card h3 {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            margin: 20px 0 15px;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .score-item {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .score-item .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+
+        .score-item .score {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .score-item.critical .score { color: var(--danger); }
+        .score-item.warning .score { color: var(--warning); }
+        .score-item.good .score { color: var(--success); }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-critical { background: #fed7d7; color: var(--danger); }
+        .status-high { background: #feebc8; color: #c05621; }
+        .status-medium { background: #fefcbf; color: #975a16; }
+        .status-good { background: #c6f6d5; color: var(--success); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background: var(--bg);
+        }
+
+        .issue-card {
+            border-left: 4px solid var(--danger);
+            padding: 20px;
+            margin: 15px 0;
+            background: #fff5f5;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .issue-card.high {
+            border-left-color: var(--warning);
+            background: #fffaf0;
+        }
+
+        .issue-card.medium {
+            border-left-color: var(--secondary);
+            background: #ebf8ff;
+        }
+
+        .issue-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .issue-card p {
+            margin: 8px 0;
+        }
+
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            margin: 15px 0;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist li::before {
+            content: '[ ]';
+            color: var(--text-light);
+            font-family: monospace;
+        }
+
+        .checklist li.done::before {
+            content: '[x]';
+            color: var(--success);
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .summary-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .summary-box ul {
+            list-style: none;
+        }
+
+        .summary-box li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .summary-box li:last-child {
+            border-bottom: none;
+        }
+
+        .geo-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .geo-section h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .geo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .geo-item {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .geo-item .platform {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .geo-item .visibility {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .priority-matrix {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .priority-item {
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .priority-item.p0 { background: #fed7d7; }
+        .priority-item.p1 { background: #feebc8; }
+        .priority-item.p2 { background: #fefcbf; }
+        .priority-item.p3 { background: #c6f6d5; }
+
+        .priority-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .priority-item.p0 .priority-badge { background: var(--danger); }
+        .priority-item.p1 .priority-badge { background: var(--warning); }
+        .priority-item.p2 .priority-badge { background: #ecc94b; }
+        .priority-item.p3 .priority-badge { background: var(--success); }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            .geo-grid { grid-template-columns: 1fr; }
+            .score-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Technical SEO + GEO Audit</h1>
+        <div class="subtitle">anbar.co.il | Financial Services (Mortgages)</div>
+        <div class="date">February 5, 2026</div>
+    </header>
+
+    <div class="container">
+        <!-- Executive Summary -->
+        <div class="card">
+            <h2>Executive Summary</h2>
+
+            <div class="score-grid">
+                <div class="score-item good">
+                    <div class="label">Crawlability</div>
+                    <div class="score">8/10</div>
+                </div>
+                <div class="score-item warning">
+                    <div class="label">Indexability</div>
+                    <div class="score">6/10</div>
+                </div>
+                <div class="score-item critical">
+                    <div class="label">Canonicalization</div>
+                    <div class="score">4/10</div>
+                </div>
+                <div class="score-item good">
+                    <div class="label">Structured Data</div>
+                    <div class="score">7/10</div>
+                </div>
+                <div class="score-item critical">
+                    <div class="label">GEO Readiness</div>
+                    <div class="score">2/10</div>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <h3>Top 3 Urgent Issues</h3>
+                <ul>
+                    <li><strong>1. Missing canonical tags</strong> on 80%+ of pages - causing duplicate content signals</li>
+                    <li><strong>2. Search pages indexable</strong> - /?s= pages lack noindex directive</li>
+                    <li><strong>3. Zero AI visibility</strong> - brand not recognized by ChatGPT/Perplexity/Gemini</li>
+                </ul>
+            </div>
+
+            <h3>Scan Reliability Status</h3>
+            <ul class="checklist">
+                <li class="done">Proper 404 handling</li>
+                <li class="done">HTTP to HTTPS redirect (301)</li>
+                <li class="done">www to non-www redirect (301)</li>
+                <li class="done">Sitemap valid and accessible</li>
+                <li class="done">No soft 404s detected</li>
+            </ul>
+        </div>
+
+        <!-- Critical Issues -->
+        <div class="card">
+            <h2>Critical Issues - Fix Immediately</h2>
+
+            <div class="issue-card">
+                <h4><span class="status-badge status-critical">CRITICAL</span> Issue #1: Missing Canonical Tags (80%+ of pages)</h4>
+                <p><strong>Evidence:</strong> /forms/, /contact/, /professional-info/, form pages (2021, 2023 variants)</p>
+                <p><strong>Impact:</strong> Duplicate content signals, diluted ranking power, crawl budget waste</p>
+                <p><strong>Fix:</strong> Enable Yoast canonical tags for all post types. For duplicate form pages, add canonical pointing to 2023 versions.</p>
+                <div class="code-block">
+// WordPress Admin > SEO > Search Appearance > Content Types
+// Enable "Show X in search results" for all content types
+// Yoast will auto-generate canonical tags
+
+// For old form pages, add:
+&lt;link rel="canonical" href="https://anbar.co.il/form-name-2023/" /&gt;
+                </div>
+            </div>
+
+            <div class="issue-card">
+                <h4><span class="status-badge status-critical">CRITICAL</span> Issue #2: Search Pages Indexable</h4>
+                <p><strong>Evidence:</strong> https://anbar.co.il/?s=test - no meta robots tag, no canonical</p>
+                <p><strong>Impact:</strong> Infinite indexable URLs, duplicate thin content, crawl budget waste</p>
+                <div class="code-block">
+// Add to theme's functions.php:
+add_action('wp_head', function() {
+    if (is_search()) {
+        echo '&lt;meta name="robots" content="noindex, follow"&gt;';
+    }
+});
+                </div>
+            </div>
+
+            <div class="issue-card high">
+                <h4><span class="status-badge status-high">HIGH</span> Issue #3: Duplicate Form Pages</h4>
+                <p><strong>Evidence:</strong> 6+ duplicate form page pairs identified</p>
+                <table>
+                    <tr>
+                        <th>Old Version</th>
+                        <th>New Version</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>/form-harel-2/</td>
+                        <td>/form-harel-2023/</td>
+                        <td>Canonical to 2023</td>
+                    </tr>
+                    <tr>
+                        <td>/form-clal-2/</td>
+                        <td>/form-clal-2023/</td>
+                        <td>Canonical to 2023</td>
+                    </tr>
+                    <tr>
+                        <td>/form-ayalon-2/</td>
+                        <td>/form-ayalon-2023/</td>
+                        <td>Canonical to 2023</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Crawlability Findings -->
+        <div class="card">
+            <h2>Crawlability & Indexing Findings</h2>
+
+            <h3>robots.txt Analysis</h3>
+            <table>
+                <tr>
+                    <th>Directive</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td>User-agent: *</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td>Standard rules configured</td>
+                </tr>
+                <tr>
+                    <td>AI Bots (GPTBot, ChatGPT-User)</td>
+                    <td><span class="status-badge status-good">ALLOWED</span></td>
+                    <td>Good for GEO visibility</td>
+                </tr>
+                <tr>
+                    <td>Sitemap reference</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td>Points to sitemap_index.xml</td>
+                </tr>
+            </table>
+
+            <h3>Redirect Handling</h3>
+            <table>
+                <tr>
+                    <th>Test</th>
+                    <th>Result</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>http to https</td>
+                    <td>301 redirect</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                </tr>
+                <tr>
+                    <td>www to non-www</td>
+                    <td>301 redirect</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                </tr>
+                <tr>
+                    <td>Trailing slash</td>
+                    <td>Consistent (always with /)</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Sitemap Findings -->
+        <div class="card">
+            <h2>Sitemap & URL Inventory</h2>
+
+            <h3>Sitemap Structure</h3>
+            <div class="code-block">
+sitemap_index.xml
+├── post-sitemap.xml (67 URLs) - Blog posts
+├── page-sitemap.xml (22 URLs) - Static pages
+└── category-sitemap.xml (1 URL) - Categories
+
+Total URLs in Sitemap: 90
+Estimated Valid URLs: ~80 (after deduplication)
+            </div>
+
+            <h3>Issues Found</h3>
+            <table>
+                <tr>
+                    <th>Issue Type</th>
+                    <th>Count</th>
+                    <th>Action Required</th>
+                </tr>
+                <tr>
+                    <td>Duplicate form pages</td>
+                    <td>~6</td>
+                    <td>Add canonical tags</td>
+                </tr>
+                <tr>
+                    <td>Similar content posts</td>
+                    <td>~5</td>
+                    <td>Consolidate or canonicalize</td>
+                </tr>
+                <tr>
+                    <td>Outdated year-specific URLs</td>
+                    <td>~3</td>
+                    <td>Redirect to evergreen URLs</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- GEO Section -->
+        <div class="card">
+            <h2>GEO (Generative Engine Optimization) Assessment</h2>
+
+            <div class="geo-section">
+                <h3>AI Platform Visibility: CRITICAL GAP</h3>
+                <div class="geo-grid">
+                    <div class="geo-item">
+                        <div class="platform">ChatGPT</div>
+                        <div class="visibility">0%</div>
+                    </div>
+                    <div class="geo-item">
+                        <div class="platform">Perplexity</div>
+                        <div class="visibility">0%</div>
+                    </div>
+                    <div class="geo-item">
+                        <div class="platform">Google Gemini</div>
+                        <div class="visibility">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Why Anbar Isn't Appearing in AI Answers</h3>
+            <ul>
+                <li>No Wikipedia presence - AI systems heavily weight Wikipedia</li>
+                <li>Limited media coverage - Only sponsored content found</li>
+                <li>No industry directory listings - Not in major comparison sites</li>
+                <li>Limited reviews - Minimal Google reviews/ratings</li>
+            </ul>
+
+            <h3>GEO Improvement Roadmap</h3>
+            <table>
+                <tr>
+                    <th>Timeframe</th>
+                    <th>Action</th>
+                    <th>Expected Impact</th>
+                </tr>
+                <tr>
+                    <td>Week 1-2</td>
+                    <td>Create 30+ FAQ questions, standardize brand name</td>
+                    <td>Entity clarity</td>
+                </tr>
+                <tr>
+                    <td>Month 1-2</td>
+                    <td>Pursue media coverage, create pillar content</td>
+                    <td>5-15% visibility</td>
+                </tr>
+                <tr>
+                    <td>Month 3-6</td>
+                    <td>Wikipedia stub, video content, 50+ reviews</td>
+                    <td>30-50% visibility</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Structured Data -->
+        <div class="card">
+            <h2>Structured Data Analysis</h2>
+
+            <h3>Current Implementation</h3>
+            <table>
+                <tr>
+                    <th>Schema Type</th>
+                    <th>Homepage</th>
+                    <th>Service Pages</th>
+                    <th>Blog Posts</th>
+                </tr>
+                <tr>
+                    <td>Organization/FinancialService</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                </tr>
+                <tr>
+                    <td>WebSite</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>FAQPage</td>
+                    <td>-</td>
+                    <td><span class="status-badge status-good">11 Q&As</span></td>
+                    <td><span class="status-badge status-medium">Partial</span></td>
+                </tr>
+                <tr>
+                    <td>BreadcrumbList</td>
+                    <td>-</td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                    <td><span class="status-badge status-good">OK</span></td>
+                </tr>
+                <tr>
+                    <td>HowTo</td>
+                    <td>-</td>
+                    <td><span class="status-badge status-good">7 steps</span></td>
+                    <td>-</td>
+                </tr>
+            </table>
+
+            <h3>Missing Schema (Recommended)</h3>
+            <ul>
+                <li>Person schema for founder "Amir Noe"</li>
+                <li>sameAs links to social profiles</li>
+                <li>AggregateRating (once reviews collected)</li>
+            </ul>
+        </div>
+
+        <!-- Priority Matrix -->
+        <div class="card">
+            <h2>Implementation Priority Matrix</h2>
+
+            <div class="priority-matrix">
+                <div class="priority-item p0">
+                    <div class="priority-badge">P0</div>
+                    <div>
+                        <strong>Add canonical tags</strong><br>
+                        <small>Effort: Low | Impact: Critical</small>
+                    </div>
+                </div>
+                <div class="priority-item p0">
+                    <div class="priority-badge">P0</div>
+                    <div>
+                        <strong>Noindex search pages</strong><br>
+                        <small>Effort: Low | Impact: High</small>
+                    </div>
+                </div>
+                <div class="priority-item p1">
+                    <div class="priority-badge">P1</div>
+                    <div>
+                        <strong>Consolidate form duplicates</strong><br>
+                        <small>Effort: Medium | Impact: High</small>
+                    </div>
+                </div>
+                <div class="priority-item p1">
+                    <div class="priority-badge">P1</div>
+                    <div>
+                        <strong>Add category descriptions</strong><br>
+                        <small>Effort: Low | Impact: Medium</small>
+                    </div>
+                </div>
+                <div class="priority-item p2">
+                    <div class="priority-badge">P2</div>
+                    <div>
+                        <strong>Expand FAQ schemas</strong><br>
+                        <small>Effort: Medium | Impact: Medium</small>
+                    </div>
+                </div>
+                <div class="priority-item p2">
+                    <div class="priority-badge">P2</div>
+                    <div>
+                        <strong>Build GEO authority content</strong><br>
+                        <small>Effort: High | Impact: High</small>
+                    </div>
+                </div>
+                <div class="priority-item p3">
+                    <div class="priority-badge">P3</div>
+                    <div>
+                        <strong>Optimize cache headers</strong><br>
+                        <small>Effort: Low | Impact: Low</small>
+                    </div>
+                </div>
+                <div class="priority-item p3">
+                    <div class="priority-badge">P3</div>
+                    <div>
+                        <strong>Add Person schema</strong><br>
+                        <small>Effort: Low | Impact: Low</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Developer Checklist -->
+        <div class="card">
+            <h2>Developer Handoff Checklist</h2>
+
+            <h3>Immediate Actions (This Week)</h3>
+            <ul class="checklist">
+                <li>Verify Yoast canonical settings for all post types</li>
+                <li>Add noindex to search result pages via Yoast or functions.php</li>
+                <li>Remove outdated form URLs from sitemap</li>
+                <li>Add canonical tags to old form pages pointing to 2023 versions</li>
+            </ul>
+
+            <h3>Code Changes Required</h3>
+            <div class="code-block">
+// functions.php - Noindex search results
+add_action('wp_head', function() {
+    if (is_search()) {
+        echo '&lt;meta name="robots" content="noindex, follow"&gt;' . "\n";
+    }
+});
+
+// Canonical for old form pages (if custom post type)
+add_filter('wpseo_canonical', function($canonical) {
+    if (strpos($canonical, '-2/') !== false) {
+        return str_replace('-2/', '-2023/', $canonical);
+    }
+    return $canonical;
+});
+            </div>
+
+            <h3>Scan Reliability Checklist</h3>
+            <ul class="checklist">
+                <li class="done">robots.txt accessible and valid</li>
+                <li class="done">Sitemap accessible and valid XML</li>
+                <li class="done">HTTP to HTTPS redirect working</li>
+                <li class="done">www to non-www redirect working</li>
+                <li class="done">Proper 404 handling (no soft 404s)</li>
+                <li>Add canonical tags to all pages</li>
+                <li>Add noindex to search pages</li>
+                <li>Remove duplicate URLs from sitemap</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Report Generated: February 5, 2026 | Next Audit Recommended: March 2026</p>
+        <p>Auditor: Claude AI (Opus 4.5) | Nadav Digital SEO Agency</p>
+    </footer>
+</body>
+</html>
