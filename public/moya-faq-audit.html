@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ + JSON-LD | MOYA CBD | ביקורת אורגנית</title>
+<style>
+:root {
+    --bg-dark: #0f0f23;
+    --bg-card: #1e1e3f;
+    --bg-card-hover: #2a2a5a;
+    --purple: #667eea;
+    --pink: #f093fb;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --teal: #4ecdc4;
+    --blue: #3498db;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --border: #333366;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 100%);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.metric-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+}
+.metric-value {
+    font-size: 2.6em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+}
+
+/* Navigation */
+.nav-section {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+}
+.nav-section h2 { margin-bottom: 16px; color: var(--purple); font-size: 1.3em; }
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--purple), #764ba2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.nav-link:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Client Section */
+.client-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.client-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.client-header h2 {
+    font-size: 1.6em;
+    margin: 0;
+}
+.client-domain {
+    font-size: 0.85em;
+    color: var(--teal);
+    background: rgba(78,205,196,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.cat-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+.client-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 16px 28px;
+    background: rgba(0,0,0,0.15);
+    font-size: 0.9em;
+}
+.client-stats span { color: var(--text-dim); }
+.client-stats strong { color: var(--text); }
+.client-body { padding: 20px 28px; }
+
+/* Skipped box */
+.skipped-box {
+    background: rgba(243,156,18,0.08);
+    border: 1px solid rgba(243,156,18,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+.skipped-box h3 { color: var(--orange); margin-bottom: 10px; font-size: 1em; }
+.skipped-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(243,156,18,0.15);
+    font-size: 0.9em;
+}
+.skipped-item:last-child { border-bottom: none; }
+.skipped-item a { color: var(--orange); text-decoration: none; }
+.skipped-item a:hover { text-decoration: underline; }
+.skipped-reason { color: var(--text-dim); font-size: 0.85em; margin-top: 2px; }
+
+/* Page block */
+.page-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+.page-block:last-child { border-bottom: none; }
+.page-title {
+    font-size: 1.15em;
+    color: var(--teal);
+    margin-bottom: 4px;
+}
+.page-url {
+    font-size: 0.8em;
+    margin-bottom: 16px;
+}
+.page-url a {
+    color: var(--text-dim);
+    text-decoration: none;
+    word-break: break-all;
+}
+.page-url a:hover { color: var(--purple); }
+
+/* FAQ cards */
+.faq-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-right: 3px solid var(--purple);
+}
+.faq-q {
+    font-weight: 700;
+    color: var(--pink);
+    margin-bottom: 6px;
+    font-size: 1em;
+}
+.faq-a {
+    color: #ccc;
+    font-size: 0.92em;
+    line-height: 1.65;
+}
+
+/* Schema details */
+.schema-wrapper { margin-top: 18px; }
+.schema-wrapper summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.2s;
+}
+.schema-wrapper summary:hover {
+    background: rgba(102,126,234,0.25);
+}
+.schema-wrapper summary::before { content: "\25B6"; font-size: 0.7em; transition: transform 0.2s; }
+.schema-wrapper[open] summary::before { transform: rotate(90deg); }
+.schema-code-wrap {
+    position: relative;
+    margin-top: 10px;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    z-index: 2;
+    transition: background 0.2s;
+}
+.copy-btn:hover { background: #764ba2; }
+.copy-btn.copied { background: var(--green); }
+pre.schema-code {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    padding-top: 45px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    white-space: pre;
+    direction: ltr;
+    text-align: left;
+}
+
+/* Instructions section */
+.instructions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+}
+.instructions h2 { color: var(--green); margin-bottom: 18px; font-size: 1.4em; }
+.instructions ol {
+    padding-right: 24px;
+    margin-bottom: 18px;
+}
+.instructions li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.instructions code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #a0d0a0;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.instructions pre {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 1.5em; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+    .client-header { padding: 18px; }
+    .client-body { padding: 16px; }
+    .client-stats { padding: 12px 18px; }
+    .nav-links { flex-direction: column; }
+    .metric-value { font-size: 2em; }
+}
+@media (max-width: 480px) {
+    .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric-card { padding: 16px 10px; }
+    .metric-value { font-size: 1.6em; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>תוכן FAQ + סכמות JSON-LD</h1>
+    <p>MOYA CBD | moya-cbd.com</p>
+    <div class="badge">V5 - פברואר 2026 | נדב דיגיטל</div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--blue)">8</div>
+            <div class="metric-label">עמודים נבדקו</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--orange)">1</div>
+            <div class="metric-label">עמודים דולגו (FAQ קיים)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">7</div>
+            <div class="metric-label">עמודים עם FAQ חדש</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">45</div>
+            <div class="metric-label">סה"כ שאלות נוצרו</div>
+        </div>
+    </div>
+
+    <div class="client-section" id="moya">
+        <div class="client-header">
+            <h2>MOYA CBD</h2>
+            <span class="client-domain">moya-cbd.com</span>
+            <span class="cat-badge" style="background:rgba(255,255,255,0.08);color:#2ecc71;border:1px solid #2ecc71">מוצרי CBD</span>
+        </div>
+        <div class="client-stats">
+            <span>עמודים נבדקו: <strong>8</strong></span>
+            <span>דולגו: <strong style="color:var(--orange)">1</strong></span>
+            <span>FAQ נוצר: <strong style="color:var(--green)">7</strong></span>
+            <span>סה"כ שאלות: <strong style="color:var(--green)">45</strong></span>
+        </div>
+        <div class="client-body">
+            <div class="skipped-box">
+                <h3>עמודים שדולגו</h3>
+                <div class="skipped-item">
+                    <a href="https://moya-cbd.com/shop/oils/organic-30/" target="_blank">30% Organic CBD Oil</a>
+                    <div class="skipped-reason">SKIP - FAQ already exists on live site</div>
+                </div>
+            </div>
+            <div class="page-block">
+                <div class="page-title">MOYA CBD Shop - Main Store Page</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/" target="_blank">https://moya-cbd.com/shop/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה זה CBD ומה ההבדל בין CBD ל-THC?</div>
+                    <div class="faq-a">CBD (קנבידיול) הוא תרכובת טבעית המופקת מצמח הקנאביס. בניגוד ל-THC, CBD אינו גורם לתחושת שיכרון או אופוריה. מוצרי MOYA מכילים CBD בלבד ללא THC, ולכן הם חוקיים לשימוש בישראל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מוצרי CBD של MOYA חוקיים בישראל?</div>
+                    <div class="faq-a">כן, כל מוצרי MOYA CBD חוקיים לחלוטין בישראל. המוצרים מכילים CBD בלבד ללא THC, ועומדים בכל התקנים והדרישות הרגולטוריות הנדרשות בישראל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך בוחרים את ריכוז ה-CBD המתאים?</div>
+                    <div class="faq-a">בחירת הריכוז תלויה בצרכים האישיים ובניסיון הקודם עם CBD. למשתמשים חדשים מומלץ להתחיל עם ריכוז נמוך (10%) ולהתאים בהדרגה. ריכוזים גבוהים יותר (20%, 30%) מתאימים למשתמשים מנוסים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין שמן CBD אורגני לשמן Full Spectrum?</div>
+                    <div class="faq-a">שמן CBD אורגני הוא שמן טהור המכיל CBD בודד. שמן Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח כולל קנבינואידים נוספים, טרפנים ופלבנואידים, מה שעשוי לספק חוויה מקיפה יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מאחסנים מוצרי CBD?</div>
+                    <div class="faq-a">יש לאחסן את מוצרי ה-CBD במקום קריר ויבש, הרחק מאור שמש ישיר. מומלץ לשמור את המוצרים בטמפרטורת החדר או במקרר. יש לוודא שהמכסה סגור היטב לאחר כל שימוש.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן לוקח למשלוח להגיע?</div>
+                    <div class="faq-a">משלוחים מבוצעים בימי עסקים ומגיעים בדרך כלל תוך 3-5 ימי עסקים לכל רחבי הארץ. ניתן לבחור במשלוח אקספרס לקבלה מהירה יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן להחזיר מוצרים?</div>
+                    <div class="faq-a">MOYA מציעה מדיניות החזרות נוחה. ניתן להחזיר מוצרים שלא נפתחו תוך 14 יום מיום הרכישה לקבלת החזר מלא. לפרטים נוספים יש ליצור קשר עם שירות הלקוחות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש אישורי איכות למוצרי MOYA?</div>
+                    <div class="faq-a">כל מוצרי MOYA עוברים בדיקות מעבדה קפדניות לאיכות וטוהר. המוצרים מיוצרים בתהליכים מבוקרים ועומדים בתקנים בינלאומיים. תעודות הבדיקה זמינות לעיון.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-0">העתק</button>
+                        <pre class="schema-code" id="schema-moya-0">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה זה CBD ומה ההבדל בין CBD ל-THC?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;CBD (קנבידיול) הוא תרכובת טבעית המופקת מצמח הקנאביס. בניגוד ל-THC, CBD אינו גורם לתחושת שיכרון או אופוריה. מוצרי MOYA מכילים CBD בלבד ללא THC, ולכן הם חוקיים לשימוש בישראל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מוצרי CBD של MOYA חוקיים בישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, כל מוצרי MOYA CBD חוקיים לחלוטין בישראל. המוצרים מכילים CBD בלבד ללא THC, ועומדים בכל התקנים והדרישות הרגולטוריות הנדרשות בישראל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך בוחרים את ריכוז ה-CBD המתאים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בחירת הריכוז תלויה בצרכים האישיים ובניסיון הקודם עם CBD. למשתמשים חדשים מומלץ להתחיל עם ריכוז נמוך (10%) ולהתאים בהדרגה. ריכוזים גבוהים יותר (20%, 30%) מתאימים למשתמשים מנוסים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין שמן CBD אורגני לשמן Full Spectrum?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן CBD אורגני הוא שמן טהור המכיל CBD בודד. שמן Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח כולל קנבינואידים נוספים, טרפנים ופלבנואידים, מה שעשוי לספק חוויה מקיפה יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מאחסנים מוצרי CBD?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;יש לאחסן את מוצרי ה-CBD במקום קריר ויבש, הרחק מאור שמש ישיר. מומלץ לשמור את המוצרים בטמפרטורת החדר או במקרר. יש לוודא שהמכסה סגור היטב לאחר כל שימוש.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן לוקח למשלוח להגיע?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משלוחים מבוצעים בימי עסקים ומגיעים בדרך כלל תוך 3-5 ימי עסקים לכל רחבי הארץ. ניתן לבחור במשלוח אקספרס לקבלה מהירה יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן להחזיר מוצרים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;MOYA מציעה מדיניות החזרות נוחה. ניתן להחזיר מוצרים שלא נפתחו תוך 14 יום מיום הרכישה לקבלת החזר מלא. לפרטים נוספים יש ליצור קשר עם שירות הלקוחות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש אישורי איכות למוצרי MOYA?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כל מוצרי MOYA עוברים בדיקות מעבדה קפדניות לאיכות וטוהר. המוצרים מיוצרים בתהליכים מבוקרים ועומדים בתקנים בינלאומיים. תעודות הבדיקה זמינות לעיון.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">20% Organic CBD Oil</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/oils/organic-20/" target="_blank">https://moya-cbd.com/shop/oils/organic-20/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה מיוחד בשמן CBD אורגני 20%?</div>
+                    <div class="faq-a">שמן CBD אורגני 20% של MOYA מיוצר מקנאביס אורגני ללא חומרי הדברה או כימיקלים. הריכוז של 20% מספק כמות CBD משמעותית בכל טיפה, מתאים למשתמשים שכבר מכירים CBD ומעוניינים בריכוז בינוני-גבוה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה CBD יש בכל טיפה של שמן 20%?</div>
+                    <div class="faq-a">בבקבוק 10 מ&quot;ל של שמן CBD אורגני 20%, יש כ-2000 מ&quot;ג CBD בסך הכל. כל טיפה מכילה בערך 4-5 מ&quot;ג CBD, כאשר הבקבוק מכיל כ-200 טיפות בממוצע.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך משתמשים בשמן CBD אורגני 20%?</div>
+                    <div class="faq-a">יש לטפטף את השמן מתחת ללשון ולהחזיק במקום כ-60-90 שניות לפני הבליעה. שיטה זו מאפשרת ספיגה יעילה דרך רירית הפה. מומלץ להתחיל עם מינון נמוך ולהתאים בהדרגה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה תאריך התפוגה של שמן CBD?</div>
+                    <div class="faq-a">שמן CBD איכותי שומר על טריותו לכ-12-24 חודשים מיום הייצור כאשר מאוחסן בתנאים מתאימים. תאריך התפוגה מצוין על גבי האריזה. מומלץ להשתמש במוצר תוך התקופה המומלצת.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם שמן CBD אורגני מתאים לטבעוניים?</div>
+                    <div class="faq-a">כן, שמן CBD אורגני של MOYA מתאים לטבעוניים. המוצר מכיל שמן נשא מקור צמחי (בדרך כלל שמן המפ או MCT) ואינו מכיל רכיבים מן החי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין ריכוז 10%, 20% ו-30%?</div>
+                    <div class="faq-a">ההבדל העיקרי הוא כמות ה-CBD בכל טיפה. שמן 10% מתאים למתחילים, 20% למשתמשים עם ניסיון שרוצים ריכוז בינוני, ו-30% למשתמשים מנוסים שזקוקים לריכוז גבוה יותר. המחיר ליחידת CBD בדרך כלל משתלם יותר בריכוזים גבוהים.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-1">העתק</button>
+                        <pre class="schema-code" id="schema-moya-1">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה מיוחד בשמן CBD אורגני 20%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן CBD אורגני 20% של MOYA מיוצר מקנאביס אורגני ללא חומרי הדברה או כימיקלים. הריכוז של 20% מספק כמות CBD משמעותית בכל טיפה, מתאים למשתמשים שכבר מכירים CBD ומעוניינים בריכוז בינוני-גבוה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה CBD יש בכל טיפה של שמן 20%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בבקבוק 10 מ\&quot;ל של שמן CBD אורגני 20%, יש כ-2000 מ\&quot;ג CBD בסך הכל. כל טיפה מכילה בערך 4-5 מ\&quot;ג CBD, כאשר הבקבוק מכיל כ-200 טיפות בממוצע.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך משתמשים בשמן CBD אורגני 20%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;יש לטפטף את השמן מתחת ללשון ולהחזיק במקום כ-60-90 שניות לפני הבליעה. שיטה זו מאפשרת ספיגה יעילה דרך רירית הפה. מומלץ להתחיל עם מינון נמוך ולהתאים בהדרגה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה תאריך התפוגה של שמן CBD?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן CBD איכותי שומר על טריותו לכ-12-24 חודשים מיום הייצור כאשר מאוחסן בתנאים מתאימים. תאריך התפוגה מצוין על גבי האריזה. מומלץ להשתמש במוצר תוך התקופה המומלצת.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם שמן CBD אורגני מתאים לטבעוניים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, שמן CBD אורגני של MOYA מתאים לטבעוניים. המוצר מכיל שמן נשא מקור צמחי (בדרך כלל שמן המפ או MCT) ואינו מכיל רכיבים מן החי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין ריכוז 10%, 20% ו-30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ההבדל העיקרי הוא כמות ה-CBD בכל טיפה. שמן 10% מתאים למתחילים, 20% למשתמשים עם ניסיון שרוצים ריכוז בינוני, ו-30% למשתמשים מנוסים שזקוקים לריכוז גבוה יותר. המחיר ליחידת CBD בדרך כלל משתלם יותר בריכוזים גבוהים.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">20% Full Spectrum CBD Oil</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/oils/full-spectrum-20/" target="_blank">https://moya-cbd.com/shop/oils/full-spectrum-20/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה זה שמן CBD Full Spectrum?</div>
+                    <div class="faq-a">שמן Full Spectrum מכיל את כל התרכובות הטבעיות של צמח הקנאביס - לא רק CBD אלא גם קנבינואידים נוספים, טרפנים, פלבנואידים וחומרים פעילים אחרים. כל אלה פועלים יחד ב&#x27;אפקט הסביבה&#x27; ומשלימים זה את זה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם שמן Full Spectrum מכיל THC?</div>
+                    <div class="faq-a">שמני Full Spectrum של MOYA עוברים תהליך ייצור קפדני להסרת THC. המוצרים מכילים פחות מ-0.2% THC, שזה מתחת לסף המותר בישראל ואינו גורם לכל אפקט פסיכואקטיבי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה היתרון של Full Spectrum על פני CBD בודד?</div>
+                    <div class="faq-a">היתרון העיקרי הוא &#x27;אפקט הסביבה&#x27; - התרכובות הטבעיות פועלות בסינרגיה ומשלימות זו את זו. משתמשים רבים מדווחים שהם מעדיפים את חווית השימוש בשמן Full Spectrum לעומת CBD מבודד.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה הטעם של שמן Full Spectrum?</div>
+                    <div class="faq-a">לשמן Full Spectrum טעם עשיר וטבעי יותר בהשוואה ל-CBD מבודד, בשל הטרפנים והתרכובות הטבעיות. חלק מהמשתמשים מעדיפים את הטעם הזה, בעוד אחרים מעדיפים את הטעם הניטרלי יותר של שמן אורגני טהור.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם שמן Full Spectrum 20% מתאים למשתמשים חדשים?</div>
+                    <div class="faq-a">ריכוז 20% מתאים יותר למשתמשים עם ניסיון קודם ב-CBD. למשתמשים חדשים מומלץ להתחיל עם ריכוז 10% ולהגדיל בהדרגה בהתאם לצרכים האישיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כיצד לאחסן שמן Full Spectrum?</div>
+                    <div class="faq-a">יש לאחסן במקום קריר וחשוך, הרחק מאור שמש ישיר וחום. ניתן לשמור במקרר להארכת חיי המדף. יש לוודא שהמכסה סגור היטב לאחר כל שימוש למניעת חמצון.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-2">העתק</button>
+                        <pre class="schema-code" id="schema-moya-2">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה זה שמן CBD Full Spectrum?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן Full Spectrum מכיל את כל התרכובות הטבעיות של צמח הקנאביס - לא רק CBD אלא גם קנבינואידים נוספים, טרפנים, פלבנואידים וחומרים פעילים אחרים. כל אלה פועלים יחד ב&#x27;אפקט הסביבה&#x27; ומשלימים זה את זה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם שמן Full Spectrum מכיל THC?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמני Full Spectrum של MOYA עוברים תהליך ייצור קפדני להסרת THC. המוצרים מכילים פחות מ-0.2% THC, שזה מתחת לסף המותר בישראל ואינו גורם לכל אפקט פסיכואקטיבי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה היתרון של Full Spectrum על פני CBD בודד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;היתרון העיקרי הוא &#x27;אפקט הסביבה&#x27; - התרכובות הטבעיות פועלות בסינרגיה ומשלימות זו את זו. משתמשים רבים מדווחים שהם מעדיפים את חווית השימוש בשמן Full Spectrum לעומת CBD מבודד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה הטעם של שמן Full Spectrum?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לשמן Full Spectrum טעם עשיר וטבעי יותר בהשוואה ל-CBD מבודד, בשל הטרפנים והתרכובות הטבעיות. חלק מהמשתמשים מעדיפים את הטעם הזה, בעוד אחרים מעדיפים את הטעם הניטרלי יותר של שמן אורגני טהור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם שמן Full Spectrum 20% מתאים למשתמשים חדשים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ריכוז 20% מתאים יותר למשתמשים עם ניסיון קודם ב-CBD. למשתמשים חדשים מומלץ להתחיל עם ריכוז 10% ולהגדיל בהדרגה בהתאם לצרכים האישיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כיצד לאחסן שמן Full Spectrum?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;יש לאחסן במקום קריר וחשוך, הרחק מאור שמש ישיר וחום. ניתן לשמור במקרר להארכת חיי המדף. יש לוודא שהמכסה סגור היטב לאחר כל שימוש למניעת חמצון.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">CBD Oils Category Page</div>
+                <div class="page-url"><a href="https://moya-cbd.com/product-category/oils/" target="_blank">https://moya-cbd.com/product-category/oils/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו סוגי שמן CBD מציעה MOYA?</div>
+                    <div class="faq-a">MOYA מציעה שני סוגים עיקריים של שמן CBD: שמן אורגני טהור (CBD Isolate) ושמן Full Spectrum. כל סוג זמין בריכוזים שונים: 10%, 20% ו-30%, כך שניתן לבחור את המוצר המתאים ביותר לצרכים האישיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איזה סוג שמן CBD מומלץ למתחילים?</div>
+                    <div class="faq-a">למשתמשים חדשים מומלץ להתחיל עם שמן CBD בריכוז 10%. ניתן לבחור בין שמן אורגני (טעם ניטרלי יותר) או Full Spectrum (טעם טבעי עשיר). מומלץ להתחיל עם מינון נמוך ולהעלות בהדרגה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין השמנים השונים?</div>
+                    <div class="faq-a">שמן אורגני מכיל CBD טהור בלבד עם טעם ניטרלי. שמן Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח ליתרון &#x27;אפקט הסביבה&#x27;. הריכוז (10%, 20%, 30%) קובע את כמות ה-CBD בכל טיפה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם כל השמנים חוקיים בישראל?</div>
+                    <div class="faq-a">כן, כל שמני ה-CBD של MOYA חוקיים לחלוטין בישראל. המוצרים אינם מכילים THC מעל הסף המותר ועומדים בכל הדרישות הרגולטוריות הישראליות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה גודל הבקבוקים?</div>
+                    <div class="faq-a">שמני ה-CBD של MOYA זמינים בבקבוקי זכוכית של 10 מ&quot;ל עם טפטפת מדויקת. גודל זה מאפשר שימוש נוח ושליטה מדויקת במינון, וכן אחסנה קלה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך בוחרים את הריכוז הנכון?</div>
+                    <div class="faq-a">הבחירה תלויה בניסיון הקודם ובצרכים האישיים. ריכוז 10% מתאים למתחילים, 20% למשתמשים עם ניסיון, ו-30% למשתמשים מנוסים. מומלץ להתייעץ עם נציג MOYA לקבלת המלצה אישית.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-3">העתק</button>
+                        <pre class="schema-code" id="schema-moya-3">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו סוגי שמן CBD מציעה MOYA?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;MOYA מציעה שני סוגים עיקריים של שמן CBD: שמן אורגני טהור (CBD Isolate) ושמן Full Spectrum. כל סוג זמין בריכוזים שונים: 10%, 20% ו-30%, כך שניתן לבחור את המוצר המתאים ביותר לצרכים האישיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איזה סוג שמן CBD מומלץ למתחילים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;למשתמשים חדשים מומלץ להתחיל עם שמן CBD בריכוז 10%. ניתן לבחור בין שמן אורגני (טעם ניטרלי יותר) או Full Spectrum (טעם טבעי עשיר). מומלץ להתחיל עם מינון נמוך ולהעלות בהדרגה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין השמנים השונים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן אורגני מכיל CBD טהור בלבד עם טעם ניטרלי. שמן Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח ליתרון &#x27;אפקט הסביבה&#x27;. הריכוז (10%, 20%, 30%) קובע את כמות ה-CBD בכל טיפה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם כל השמנים חוקיים בישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, כל שמני ה-CBD של MOYA חוקיים לחלוטין בישראל. המוצרים אינם מכילים THC מעל הסף המותר ועומדים בכל הדרישות הרגולטוריות הישראליות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה גודל הבקבוקים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמני ה-CBD של MOYA זמינים בבקבוקי זכוכית של 10 מ\&quot;ל עם טפטפת מדויקת. גודל זה מאפשר שימוש נוח ושליטה מדויקת במינון, וכן אחסנה קלה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך בוחרים את הריכוז הנכון?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הבחירה תלויה בניסיון הקודם ובצרכים האישיים. ריכוז 10% מתאים למתחילים, 20% למשתמשים עם ניסיון, ו-30% למשתמשים מנוסים. מומלץ להתייעץ עם נציג MOYA לקבלת המלצה אישית.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">30% Full Spectrum CBD Oil</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/oils/full-spectrum-30/" target="_blank">https://moya-cbd.com/shop/oils/full-spectrum-30/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">למי מיועד שמן Full Spectrum 30%?</div>
+                    <div class="faq-a">שמן CBD בריכוז 30% מיועד למשתמשים מנוסים שכבר מכירים CBD ויודעים שהם זקוקים לריכוז גבוה. זהו הריכוז החזק ביותר שמציעה MOYA, ומספק את כמות ה-CBD הגבוהה ביותר בכל טיפה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה CBD יש בכל טיפה של שמן 30%?</div>
+                    <div class="faq-a">בבקבוק 10 מ&quot;ל של שמן CBD 30%, יש כ-3000 מ&quot;ג CBD בסך הכל. כל טיפה מכילה כ-7-8 מ&quot;ג CBD. זהו ריכוז גבוה המאפשר להשיג את המינון הרצוי במספר מינימלי של טיפות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם שמן 30% משתלם יותר מריכוזים נמוכים?</div>
+                    <div class="faq-a">מבחינת עלות ל-מ&quot;ג CBD, ריכוז 30% הוא בדרך כלל המשתלם ביותר. אתם מקבלים יותר CBD באותו נפח, כך שהמחיר האפקטיבי ליחידת CBD נמוך יותר בהשוואה לריכוזים נמוכים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אפשר להתחיל ישר עם ריכוז 30%?</div>
+                    <div class="faq-a">לא מומלץ. גם אם אתם מעוניינים בריכוז גבוה, עדיף להתחיל עם 10% או 20%, להכיר את התגובה האישית שלכם, ורק אז לעבור לריכוז גבוה יותר אם יש צורך.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין Full Spectrum 30% לאורגני 30%?</div>
+                    <div class="faq-a">שניהם באותו ריכוז (30%), אך ההבדל בהרכב: Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח כולל טרפנים וקנבינואידים נוספים, בעוד האורגני מכיל CBD טהור בלבד עם טעם ניטרלי יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן מחזיק בקבוק של שמן 30%?</div>
+                    <div class="faq-a">משך הזמן תלוי במינון האישי. אם משתמשים ב-2-3 טיפות ביום, בקבוק 10 מ&quot;ל (כ-200 טיפות) יכול להחזיק כ-2-3 חודשים. בזכות הריכוז הגבוה, נדרשות פחות טיפות להשגת המינון הרצוי.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-4">העתק</button>
+                        <pre class="schema-code" id="schema-moya-4">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;למי מיועד שמן Full Spectrum 30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן CBD בריכוז 30% מיועד למשתמשים מנוסים שכבר מכירים CBD ויודעים שהם זקוקים לריכוז גבוה. זהו הריכוז החזק ביותר שמציעה MOYA, ומספק את כמות ה-CBD הגבוהה ביותר בכל טיפה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה CBD יש בכל טיפה של שמן 30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בבקבוק 10 מ\&quot;ל של שמן CBD 30%, יש כ-3000 מ\&quot;ג CBD בסך הכל. כל טיפה מכילה כ-7-8 מ\&quot;ג CBD. זהו ריכוז גבוה המאפשר להשיג את המינון הרצוי במספר מינימלי של טיפות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם שמן 30% משתלם יותר מריכוזים נמוכים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מבחינת עלות ל-מ\&quot;ג CBD, ריכוז 30% הוא בדרך כלל המשתלם ביותר. אתם מקבלים יותר CBD באותו נפח, כך שהמחיר האפקטיבי ליחידת CBD נמוך יותר בהשוואה לריכוזים נמוכים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר להתחיל ישר עם ריכוז 30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא מומלץ. גם אם אתם מעוניינים בריכוז גבוה, עדיף להתחיל עם 10% או 20%, להכיר את התגובה האישית שלכם, ורק אז לעבור לריכוז גבוה יותר אם יש צורך.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין Full Spectrum 30% לאורגני 30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שניהם באותו ריכוז (30%), אך ההבדל בהרכב: Full Spectrum מכיל את כל התרכובות הטבעיות של הצמח כולל טרפנים וקנבינואידים נוספים, בעוד האורגני מכיל CBD טהור בלבד עם טעם ניטרלי יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן מחזיק בקבוק של שמן 30%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משך הזמן תלוי במינון האישי. אם משתמשים ב-2-3 טיפות ביום, בקבוק 10 מ\&quot;ל (כ-200 טיפות) יכול להחזיק כ-2-3 חודשים. בזכות הריכוז הגבוה, נדרשות פחות טיפות להשגת המינון הרצוי.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">CBD Skin Cream</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/creams/for-skin/" target="_blank">https://moya-cbd.com/shop/creams/for-skin/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה זה קרם CBD לעור?</div>
+                    <div class="faq-a">קרם CBD לעור הוא קרם מטפח המכיל CBD (קנבידיול) בשילוב עם רכיבים מזינים נוספים. הקרם מיועד למריחה חיצונית על העור ומסייע בלחות ובטיפוח העור.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך משתמשים בקרם CBD?</div>
+                    <div class="faq-a">יש למרוח כמות קטנה של קרם על האזור הרצוי ולעסות בעדינות עד לספיגה מלאה. ניתן להשתמש בקרם מספר פעמים ביום לפי הצורך. מומלץ לנקות את העור לפני המריחה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם קרם CBD מתאים לכל סוגי העור?</div>
+                    <div class="faq-a">קרם ה-CBD של MOYA מיוצר מרכיבים איכותיים ומתאים לרוב סוגי העור. עם זאת, מומלץ לבצע בדיקת רגישות על אזור קטן בעור לפני שימוש ראשון, במיוחד לאנשים עם עור רגיש.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה הרכיבים בקרם CBD של MOYA?</div>
+                    <div class="faq-a">הקרם מכיל CBD איכותי בשילוב עם שמנים מזינים ורכיבי טיפוח נוספים. הרכיבים המלאים מפורטים על גבי האריזה. המוצר אינו מכיל THC ומיוצר מחומרי גלם איכותיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה קרם צריך למרוח בכל פעם?</div>
+                    <div class="faq-a">כמות בגודל אפונה עד שקד מספיקה בדרך כלל לאזור בינוני. ניתן להתאים את הכמות בהתאם לגודל האזור ולצרכים האישיים. אין צורך להגזים בכמות - שכבה דקה נספגת היטב.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אפשר להשתמש בקרם CBD יחד עם מוצרי טיפוח אחרים?</div>
+                    <div class="faq-a">בדרך כלל כן. מומלץ להמתין מספר דקות בין מריחת מוצרים שונים לאפשר ספיגה. אם יש לכם שגרת טיפוח קבועה או משתמשים במוצרים רפואיים לעור, כדאי להתייעץ עם רופא עור.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך לאחסן את קרם ה-CBD?</div>
+                    <div class="faq-a">יש לאחסן את הקרם במקום קריר ויבש, הרחק מאור שמש ישיר. אין צורך לשמור במקרר אלא אם מצוין אחרת על האריזה. יש לוודא שהמכסה סגור היטב לאחר כל שימוש.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-5">העתק</button>
+                        <pre class="schema-code" id="schema-moya-5">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה זה קרם CBD לעור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;קרם CBD לעור הוא קרם מטפח המכיל CBD (קנבידיול) בשילוב עם רכיבים מזינים נוספים. הקרם מיועד למריחה חיצונית על העור ומסייע בלחות ובטיפוח העור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך משתמשים בקרם CBD?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;יש למרוח כמות קטנה של קרם על האזור הרצוי ולעסות בעדינות עד לספיגה מלאה. ניתן להשתמש בקרם מספר פעמים ביום לפי הצורך. מומלץ לנקות את העור לפני המריחה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם קרם CBD מתאים לכל סוגי העור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;קרם ה-CBD של MOYA מיוצר מרכיבים איכותיים ומתאים לרוב סוגי העור. עם זאת, מומלץ לבצע בדיקת רגישות על אזור קטן בעור לפני שימוש ראשון, במיוחד לאנשים עם עור רגיש.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה הרכיבים בקרם CBD של MOYA?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הקרם מכיל CBD איכותי בשילוב עם שמנים מזינים ורכיבי טיפוח נוספים. הרכיבים המלאים מפורטים על גבי האריזה. המוצר אינו מכיל THC ומיוצר מחומרי גלם איכותיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה קרם צריך למרוח בכל פעם?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כמות בגודל אפונה עד שקד מספיקה בדרך כלל לאזור בינוני. ניתן להתאים את הכמות בהתאם לגודל האזור ולצרכים האישיים. אין צורך להגזים בכמות - שכבה דקה נספגת היטב.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר להשתמש בקרם CBD יחד עם מוצרי טיפוח אחרים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בדרך כלל כן. מומלץ להמתין מספר דקות בין מריחת מוצרים שונים לאפשר ספיגה. אם יש לכם שגרת טיפוח קבועה או משתמשים במוצרים רפואיים לעור, כדאי להתייעץ עם רופא עור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך לאחסן את קרם ה-CBD?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;יש לאחסן את הקרם במקום קריר ויבש, הרחק מאור שמש ישיר. אין צורך לשמור במקרר אלא אם מצוין אחרת על האריזה. יש לוודא שהמכסה סגור היטב לאחר כל שימוש.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">10% Full Spectrum CBD Oil</div>
+                <div class="page-url"><a href="https://moya-cbd.com/shop/oils/full-spectrum-10/" target="_blank">https://moya-cbd.com/shop/oils/full-spectrum-10/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">למי מתאים שמן Full Spectrum 10%?</div>
+                    <div class="faq-a">שמן CBD בריכוז 10% מתאים במיוחד למשתמשים חדשים שרוצים להתנסות ב-CBD לראשונה, או למשתמשים שמעדיפים מינון קל יותר. הריכוז הנמוך יחסית מאפשר שליטה מדויקת במינון והתאמה הדרגתית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה CBD יש בכל טיפה של שמן 10%?</div>
+                    <div class="faq-a">בבקבוק 10 מ&quot;ל של שמן CBD 10%, יש כ-1000 מ&quot;ג CBD בסך הכל. כל טיפה מכילה כ-2-2.5 מ&quot;ג CBD. הבקבוק מכיל כ-200 טיפות בממוצע.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה היתרון של Full Spectrum בריכוז נמוך?</div>
+                    <div class="faq-a">שמן Full Spectrum 10% מאפשר ליהנות מ&#x27;אפקט הסביבה&#x27; - השילוב של כל התרכובות הטבעיות של הצמח - תוך שמירה על ריכוז נמוך ונוח לשליטה. מתאים למי שרוצה את היתרונות של Full Spectrum במינון עדין.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה טיפות מומלץ לקחת?</div>
+                    <div class="faq-a">למתחילים מומלץ להתחיל עם 2-3 טיפות פעם ביום, ולהעלות בהדרגה לפי הצורך. אין מינון אחיד לכולם - הכמות האופטימלית משתנה מאדם לאדם. חשוב להקשיב לגוף ולהתאים בהתאם.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מתי הזמן הטוב ביותר לקחת שמן CBD?</div>
+                    <div class="faq-a">אין זמן &#x27;נכון&#x27; אחד - זה תלוי בהעדפות האישיות. חלק מהמשתמשים מעדיפים בבוקר, אחרים בערב. מומלץ להתנסות ולמצוא את הזמן שמתאים לכם. ניתן להשתמש עם או בלי אוכל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן להגדיל את הריכוז בהמשך?</div>
+                    <div class="faq-a">בהחלט. רבים מתחילים עם 10% ולאחר שמכירים את התגובה האישית שלהם, עוברים לריכוז גבוה יותר (20% או 30%) אם יש צורך. MOYA מציעה את כל הריכוזים כך שניתן להתקדם בהדרגה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="moya-6">העתק</button>
+                        <pre class="schema-code" id="schema-moya-6">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;למי מתאים שמן Full Spectrum 10%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן CBD בריכוז 10% מתאים במיוחד למשתמשים חדשים שרוצים להתנסות ב-CBD לראשונה, או למשתמשים שמעדיפים מינון קל יותר. הריכוז הנמוך יחסית מאפשר שליטה מדויקת במינון והתאמה הדרגתית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה CBD יש בכל טיפה של שמן 10%?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בבקבוק 10 מ\&quot;ל של שמן CBD 10%, יש כ-1000 מ\&quot;ג CBD בסך הכל. כל טיפה מכילה כ-2-2.5 מ\&quot;ג CBD. הבקבוק מכיל כ-200 טיפות בממוצע.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה היתרון של Full Spectrum בריכוז נמוך?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שמן Full Spectrum 10% מאפשר ליהנות מ&#x27;אפקט הסביבה&#x27; - השילוב של כל התרכובות הטבעיות של הצמח - תוך שמירה על ריכוז נמוך ונוח לשליטה. מתאים למי שרוצה את היתרונות של Full Spectrum במינון עדין.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה טיפות מומלץ לקחת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;למתחילים מומלץ להתחיל עם 2-3 טיפות פעם ביום, ולהעלות בהדרגה לפי הצורך. אין מינון אחיד לכולם - הכמות האופטימלית משתנה מאדם לאדם. חשוב להקשיב לגוף ולהתאים בהתאם.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי הזמן הטוב ביותר לקחת שמן CBD?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אין זמן &#x27;נכון&#x27; אחד - זה תלוי בהעדפות האישיות. חלק מהמשתמשים מעדיפים בבוקר, אחרים בערב. מומלץ להתנסות ולמצוא את הזמן שמתאים לכם. ניתן להשתמש עם או בלי אוכל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן להגדיל את הריכוז בהמשך?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בהחלט. רבים מתחילים עם 10% ולאחר שמכירים את התגובה האישית שלהם, עוברים לריכוז גבוה יותר (20% או 30%) אם יש צורך. MOYA מציעה את כל הריכוזים כך שניתן להתקדם בהדרגה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h2>הוראות הטמעה</h2>
+        <p style="margin-bottom:18px;color:var(--text-dim)">כיצד להוסיף את סכמת ה-FAQPage לאתר:</p>
+        <ol>
+            <li>לחצו על כפתור <strong>העתק</strong> ליד הסכמה הרצויה</li>
+            <li>פתחו את עורך העמוד במערכת ניהול התוכן (WordPress, Elementor וכו')</li>
+            <li>הוסיפו את הקוד בתוך תגית <code>&lt;head&gt;</code> של העמוד, לפני תגית <code>&lt;/head&gt;</code></li>
+            <li>שמרו ופרסמו את העמוד</li>
+        </ol>
+        <p style="margin-bottom:10px"><strong>דוגמה להטמעה:</strong></p>
+        <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "השאלה שלכם",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התשובה שלכם"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+        <p style="margin-top:18px;color:var(--text-dim)"><strong>שימו לב:</strong> בעמודים שכבר קיים FAQ (מסומנים בכתום) - אין להוסיף סכמה נוספת. הסכמה הקיימת מספיקה.</p>
+        <p style="margin-top:10px;color:var(--text-dim)"><strong>בדיקה:</strong> לאחר ההטמעה, בדקו ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal)">Google Rich Results Test</a> שהסכמה נקראת נכון.</p>
+
+        <p style="margin-top:20px;color:var(--text-dim)"><strong>למשתמשי WordPress / Elementor:</strong></p>
+        <ol>
+            <li>גשו לעמוד בעורך האתר</li>
+            <li>בתפריט Rank Math / Yoast → הגדרות מתקדמות → Schema</li>
+            <li>הדביקו את ה-JSON-LD בתיבת Custom Schema</li>
+            <li>לחלופין: הוסיפו בלוק HTML עם תגית script בתחתית או בסוף העמוד</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        נוצר באמצעות Claude AI | נדב דיגיטל | פברואר 2026
+    </div>
+</div>
+
+<script>
+function copySchema(btn) {
+    const id = btn.getAttribute('data-schema-id');
+    const pre = document.getElementById('schema-' + id);
+    const text = '<script type="application/ld+json">\n' + pre.textContent + '\n</' + 'script>';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

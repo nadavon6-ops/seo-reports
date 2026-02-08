@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ + JSON-LD | מנפאוער קר | ביקורת אורגנית</title>
+<style>
+:root {
+    --bg-dark: #0f0f23;
+    --bg-card: #1e1e3f;
+    --bg-card-hover: #2a2a5a;
+    --purple: #667eea;
+    --pink: #f093fb;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --teal: #4ecdc4;
+    --blue: #3498db;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --border: #333366;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 100%);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.metric-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+}
+.metric-value {
+    font-size: 2.6em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+}
+
+/* Navigation */
+.nav-section {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+}
+.nav-section h2 { margin-bottom: 16px; color: var(--purple); font-size: 1.3em; }
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--purple), #764ba2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.nav-link:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Client Section */
+.client-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.client-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.client-header h2 {
+    font-size: 1.6em;
+    margin: 0;
+}
+.client-domain {
+    font-size: 0.85em;
+    color: var(--teal);
+    background: rgba(78,205,196,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.cat-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+.client-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 16px 28px;
+    background: rgba(0,0,0,0.15);
+    font-size: 0.9em;
+}
+.client-stats span { color: var(--text-dim); }
+.client-stats strong { color: var(--text); }
+.client-body { padding: 20px 28px; }
+
+/* Skipped box */
+.skipped-box {
+    background: rgba(243,156,18,0.08);
+    border: 1px solid rgba(243,156,18,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+.skipped-box h3 { color: var(--orange); margin-bottom: 10px; font-size: 1em; }
+.skipped-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(243,156,18,0.15);
+    font-size: 0.9em;
+}
+.skipped-item:last-child { border-bottom: none; }
+.skipped-item a { color: var(--orange); text-decoration: none; }
+.skipped-item a:hover { text-decoration: underline; }
+.skipped-reason { color: var(--text-dim); font-size: 0.85em; margin-top: 2px; }
+
+/* Page block */
+.page-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+.page-block:last-child { border-bottom: none; }
+.page-title {
+    font-size: 1.15em;
+    color: var(--teal);
+    margin-bottom: 4px;
+}
+.page-url {
+    font-size: 0.8em;
+    margin-bottom: 16px;
+}
+.page-url a {
+    color: var(--text-dim);
+    text-decoration: none;
+    word-break: break-all;
+}
+.page-url a:hover { color: var(--purple); }
+
+/* FAQ cards */
+.faq-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-right: 3px solid var(--purple);
+}
+.faq-q {
+    font-weight: 700;
+    color: var(--pink);
+    margin-bottom: 6px;
+    font-size: 1em;
+}
+.faq-a {
+    color: #ccc;
+    font-size: 0.92em;
+    line-height: 1.65;
+}
+
+/* Schema details */
+.schema-wrapper { margin-top: 18px; }
+.schema-wrapper summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.2s;
+}
+.schema-wrapper summary:hover {
+    background: rgba(102,126,234,0.25);
+}
+.schema-wrapper summary::before { content: "\25B6"; font-size: 0.7em; transition: transform 0.2s; }
+.schema-wrapper[open] summary::before { transform: rotate(90deg); }
+.schema-code-wrap {
+    position: relative;
+    margin-top: 10px;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    z-index: 2;
+    transition: background 0.2s;
+}
+.copy-btn:hover { background: #764ba2; }
+.copy-btn.copied { background: var(--green); }
+pre.schema-code {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    padding-top: 45px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    white-space: pre;
+    direction: ltr;
+    text-align: left;
+}
+
+/* Instructions section */
+.instructions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+}
+.instructions h2 { color: var(--green); margin-bottom: 18px; font-size: 1.4em; }
+.instructions ol {
+    padding-right: 24px;
+    margin-bottom: 18px;
+}
+.instructions li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.instructions code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #a0d0a0;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.instructions pre {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 1.5em; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+    .client-header { padding: 18px; }
+    .client-body { padding: 16px; }
+    .client-stats { padding: 12px 18px; }
+    .nav-links { flex-direction: column; }
+    .metric-value { font-size: 2em; }
+}
+@media (max-width: 480px) {
+    .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric-card { padding: 16px 10px; }
+    .metric-value { font-size: 1.6em; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>תוכן FAQ + סכמות JSON-LD</h1>
+    <p>מנפאוער קר | manpowercare.co.il</p>
+    <div class="badge">V5 - פברואר 2026 | נדב דיגיטל</div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--blue)">6</div>
+            <div class="metric-label">עמודים נבדקו</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--orange)">0</div>
+            <div class="metric-label">עמודים דולגו (FAQ קיים)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">6</div>
+            <div class="metric-label">עמודים עם FAQ חדש</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">42</div>
+            <div class="metric-label">סה"כ שאלות נוצרו</div>
+        </div>
+    </div>
+
+    <div class="client-section" id="manpowercare">
+        <div class="client-header">
+            <h2>מנפאוער קר</h2>
+            <span class="client-domain">manpowercare.co.il</span>
+            <span class="cat-badge" style="background:rgba(255,255,255,0.08);color:#3498db;border:1px solid #3498db">YMYL סיעוד</span>
+        </div>
+        <div class="client-stats">
+            <span>עמודים נבדקו: <strong>6</strong></span>
+            <span>דולגו: <strong style="color:var(--orange)">0</strong></span>
+            <span>FAQ נוצר: <strong style="color:var(--green)">6</strong></span>
+            <span>סה"כ שאלות: <strong style="color:var(--green)">42</strong></span>
+        </div>
+        <div class="client-body">
+            <div class="page-block">
+                <div class="page-title">מנפאואר קר - שירותי סיעוד</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/" target="_blank">https://manpowercare.co.il/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם שירותי הסיעוד שמנפאואר קר מספקת?</div>
+                    <div class="faq-a">מנפאואר קר מספקת מגוון שירותי סיעוד הכוללים: טיפול סיעודי בבית למטופלים קשישים וסובלים ממחלות כרוניות, שירותי מטפלים זרים וישראלים, ליווי לבדיקות רפואיות, סיוע בפעולות יום-יומיות (רחצה, הלבשה, האכלה), וטיפול מותאם למצבים מיוחדים כמו דמנציה ואלצהיימר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כיצד בוחרים את המטפל המתאים למשפחתנו?</div>
+                    <div class="faq-a">תהליך ההתאמה כולל שיחת היכרות עם רכז הטיפול להבנת הצרכים הספציפיים, הערכה מקצועית של מצב המטופל, והצגת מספר מועמדים מתאימים. המשפחה משתתפת בבחירה הסופית, ומתבצעת תקופת התאמה להבטחת התאמה מיטבית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהן שעות הפעילות ואיך ניתן ליצור קשר?</div>
+                    <div class="faq-a">מנפאואר קר מפעילה מוקד חירום זמין 24/7 בטלפון *9055 לשעות חירום. בשעות הפעילות הרגילות ניתן להתקשר ל-03-5404533. ניתן גם להשאיר פנייה באתר ונציג יחזור אליכם בהקדם.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין מטפל ישראלי לעובד זר בתחום הסיעוד?</div>
+                    <div class="faq-a">מטפל ישראלי מתאים לטיפול לפי שעות או משמרות, מאפשר גמישות, ומתקשר בעברית. עובד זר מתגורר בבית המטופל ומספק טיפול רציף 24/7, מתאים במיוחד למצבים הדורשים השגחה מתמדת. בשני המקרים המטפלים עוברים הכשרה מקצועית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מנפאואר קר מסייעת בהגשת בקשות לגמלת סיעוד?</div>
+                    <div class="faq-a">כן, מנפאואר קר מלווה משפחות בתהליך הגשת הבקשה לגמלת סיעוד מביטוח לאומי. הצוות מסייע במילוי הטפסים, הכנה לבדיקת התלות (ADL), ומעקב אחר הטיפול בבקשה עד לקבלת האישור.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">באילו אזורים בארץ מנפאואר קר פועלת?</div>
+                    <div class="faq-a">מנפאואר קר פועלת בפריסה ארצית מהצפון ועד הדרום. לחברה סניפים ומרכזי שירות ברחבי הארץ, המאפשרים מתן שירות מהיר ומקומי. ניתן לקבל מידע על הסניף הקרוב אליכם במוקד השירות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה כוללת ההכשרה של המטפלים?</div>
+                    <div class="faq-a">כל המטפלים של מנפאואר קר עוברים הכשרה מקיפה הכוללת: טיפול סיעודי בסיסי ומתקדם, התמודדות עם מצבי חירום, טיפול במטופלים עם דמנציה, תקשורת עם קשישים ובני משפחה, ושמירה על כבוד המטופל ופרטיותו.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מנפאואר קר מבטיחה את איכות הטיפול?</div>
+                    <div class="faq-a">מנפאואר קר מקיימת מערך פיקוח ובקרה הכולל: ביקורי מעקב תקופתיים של רכזי טיפול, קו פתוח למשפחות לדיווח ומשוב, החלפת מטפל במקרה של אי התאמה, וליווי מקצועי שוטף לאורך כל תקופת הטיפול.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-0">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-0">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם שירותי הסיעוד שמנפאואר קר מספקת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מספקת מגוון שירותי סיעוד הכוללים: טיפול סיעודי בבית למטופלים קשישים וסובלים ממחלות כרוניות, שירותי מטפלים זרים וישראלים, ליווי לבדיקות רפואיות, סיוע בפעולות יום-יומיות (רחצה, הלבשה, האכלה), וטיפול מותאם למצבים מיוחדים כמו דמנציה ואלצהיימר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כיצד בוחרים את המטפל המתאים למשפחתנו?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תהליך ההתאמה כולל שיחת היכרות עם רכז הטיפול להבנת הצרכים הספציפיים, הערכה מקצועית של מצב המטופל, והצגת מספר מועמדים מתאימים. המשפחה משתתפת בבחירה הסופית, ומתבצעת תקופת התאמה להבטחת התאמה מיטבית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהן שעות הפעילות ואיך ניתן ליצור קשר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מפעילה מוקד חירום זמין 24/7 בטלפון *9055 לשעות חירום. בשעות הפעילות הרגילות ניתן להתקשר ל-03-5404533. ניתן גם להשאיר פנייה באתר ונציג יחזור אליכם בהקדם.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין מטפל ישראלי לעובד זר בתחום הסיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מטפל ישראלי מתאים לטיפול לפי שעות או משמרות, מאפשר גמישות, ומתקשר בעברית. עובד זר מתגורר בבית המטופל ומספק טיפול רציף 24/7, מתאים במיוחד למצבים הדורשים השגחה מתמדת. בשני המקרים המטפלים עוברים הכשרה מקצועית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מנפאואר קר מסייעת בהגשת בקשות לגמלת סיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מנפאואר קר מלווה משפחות בתהליך הגשת הבקשה לגמלת סיעוד מביטוח לאומי. הצוות מסייע במילוי הטפסים, הכנה לבדיקת התלות (ADL), ומעקב אחר הטיפול בבקשה עד לקבלת האישור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;באילו אזורים בארץ מנפאואר קר פועלת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר פועלת בפריסה ארצית מהצפון ועד הדרום. לחברה סניפים ומרכזי שירות ברחבי הארץ, המאפשרים מתן שירות מהיר ומקומי. ניתן לקבל מידע על הסניף הקרוב אליכם במוקד השירות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה כוללת ההכשרה של המטפלים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כל המטפלים של מנפאואר קר עוברים הכשרה מקיפה הכוללת: טיפול סיעודי בסיסי ומתקדם, התמודדות עם מצבי חירום, טיפול במטופלים עם דמנציה, תקשורת עם קשישים ובני משפחה, ושמירה על כבוד המטופל ופרטיותו.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מנפאואר קר מבטיחה את איכות הטיפול?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מקיימת מערך פיקוח ובקרה הכולל: ביקורי מעקב תקופתיים של רכזי טיפול, קו פתוח למשפחות לדיווח ומשוב, החלפת מטפל במקרה של אי התאמה, וליווי מקצועי שוטף לאורך כל תקופת הטיפול.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">דמנציה - מדריך מקיף</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/happy-employees-good-employees-16/" target="_blank">https://manpowercare.co.il/happy-employees-good-employees-16/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהי דמנציה ומה ההבדל בינה לבין שכחה רגילה?</div>
+                    <div class="faq-a">דמנציה היא מצב רפואי המתאפיין באובדן הדרגתי של יכולות קוגניטיביות ומנטליות, הכולל פגיעה בזיכרון, חשיבה והתנהגות. בניגוד לשכחה רגילה הקשורה לגיל, דמנציה פוגעת ביכולת לתפקד בחיי היום-יום ומחמירה עם הזמן. כ-60-70% ממקרי הדמנציה נגרמים ממחלת האלצהיימר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם הסימנים המוקדמים לדמנציה שכדאי לשים לב אליהם?</div>
+                    <div class="faq-a">הסימנים המוקדמים כוללים: קשיים בזיכרון לטווח קצר (שכחת אירועים אחרונים), בלבול לגבי זמן ומקום, קושי במציאת מילים או במעקב אחר שיחה, בעיות בקבלת החלטות, שינויים במצב הרוח או באישיות, וקושי בביצוע משימות מוכרות כמו בישול או ניהול כספים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם שלבי התפתחות מחלת הדמנציה?</div>
+                    <div class="faq-a">המחלה מתפתחת בשלושה שלבים עיקריים, כל אחד נמשך כשלוש שנים בממוצע. בשלב הראשון יש קשיי זיכרון קלים ובלבול. בשלב השני מתווספים קשיים בתפקוד היום-יומי והצורך בעזרה. בשלב השלישי יש תלות מלאה במטפל, קושי בזיהוי קרובים, ולעיתים אובדן יכולת הדיבור.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כיצד מאבחנים דמנציה?</div>
+                    <div class="faq-a">האבחון מתבצע על ידי רופא נוירולוג או גריאטר וכולל: בדיקה קוגניטיבית (מבחן MMSE), בדיקות דם לשלילת גורמים אחרים, הדמיה מוחית (CT או MRI), ושיחה עם המטופל ובני המשפחה על ההיסטוריה הרפואית והתפקודית. האבחון המוקדם חשוב לתכנון טיפול מתאים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש טיפול שיכול לעצור או להאט את הדמנציה?</div>
+                    <div class="faq-a">נכון להיום אין טיפול שמרפא דמנציה, אך קיימים טיפולים שעשויים להאט את ההתדרדרות. אלה כוללים תרופות (כמו מעכבי כולינסטראז), גירוי קוגניטיבי, פעילות גופנית, תזונה מאוזנת, ושמירה על קשרים חברתיים. חשוב להתחיל בטיפול מוקדם ככל האפשר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מתי כדאי לשקול מטפל מקצועי לחולה דמנציה?</div>
+                    <div class="faq-a">מומלץ לשקול מטפל מקצועי כאשר: המטופל זקוק לעזרה בפעולות יום-יומיות, יש סכנת נפילות או שכחת תרופות, בן המשפחה המטפל חש מותש, או כשנדרשת השגחה קבועה. מטפל מיומן יודע להתמודד עם התנהגויות קשות ולספק סביבה בטוחה ותומכת.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה אנשים בישראל סובלים מדמנציה?</div>
+                    <div class="faq-a">על פי ההערכות, כ-140,000 איש בישראל סובלים מדמנציה, והמספר צפוי לעלות ל-349,000 עד שנת 2035 בשל הזדקנות האוכלוסייה. דמנציה נפוצה יותר בגילאים מבוגרים, אך יכולה להופיע גם בגיל צעיר יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מנפאואר קר יכולה לעזור למשפחות עם חולה דמנציה?</div>
+                    <div class="faq-a">מנפאואר קר מספקת מטפלים מיומנים בטיפול בחולי דמנציה, המתמחים בהתמודדות עם אתגרים ייחודיים כמו בלבול, תסיסה וקשיי תקשורת. השירות כולל התאמה אישית של מטפל, גמישות בשעות הטיפול, מעקב מקצועי שוטף, ותמיכה למשפחה לאורך כל התהליך.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-1">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-1">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי דמנציה ומה ההבדל בינה לבין שכחה רגילה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;דמנציה היא מצב רפואי המתאפיין באובדן הדרגתי של יכולות קוגניטיביות ומנטליות, הכולל פגיעה בזיכרון, חשיבה והתנהגות. בניגוד לשכחה רגילה הקשורה לגיל, דמנציה פוגעת ביכולת לתפקד בחיי היום-יום ומחמירה עם הזמן. כ-60-70% ממקרי הדמנציה נגרמים ממחלת האלצהיימר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם הסימנים המוקדמים לדמנציה שכדאי לשים לב אליהם?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הסימנים המוקדמים כוללים: קשיים בזיכרון לטווח קצר (שכחת אירועים אחרונים), בלבול לגבי זמן ומקום, קושי במציאת מילים או במעקב אחר שיחה, בעיות בקבלת החלטות, שינויים במצב הרוח או באישיות, וקושי בביצוע משימות מוכרות כמו בישול או ניהול כספים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם שלבי התפתחות מחלת הדמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המחלה מתפתחת בשלושה שלבים עיקריים, כל אחד נמשך כשלוש שנים בממוצע. בשלב הראשון יש קשיי זיכרון קלים ובלבול. בשלב השני מתווספים קשיים בתפקוד היום-יומי והצורך בעזרה. בשלב השלישי יש תלות מלאה במטפל, קושי בזיהוי קרובים, ולעיתים אובדן יכולת הדיבור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כיצד מאבחנים דמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;האבחון מתבצע על ידי רופא נוירולוג או גריאטר וכולל: בדיקה קוגניטיבית (מבחן MMSE), בדיקות דם לשלילת גורמים אחרים, הדמיה מוחית (CT או MRI), ושיחה עם המטופל ובני המשפחה על ההיסטוריה הרפואית והתפקודית. האבחון המוקדם חשוב לתכנון טיפול מתאים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש טיפול שיכול לעצור או להאט את הדמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נכון להיום אין טיפול שמרפא דמנציה, אך קיימים טיפולים שעשויים להאט את ההתדרדרות. אלה כוללים תרופות (כמו מעכבי כולינסטראז), גירוי קוגניטיבי, פעילות גופנית, תזונה מאוזנת, ושמירה על קשרים חברתיים. חשוב להתחיל בטיפול מוקדם ככל האפשר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי כדאי לשקול מטפל מקצועי לחולה דמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מומלץ לשקול מטפל מקצועי כאשר: המטופל זקוק לעזרה בפעולות יום-יומיות, יש סכנת נפילות או שכחת תרופות, בן המשפחה המטפל חש מותש, או כשנדרשת השגחה קבועה. מטפל מיומן יודע להתמודד עם התנהגויות קשות ולספק סביבה בטוחה ותומכת.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה אנשים בישראל סובלים מדמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;על פי ההערכות, כ-140,000 איש בישראל סובלים מדמנציה, והמספר צפוי לעלות ל-349,000 עד שנת 2035 בשל הזדקנות האוכלוסייה. דמנציה נפוצה יותר בגילאים מבוגרים, אך יכולה להופיע גם בגיל צעיר יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מנפאואר קר יכולה לעזור למשפחות עם חולה דמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מספקת מטפלים מיומנים בטיפול בחולי דמנציה, המתמחים בהתמודדות עם אתגרים ייחודיים כמו בלבול, תסיסה וקשיי תקשורת. השירות כולל התאמה אישית של מטפל, גמישות בשעות הטיפול, מעקב מקצועי שוטף, ותמיכה למשפחה לאורך כל התהליך.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">הנהלת מנפאואר קר</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/%D7%94%D7%A0%D7%94%D7%9C%D7%AA-%D7%94%D7%97%D7%91%D7%A8%D7%94/" target="_blank">https://manpowercare.co.il/%D7%94%D7%A0%D7%94%D7%9C%D7%AA-%D7%94%D7%97%D7%91%D7%A8%D7%94/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מי עומדים בראש מנפאואר קר?</div>
+                    <div class="faq-a">מנפאואר קר מנוהלת על ידי צוות הנהלה בכיר ומנוסה, בראשות קרן אושר כמנכ&quot;לית. ההנהלה כוללת מנהלי תפעול, משאבי אנוש, ומנהלים אזוריים בעלי ניסיון רב בתחום הסיעוד והטיפול בקשישים בישראל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו הניסיון של מנפאואר קר בתחום הסיעוד?</div>
+                    <div class="faq-a">מנפאואר קר היא חלק מקבוצת מנפאואר ישראל הפועלת מאז 1968. החברה צברה עשרות שנות ניסיון בתחום משאבי האנוש, ומתמחה בשירותי סיעוד עם ידע מקצועי עמוק בהתאמת מטפלים, ניהול כוח אדם, ועמידה בדרישות הרגולציה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה מבדיל את מנפאואר קר מחברות סיעוד אחרות?</div>
+                    <div class="faq-a">מנפאואר קר משלבת את היתרונות של תאגיד גלובלי עם הבנה מקומית של שוק הסיעוד בישראל. החברה מציעה פריסה ארצית, מוקד חירום 24/7, הכשרות מקצועיות למטפלים, ומערך פיקוח ובקרה שמבטיח איכות שירות גבוהה ורציפה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מנפאואר קר מפוקחת על ידי גורמים רשמיים?</div>
+                    <div class="faq-a">כן, מנפאואר קר פועלת בהתאם לכל הרגולציות הנדרשות בישראל ומחזיקה ברישיונות הנדרשים להפעלת שירותי סיעוד. החברה עומדת בתקנים של משרד הבריאות ומשרד העבודה, ומקפידה על שקיפות ועמידה בכל דרישות החוק.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מנפאואר קר מגייסת את המטפלים שלה?</div>
+                    <div class="faq-a">תהליך הגיוס כולל בדיקות רקע מקיפות, אימות תעודות והכשרות, ראיונות אישיים, ובדיקת התאמה מקצועית ואישית. כל מטפל עובר הכשרה פנימית לפני תחילת העבודה, ומלווה על ידי רכז מקצועי לאורך כל תקופת ההעסקה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה סניפים יש למנפאואר קר בארץ?</div>
+                    <div class="faq-a">למנפאואר קר פריסה ארצית עם סניפים ומרכזי שירות בערים המרכזיות ובפריפריה. המבנה הארגוני מאפשר מתן שירות מהיר ומקומי, עם מנהלים אזוריים שמכירים את הצרכים הייחודיים של כל אזור בארץ.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-2">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-2">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי עומדים בראש מנפאואר קר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מנוהלת על ידי צוות הנהלה בכיר ומנוסה, בראשות קרן אושר כמנכ\&quot;לית. ההנהלה כוללת מנהלי תפעול, משאבי אנוש, ומנהלים אזוריים בעלי ניסיון רב בתחום הסיעוד והטיפול בקשישים בישראל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו הניסיון של מנפאואר קר בתחום הסיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר היא חלק מקבוצת מנפאואר ישראל הפועלת מאז 1968. החברה צברה עשרות שנות ניסיון בתחום משאבי האנוש, ומתמחה בשירותי סיעוד עם ידע מקצועי עמוק בהתאמת מטפלים, ניהול כוח אדם, ועמידה בדרישות הרגולציה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה מבדיל את מנפאואר קר מחברות סיעוד אחרות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר משלבת את היתרונות של תאגיד גלובלי עם הבנה מקומית של שוק הסיעוד בישראל. החברה מציעה פריסה ארצית, מוקד חירום 24/7, הכשרות מקצועיות למטפלים, ומערך פיקוח ובקרה שמבטיח איכות שירות גבוהה ורציפה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מנפאואר קר מפוקחת על ידי גורמים רשמיים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מנפאואר קר פועלת בהתאם לכל הרגולציות הנדרשות בישראל ומחזיקה ברישיונות הנדרשים להפעלת שירותי סיעוד. החברה עומדת בתקנים של משרד הבריאות ומשרד העבודה, ומקפידה על שקיפות ועמידה בכל דרישות החוק.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מנפאואר קר מגייסת את המטפלים שלה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תהליך הגיוס כולל בדיקות רקע מקיפות, אימות תעודות והכשרות, ראיונות אישיים, ובדיקת התאמה מקצועית ואישית. כל מטפל עובר הכשרה פנימית לפני תחילת העבודה, ומלווה על ידי רכז מקצועי לאורך כל תקופת ההעסקה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה סניפים יש למנפאואר קר בארץ?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;למנפאואר קר פריסה ארצית עם סניפים ומרכזי שירות בערים המרכזיות ובפריפריה. המבנה הארגוני מאפשר מתן שירות מהיר ומקומי, עם מנהלים אזוריים שמכירים את הצרכים הייחודיים של כל אזור בארץ.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">טיפול בנכי צה&quot;ל</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A0%D7%9B%D7%99-%D7%A6%D7%94%D7%9C/" target="_blank">https://manpowercare.co.il/%D7%98%D7%99%D7%A4%D7%95%D7%9C-%D7%91%D7%A0%D7%9B%D7%99-%D7%A6%D7%94%D7%9C/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו שירותים מנפאואר קר מספקת לנכי צה&quot;ל?</div>
+                    <div class="faq-a">מנפאואר קר מספקת לנכי צה&quot;ל מגוון שירותים הכוללים: טיפול סיעודי אישי, ליווי ומלווים, עזרה בפעולות יום-יומיות, סיוע בניהול משק הבית, ליווי לבדיקות ופגישות רפואיות, וטיפול מותאם לנפגעי פוסט-טראומה (PTSD).</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו נתיב 2 ואיך הוא קשור לשירותי מנפאואר קר?</div>
+                    <div class="faq-a">נתיב 2 הוא מסלול של אגף השיקום במשרד הביטחון המאפשר לנכי צה&quot;ל לבחור את ספק השירות שלהם. מנפאואר קר היא ספק מורשה בנתיב 2, ומספקת שירותי סיעוד וליווי לנכים הזכאים דרך מסלול זה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם המטפלים של מנפאואר קר מיומנים בטיפול בפוסט-טראומה?</div>
+                    <div class="faq-a">כן, מנפאואר קר מעסיקה מטפלים בעלי הכשרה מיוחדת בטיפול בנפגעי פוסט-טראומה קרבית. המטפלים מבינים את האתגרים הייחודיים ויודעים להתמודד עם מצבי חרדה, פלאשבקים, והפרעות שינה באופן רגיש ומקצועי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מתחילים לקבל שירות מנפאואר קר כנכה צה&quot;ל?</div>
+                    <div class="faq-a">ניתן לפנות ישירות למנפאואר קר בטלפון *9055 או 03-5404533. הצוות יבדוק את הזכאות מול אגף השיקום, יקיים פגישת הערכה להבנת הצרכים, ויתאים מטפל מתאים. התהליך מתואם עם אגף השיקום לאישור המימון.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהן שעות הזמינות של השירות לנכי צה&quot;ל?</div>
+                    <div class="faq-a">מנפאואר קר מפעילה מוקד חירום 24/7 בטלפון *9055, המיועד גם לנכי צה&quot;ל. השירות זמין בכל שעות היממה להתמודדות עם מצבי חירום, שאלות דחופות, או צורך בסיוע מיידי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לקבל מלווה צמוד לאורך כל היום?</div>
+                    <div class="faq-a">כן, בהתאם לרמת הזכאות ואישור אגף השיקום, ניתן לקבל מלווה צמוד לשעות רבות ביום או אף 24/7. מנפאואר קר מתאימה את היקף השירות לצרכי הנכה ולאישורים הקיימים מאגף השיקום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה כוללת ההכשרה של מטפלים לנכי צה&quot;ל?</div>
+                    <div class="faq-a">המטפלים עוברים הכשרה מיוחדת הכוללת: הבנת הצרכים הייחודיים של נכי צה&quot;ל, טיפול בפוסט-טראומה ומצבי חרדה, סיוע בשיקום ופיזיותרפיה, תקשורת רגישה ומותאמת, והתמודדות עם מגבלות פיזיות שונות הנובעות מפציעות קרביות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מנפאואר קר מספקת שירותים גם לבני משפחות של נכי צה&quot;ל?</div>
+                    <div class="faq-a">מנפאואר קר מבינה שהטיפול בנכה משפיע על כל המשפחה. הצוות מספק תמיכה והדרכה לבני המשפחה, מאפשר להם הפוגות מהטיפול, ומסייע בהתמודדות עם האתגרים היום-יומיים. הליווי כולל גם תקשורת שוטפת עם המשפחה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-3">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-3">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו שירותים מנפאואר קר מספקת לנכי צה\&quot;ל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מספקת לנכי צה\&quot;ל מגוון שירותים הכוללים: טיפול סיעודי אישי, ליווי ומלווים, עזרה בפעולות יום-יומיות, סיוע בניהול משק הבית, ליווי לבדיקות ופגישות רפואיות, וטיפול מותאם לנפגעי פוסט-טראומה (PTSD).&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו נתיב 2 ואיך הוא קשור לשירותי מנפאואר קר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נתיב 2 הוא מסלול של אגף השיקום במשרד הביטחון המאפשר לנכי צה\&quot;ל לבחור את ספק השירות שלהם. מנפאואר קר היא ספק מורשה בנתיב 2, ומספקת שירותי סיעוד וליווי לנכים הזכאים דרך מסלול זה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם המטפלים של מנפאואר קר מיומנים בטיפול בפוסט-טראומה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מנפאואר קר מעסיקה מטפלים בעלי הכשרה מיוחדת בטיפול בנפגעי פוסט-טראומה קרבית. המטפלים מבינים את האתגרים הייחודיים ויודעים להתמודד עם מצבי חרדה, פלאשבקים, והפרעות שינה באופן רגיש ומקצועי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מתחילים לקבל שירות מנפאואר קר כנכה צה\&quot;ל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ניתן לפנות ישירות למנפאואר קר בטלפון *9055 או 03-5404533. הצוות יבדוק את הזכאות מול אגף השיקום, יקיים פגישת הערכה להבנת הצרכים, ויתאים מטפל מתאים. התהליך מתואם עם אגף השיקום לאישור המימון.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהן שעות הזמינות של השירות לנכי צה\&quot;ל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מפעילה מוקד חירום 24/7 בטלפון *9055, המיועד גם לנכי צה\&quot;ל. השירות זמין בכל שעות היממה להתמודדות עם מצבי חירום, שאלות דחופות, או צורך בסיוע מיידי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לקבל מלווה צמוד לאורך כל היום?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בהתאם לרמת הזכאות ואישור אגף השיקום, ניתן לקבל מלווה צמוד לשעות רבות ביום או אף 24/7. מנפאואר קר מתאימה את היקף השירות לצרכי הנכה ולאישורים הקיימים מאגף השיקום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה כוללת ההכשרה של מטפלים לנכי צה\&quot;ל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המטפלים עוברים הכשרה מיוחדת הכוללת: הבנת הצרכים הייחודיים של נכי צה\&quot;ל, טיפול בפוסט-טראומה ומצבי חרדה, סיוע בשיקום ופיזיותרפיה, תקשורת רגישה ומותאמת, והתמודדות עם מגבלות פיזיות שונות הנובעות מפציעות קרביות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מנפאואר קר מספקת שירותים גם לבני משפחות של נכי צה\&quot;ל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר מבינה שהטיפול בנכה משפיע על כל המשפחה. הצוות מספק תמיכה והדרכה לבני המשפחה, מאפשר להם הפוגות מהטיפול, ומסייע בהתמודדות עם האתגרים היום-יומיים. הליווי כולל גם תקשורת שוטפת עם המשפחה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">צור קשר - מנפאואר קר</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/contact/" target="_blank">https://manpowercare.co.il/contact/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">איך אפשר ליצור קשר עם מנפאואר קר?</div>
+                    <div class="faq-a">ניתן ליצור קשר עם מנפאואר קר במספר דרכים: טלפון למוקד השירות 03-5404533, מוקד חירום 24/7 בטלפון *9055, מילוי טופס פנייה באתר, או הגעה פיזית למשרדים. נציג יחזור אליכם בהקדם האפשרי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהן שעות הפעילות של מנפאואר קר?</div>
+                    <div class="faq-a">המשרדים פתוחים בימים א&#x27;-ה&#x27; בשעות העבודה הרגילות. בנוסף, מוקד החירום בטלפון *9055 פעיל 24 שעות ביממה, 7 ימים בשבוע, לטיפול במקרים דחופים ושאלות בשעות לא שגרתיות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם צריך להגיע פיזית למשרדים כדי להתחיל שירות?</div>
+                    <div class="faq-a">לא חובה. רוב התהליך יכול להתבצע טלפונית ובאמצעות האתר. רכז הטיפול יכול להגיע לביתכם לפגישת הערכה ראשונית. עם זאת, אתם מוזמנים להגיע למשרדים אם מעדיפים פגישה פרונטלית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">תוך כמה זמן מקבלים מענה לפנייה?</div>
+                    <div class="faq-a">פניות שמתקבלות בשעות הפעילות מטופלות בדרך כלל באותו יום. פניות דחופות למוקד *9055 מטופלות מיידית. פניות שנשלחות דרך האתר מקבלות מענה תוך יום עסקים אחד.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה צריך להכין לפני הפנייה הראשונה?</div>
+                    <div class="faq-a">מומלץ להכין: פרטים על מצבו הרפואי של המטופל, מסמכים רלוונטיים (כמו אישורים מביטוח לאומי או אגף השיקום), מידע על הצרכים הספציפיים (שעות, סוג טיפול), ופרטי קשר של בני משפחה נוספים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לקבל ייעוץ ראשוני בחינם?</div>
+                    <div class="faq-a">כן, השיחה הראשונית ופגישת ההערכה הם ללא התחייבות. הצוות ישמח להסביר על השירותים, לבדוק זכאויות, ולהמליץ על הפתרון המתאים ביותר למשפחתכם ללא כל עלות.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-4">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-4">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך אפשר ליצור קשר עם מנפאואר קר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ניתן ליצור קשר עם מנפאואר קר במספר דרכים: טלפון למוקד השירות 03-5404533, מוקד חירום 24/7 בטלפון *9055, מילוי טופס פנייה באתר, או הגעה פיזית למשרדים. נציג יחזור אליכם בהקדם האפשרי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהן שעות הפעילות של מנפאואר קר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המשרדים פתוחים בימים א&#x27;-ה&#x27; בשעות העבודה הרגילות. בנוסף, מוקד החירום בטלפון *9055 פעיל 24 שעות ביממה, 7 ימים בשבוע, לטיפול במקרים דחופים ושאלות בשעות לא שגרתיות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך להגיע פיזית למשרדים כדי להתחיל שירות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא חובה. רוב התהליך יכול להתבצע טלפונית ובאמצעות האתר. רכז הטיפול יכול להגיע לביתכם לפגישת הערכה ראשונית. עם זאת, אתם מוזמנים להגיע למשרדים אם מעדיפים פגישה פרונטלית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;תוך כמה זמן מקבלים מענה לפנייה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;פניות שמתקבלות בשעות הפעילות מטופלות בדרך כלל באותו יום. פניות דחופות למוקד *9055 מטופלות מיידית. פניות שנשלחות דרך האתר מקבלות מענה תוך יום עסקים אחד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה צריך להכין לפני הפנייה הראשונה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מומלץ להכין: פרטים על מצבו הרפואי של המטופל, מסמכים רלוונטיים (כמו אישורים מביטוח לאומי או אגף השיקום), מידע על הצרכים הספציפיים (שעות, סוג טיפול), ופרטי קשר של בני משפחה נוספים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לקבל ייעוץ ראשוני בחינם?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, השיחה הראשונית ופגישת ההערכה הם ללא התחייבות. הצוות ישמח להסביר על השירותים, לבדוק זכאויות, ולהמליץ על הפתרון המתאים ביותר למשפחתכם ללא כל עלות.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">ManpowerGroup ישראל</div>
+                <div class="page-url"><a href="https://manpowercare.co.il/manpowergroup-%D7%99%D7%A9%D7%A8%D7%90%D7%9C/" target="_blank">https://manpowercare.co.il/manpowergroup-%D7%99%D7%A9%D7%A8%D7%90%D7%9C/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהי קבוצת מנפאואר (ManpowerGroup) ישראל?</div>
+                    <div class="faq-a">מנפאואר ישראל היא חלק מתאגיד ManpowerGroup הגלובלי, חברת משאבי האנוש המובילה בעולם. הקבוצה פועלת בישראל מאז 1968 ומספקת פתרונות כוח אדם מתקדמים לאלפי לקוחות, תוך שילוב משאבים גלובליים עם מומחיות מקומית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם החטיבות העיקריות של מנפאואר ישראל?</div>
+                    <div class="faq-a">מנפאואר ישראל פועלת בשלוש חטיבות עיקריות: Manpower - המתמחה בגיוס, השמה, ייעוץ קריירה ושירותי סיעוד; Solutions Talent - המתמקדת במיקור חוץ, ניהול פרויקטים ושירותי שפה; ו-Experis - העוסקת בטכנולוגיה, IT, סייבר והכשרות מקצועיות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה הקשר בין מנפאואר קר למנפאואר ישראל?</div>
+                    <div class="faq-a">מנפאואר קר היא חברת הבת של מנפאואר ישראל המתמחה בתחום הסיעוד. היא נהנית מהמשאבים, הניסיון והתשתיות של קבוצת מנפאואר הגלובלית, תוך התמקדות מלאה בשירותי טיפול סיעודי איכותיים בישראל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה לקוחות מנפאואר ישראל משרתת?</div>
+                    <div class="faq-a">מנפאואר ישראל משרתת למעלה מ-10,000 לקוחות ברחבי הארץ, החל מעסקים קטנים ועד תאגידים גדולים ומוסדות ציבוריים. החברה ידועה בשירות מקצועי, אמינות, ויכולת לספק פתרונות מותאמים לכל לקוח.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם הערכים המנחים של מנפאואר ישראל?</div>
+                    <div class="faq-a">מנפאואר ישראל פועלת על פי ערכי הקבוצה הגלובלית הכוללים: מקצועיות ומצוינות, התנהלות אתית ושקופה, דאגה לעובדים וללקוחות, חדשנות מתמדת, ומחויבות לקהילה ולאחריות חברתית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מנפאואר מספקת שירותים גם למגזר הציבורי?</div>
+                    <div class="faq-a">כן, מנפאואר ישראל מספקת שירותים נרחבים למגזר הציבורי, כולל משרדי ממשלה, רשויות מקומיות, ומוסדות ציבוריים. השירותים כוללים גיוס והשמה, ניהול כוח אדם, הכשרות, ושירותי סיעוד דרך מנפאואר קר.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="manpowercare-5">העתק</button>
+                        <pre class="schema-code" id="schema-manpowercare-5">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי קבוצת מנפאואר (ManpowerGroup) ישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר ישראל היא חלק מתאגיד ManpowerGroup הגלובלי, חברת משאבי האנוש המובילה בעולם. הקבוצה פועלת בישראל מאז 1968 ומספקת פתרונות כוח אדם מתקדמים לאלפי לקוחות, תוך שילוב משאבים גלובליים עם מומחיות מקומית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם החטיבות העיקריות של מנפאואר ישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר ישראל פועלת בשלוש חטיבות עיקריות: Manpower - המתמחה בגיוס, השמה, ייעוץ קריירה ושירותי סיעוד; Solutions Talent - המתמקדת במיקור חוץ, ניהול פרויקטים ושירותי שפה; ו-Experis - העוסקת בטכנולוגיה, IT, סייבר והכשרות מקצועיות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה הקשר בין מנפאואר קר למנפאואר ישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר קר היא חברת הבת של מנפאואר ישראל המתמחה בתחום הסיעוד. היא נהנית מהמשאבים, הניסיון והתשתיות של קבוצת מנפאואר הגלובלית, תוך התמקדות מלאה בשירותי טיפול סיעודי איכותיים בישראל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה לקוחות מנפאואר ישראל משרתת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר ישראל משרתת למעלה מ-10,000 לקוחות ברחבי הארץ, החל מעסקים קטנים ועד תאגידים גדולים ומוסדות ציבוריים. החברה ידועה בשירות מקצועי, אמינות, ויכולת לספק פתרונות מותאמים לכל לקוח.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם הערכים המנחים של מנפאואר ישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מנפאואר ישראל פועלת על פי ערכי הקבוצה הגלובלית הכוללים: מקצועיות ומצוינות, התנהלות אתית ושקופה, דאגה לעובדים וללקוחות, חדשנות מתמדת, ומחויבות לקהילה ולאחריות חברתית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מנפאואר מספקת שירותים גם למגזר הציבורי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מנפאואר ישראל מספקת שירותים נרחבים למגזר הציבורי, כולל משרדי ממשלה, רשויות מקומיות, ומוסדות ציבוריים. השירותים כוללים גיוס והשמה, ניהול כוח אדם, הכשרות, ושירותי סיעוד דרך מנפאואר קר.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h2>הוראות הטמעה</h2>
+        <p style="margin-bottom:18px;color:var(--text-dim)">כיצד להוסיף את סכמת ה-FAQPage לאתר:</p>
+        <ol>
+            <li>לחצו על כפתור <strong>העתק</strong> ליד הסכמה הרצויה</li>
+            <li>פתחו את עורך העמוד במערכת ניהול התוכן (WordPress, Elementor וכו')</li>
+            <li>הוסיפו את הקוד בתוך תגית <code>&lt;head&gt;</code> של העמוד, לפני תגית <code>&lt;/head&gt;</code></li>
+            <li>שמרו ופרסמו את העמוד</li>
+        </ol>
+        <p style="margin-bottom:10px"><strong>דוגמה להטמעה:</strong></p>
+        <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "השאלה שלכם",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התשובה שלכם"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+        <p style="margin-top:18px;color:var(--text-dim)"><strong>שימו לב:</strong> בעמודים שכבר קיים FAQ (מסומנים בכתום) - אין להוסיף סכמה נוספת. הסכמה הקיימת מספיקה.</p>
+        <p style="margin-top:10px;color:var(--text-dim)"><strong>בדיקה:</strong> לאחר ההטמעה, בדקו ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal)">Google Rich Results Test</a> שהסכמה נקראת נכון.</p>
+
+        <p style="margin-top:20px;color:var(--text-dim)"><strong>למשתמשי WordPress / Elementor:</strong></p>
+        <ol>
+            <li>גשו לעמוד בעורך האתר</li>
+            <li>בתפריט Rank Math / Yoast → הגדרות מתקדמות → Schema</li>
+            <li>הדביקו את ה-JSON-LD בתיבת Custom Schema</li>
+            <li>לחלופין: הוסיפו בלוק HTML עם תגית script בתחתית או בסוף העמוד</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        נוצר באמצעות Claude AI | נדב דיגיטל | פברואר 2026
+    </div>
+</div>
+
+<script>
+function copySchema(btn) {
+    const id = btn.getAttribute('data-schema-id');
+    const pre = document.getElementById('schema-' + id);
+    const text = '<script type="application/ld+json">\n' + pre.textContent + '\n</' + 'script>';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ + JSON-LD | מכללת כרכור (BeSpirit) | ביקורת אורגנית</title>
+<style>
+:root {
+    --bg-dark: #0f0f23;
+    --bg-card: #1e1e3f;
+    --bg-card-hover: #2a2a5a;
+    --purple: #667eea;
+    --pink: #f093fb;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --teal: #4ecdc4;
+    --blue: #3498db;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --border: #333366;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 100%);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.metric-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+}
+.metric-value {
+    font-size: 2.6em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+}
+
+/* Navigation */
+.nav-section {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+}
+.nav-section h2 { margin-bottom: 16px; color: var(--purple); font-size: 1.3em; }
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--purple), #764ba2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.nav-link:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Client Section */
+.client-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.client-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.client-header h2 {
+    font-size: 1.6em;
+    margin: 0;
+}
+.client-domain {
+    font-size: 0.85em;
+    color: var(--teal);
+    background: rgba(78,205,196,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.cat-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+.client-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 16px 28px;
+    background: rgba(0,0,0,0.15);
+    font-size: 0.9em;
+}
+.client-stats span { color: var(--text-dim); }
+.client-stats strong { color: var(--text); }
+.client-body { padding: 20px 28px; }
+
+/* Skipped box */
+.skipped-box {
+    background: rgba(243,156,18,0.08);
+    border: 1px solid rgba(243,156,18,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+.skipped-box h3 { color: var(--orange); margin-bottom: 10px; font-size: 1em; }
+.skipped-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(243,156,18,0.15);
+    font-size: 0.9em;
+}
+.skipped-item:last-child { border-bottom: none; }
+.skipped-item a { color: var(--orange); text-decoration: none; }
+.skipped-item a:hover { text-decoration: underline; }
+.skipped-reason { color: var(--text-dim); font-size: 0.85em; margin-top: 2px; }
+
+/* Page block */
+.page-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+.page-block:last-child { border-bottom: none; }
+.page-title {
+    font-size: 1.15em;
+    color: var(--teal);
+    margin-bottom: 4px;
+}
+.page-url {
+    font-size: 0.8em;
+    margin-bottom: 16px;
+}
+.page-url a {
+    color: var(--text-dim);
+    text-decoration: none;
+    word-break: break-all;
+}
+.page-url a:hover { color: var(--purple); }
+
+/* FAQ cards */
+.faq-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-right: 3px solid var(--purple);
+}
+.faq-q {
+    font-weight: 700;
+    color: var(--pink);
+    margin-bottom: 6px;
+    font-size: 1em;
+}
+.faq-a {
+    color: #ccc;
+    font-size: 0.92em;
+    line-height: 1.65;
+}
+
+/* Schema details */
+.schema-wrapper { margin-top: 18px; }
+.schema-wrapper summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.2s;
+}
+.schema-wrapper summary:hover {
+    background: rgba(102,126,234,0.25);
+}
+.schema-wrapper summary::before { content: "\25B6"; font-size: 0.7em; transition: transform 0.2s; }
+.schema-wrapper[open] summary::before { transform: rotate(90deg); }
+.schema-code-wrap {
+    position: relative;
+    margin-top: 10px;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    z-index: 2;
+    transition: background 0.2s;
+}
+.copy-btn:hover { background: #764ba2; }
+.copy-btn.copied { background: var(--green); }
+pre.schema-code {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    padding-top: 45px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    white-space: pre;
+    direction: ltr;
+    text-align: left;
+}
+
+/* Instructions section */
+.instructions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+}
+.instructions h2 { color: var(--green); margin-bottom: 18px; font-size: 1.4em; }
+.instructions ol {
+    padding-right: 24px;
+    margin-bottom: 18px;
+}
+.instructions li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.instructions code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #a0d0a0;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.instructions pre {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 1.5em; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+    .client-header { padding: 18px; }
+    .client-body { padding: 16px; }
+    .client-stats { padding: 12px 18px; }
+    .nav-links { flex-direction: column; }
+    .metric-value { font-size: 2em; }
+}
+@media (max-width: 480px) {
+    .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric-card { padding: 16px 10px; }
+    .metric-value { font-size: 1.6em; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>תוכן FAQ + סכמות JSON-LD</h1>
+    <p>מכללת כרכור (BeSpirit) | bespirit.co.il</p>
+    <div class="badge">V5 - פברואר 2026 | נדב דיגיטל</div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--blue)">5</div>
+            <div class="metric-label">עמודים נבדקו</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--orange)">0</div>
+            <div class="metric-label">עמודים דולגו (FAQ קיים)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">5</div>
+            <div class="metric-label">עמודים עם FAQ חדש</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">37</div>
+            <div class="metric-label">סה"כ שאלות נוצרו</div>
+        </div>
+    </div>
+
+    <div class="client-section" id="bespirit">
+        <div class="client-header">
+            <h2>מכללת כרכור (BeSpirit)</h2>
+            <span class="client-domain">bespirit.co.il</span>
+            <span class="cat-badge" style="background:rgba(255,255,255,0.08);color:#9b59b6;border:1px solid #9b59b6">חינוך הוליסטי</span>
+        </div>
+        <div class="client-stats">
+            <span>עמודים נבדקו: <strong>5</strong></span>
+            <span>דולגו: <strong style="color:var(--orange)">0</strong></span>
+            <span>FAQ נוצר: <strong style="color:var(--green)">5</strong></span>
+            <span>סה"כ שאלות: <strong style="color:var(--green)">37</strong></span>
+        </div>
+        <div class="client-body">
+            <div class="page-block">
+                <div class="page-title">מכללת כרכור - יצירת קשר</div>
+                <div class="page-url"><a href="https://bespirit.co.il/contacts/" target="_blank">https://bespirit.co.il/contacts/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהן שעות הפעילות של מכללת כרכור?</div>
+                    <div class="faq-a">המכללה פעילה בימים א&#x27;-ה&#x27; בין השעות 09:00-17:00. ניתן להשאיר הודעה גם מחוץ לשעות הפעילות ונחזור אליכם בהקדם.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך אפשר להגיע למכללת כרכור?</div>
+                    <div class="faq-a">המכללה ממוקמת בכרכור ונגישה באמצעות תחבורה ציבורית וכביש 4. חניה חינם זמינה בשטח המכללה לסטודנטים ולמבקרים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לקבוע פגישת ייעוץ לפני ההרשמה?</div>
+                    <div class="faq-a">בהחלט. אנו מציעים פגישות ייעוץ אישיות ללא עלות, בהן תוכלו לקבל מידע מפורט על מסלולי הלימוד, להכיר את הקמפוס ולשאול שאלות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">באילו ערוצים ניתן ליצור קשר עם המכללה?</div>
+                    <div class="faq-a">ניתן ליצור קשר טלפונית, באמצעות טופס יצירת הקשר באתר, בדוא&quot;ל או דרך עמודי הסושיאל של המכללה. הצוות שלנו ישמח לענות על כל שאלה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן לוקח לקבל תשובה לפניות?</div>
+                    <div class="faq-a">אנו מתחייבים לחזור לכל פנייה תוך 24-48 שעות עסקיות. בתקופות עמוסות זמן התגובה עשוי להתארך מעט.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש אפשרות לסיור בקמפוס?</div>
+                    <div class="faq-a">כן, אנו מקיימים ימי פתוחים וסיורים מודרכים בקמפוס. ניתן לתאם סיור באמצעות יצירת קשר עם מזכירות המכללה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="bespirit-0">העתק</button>
+                        <pre class="schema-code" id="schema-bespirit-0">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהן שעות הפעילות של מכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה פעילה בימים א&#x27;-ה&#x27; בין השעות 09:00-17:00. ניתן להשאיר הודעה גם מחוץ לשעות הפעילות ונחזור אליכם בהקדם.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך אפשר להגיע למכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה ממוקמת בכרכור ונגישה באמצעות תחבורה ציבורית וכביש 4. חניה חינם זמינה בשטח המכללה לסטודנטים ולמבקרים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לקבוע פגישת ייעוץ לפני ההרשמה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בהחלט. אנו מציעים פגישות ייעוץ אישיות ללא עלות, בהן תוכלו לקבל מידע מפורט על מסלולי הלימוד, להכיר את הקמפוס ולשאול שאלות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;באילו ערוצים ניתן ליצור קשר עם המכללה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ניתן ליצור קשר טלפונית, באמצעות טופס יצירת הקשר באתר, בדוא\&quot;ל או דרך עמודי הסושיאל של המכללה. הצוות שלנו ישמח לענות על כל שאלה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן לוקח לקבל תשובה לפניות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אנו מתחייבים לחזור לכל פנייה תוך 24-48 שעות עסקיות. בתקופות עמוסות זמן התגובה עשוי להתארך מעט.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש אפשרות לסיור בקמפוס?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, אנו מקיימים ימי פתוחים וסיורים מודרכים בקמפוס. ניתן לתאם סיור באמצעות יצירת קשר עם מזכירות המכללה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">לימודי ריברסינג ותרפיית נשימה</div>
+                <div class="page-url"><a href="https://bespirit.co.il/courses/%D7%A8%D7%99%D7%91%D7%A8%D7%A1%D7%99%D7%A0%D7%92-%D7%95%D7%AA%D7%A8%D7%A4%D7%99%D7%99%D7%AA-%D7%A0%D7%A9%D7%99%D7%9E%D7%94/" target="_blank">https://bespirit.co.il/courses/%D7%A8%D7%99%D7%91%D7%A8%D7%A1%D7%99%D7%A0%D7%92-%D7%95%D7%AA%D7%A8%D7%A4%D7%99%D7%99%D7%AA-%D7%A0%D7%A9%D7%99%D7%9E%D7%94/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו ריברסינג ומה ההבדל בינו לבין תרפיית נשימה?</div>
+                    <div class="faq-a">ריברסינג היא שיטת נשימה מעגלית מתמשכת שמטרתה לשחרר חסימות רגשיות ופיזיות. תרפיית נשימה היא מונח רחב יותר הכולל מגוון טכניקות נשימה טיפוליות. בקורס נלמד את שתי הגישות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">למי מתאים קורס ריברסינג ותרפיית נשימה?</div>
+                    <div class="faq-a">הקורס מתאים לאנשי טיפול, מאמנים, יועצים, ולכל מי שמעוניין להעמיק בהכרת עצמו ולרכוש כלי טיפולי עוצמתי. אין צורך ברקע קודם בתחום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן נמשכים לימודי ריברסינג?</div>
+                    <div class="faq-a">משך הלימודים תלוי במסלול הנבחר. הקורס כולל מפגשים תיאורטיים ומעשיים לאורך מספר חודשים, הכוללים תרגול אישי והתנסות מודרכת.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מקבלים תעודה בסיום הקורס?</div>
+                    <div class="faq-a">כן, בוגרי הקורס מקבלים תעודת גמר מטעם מכללת כרכור המוכרת בתחום הרפואה המשלימה בישראל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש דרישות קדם ללימודי ריברסינג?</div>
+                    <div class="faq-a">אין דרישות קדם פורמליות. מומלץ להגיע עם פתיחות ללמידה חווייתית ונכונות לתהליך אישי. מתקיימת שיחת היכרות לפני תחילת הלימודים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מתנהל הלימוד המעשי בקורס?</div>
+                    <div class="faq-a">הלימוד המעשי כולל התנסות בטכניקות נשימה, עבודה בזוגות ובקבוצות, הדרכה אישית והתנסות בהנחיית מפגשים תחת פיקוח. הדגש הוא על רכישת מיומנויות מעשיות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לעבוד בתחום לאחר סיום הקורס?</div>
+                    <div class="faq-a">כן, בוגרי הקורס יכולים לעבוד כמטפלים עצמאיים בריברסינג ותרפיית נשימה, לשלב את הכלים בעבודתם הטיפולית הקיימת או להמשיך להתמחויות נוספות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם היתרונות של שיטת הריברסינג?</div>
+                    <div class="faq-a">הריברסינג מסייע בשחרור מתחים כרוניים, עיבוד טראומות, הפחתת חרדה, שיפור איכות השינה והגברת תחושת החיוניות. השיטה פועלת ברמה הפיזית, הרגשית והאנרגטית.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="bespirit-1">העתק</button>
+                        <pre class="schema-code" id="schema-bespirit-1">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו ריברסינג ומה ההבדל בינו לבין תרפיית נשימה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ריברסינג היא שיטת נשימה מעגלית מתמשכת שמטרתה לשחרר חסימות רגשיות ופיזיות. תרפיית נשימה היא מונח רחב יותר הכולל מגוון טכניקות נשימה טיפוליות. בקורס נלמד את שתי הגישות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;למי מתאים קורס ריברסינג ותרפיית נשימה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הקורס מתאים לאנשי טיפול, מאמנים, יועצים, ולכל מי שמעוניין להעמיק בהכרת עצמו ולרכוש כלי טיפולי עוצמתי. אין צורך ברקע קודם בתחום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן נמשכים לימודי ריברסינג?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משך הלימודים תלוי במסלול הנבחר. הקורס כולל מפגשים תיאורטיים ומעשיים לאורך מספר חודשים, הכוללים תרגול אישי והתנסות מודרכת.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מקבלים תעודה בסיום הקורס?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בוגרי הקורס מקבלים תעודת גמר מטעם מכללת כרכור המוכרת בתחום הרפואה המשלימה בישראל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש דרישות קדם ללימודי ריברסינג?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אין דרישות קדם פורמליות. מומלץ להגיע עם פתיחות ללמידה חווייתית ונכונות לתהליך אישי. מתקיימת שיחת היכרות לפני תחילת הלימודים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מתנהל הלימוד המעשי בקורס?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הלימוד המעשי כולל התנסות בטכניקות נשימה, עבודה בזוגות ובקבוצות, הדרכה אישית והתנסות בהנחיית מפגשים תחת פיקוח. הדגש הוא על רכישת מיומנויות מעשיות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לעבוד בתחום לאחר סיום הקורס?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בוגרי הקורס יכולים לעבוד כמטפלים עצמאיים בריברסינג ותרפיית נשימה, לשלב את הכלים בעבודתם הטיפולית הקיימת או להמשיך להתמחויות נוספות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם היתרונות של שיטת הריברסינג?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הריברסינג מסייע בשחרור מתחים כרוניים, עיבוד טראומות, הפחתת חרדה, שיפור איכות השינה והגברת תחושת החיוניות. השיטה פועלת ברמה הפיזית, הרגשית והאנרגטית.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">אודות מכללת כרכור</div>
+                <div class="page-url"><a href="https://bespirit.co.il/about/" target="_blank">https://bespirit.co.il/about/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מתי הוקמה מכללת כרכור ומה הניסיון שלה?</div>
+                    <div class="faq-a">מכללת כרכור פועלת מזה שנים רבות ונחשבת למוסד מוביל בישראל בתחום הרפואה המשלימה והטיפולים ההוליסטיים. המכללה הכשירה אלפי בוגרים שעובדים היום בתחום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהי הגישה החינוכית של מכללת כרכור?</div>
+                    <div class="faq-a">המכללה משלבת בין תיאוריה מעמיקה לבין תרגול מעשי אינטנסיבי. אנו מאמינים בלמידה חווייתית, בליווי אישי ובפיתוח מקצועי ואישי של כל סטודנט.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו תחומי לימוד מציעה המכללה?</div>
+                    <div class="faq-a">המכללה מציעה מגוון רחב של תכניות לימוד: נטורופתיה, תזונה הוליסטית, עיסוי רפואי, יוגה, פסיכותרפיה גופנית, ריברסינג ותרפיית נשימה, צמחי מרפא ועוד.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מי הם המרצים במכללת כרכור?</div>
+                    <div class="faq-a">צוות ההוראה כולל מטפלים ומרצים מנוסים בעלי הכשרה מקצועית וניסיון קליני עשיר. רבים מהם פעילים בתחום הטיפולי לצד ההוראה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם התעודות של המכללה מוכרות?</div>
+                    <div class="faq-a">תעודות המכללה מוכרות בתחום הרפואה המשלימה בישראל. בוגרים יכולים לעבוד כמטפלים עצמאיים, להצטרף לקליניקות או להמשיך ללימודים מתקדמים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו היתרון של לימודים במכללת כרכור?</div>
+                    <div class="faq-a">המכללה מציעה שילוב ייחודי של מסורת וחדשנות, כיתות קטנות המאפשרות תשומת לב אישית, סביבה תומכת ורשת בוגרים פעילה שתומכת בהתפתחות המקצועית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם המכללה מציעה לימודים גם למתחילים?</div>
+                    <div class="faq-a">כן, רוב התכניות מיועדות גם למתחילים ללא רקע קודם. ישנן גם תכניות המשך והתמחות למי שכבר פועל בתחום ומעוניין להרחיב את הידע והכלים שלו.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="bespirit-2">העתק</button>
+                        <pre class="schema-code" id="schema-bespirit-2">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי הוקמה מכללת כרכור ומה הניסיון שלה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מכללת כרכור פועלת מזה שנים רבות ונחשבת למוסד מוביל בישראל בתחום הרפואה המשלימה והטיפולים ההוליסטיים. המכללה הכשירה אלפי בוגרים שעובדים היום בתחום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי הגישה החינוכית של מכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה משלבת בין תיאוריה מעמיקה לבין תרגול מעשי אינטנסיבי. אנו מאמינים בלמידה חווייתית, בליווי אישי ובפיתוח מקצועי ואישי של כל סטודנט.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו תחומי לימוד מציעה המכללה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה מציעה מגוון רחב של תכניות לימוד: נטורופתיה, תזונה הוליסטית, עיסוי רפואי, יוגה, פסיכותרפיה גופנית, ריברסינג ותרפיית נשימה, צמחי מרפא ועוד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי הם המרצים במכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;צוות ההוראה כולל מטפלים ומרצים מנוסים בעלי הכשרה מקצועית וניסיון קליני עשיר. רבים מהם פעילים בתחום הטיפולי לצד ההוראה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם התעודות של המכללה מוכרות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תעודות המכללה מוכרות בתחום הרפואה המשלימה בישראל. בוגרים יכולים לעבוד כמטפלים עצמאיים, להצטרף לקליניקות או להמשיך ללימודים מתקדמים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו היתרון של לימודים במכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה מציעה שילוב ייחודי של מסורת וחדשנות, כיתות קטנות המאפשרות תשומת לב אישית, סביבה תומכת ורשת בוגרים פעילה שתומכת בהתפתחות המקצועית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם המכללה מציעה לימודים גם למתחילים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, רוב התכניות מיועדות גם למתחילים ללא רקע קודם. ישנן גם תכניות המשך והתמחות למי שכבר פועל בתחום ומעוניין להרחיב את הידע והכלים שלו.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">לימודי תזונה הוליסטית וקלינית</div>
+                <div class="page-url"><a href="https://bespirit.co.il/courses/nutrition_annual_course/" target="_blank">https://bespirit.co.il/courses/nutrition_annual_course/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין תזונה הוליסטית לדיאטנות קלינית?</div>
+                    <div class="faq-a">תזונה הוליסטית מתייחסת לאדם כמכלול - גוף, נפש וסביבה - ומשלבת גישות טבעיות ומסורתיות. דיאטנות קלינית מתמקדת בהיבטים הרפואיים והתזונתיים בלבד. הקורס שלנו משלב את שתי הגישות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן נמשכים לימודי התזונה במכללה?</div>
+                    <div class="faq-a">התכנית היא שנתית ומקיפה, וכוללת לימודים תיאורטיים, התנסות מעשית ועבודה עם מטופלים. משך הלימודים מאפשר רכישת ידע מעמיק וכלים מעשיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם צריך רקע קודם כדי ללמוד תזונה הוליסטית?</div>
+                    <div class="faq-a">לא נדרש רקע קודם בתזונה או במדעים. הקורס מתחיל מהיסודות ובונה את הידע באופן מדורג. נדרשים מוטיבציה גבוהה ועניין אמיתי בתחום הבריאות הטבעית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה לומדים בקורס תזונה הוליסטית?</div>
+                    <div class="faq-a">הקורס כולל: עקרונות תזונה טבעית, צמחי מרפא ותוספי תזונה, אבחון וטיפול במצבים שונים, תכנון תפריטים, ליווי מטופלים ופיתוח קריירה בתחום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לעבוד בתחום לאחר סיום הלימודים?</div>
+                    <div class="faq-a">כן, בוגרי הקורס יכולים לעבוד כיועצי תזונה הוליסטית, לפתוח קליניקה פרטית, לעבוד במרכזי בריאות או לשלב את הידע במקצועות טיפוליים אחרים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם התעודה מוכרת?</div>
+                    <div class="faq-a">התעודה מוכרת בתחום הרפואה המשלימה בישראל ומאפשרת לעבוד כיועץ תזונה הוליסטית. הקורס עומד בסטנדרטים המקצועיים המקובלים בתחום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מתנהל הלימוד המעשי?</div>
+                    <div class="faq-a">הלימוד המעשי כולל ניתוח מקרים, תרגול אבחון והמלצות, עבודה עם מטופלים אמיתיים תחת הנחיה, והכנת תוכניות תזונה מותאמות אישית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם הלימודים מתאימים לעבודה במקביל?</div>
+                    <div class="faq-a">כן, מערכת השעות מותאמת לאנשים עובדים. הלימודים מתקיימים בימים ובשעות קבועים, ומאפשרים שילוב עם עבודה או משפחה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="bespirit-3">העתק</button>
+                        <pre class="schema-code" id="schema-bespirit-3">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין תזונה הוליסטית לדיאטנות קלינית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תזונה הוליסטית מתייחסת לאדם כמכלול - גוף, נפש וסביבה - ומשלבת גישות טבעיות ומסורתיות. דיאטנות קלינית מתמקדת בהיבטים הרפואיים והתזונתיים בלבד. הקורס שלנו משלב את שתי הגישות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן נמשכים לימודי התזונה במכללה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;התכנית היא שנתית ומקיפה, וכוללת לימודים תיאורטיים, התנסות מעשית ועבודה עם מטופלים. משך הלימודים מאפשר רכישת ידע מעמיק וכלים מעשיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך רקע קודם כדי ללמוד תזונה הוליסטית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא נדרש רקע קודם בתזונה או במדעים. הקורס מתחיל מהיסודות ובונה את הידע באופן מדורג. נדרשים מוטיבציה גבוהה ועניין אמיתי בתחום הבריאות הטבעית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה לומדים בקורס תזונה הוליסטית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הקורס כולל: עקרונות תזונה טבעית, צמחי מרפא ותוספי תזונה, אבחון וטיפול במצבים שונים, תכנון תפריטים, ליווי מטופלים ופיתוח קריירה בתחום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לעבוד בתחום לאחר סיום הלימודים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בוגרי הקורס יכולים לעבוד כיועצי תזונה הוליסטית, לפתוח קליניקה פרטית, לעבוד במרכזי בריאות או לשלב את הידע במקצועות טיפוליים אחרים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם התעודה מוכרת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;התעודה מוכרת בתחום הרפואה המשלימה בישראל ומאפשרת לעבוד כיועץ תזונה הוליסטית. הקורס עומד בסטנדרטים המקצועיים המקובלים בתחום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מתנהל הלימוד המעשי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הלימוד המעשי כולל ניתוח מקרים, תרגול אבחון והמלצות, עבודה עם מטופלים אמיתיים תחת הנחיה, והכנת תוכניות תזונה מותאמות אישית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם הלימודים מתאימים לעבודה במקביל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מערכת השעות מותאמת לאנשים עובדים. הלימודים מתקיימים בימים ובשעות קבועים, ומאפשרים שילוב עם עבודה או משפחה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">כל הקורסים במכללת כרכור</div>
+                <div class="page-url"><a href="https://bespirit.co.il/allplans/" target="_blank">https://bespirit.co.il/allplans/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו סוגי קורסים מציעה מכללת כרכור?</div>
+                    <div class="faq-a">המכללה מציעה מגוון רחב של קורסים בתחום הרפואה המשלימה: נטורופתיה, תזונה הוליסטית, עיסוי רפואי, יוגה, פסיכותרפיה גופנית, ריברסינג, צמחי מרפא ועוד.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש קורסים קצרים או רק תכניות ארוכות?</div>
+                    <div class="faq-a">המכללה מציעה גם תכניות לימוד מקיפות לאורך שנה או יותר, וגם קורסים קצרים וסדנאות למי שמעוניין להתנסות או להרחיב ידע בתחום ספציפי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך בוחרים את הקורס המתאים?</div>
+                    <div class="faq-a">מומלץ להתייעץ עם צוות הייעוץ של המכללה שישמח לסייע בבחירה בהתאם לתחומי העניין, הזמן הפנוי והמטרות המקצועיות שלכם. ניתן גם להשתתף ביום פתוח.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לשלב בין מספר קורסים?</div>
+                    <div class="faq-a">כן, סטודנטים רבים משלבים בין מספר תחומי לימוד כדי לבנות מקצוע ייחודי. המכללה מעודדת שילובים ומציעה מסלולים משולבים במחירים מועדפים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהן אפשרויות התשלום ללימודים?</div>
+                    <div class="faq-a">המכללה מציעה מגוון אפשרויות תשלום כולל פריסה לתשלומים. לפרטים מדויקים על עלויות ואפשרויות מימון מומלץ לפנות למזכירות המכללה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מתי נפתחות מחזורים חדשים?</div>
+                    <div class="faq-a">מחזורים חדשים נפתחים מספר פעמים בשנה, בהתאם לקורס הספציפי. מומלץ להירשם מוקדם כדי להבטיח מקום, שכן הכיתות מוגבלות בגודלן.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש הכרה הדדית בין הקורסים?</div>
+                    <div class="faq-a">כן, חלק מהקורסים כוללים קרדיטציה הדדית. למשל, לימודים בנטורופתיה כוללים בסיס בתזונה שמוכר גם במסלולי המשך. פרטים נוספים זמינים בעמוד כל קורס.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש ימי פתוחים או שיעורי ניסיון?</div>
+                    <div class="faq-a">כן, המכללה מקיימת ימי פתוחים תקופתיים בהם ניתן להכיר את הקמפוס, לפגוש מרצים ולקבל מידע על הקורסים השונים. ניתן גם לתאם ביקור אישי.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="bespirit-4">העתק</button>
+                        <pre class="schema-code" id="schema-bespirit-4">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו סוגי קורסים מציעה מכללת כרכור?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה מציעה מגוון רחב של קורסים בתחום הרפואה המשלימה: נטורופתיה, תזונה הוליסטית, עיסוי רפואי, יוגה, פסיכותרפיה גופנית, ריברסינג, צמחי מרפא ועוד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש קורסים קצרים או רק תכניות ארוכות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה מציעה גם תכניות לימוד מקיפות לאורך שנה או יותר, וגם קורסים קצרים וסדנאות למי שמעוניין להתנסות או להרחיב ידע בתחום ספציפי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך בוחרים את הקורס המתאים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מומלץ להתייעץ עם צוות הייעוץ של המכללה שישמח לסייע בבחירה בהתאם לתחומי העניין, הזמן הפנוי והמטרות המקצועיות שלכם. ניתן גם להשתתף ביום פתוח.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לשלב בין מספר קורסים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, סטודנטים רבים משלבים בין מספר תחומי לימוד כדי לבנות מקצוע ייחודי. המכללה מעודדת שילובים ומציעה מסלולים משולבים במחירים מועדפים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהן אפשרויות התשלום ללימודים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המכללה מציעה מגוון אפשרויות תשלום כולל פריסה לתשלומים. לפרטים מדויקים על עלויות ואפשרויות מימון מומלץ לפנות למזכירות המכללה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי נפתחות מחזורים חדשים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מחזורים חדשים נפתחים מספר פעמים בשנה, בהתאם לקורס הספציפי. מומלץ להירשם מוקדם כדי להבטיח מקום, שכן הכיתות מוגבלות בגודלן.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש הכרה הדדית בין הקורסים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, חלק מהקורסים כוללים קרדיטציה הדדית. למשל, לימודים בנטורופתיה כוללים בסיס בתזונה שמוכר גם במסלולי המשך. פרטים נוספים זמינים בעמוד כל קורס.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש ימי פתוחים או שיעורי ניסיון?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, המכללה מקיימת ימי פתוחים תקופתיים בהם ניתן להכיר את הקמפוס, לפגוש מרצים ולקבל מידע על הקורסים השונים. ניתן גם לתאם ביקור אישי.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h2>הוראות הטמעה</h2>
+        <p style="margin-bottom:18px;color:var(--text-dim)">כיצד להוסיף את סכמת ה-FAQPage לאתר:</p>
+        <ol>
+            <li>לחצו על כפתור <strong>העתק</strong> ליד הסכמה הרצויה</li>
+            <li>פתחו את עורך העמוד במערכת ניהול התוכן (WordPress, Elementor וכו')</li>
+            <li>הוסיפו את הקוד בתוך תגית <code>&lt;head&gt;</code> של העמוד, לפני תגית <code>&lt;/head&gt;</code></li>
+            <li>שמרו ופרסמו את העמוד</li>
+        </ol>
+        <p style="margin-bottom:10px"><strong>דוגמה להטמעה:</strong></p>
+        <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "השאלה שלכם",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התשובה שלכם"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+        <p style="margin-top:18px;color:var(--text-dim)"><strong>שימו לב:</strong> בעמודים שכבר קיים FAQ (מסומנים בכתום) - אין להוסיף סכמה נוספת. הסכמה הקיימת מספיקה.</p>
+        <p style="margin-top:10px;color:var(--text-dim)"><strong>בדיקה:</strong> לאחר ההטמעה, בדקו ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal)">Google Rich Results Test</a> שהסכמה נקראת נכון.</p>
+
+        <p style="margin-top:20px;color:var(--text-dim)"><strong>למשתמשי WordPress / Elementor:</strong></p>
+        <ol>
+            <li>גשו לעמוד בעורך האתר</li>
+            <li>בתפריט Rank Math / Yoast → הגדרות מתקדמות → Schema</li>
+            <li>הדביקו את ה-JSON-LD בתיבת Custom Schema</li>
+            <li>לחלופין: הוסיפו בלוק HTML עם תגית script בתחתית או בסוף העמוד</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        נוצר באמצעות Claude AI | נדב דיגיטל | פברואר 2026
+    </div>
+</div>
+
+<script>
+function copySchema(btn) {
+    const id = btn.getAttribute('data-schema-id');
+    const pre = document.getElementById('schema-' + id);
+    const text = '<script type="application/ld+json">\n' + pre.textContent + '\n</' + 'script>';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

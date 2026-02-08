@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ + JSON-LD | מכללת אולטימה | ביקורת אורגנית</title>
+<style>
+:root {
+    --bg-dark: #0f0f23;
+    --bg-card: #1e1e3f;
+    --bg-card-hover: #2a2a5a;
+    --purple: #667eea;
+    --pink: #f093fb;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --teal: #4ecdc4;
+    --blue: #3498db;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --border: #333366;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 100%);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.metric-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+}
+.metric-value {
+    font-size: 2.6em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+}
+
+/* Navigation */
+.nav-section {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+}
+.nav-section h2 { margin-bottom: 16px; color: var(--purple); font-size: 1.3em; }
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--purple), #764ba2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.nav-link:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Client Section */
+.client-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.client-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.client-header h2 {
+    font-size: 1.6em;
+    margin: 0;
+}
+.client-domain {
+    font-size: 0.85em;
+    color: var(--teal);
+    background: rgba(78,205,196,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.cat-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+.client-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 16px 28px;
+    background: rgba(0,0,0,0.15);
+    font-size: 0.9em;
+}
+.client-stats span { color: var(--text-dim); }
+.client-stats strong { color: var(--text); }
+.client-body { padding: 20px 28px; }
+
+/* Skipped box */
+.skipped-box {
+    background: rgba(243,156,18,0.08);
+    border: 1px solid rgba(243,156,18,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+.skipped-box h3 { color: var(--orange); margin-bottom: 10px; font-size: 1em; }
+.skipped-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(243,156,18,0.15);
+    font-size: 0.9em;
+}
+.skipped-item:last-child { border-bottom: none; }
+.skipped-item a { color: var(--orange); text-decoration: none; }
+.skipped-item a:hover { text-decoration: underline; }
+.skipped-reason { color: var(--text-dim); font-size: 0.85em; margin-top: 2px; }
+
+/* Page block */
+.page-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+.page-block:last-child { border-bottom: none; }
+.page-title {
+    font-size: 1.15em;
+    color: var(--teal);
+    margin-bottom: 4px;
+}
+.page-url {
+    font-size: 0.8em;
+    margin-bottom: 16px;
+}
+.page-url a {
+    color: var(--text-dim);
+    text-decoration: none;
+    word-break: break-all;
+}
+.page-url a:hover { color: var(--purple); }
+
+/* FAQ cards */
+.faq-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-right: 3px solid var(--purple);
+}
+.faq-q {
+    font-weight: 700;
+    color: var(--pink);
+    margin-bottom: 6px;
+    font-size: 1em;
+}
+.faq-a {
+    color: #ccc;
+    font-size: 0.92em;
+    line-height: 1.65;
+}
+
+/* Schema details */
+.schema-wrapper { margin-top: 18px; }
+.schema-wrapper summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.2s;
+}
+.schema-wrapper summary:hover {
+    background: rgba(102,126,234,0.25);
+}
+.schema-wrapper summary::before { content: "\25B6"; font-size: 0.7em; transition: transform 0.2s; }
+.schema-wrapper[open] summary::before { transform: rotate(90deg); }
+.schema-code-wrap {
+    position: relative;
+    margin-top: 10px;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    z-index: 2;
+    transition: background 0.2s;
+}
+.copy-btn:hover { background: #764ba2; }
+.copy-btn.copied { background: var(--green); }
+pre.schema-code {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    padding-top: 45px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    white-space: pre;
+    direction: ltr;
+    text-align: left;
+}
+
+/* Instructions section */
+.instructions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+}
+.instructions h2 { color: var(--green); margin-bottom: 18px; font-size: 1.4em; }
+.instructions ol {
+    padding-right: 24px;
+    margin-bottom: 18px;
+}
+.instructions li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.instructions code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #a0d0a0;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.instructions pre {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 1.5em; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+    .client-header { padding: 18px; }
+    .client-body { padding: 16px; }
+    .client-stats { padding: 12px 18px; }
+    .nav-links { flex-direction: column; }
+    .metric-value { font-size: 2em; }
+}
+@media (max-width: 480px) {
+    .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric-card { padding: 16px 10px; }
+    .metric-value { font-size: 1.6em; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>תוכן FAQ + סכמות JSON-LD</h1>
+    <p>מכללת אולטימה | ultimaschool.co.il</p>
+    <div class="badge">V5 - פברואר 2026 | נדב דיגיטל</div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--blue)">8</div>
+            <div class="metric-label">עמודים נבדקו</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--orange)">0</div>
+            <div class="metric-label">עמודים דולגו (FAQ קיים)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">8</div>
+            <div class="metric-label">עמודים עם FAQ חדש</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">55</div>
+            <div class="metric-label">סה"כ שאלות נוצרו</div>
+        </div>
+    </div>
+
+    <div class="client-section" id="ultimaschool">
+        <div class="client-header">
+            <h2>מכללת אולטימה</h2>
+            <span class="client-domain">ultimaschool.co.il</span>
+            <span class="cat-badge" style="background:rgba(255,255,255,0.08);color:#4ecdc4;border:1px solid #4ecdc4">לימודי עיצוב פנים</span>
+        </div>
+        <div class="client-stats">
+            <span>עמודים נבדקו: <strong>8</strong></span>
+            <span>דולגו: <strong style="color:var(--orange)">0</strong></span>
+            <span>FAQ נוצר: <strong style="color:var(--green)">8</strong></span>
+            <span>סה"כ שאלות: <strong style="color:var(--green)">55</strong></span>
+        </div>
+        <div class="client-body">
+            <div class="page-block">
+                <div class="page-title">מכללת אולטימה - עיצוב פנים</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/" target="_blank">https://ultimaschool.co.il/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה לומדים בקורס עיצוב פנים באולטימה?</div>
+                    <div class="faq-a">בקורס עיצוב פנים במכללת אולטימה לומדים תכנון מרחבי, שרטוט טכני וממוחשב, בחירת חומרים וגימורים, תאורה, עיצוב ריהוט, סגנונות עיצוב שונים, וליווי פרויקט מקצועי מההתחלה ועד הסוף.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן נמשכים הלימודים באולטימה?</div>
+                    <div class="faq-a">משך הלימודים משתנה בהתאם למסלול הנבחר. קורס עיצוב פנים מקצועי נמשך כשנה וחצי עד שנתיים, וקורס הום סטיילינג קצר יותר ונמשך כמה חודשים. ניתן לבחור בין מסלולי בוקר, ערב ואונליין.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מקבלים תעודה בסיום הלימודים?</div>
+                    <div class="faq-a">כן, בוגרי מכללת אולטימה מקבלים תעודת מעצב פנים מוסמך המוכרת בענף. התעודה מאפשרת לעבוד כמעצב פנים עצמאי, להצטרף לסטודיו קיים או להמשיך להתמחות בתחומי נישה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם צריך רקע אמנותי קודם כדי ללמוד עיצוב פנים?</div>
+                    <div class="faq-a">לא נדרש רקע אמנותי קודם. הקורסים במכללת אולטימה מתחילים מהבסיס ומלמדים את כל הכלים הנדרשים. חשוב יותר להגיע עם מוטיבציה, יצירתיות וחשיבה מרחבית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין עיצוב פנים להום סטיילינג?</div>
+                    <div class="faq-a">עיצוב פנים עוסק בתכנון מקיף של המרחב כולל שינויים מבניים, תכנון תאורה ואינסטלציה. הום סטיילינג מתמקד בעיצוב הוויזואלי והאסתטי של חלל קיים - בחירת ריהוט, אביזרים, צבעים וטקסטורות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איפה נמצאת מכללת אולטימה?</div>
+                    <div class="faq-a">מכללת אולטימה ממוקמת במרכז הבנייה הישראלי, מיקום מרכזי הנגיש מכל רחבי הארץ. בנוסף, המכללה מציעה אפשרות ללימודים מרחוק בפורמט היברידי המשלב מפגשים פרונטליים ולימודים אונליין.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לעבוד במקביל ללימודים?</div>
+                    <div class="faq-a">כן, מכללת אולטימה מציעה מסלולי לימוד גמישים המתאימים לעובדים. ישנם מסלולי ערב ומסלולים היברידיים המאפשרים שילוב בין עבודה ולימודים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה אפשרויות התעסוקה לאחר סיום הלימודים?</div>
+                    <div class="faq-a">בוגרי עיצוב פנים יכולים לעבוד כמעצבי פנים עצמאיים, להצטרף לסטודיו לעיצוב, לעבוד בחברות נדל&quot;ן ובנייה, בחנויות ריהוט ועיצוב, או להתמחות בתחומי נישה כמו עיצוב משרדים, חנויות או מלונות.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-0">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-0">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה לומדים בקורס עיצוב פנים באולטימה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בקורס עיצוב פנים במכללת אולטימה לומדים תכנון מרחבי, שרטוט טכני וממוחשב, בחירת חומרים וגימורים, תאורה, עיצוב ריהוט, סגנונות עיצוב שונים, וליווי פרויקט מקצועי מההתחלה ועד הסוף.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן נמשכים הלימודים באולטימה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משך הלימודים משתנה בהתאם למסלול הנבחר. קורס עיצוב פנים מקצועי נמשך כשנה וחצי עד שנתיים, וקורס הום סטיילינג קצר יותר ונמשך כמה חודשים. ניתן לבחור בין מסלולי בוקר, ערב ואונליין.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מקבלים תעודה בסיום הלימודים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בוגרי מכללת אולטימה מקבלים תעודת מעצב פנים מוסמך המוכרת בענף. התעודה מאפשרת לעבוד כמעצב פנים עצמאי, להצטרף לסטודיו קיים או להמשיך להתמחות בתחומי נישה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך רקע אמנותי קודם כדי ללמוד עיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא נדרש רקע אמנותי קודם. הקורסים במכללת אולטימה מתחילים מהבסיס ומלמדים את כל הכלים הנדרשים. חשוב יותר להגיע עם מוטיבציה, יצירתיות וחשיבה מרחבית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין עיצוב פנים להום סטיילינג?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עיצוב פנים עוסק בתכנון מקיף של המרחב כולל שינויים מבניים, תכנון תאורה ואינסטלציה. הום סטיילינג מתמקד בעיצוב הוויזואלי והאסתטי של חלל קיים - בחירת ריהוט, אביזרים, צבעים וטקסטורות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איפה נמצאת מכללת אולטימה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מכללת אולטימה ממוקמת במרכז הבנייה הישראלי, מיקום מרכזי הנגיש מכל רחבי הארץ. בנוסף, המכללה מציעה אפשרות ללימודים מרחוק בפורמט היברידי המשלב מפגשים פרונטליים ולימודים אונליין.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לעבוד במקביל ללימודים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מכללת אולטימה מציעה מסלולי לימוד גמישים המתאימים לעובדים. ישנם מסלולי ערב ומסלולים היברידיים המאפשרים שילוב בין עבודה ולימודים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה אפשרויות התעסוקה לאחר סיום הלימודים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בוגרי עיצוב פנים יכולים לעבוד כמעצבי פנים עצמאיים, להצטרף לסטודיו לעיצוב, לעבוד בחברות נדל\&quot;ן ובנייה, בחנויות ריהוט ועיצוב, או להתמחות בתחומי נישה כמו עיצוב משרדים, חנויות או מלונות.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">מרכז הבנייה הישראלי</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/%D7%90%D7%95%D7%93%D7%95%D7%AA-%D7%9E%D7%A8%D7%9B%D7%96-%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94/" target="_blank">https://ultimaschool.co.il/%D7%90%D7%95%D7%93%D7%95%D7%AA-%D7%9E%D7%A8%D7%9B%D7%96-%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו מרכז הבנייה הישראלי?</div>
+                    <div class="faq-a">מרכז הבנייה הישראלי הוא מתחם מקצועי המרכז את כל עולם הבנייה והעיצוב תחת קורת גג אחת. במתחם פועלים אולמות תצוגה של חברות מובילות, מכללת אולטימה לעיצוב פנים, וחללי אירועים מקצועיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה הקשר בין מכללת אולטימה למרכז הבנייה?</div>
+                    <div class="faq-a">מכללת אולטימה פועלת בתוך מרכז הבנייה הישראלי, מה שמאפשר לסטודנטים חשיפה ישירה לחומרים, ספקים וטרנדים עדכניים בתעשייה. הקרבה לאולמות התצוגה מעשירה את חווית הלמידה ומספקת השראה מתמדת.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לבקר במרכז הבנייה?</div>
+                    <div class="faq-a">כן, מרכז הבנייה פתוח למבקרים. ניתן לסייר באולמות התצוגה, להתרשם מהמוצרים והחומרים, ולקבל מידע על הקורסים במכללת אולטימה. מומלץ לתאם ביקור מראש.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו מותגים מוצגים במרכז הבנייה?</div>
+                    <div class="faq-a">במרכז הבנייה מוצגים מותגים מובילים בתחומי הריצוף, הקרמיקה, חדרי האמבטיה, המטבחים, התאורה והריהוט. האולמות מציגים את החידושים והטרנדים העדכניים בעולם העיצוב.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש במתחם חניה?</div>
+                    <div class="faq-a">כן, מרכז הבנייה מציע חניה נוחה למבקרים ולסטודנטים. המתחם נגיש ברכב פרטי ובתחבורה ציבורית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה היתרון ללמוד במיקום כזה?</div>
+                    <div class="faq-a">הלימודים בלב מרכז הבנייה מאפשרים לסטודנטים להכיר מקרוב חומרים ומוצרים, ליצור קשרים עם ספקים ואנשי מקצוע, ולהתעדכן בזמן אמת בחידושים בתעשייה. זהו יתרון משמעותי לקראת הקריירה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מתקיימים אירועים מקצועיים במרכז?</div>
+                    <div class="faq-a">כן, במרכז הבנייה מתקיימים באופן קבוע אירועים מקצועיים, הרצאות, השקות מוצרים וכנסים בנושאי עיצוב ובנייה. סטודנטים ובוגרי אולטימה מוזמנים להשתתף ולהתעדכן.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-1">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-1">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו מרכז הבנייה הישראלי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מרכז הבנייה הישראלי הוא מתחם מקצועי המרכז את כל עולם הבנייה והעיצוב תחת קורת גג אחת. במתחם פועלים אולמות תצוגה של חברות מובילות, מכללת אולטימה לעיצוב פנים, וחללי אירועים מקצועיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה הקשר בין מכללת אולטימה למרכז הבנייה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מכללת אולטימה פועלת בתוך מרכז הבנייה הישראלי, מה שמאפשר לסטודנטים חשיפה ישירה לחומרים, ספקים וטרנדים עדכניים בתעשייה. הקרבה לאולמות התצוגה מעשירה את חווית הלמידה ומספקת השראה מתמדת.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לבקר במרכז הבנייה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מרכז הבנייה פתוח למבקרים. ניתן לסייר באולמות התצוגה, להתרשם מהמוצרים והחומרים, ולקבל מידע על הקורסים במכללת אולטימה. מומלץ לתאם ביקור מראש.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו מותגים מוצגים במרכז הבנייה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;במרכז הבנייה מוצגים מותגים מובילים בתחומי הריצוף, הקרמיקה, חדרי האמבטיה, המטבחים, התאורה והריהוט. האולמות מציגים את החידושים והטרנדים העדכניים בעולם העיצוב.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש במתחם חניה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מרכז הבנייה מציע חניה נוחה למבקרים ולסטודנטים. המתחם נגיש ברכב פרטי ובתחבורה ציבורית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה היתרון ללמוד במיקום כזה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הלימודים בלב מרכז הבנייה מאפשרים לסטודנטים להכיר מקרוב חומרים ומוצרים, ליצור קשרים עם ספקים ואנשי מקצוע, ולהתעדכן בזמן אמת בחידושים בתעשייה. זהו יתרון משמעותי לקראת הקריירה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מתקיימים אירועים מקצועיים במרכז?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, במרכז הבנייה מתקיימים באופן קבוע אירועים מקצועיים, הרצאות, השקות מוצרים וכנסים בנושאי עיצוב ובנייה. סטודנטים ובוגרי אולטימה מוזמנים להשתתף ולהתעדכן.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">עלות לימודי עיצוב פנים</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%9B%D7%9E%D7%94-%D7%A2%D7%95%D7%9C%D7%94-%D7%A7%D7%95%D7%A8%D7%A1-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/" target="_blank">https://ultimaschool.co.il/magazine/%D7%9B%D7%9E%D7%94-%D7%A2%D7%95%D7%9C%D7%94-%D7%A7%D7%95%D7%A8%D7%A1-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">ממה מורכבת עלות קורס עיצוב פנים?</div>
+                    <div class="faq-a">עלות הקורס כוללת שכר לימוד, חומרי לימוד, גישה לתוכנות מקצועיות, ליווי פרויקט גמר, ותעודת הסמכה. חלק מהמוסדות גובים תשלום נפרד על ציוד או חומרים נוספים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש אפשרות לתשלומים?</div>
+                    <div class="faq-a">כן, רוב המוסדות מציעים אפשרות לפריסת תשלומים נוחה. ניתן לשלם בתשלומים חודשיים או בהסדרי מימון שונים. מומלץ לברר את האפשרויות בעת ההרשמה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם קיימות מלגות ללימודי עיצוב פנים?</div>
+                    <div class="faq-a">ישנם מוסדות המציעים מלגות הצטיינות או מלגות סיוע. כמו כן, קיימים קרנות הלוואה ומענקים ממשרד העבודה לזכאים. כדאי לבדוק את הזכאות מול הגורמים הרלוונטיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בעלות בין קורס קצר לקורס מקיף?</div>
+                    <div class="faq-a">קורסים קצרים כמו הום סטיילינג עולים פחות ונמשכים מספר חודשים. קורס עיצוב פנים מקיף יקר יותר אך מעניק הכשרה מלאה ותעודה המוכרת בתעשייה. ההשקעה הגדולה יותר מתבטאת בכלים מקצועיים רחבים יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם העלות כוללת את תוכנות העיצוב?</div>
+                    <div class="faq-a">ברוב הקורסים הגישה לתוכנות העיצוב כלולה במחיר הלימודים במהלך תקופת הקורס. לאחר סיום הלימודים, הסטודנטים צריכים לרכוש רישיונות עצמאיים או להירשם למנויים מקצועיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם כדאי להשקיע בקורס יקר יותר?</div>
+                    <div class="faq-a">איכות ההכשרה חשובה לא פחות מהמחיר. קורס איכותי עם מרצים מנוסים, פרויקטים מעשיים וקשרים בתעשייה יכול להחזיר את ההשקעה במהירות. מומלץ להשוות תכנים, משך לימודים ומוניטין המוסד.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לקבל החזר מהמעסיק?</div>
+                    <div class="faq-a">חלק מהמעסיקים מממנים או משתתפים בעלות לימודי העובדים לצורך התפתחות מקצועית. כדאי לבדוק מול המעסיק או מחלקת משאבי אנוש אם קיימת אפשרות כזו.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-2">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-2">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;ממה מורכבת עלות קורס עיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עלות הקורס כוללת שכר לימוד, חומרי לימוד, גישה לתוכנות מקצועיות, ליווי פרויקט גמר, ותעודת הסמכה. חלק מהמוסדות גובים תשלום נפרד על ציוד או חומרים נוספים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש אפשרות לתשלומים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, רוב המוסדות מציעים אפשרות לפריסת תשלומים נוחה. ניתן לשלם בתשלומים חודשיים או בהסדרי מימון שונים. מומלץ לברר את האפשרויות בעת ההרשמה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם קיימות מלגות ללימודי עיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ישנם מוסדות המציעים מלגות הצטיינות או מלגות סיוע. כמו כן, קיימים קרנות הלוואה ומענקים ממשרד העבודה לזכאים. כדאי לבדוק את הזכאות מול הגורמים הרלוונטיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בעלות בין קורס קצר לקורס מקיף?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;קורסים קצרים כמו הום סטיילינג עולים פחות ונמשכים מספר חודשים. קורס עיצוב פנים מקיף יקר יותר אך מעניק הכשרה מלאה ותעודה המוכרת בתעשייה. ההשקעה הגדולה יותר מתבטאת בכלים מקצועיים רחבים יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם העלות כוללת את תוכנות העיצוב?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ברוב הקורסים הגישה לתוכנות העיצוב כלולה במחיר הלימודים במהלך תקופת הקורס. לאחר סיום הלימודים, הסטודנטים צריכים לרכוש רישיונות עצמאיים או להירשם למנויים מקצועיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם כדאי להשקיע בקורס יקר יותר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;איכות ההכשרה חשובה לא פחות מהמחיר. קורס איכותי עם מרצים מנוסים, פרויקטים מעשיים וקשרים בתעשייה יכול להחזיר את ההשקעה במהירות. מומלץ להשוות תכנים, משך לימודים ומוניטין המוסד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לקבל החזר מהמעסיק?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;חלק מהמעסיקים מממנים או משתתפים בעלות לימודי העובדים לצורך התפתחות מקצועית. כדאי לבדוק מול המעסיק או מחלקת משאבי אנוש אם קיימת אפשרות כזו.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">טרנדים בעיצוב פנים - נחושת</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%A0%D7%97%D7%95%D7%A9%D7%AA-%D7%A0%D7%95%D7%A6%D7%A6%D7%94-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%95%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94-%D7%A6%D7%95-%D7%94%D7%A9%D7%A2%D7%94-%D7%9B%D7%AA/" target="_blank">https://ultimaschool.co.il/magazine/%D7%A0%D7%97%D7%95%D7%A9%D7%AA-%D7%A0%D7%95%D7%A6%D7%A6%D7%94-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%95%D7%A7%D7%95%D7%A8%D7%95%D7%A0%D7%94-%D7%A6%D7%95-%D7%94%D7%A9%D7%A2%D7%94-%D7%9B%D7%AA/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">למה נחושת חוזרת לאופנה בעיצוב פנים?</div>
+                    <div class="faq-a">נחושת חוזרת לאופנה בזכות הגוון החם והייחודי שלה, שמוסיף עומק ואלגנטיות לחללים. בנוסף, נחושת בעלת תכונות אנטיבקטריאליות טבעיות, מה שהפך אותה לבחירה פופולרית במיוחד בשנים האחרונות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">באילו אלמנטים ניתן לשלב נחושת בעיצוב הבית?</div>
+                    <div class="faq-a">נחושת ניתנת לשילוב בברזים ואביזרי אמבטיה, גופי תאורה, ידיות ריהוט ודלתות, כלי מטבח דקורטיביים, מסגרות לתמונות ומראות, ופרטי ריהוט כמו רגלי שולחן או מדפים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך לתחזק משטחים ואביזרים מנחושת?</div>
+                    <div class="faq-a">נחושת מפתחת פטינה טבעית עם הזמן. אם רוצים לשמור על הברק המקורי, יש לנקות עם תכשיר ייעודי לנחושת. רבים דווקא מעדיפים את המראה המיושן שנוצר באופן טבעי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">עם אילו צבעים נחושת משתלבת היטב?</div>
+                    <div class="faq-a">נחושת משתלבת יפה עם גווני כחול כהה וירוק אזמרגד, עם לבן ושחור לניגודיות אלגנטית, עם גווני אדמה חומים ובז&#x27;, ועם אפורים עמוקים. השילוב יוצר אווירה חמה ומתוחכמת.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם נחושת מתאימה לכל סגנון עיצובי?</div>
+                    <div class="faq-a">נחושת היא חומר רב-תכליתי המתאים לסגנונות מגוונים - מתעשייתי ולופט, דרך כפרי וויינטג&#x27;, ועד מודרני ומינימליסטי. הכל תלוי בכמות ובאופן השילוב שלה בחלל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם החסרונות של שימוש בנחושת בעיצוב?</div>
+                    <div class="faq-a">נחושת דורשת תחזוקה שוטפת לשמירת הברק, יכולה להשאיר כתמים ירוקים על משטחים רטובים, ומחירה גבוה יחסית. יש לקחת בחשבון גורמים אלה בעת בחירת אביזרים ומשטחים.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (6 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-3">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-3">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;למה נחושת חוזרת לאופנה בעיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת חוזרת לאופנה בזכות הגוון החם והייחודי שלה, שמוסיף עומק ואלגנטיות לחללים. בנוסף, נחושת בעלת תכונות אנטיבקטריאליות טבעיות, מה שהפך אותה לבחירה פופולרית במיוחד בשנים האחרונות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;באילו אלמנטים ניתן לשלב נחושת בעיצוב הבית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת ניתנת לשילוב בברזים ואביזרי אמבטיה, גופי תאורה, ידיות ריהוט ודלתות, כלי מטבח דקורטיביים, מסגרות לתמונות ומראות, ופרטי ריהוט כמו רגלי שולחן או מדפים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך לתחזק משטחים ואביזרים מנחושת?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת מפתחת פטינה טבעית עם הזמן. אם רוצים לשמור על הברק המקורי, יש לנקות עם תכשיר ייעודי לנחושת. רבים דווקא מעדיפים את המראה המיושן שנוצר באופן טבעי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;עם אילו צבעים נחושת משתלבת היטב?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת משתלבת יפה עם גווני כחול כהה וירוק אזמרגד, עם לבן ושחור לניגודיות אלגנטית, עם גווני אדמה חומים ובז&#x27;, ועם אפורים עמוקים. השילוב יוצר אווירה חמה ומתוחכמת.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם נחושת מתאימה לכל סגנון עיצובי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת היא חומר רב-תכליתי המתאים לסגנונות מגוונים - מתעשייתי ולופט, דרך כפרי וויינטג&#x27;, ועד מודרני ומינימליסטי. הכל תלוי בכמות ובאופן השילוב שלה בחלל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם החסרונות של שימוש בנחושת בעיצוב?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;נחושת דורשת תחזוקה שוטפת לשמירת הברק, יכולה להשאיר כתמים ירוקים על משטחים רטובים, ומחירה גבוה יחסית. יש לקחת בחשבון גורמים אלה בעת בחירת אביזרים ומשטחים.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">שכר מעצב פנים</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%A9%D7%9B%D7%A8-%D7%9E%D7%A2%D7%A6%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/" target="_blank">https://ultimaschool.co.il/magazine/%D7%A9%D7%9B%D7%A8-%D7%9E%D7%A2%D7%A6%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">כיצד ניתן להגדיל את ההכנסה כמעצב פנים?</div>
+                    <div class="faq-a">ניתן להגדיל הכנסה על ידי התמחות בנישה מבוקשת כמו עיצוב משרדים או מלונות, בניית פורטפוליו איכותי, יצירת נוכחות ברשתות חברתיות, קבלת המלצות מלקוחות מרוצים, והרחבת שירותים כמו ייעוץ או הדרכה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בשכר בין מעצב פנים שכיר לעצמאי?</div>
+                    <div class="faq-a">מעצב פנים עצמאי יכול להרוויח יותר לפרויקט, אך ההכנסה פחות יציבה. שכיר נהנה ממשכורת קבועה וזכויות סוציאליות. עצמאים מנוסים עם בסיס לקוחות איתן יכולים להגיע להכנסות גבוהות משמעותית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מיקום גיאוגרפי משפיע על השכר?</div>
+                    <div class="faq-a">כן, מעצבי פנים במרכז הארץ ובאזורי ביקוש גבוה מרוויחים בדרך כלל יותר. עם זאת, עלויות התפעול במרכז גבוהות יותר. עבודה מרחוק ואונליין מאפשרת כיום גמישות רבה יותר במיקום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן לוקח להגיע לשכר טוב בתחום?</div>
+                    <div class="faq-a">בשנים הראשונות השכר נמוך יחסית בזמן צבירת ניסיון ובניית פורטפוליו. לאחר 3-5 שנות ניסיון וביסוס מוניטין, ניתן להגיע לשכר משמעותי. ההשקעה בשנים הראשונות משתלמת לטווח ארוך.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם תחום עיצוב הפנים רווחי בישראל?</div>
+                    <div class="faq-a">שוק עיצוב הפנים בישראל פעיל וצומח, עם ביקוש גבוה לדירות חדשות ושיפוצים. מעצבים מוכשרים עם שירות איכותי יכולים לבנות קריירה רווחית. חשוב להתעדכן בטרנדים ולתת שירות מקצועי.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (5 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-4">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-4">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כיצד ניתן להגדיל את ההכנסה כמעצב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ניתן להגדיל הכנסה על ידי התמחות בנישה מבוקשת כמו עיצוב משרדים או מלונות, בניית פורטפוליו איכותי, יצירת נוכחות ברשתות חברתיות, קבלת המלצות מלקוחות מרוצים, והרחבת שירותים כמו ייעוץ או הדרכה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בשכר בין מעצב פנים שכיר לעצמאי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מעצב פנים עצמאי יכול להרוויח יותר לפרויקט, אך ההכנסה פחות יציבה. שכיר נהנה ממשכורת קבועה וזכויות סוציאליות. עצמאים מנוסים עם בסיס לקוחות איתן יכולים להגיע להכנסות גבוהות משמעותית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מיקום גיאוגרפי משפיע על השכר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מעצבי פנים במרכז הארץ ובאזורי ביקוש גבוה מרוויחים בדרך כלל יותר. עם זאת, עלויות התפעול במרכז גבוהות יותר. עבודה מרחוק ואונליין מאפשרת כיום גמישות רבה יותר במיקום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן לוקח להגיע לשכר טוב בתחום?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בשנים הראשונות השכר נמוך יחסית בזמן צבירת ניסיון ובניית פורטפוליו. לאחר 3-5 שנות ניסיון וביסוס מוניטין, ניתן להגיע לשכר משמעותי. ההשקעה בשנים הראשונות משתלמת לטווח ארוך.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם תחום עיצוב הפנים רווחי בישראל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שוק עיצוב הפנים בישראל פעיל וצומח, עם ביקוש גבוה לדירות חדשות ושיפוצים. מעצבים מוכשרים עם שירות איכותי יכולים לבנות קריירה רווחית. חשוב להתעדכן בטרנדים ולתת שירות מקצועי.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">עיצוב חנויות</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%97%D7%A0%D7%95%D7%AA/" target="_blank">https://ultimaschool.co.il/magazine/%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%97%D7%A0%D7%95%D7%AA/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">למה חשוב להשקיע בעיצוב חנות?</div>
+                    <div class="faq-a">עיצוב חנות מקצועי משפיע ישירות על חווית הלקוח, זמן השהייה בחנות והסיכוי לרכישה. עיצוב נכון מבליט את המוצרים, יוצר אווירה נעימה, מבדל מהמתחרים ומחזק את תדמית המותג.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין עיצוב חנות לעיצוב פנים רגיל?</div>
+                    <div class="faq-a">עיצוב חנות דורש התמחות בתכנון מרחב מכירה - תנועת לקוחות, תצוגת מוצרים, תאורה ממוקדת, שילוט ומיתוג. בנוסף, יש לקחת בחשבון שיקולים מסחריים כמו מיקסום שטח מכירה ונגישות למוצרים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו אלמנטים חשובים בעיצוב חנות?</div>
+                    <div class="faq-a">האלמנטים החשובים כוללים חזית ושלט מזמינים, תאורה מתאימה למוצרים, תצוגות אטרקטיביות, מעברים נוחים, אזור קופה נגיש, חדרי הלבשה מאירים (בחנויות אופנה), וחומרים עמידים לתנועה רבה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">כמה זמן לוקח תהליך עיצוב חנות?</div>
+                    <div class="faq-a">משך התהליך תלוי בגודל החנות ומורכבות הפרויקט. תכנון ועיצוב אורכים בדרך כלל 2-4 שבועות, וביצוע נמשך בין שבועיים לחודשיים. תכנון מראש מאפשר פתיחה מהירה יותר.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם צריך אדריכל או מעצב פנים לעיצוב חנות?</div>
+                    <div class="faq-a">מעצב פנים עם התמחות בחללים מסחריים מספיק לרוב החנויות. אדריכל נדרש כאשר יש שינויים מבניים משמעותיים. חשוב לבחור מעצב עם ניסיון בעיצוב קמעונאי והבנה של שיקולים מסחריים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">איך מתאימים את עיצוב החנות למותג?</div>
+                    <div class="faq-a">עיצוב החנות צריך לשקף את ערכי המותג, קהל היעד וסגנון המוצרים. צבעים, חומרים, תאורה וריהוט נבחרים בהתאם לשפה העיצובית של המותג וליצירת חוויה עקבית מול הנוכחות הדיגיטלית.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם הטרנדים בעיצוב חנויות כיום?</div>
+                    <div class="faq-a">הטרנדים כוללים שילוב טכנולוגיה וחוויה דיגיטלית, עיצוב אקולוגי וחומרים ממוחזרים, חללים גמישים המתאימים לאירועים, אזורי צילום לרשתות חברתיות, ויצירת חוויה מעבר לקנייה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-5">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-5">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;למה חשוב להשקיע בעיצוב חנות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עיצוב חנות מקצועי משפיע ישירות על חווית הלקוח, זמן השהייה בחנות והסיכוי לרכישה. עיצוב נכון מבליט את המוצרים, יוצר אווירה נעימה, מבדל מהמתחרים ומחזק את תדמית המותג.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין עיצוב חנות לעיצוב פנים רגיל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עיצוב חנות דורש התמחות בתכנון מרחב מכירה - תנועת לקוחות, תצוגת מוצרים, תאורה ממוקדת, שילוט ומיתוג. בנוסף, יש לקחת בחשבון שיקולים מסחריים כמו מיקסום שטח מכירה ונגישות למוצרים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו אלמנטים חשובים בעיצוב חנות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;האלמנטים החשובים כוללים חזית ושלט מזמינים, תאורה מתאימה למוצרים, תצוגות אטרקטיביות, מעברים נוחים, אזור קופה נגיש, חדרי הלבשה מאירים (בחנויות אופנה), וחומרים עמידים לתנועה רבה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה זמן לוקח תהליך עיצוב חנות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משך התהליך תלוי בגודל החנות ומורכבות הפרויקט. תכנון ועיצוב אורכים בדרך כלל 2-4 שבועות, וביצוע נמשך בין שבועיים לחודשיים. תכנון מראש מאפשר פתיחה מהירה יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך אדריכל או מעצב פנים לעיצוב חנות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מעצב פנים עם התמחות בחללים מסחריים מספיק לרוב החנויות. אדריכל נדרש כאשר יש שינויים מבניים משמעותיים. חשוב לבחור מעצב עם ניסיון בעיצוב קמעונאי והבנה של שיקולים מסחריים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מתאימים את עיצוב החנות למותג?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עיצוב החנות צריך לשקף את ערכי המותג, קהל היעד וסגנון המוצרים. צבעים, חומרים, תאורה וריהוט נבחרים בהתאם לשפה העיצובית של המותג וליצירת חוויה עקבית מול הנוכחות הדיגיטלית.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם הטרנדים בעיצוב חנויות כיום?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הטרנדים כוללים שילוב טכנולוגיה וחוויה דיגיטלית, עיצוב אקולוגי וחומרים ממוחזרים, חללים גמישים המתאימים לאירועים, אזורי צילום לרשתות חברתיות, ויצירת חוויה מעבר לקנייה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">תעודה מול תואר בעיצוב פנים</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%9E%D7%94-%D7%A2%D7%93%D7%99%D7%A3-%D7%9C%D7%99%D7%9E%D7%95%D7%93%D7%99-%D7%AA%D7%A2%D7%95%D7%93%D7%94-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%A4%D7%A0%D7%99%D7%9D-%D7%90%D7%95-%D7%AA%D7%95%D7%90%D7%A8/" target="_blank">https://ultimaschool.co.il/magazine/%D7%9E%D7%94-%D7%A2%D7%93%D7%99%D7%A3-%D7%9C%D7%99%D7%9E%D7%95%D7%93%D7%99-%D7%AA%D7%A2%D7%95%D7%93%D7%94-%D7%A2%D7%99%D7%A6%D7%95%D7%91-%D7%A4%D7%A0%D7%99%D7%9D-%D7%90%D7%95-%D7%AA%D7%95%D7%90%D7%A8/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין לימודי תעודה לתואר בעיצוב פנים?</div>
+                    <div class="faq-a">לימודי תעודה מתמקדים בהכשרה מעשית וקצרה יותר (1-2 שנים) להתחלת עבודה מהירה. תואר אקדמי (3-4 שנים) מעניק בסיס תיאורטי רחב יותר, כולל היסטוריה ותיאוריה של העיצוב, ומוכר להמשך לימודים אקדמיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם צריך תואר כדי לעבוד כמעצב פנים?</div>
+                    <div class="faq-a">לא, אין דרישה חוקית לתואר אקדמי לעבודה כמעצב פנים בישראל. רוב המעסיקים והלקוחות מתמקדים בפורטפוליו, ניסיון ויכולות מעשיות. תעודה מקצועית ממוסד מוכר מספיקה לרוב למתחילים בתחום.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה היתרונות של לימודי תעודה?</div>
+                    <div class="faq-a">לימודי תעודה קצרים יותר וזולים יותר, מתמקדים במיומנויות מעשיות ובכלים הנדרשים בשטח, מאפשרים כניסה מהירה לשוק העבודה, וניתנים בשעות גמישות המתאימות לעובדים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה היתרונות של תואר אקדמי בעיצוב פנים?</div>
+                    <div class="faq-a">תואר אקדמי מעניק בסיס תיאורטי מעמיק, יוקרה אקדמית, אפשרות להמשך לימודים לתארים מתקדמים, וחשיפה רחבה יותר לתחומים משיקים כמו אדריכלות ואמנות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה מתאים יותר למי שמחליף קריירה?</div>
+                    <div class="faq-a">למחליפי קריירה, לימודי תעודה בדרך כלל מתאימים יותר. הם מאפשרים רכישת מקצוע חדש בזמן קצר יחסית, בעלות נמוכה יותר, ובגמישות המאפשרת המשך עבודה במקביל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אפשר להתחיל בתעודה ולהשלים לתואר?</div>
+                    <div class="faq-a">חלק מהמוסדות מציעים מסלולי המשכיות המאפשרים להתחיל בתעודה ולהשלים לתואר. כדאי לבדוק מראש את האפשרויות ואת ההכרה ההדדית בין המוסדות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה חשוב יותר - איפה למדת או מה אתה יודע?</div>
+                    <div class="faq-a">בתחום עיצוב הפנים, הפורטפוליו והיכולת המעשית חשובים יותר מהתואר. לקוחות ומעסיקים רוצים לראות עבודות איכותיות ולקבל שירות מקצועי. ניסיון ויצירתיות שוקלים יותר משם המוסד.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (7 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-6">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-6">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין לימודי תעודה לתואר בעיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לימודי תעודה מתמקדים בהכשרה מעשית וקצרה יותר (1-2 שנים) להתחלת עבודה מהירה. תואר אקדמי (3-4 שנים) מעניק בסיס תיאורטי רחב יותר, כולל היסטוריה ותיאוריה של העיצוב, ומוכר להמשך לימודים אקדמיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך תואר כדי לעבוד כמעצב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא, אין דרישה חוקית לתואר אקדמי לעבודה כמעצב פנים בישראל. רוב המעסיקים והלקוחות מתמקדים בפורטפוליו, ניסיון ויכולות מעשיות. תעודה מקצועית ממוסד מוכר מספיקה לרוב למתחילים בתחום.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה היתרונות של לימודי תעודה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לימודי תעודה קצרים יותר וזולים יותר, מתמקדים במיומנויות מעשיות ובכלים הנדרשים בשטח, מאפשרים כניסה מהירה לשוק העבודה, וניתנים בשעות גמישות המתאימות לעובדים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה היתרונות של תואר אקדמי בעיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תואר אקדמי מעניק בסיס תיאורטי מעמיק, יוקרה אקדמית, אפשרות להמשך לימודים לתארים מתקדמים, וחשיפה רחבה יותר לתחומים משיקים כמו אדריכלות ואמנות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה מתאים יותר למי שמחליף קריירה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;למחליפי קריירה, לימודי תעודה בדרך כלל מתאימים יותר. הם מאפשרים רכישת מקצוע חדש בזמן קצר יחסית, בעלות נמוכה יותר, ובגמישות המאפשרת המשך עבודה במקביל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר להתחיל בתעודה ולהשלים לתואר?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;חלק מהמוסדות מציעים מסלולי המשכיות המאפשרים להתחיל בתעודה ולהשלים לתואר. כדאי לבדוק מראש את האפשרויות ואת ההכרה ההדדית בין המוסדות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה חשוב יותר - איפה למדת או מה אתה יודע?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בתחום עיצוב הפנים, הפורטפוליו והיכולת המעשית חשובים יותר מהתואר. לקוחות ומעסיקים רוצים לראות עבודות איכותיות ולקבל שירות מקצועי. ניסיון ויצירתיות שוקלים יותר משם המוסד.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">אדריכל מול מעצב פנים</div>
+                <div class="page-url"><a href="https://ultimaschool.co.il/magazine/%D7%9E%D7%94-%D7%94%D7%94%D7%91%D7%93%D7%9C%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%90%D7%93%D7%A8%D7%99%D7%9B%D7%9C-%D7%9C%D7%9E%D7%A2%D7%A6%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/" target="_blank">https://ultimaschool.co.il/magazine/%D7%9E%D7%94-%D7%94%D7%94%D7%91%D7%93%D7%9C%D7%99%D7%9D-%D7%91%D7%99%D7%9F-%D7%90%D7%93%D7%A8%D7%99%D7%9B%D7%9C-%D7%9C%D7%9E%D7%A2%D7%A6%D7%91-%D7%A4%D7%A0%D7%99%D7%9D/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל העיקרי בין אדריכל למעצב פנים?</div>
+                    <div class="faq-a">אדריכל מוסמך לתכנן מבנים שלמים כולל היבטים קונסטרוקטיביים, ודורש רישיון ממשלתי. מעצב פנים מתמחה בעיצוב החלל הפנימי - חומרים, צבעים, ריהוט ותאורה - ללא התעסקות בשינויים מבניים משמעותיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מתי צריך אדריכל ומתי מספיק מעצב פנים?</div>
+                    <div class="faq-a">אדריכל נדרש כאשר יש שינויים מבניים כמו הריסת קירות נושאים, בנייה חדשה או תוספות בנייה. מעצב פנים מספיק לשיפוצים פנימיים, החלפת חומרים, בחירת ריהוט ותכנון פונקציונלי של החלל הקיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם מעצב פנים יכול להפוך לאדריכל?</div>
+                    <div class="faq-a">כן, אך זה דורש לימודי אדריכלות מלאים (תואר ראשון באדריכלות) ועמידה בדרישות הרישוי. הניסיון בעיצוב פנים יכול להוות יתרון, אך אין קיצורי דרך לרישיון אדריכל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה לומדים בלימודי אדריכלות לעומת עיצוב פנים?</div>
+                    <div class="faq-a">אדריכלות כוללת לימודים מעמיקים בהנדסת מבנים, קונסטרוקציה, תקנות בנייה ותכנון עירוני. עיצוב פנים מתמקד בחומרים, צבעים, תאורה, ריהוט, ארגונומיה ותכנון מרחבי של חללים פנימיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מי מרוויח יותר - אדריכל או מעצב פנים?</div>
+                    <div class="faq-a">שניהם יכולים להגיע לרמות הכנסה גבוהות בהתאם לניסיון, מוניטין וסוג הפרויקטים. אדריכלים בפרויקטים גדולים מרוויחים לרוב יותר, אך מעצבי פנים מצליחים עם בסיס לקוחות איתן יכולים להגיע להכנסות מרשימות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אדריכל יכול לעשות גם עיצוב פנים?</div>
+                    <div class="faq-a">כן, אדריכלים רבים עוסקים גם בעיצוב פנים. הכשרתם מאפשרת להם להציע שירות מקיף מתכנון המבנה ועד עיצוב הפנים. יש אדריכלים שמתמחים דווקא בפנים המבנה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהי משך הלימודים של כל מקצוע?</div>
+                    <div class="faq-a">לימודי אדריכלות נמשכים 5 שנים בממוצע (תואר ראשון) ועוד תקופת התמחות לרישיון. לימודי עיצוב פנים נמשכים שנה עד שנתיים למסלול תעודה, או 3-4 שנים לתואר אקדמי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש שיתוף פעולה בין אדריכלים למעצבי פנים?</div>
+                    <div class="faq-a">כן, בפרויקטים רבים אדריכלים ומעצבי פנים עובדים יחד. האדריכל מתכנן את המבנה והמעצב אחראי על הגמר הפנימי. שיתוף פעולה טוב מבטיח תוצאה אחידה ומקצועית.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="ultimaschool-7">העתק</button>
+                        <pre class="schema-code" id="schema-ultimaschool-7">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל העיקרי בין אדריכל למעצב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אדריכל מוסמך לתכנן מבנים שלמים כולל היבטים קונסטרוקטיביים, ודורש רישיון ממשלתי. מעצב פנים מתמחה בעיצוב החלל הפנימי - חומרים, צבעים, ריהוט ותאורה - ללא התעסקות בשינויים מבניים משמעותיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי צריך אדריכל ומתי מספיק מעצב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אדריכל נדרש כאשר יש שינויים מבניים כמו הריסת קירות נושאים, בנייה חדשה או תוספות בנייה. מעצב פנים מספיק לשיפוצים פנימיים, החלפת חומרים, בחירת ריהוט ותכנון פונקציונלי של החלל הקיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם מעצב פנים יכול להפוך לאדריכל?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, אך זה דורש לימודי אדריכלות מלאים (תואר ראשון באדריכלות) ועמידה בדרישות הרישוי. הניסיון בעיצוב פנים יכול להוות יתרון, אך אין קיצורי דרך לרישיון אדריכל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה לומדים בלימודי אדריכלות לעומת עיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אדריכלות כוללת לימודים מעמיקים בהנדסת מבנים, קונסטרוקציה, תקנות בנייה ותכנון עירוני. עיצוב פנים מתמקד בחומרים, צבעים, תאורה, ריהוט, ארגונומיה ותכנון מרחבי של חללים פנימיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי מרוויח יותר - אדריכל או מעצב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שניהם יכולים להגיע לרמות הכנסה גבוהות בהתאם לניסיון, מוניטין וסוג הפרויקטים. אדריכלים בפרויקטים גדולים מרוויחים לרוב יותר, אך מעצבי פנים מצליחים עם בסיס לקוחות איתן יכולים להגיע להכנסות מרשימות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אדריכל יכול לעשות גם עיצוב פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, אדריכלים רבים עוסקים גם בעיצוב פנים. הכשרתם מאפשרת להם להציע שירות מקיף מתכנון המבנה ועד עיצוב הפנים. יש אדריכלים שמתמחים דווקא בפנים המבנה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי משך הלימודים של כל מקצוע?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לימודי אדריכלות נמשכים 5 שנים בממוצע (תואר ראשון) ועוד תקופת התמחות לרישיון. לימודי עיצוב פנים נמשכים שנה עד שנתיים למסלול תעודה, או 3-4 שנים לתואר אקדמי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש שיתוף פעולה בין אדריכלים למעצבי פנים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בפרויקטים רבים אדריכלים ומעצבי פנים עובדים יחד. האדריכל מתכנן את המבנה והמעצב אחראי על הגמר הפנימי. שיתוף פעולה טוב מבטיח תוצאה אחידה ומקצועית.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h2>הוראות הטמעה</h2>
+        <p style="margin-bottom:18px;color:var(--text-dim)">כיצד להוסיף את סכמת ה-FAQPage לאתר:</p>
+        <ol>
+            <li>לחצו על כפתור <strong>העתק</strong> ליד הסכמה הרצויה</li>
+            <li>פתחו את עורך העמוד במערכת ניהול התוכן (WordPress, Elementor וכו')</li>
+            <li>הוסיפו את הקוד בתוך תגית <code>&lt;head&gt;</code> של העמוד, לפני תגית <code>&lt;/head&gt;</code></li>
+            <li>שמרו ופרסמו את העמוד</li>
+        </ol>
+        <p style="margin-bottom:10px"><strong>דוגמה להטמעה:</strong></p>
+        <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "השאלה שלכם",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התשובה שלכם"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+        <p style="margin-top:18px;color:var(--text-dim)"><strong>שימו לב:</strong> בעמודים שכבר קיים FAQ (מסומנים בכתום) - אין להוסיף סכמה נוספת. הסכמה הקיימת מספיקה.</p>
+        <p style="margin-top:10px;color:var(--text-dim)"><strong>בדיקה:</strong> לאחר ההטמעה, בדקו ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal)">Google Rich Results Test</a> שהסכמה נקראת נכון.</p>
+
+        <p style="margin-top:20px;color:var(--text-dim)"><strong>למשתמשי WordPress / Elementor:</strong></p>
+        <ol>
+            <li>גשו לעמוד בעורך האתר</li>
+            <li>בתפריט Rank Math / Yoast → הגדרות מתקדמות → Schema</li>
+            <li>הדביקו את ה-JSON-LD בתיבת Custom Schema</li>
+            <li>לחלופין: הוסיפו בלוק HTML עם תגית script בתחתית או בסוף העמוד</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        נוצר באמצעות Claude AI | נדב דיגיטל | פברואר 2026
+    </div>
+</div>
+
+<script>
+function copySchema(btn) {
+    const id = btn.getAttribute('data-schema-id');
+    const pre = document.getElementById('schema-' + id);
+    const text = '<script type="application/ld+json">\n' + pre.textContent + '\n</' + 'script>';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

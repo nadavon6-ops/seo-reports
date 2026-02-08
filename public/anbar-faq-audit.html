@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ + JSON-LD | ענבר פיננסים | ביקורת אורגנית</title>
+<style>
+:root {
+    --bg-dark: #0f0f23;
+    --bg-card: #1e1e3f;
+    --bg-card-hover: #2a2a5a;
+    --purple: #667eea;
+    --pink: #f093fb;
+    --green: #2ecc71;
+    --orange: #f39c12;
+    --red: #e74c3c;
+    --teal: #4ecdc4;
+    --blue: #3498db;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --border: #333366;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a3e 100%);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    animation: pulse 8s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+.header h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+.badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-top: 12px;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+.metric-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102,126,234,0.15);
+}
+.metric-value {
+    font-size: 2.6em;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.metric-label {
+    font-size: 0.9em;
+    color: var(--text-dim);
+}
+
+/* Navigation */
+.nav-section {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border: 1px solid var(--border);
+}
+.nav-section h2 { margin-bottom: 16px; color: var(--purple); font-size: 1.3em; }
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.nav-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, var(--purple), #764ba2);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.nav-link:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Client Section */
+.client-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.client-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+.client-header h2 {
+    font-size: 1.6em;
+    margin: 0;
+}
+.client-domain {
+    font-size: 0.85em;
+    color: var(--teal);
+    background: rgba(78,205,196,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.cat-badge {
+    padding: 4px 14px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+.client-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 16px 28px;
+    background: rgba(0,0,0,0.15);
+    font-size: 0.9em;
+}
+.client-stats span { color: var(--text-dim); }
+.client-stats strong { color: var(--text); }
+.client-body { padding: 20px 28px; }
+
+/* Skipped box */
+.skipped-box {
+    background: rgba(243,156,18,0.08);
+    border: 1px solid rgba(243,156,18,0.3);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+}
+.skipped-box h3 { color: var(--orange); margin-bottom: 10px; font-size: 1em; }
+.skipped-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(243,156,18,0.15);
+    font-size: 0.9em;
+}
+.skipped-item:last-child { border-bottom: none; }
+.skipped-item a { color: var(--orange); text-decoration: none; }
+.skipped-item a:hover { text-decoration: underline; }
+.skipped-reason { color: var(--text-dim); font-size: 0.85em; margin-top: 2px; }
+
+/* Page block */
+.page-block {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+}
+.page-block:last-child { border-bottom: none; }
+.page-title {
+    font-size: 1.15em;
+    color: var(--teal);
+    margin-bottom: 4px;
+}
+.page-url {
+    font-size: 0.8em;
+    margin-bottom: 16px;
+}
+.page-url a {
+    color: var(--text-dim);
+    text-decoration: none;
+    word-break: break-all;
+}
+.page-url a:hover { color: var(--purple); }
+
+/* FAQ cards */
+.faq-card {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    border-right: 3px solid var(--purple);
+}
+.faq-q {
+    font-weight: 700;
+    color: var(--pink);
+    margin-bottom: 6px;
+    font-size: 1em;
+}
+.faq-a {
+    color: #ccc;
+    font-size: 0.92em;
+    line-height: 1.65;
+}
+
+/* Schema details */
+.schema-wrapper { margin-top: 18px; }
+.schema-wrapper summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--purple);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: background 0.2s;
+}
+.schema-wrapper summary:hover {
+    background: rgba(102,126,234,0.25);
+}
+.schema-wrapper summary::before { content: "\25B6"; font-size: 0.7em; transition: transform 0.2s; }
+.schema-wrapper[open] summary::before { transform: rotate(90deg); }
+.schema-code-wrap {
+    position: relative;
+    margin-top: 10px;
+}
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 600;
+    z-index: 2;
+    transition: background 0.2s;
+}
+.copy-btn:hover { background: #764ba2; }
+.copy-btn.copied { background: var(--green); }
+pre.schema-code {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    padding-top: 45px;
+    overflow-x: auto;
+    font-size: 0.8em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    white-space: pre;
+    direction: ltr;
+    text-align: left;
+}
+
+/* Instructions section */
+.instructions {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-top: 40px;
+    border: 1px solid var(--border);
+}
+.instructions h2 { color: var(--green); margin-bottom: 18px; font-size: 1.4em; }
+.instructions ol {
+    padding-right: 24px;
+    margin-bottom: 18px;
+}
+.instructions li {
+    margin-bottom: 12px;
+    line-height: 1.7;
+}
+.instructions code {
+    background: rgba(0,0,0,0.3);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    color: #a0d0a0;
+    direction: ltr;
+    unicode-bidi: embed;
+}
+.instructions pre {
+    background: #0d0d1f;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.5;
+    color: #a0d0a0;
+    direction: ltr;
+    text-align: left;
+    margin: 12px 0;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-dim);
+    font-size: 0.85em;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 1.5em; }
+    .dashboard { grid-template-columns: repeat(2, 1fr); }
+    .client-header { padding: 18px; }
+    .client-body { padding: 16px; }
+    .client-stats { padding: 12px 18px; }
+    .nav-links { flex-direction: column; }
+    .metric-value { font-size: 2em; }
+}
+@media (max-width: 480px) {
+    .dashboard { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric-card { padding: 16px 10px; }
+    .metric-value { font-size: 1.6em; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>תוכן FAQ + סכמות JSON-LD</h1>
+    <p>ענבר פיננסים | anbar.co.il</p>
+    <div class="badge">V5 - פברואר 2026 | נדב דיגיטל</div>
+</div>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--blue)">4</div>
+            <div class="metric-label">עמודים נבדקו</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--orange)">2</div>
+            <div class="metric-label">עמודים דולגו (FAQ קיים)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">2</div>
+            <div class="metric-label">עמודים עם FAQ חדש</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--green)">16</div>
+            <div class="metric-label">סה"כ שאלות נוצרו</div>
+        </div>
+    </div>
+
+    <div class="client-section" id="anbar">
+        <div class="client-header">
+            <h2>ענבר פיננסים</h2>
+            <span class="client-domain">anbar.co.il</span>
+            <span class="cat-badge" style="background:rgba(255,255,255,0.08);color:#f39c12;border:1px solid #f39c12">YMYL פיננסי</span>
+        </div>
+        <div class="client-stats">
+            <span>עמודים נבדקו: <strong>4</strong></span>
+            <span>דולגו: <strong style="color:var(--orange)">2</strong></span>
+            <span>FAQ נוצר: <strong style="color:var(--green)">2</strong></span>
+            <span>סה"כ שאלות: <strong style="color:var(--green)">16</strong></span>
+        </div>
+        <div class="client-body">
+            <div class="skipped-box">
+                <h3>עמודים שדולגו</h3>
+                <div class="skipped-item">
+                    <a href="https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%94%D7%A4%D7%95%D7%9B%D7%94/" target="_blank">משכנתא הפוכה איילון</a>
+                    <div class="skipped-reason">Page already has comprehensive FAQ section with 11 Q&amp;A pairs and valid FAQPage schema</div>
+                </div>
+                <div class="skipped-item">
+                    <a href="https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%A4%D7%A0%D7%A1%D7%99%D7%95%D7%A0%D7%99%D7%AA/" target="_blank">משכנתא פנסיונית</a>
+                    <div class="skipped-reason">Page already has FAQ section with 6 Q&amp;A pairs and valid FAQPage schema covering eligibility, age limits, and property ownership requirements</div>
+                </div>
+            </div>
+            <div class="page-block">
+                <div class="page-title">מחשבון משכנתא הפוכה</div>
+                <div class="page-url"><a href="https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%94%D7%A4%D7%95%D7%9B%D7%94-%D7%9E%D7%97%D7%A9%D7%91%D7%95%D7%9F/" target="_blank">https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%94%D7%A4%D7%95%D7%9B%D7%94-%D7%9E%D7%97%D7%A9%D7%91%D7%95%D7%9F/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מה זה מחשבון משכנתא הפוכה ולמה הוא משמש?</div>
+                    <div class="faq-a">מחשבון משכנתא הפוכה הוא כלי דיגיטלי המאפשר לקבל הערכה ראשונית של סכום ההלוואה שניתן לקבל כנגד הנכס. המחשבון מתחשב בגיל הלווה, שווי הנכס ופרמטרים נוספים כדי לספק תמונה כללית לפני פנייה לייעוץ מקצועי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">אילו נתונים נדרשים לחישוב משכנתא הפוכה?</div>
+                    <div class="faq-a">לחישוב בסיסי נדרשים בדרך כלל: גיל הלווה (או הצעיר מבני הזוג), שווי הנכס המשועבד, וסוג הנכס. חלק מהמחשבונים מבקשים גם מידע על משכנתאות קיימות או שעבודים נוספים על הנכס.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם התוצאה במחשבון מחייבת את חברת הביטוח?</div>
+                    <div class="faq-a">לא. התוצאה המתקבלת במחשבון היא הערכה ראשונית בלבד ואינה מהווה הצעה מחייבת. הסכום הסופי נקבע לאחר בדיקת זכאות מקיפה, שמאות מקצועית של הנכס ואישור חברת הביטוח.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם הפרמטרים המשפיעים על גובה ההלוואה במשכנתא הפוכה?</div>
+                    <div class="faq-a">הפרמטרים העיקריים הם: גיל הלווה - ככל שהגיל גבוה יותר, כך ניתן לקבל אחוז מימון גבוה יותר משווי הנכס. בנוסף משפיעים שווי הנכס, מיקומו, מצבו הפיזי, וריבית ההלוואה הנהוגה בשוק.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה ההבדל בין מחשבוני משכנתא הפוכה של חברות ביטוח שונות?</div>
+                    <div class="faq-a">כל חברת ביטוח (הראל, כלל, מגדל, איילון ואחרות) מציעה תנאים שונים, לרבות אחוזי מימון, גיל מינימלי וריביות. לכן מומלץ להשוות בין מספר מחשבונים ולקבל הצעות ממספר חברות לפני קבלת החלטה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אפשר לסמוך על תוצאת המחשבון לצורך תכנון פיננסי?</div>
+                    <div class="faq-a">המחשבון נותן אומדן כללי שיכול לשמש לתכנון ראשוני. עם זאת, לתכנון פיננסי מדויק מומלץ לפנות ליועץ משכנתאות מוסמך שיבחן את כל הנתונים ויספק תמונה מלאה של העלויות, התנאים וההשלכות.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה קורה אם שווי הנכס בפועל שונה מההערכה במחשבון?</div>
+                    <div class="faq-a">שווי הנכס נקבע סופית על ידי שמאי מוסמך מטעם חברת הביטוח. אם השמאות מראה ערך שונה מההערכה שהוזנה במחשבון, סכום ההלוואה יותאם בהתאם לשווי הנכס בפועל.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם יש עלות לשימוש במחשבון משכנתא הפוכה?</div>
+                    <div class="faq-a">השימוש במחשבונים באתרי האינטרנט הוא בדרך כלל ללא עלות. מדובר בכלי שירות המיועד לתת מידע ראשוני. העלויות הממשיות מתחילות רק בשלב הפנייה לחברת הביטוח והליך אישור ההלוואה.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="anbar-0">העתק</button>
+                        <pre class="schema-code" id="schema-anbar-0">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה זה מחשבון משכנתא הפוכה ולמה הוא משמש?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מחשבון משכנתא הפוכה הוא כלי דיגיטלי המאפשר לקבל הערכה ראשונית של סכום ההלוואה שניתן לקבל כנגד הנכס. המחשבון מתחשב בגיל הלווה, שווי הנכס ופרמטרים נוספים כדי לספק תמונה כללית לפני פנייה לייעוץ מקצועי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו נתונים נדרשים לחישוב משכנתא הפוכה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לחישוב בסיסי נדרשים בדרך כלל: גיל הלווה (או הצעיר מבני הזוג), שווי הנכס המשועבד, וסוג הנכס. חלק מהמחשבונים מבקשים גם מידע על משכנתאות קיימות או שעבודים נוספים על הנכס.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם התוצאה במחשבון מחייבת את חברת הביטוח?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא. התוצאה המתקבלת במחשבון היא הערכה ראשונית בלבד ואינה מהווה הצעה מחייבת. הסכום הסופי נקבע לאחר בדיקת זכאות מקיפה, שמאות מקצועית של הנכס ואישור חברת הביטוח.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם הפרמטרים המשפיעים על גובה ההלוואה במשכנתא הפוכה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הפרמטרים העיקריים הם: גיל הלווה - ככל שהגיל גבוה יותר, כך ניתן לקבל אחוז מימון גבוה יותר משווי הנכס. בנוסף משפיעים שווי הנכס, מיקומו, מצבו הפיזי, וריבית ההלוואה הנהוגה בשוק.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין מחשבוני משכנתא הפוכה של חברות ביטוח שונות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כל חברת ביטוח (הראל, כלל, מגדל, איילון ואחרות) מציעה תנאים שונים, לרבות אחוזי מימון, גיל מינימלי וריביות. לכן מומלץ להשוות בין מספר מחשבונים ולקבל הצעות ממספר חברות לפני קבלת החלטה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר לסמוך על תוצאת המחשבון לצורך תכנון פיננסי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המחשבון נותן אומדן כללי שיכול לשמש לתכנון ראשוני. עם זאת, לתכנון פיננסי מדויק מומלץ לפנות ליועץ משכנתאות מוסמך שיבחן את כל הנתונים ויספק תמונה מלאה של העלויות, התנאים וההשלכות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה קורה אם שווי הנכס בפועל שונה מההערכה במחשבון?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;שווי הנכס נקבע סופית על ידי שמאי מוסמך מטעם חברת הביטוח. אם השמאות מראה ערך שונה מההערכה שהוזנה במחשבון, סכום ההלוואה יותאם בהתאם לשווי הנכס בפועל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש עלות לשימוש במחשבון משכנתא הפוכה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;השימוש במחשבונים באתרי האינטרנט הוא בדרך כלל ללא עלות. מדובר בכלי שירות המיועד לתת מידע ראשוני. העלויות הממשיות מתחילות רק בשלב הפנייה לחברת הביטוח והליך אישור ההלוואה.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+            <div class="page-block">
+                <div class="page-title">משכנתא לגיל הזהב</div>
+                <div class="page-url"><a href="https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%9C%D7%92%D7%99%D7%9C-%D7%94%D7%A9%D7%9C%D7%99%D7%A9%D7%99/" target="_blank">https://anbar.co.il/%D7%9E%D7%A9%D7%9B%D7%A0%D7%AA%D7%90-%D7%9C%D7%92%D7%99%D7%9C-%D7%94%D7%A9%D7%9C%D7%99%D7%A9%D7%99/</a></div>
+                <div class="faq-card">
+                    <div class="faq-q">מהי משכנתא לגיל השלישי ובמה היא שונה ממשכנתא רגילה?</div>
+                    <div class="faq-a">משכנתא לגיל השלישי היא הלוואה המיועדת לאנשים מבוגרים (בדרך כלל מגיל 60 ומעלה) המעוניינים לממש את ההון הצבור בדירתם. בניגוד למשכנתא רגילה, בחלק מהמסלולים אין צורך בהחזרים חודשיים, והפירעון מתבצע בעת מכירת הנכס או מהעיזבון.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהו גיל המינימום לקבלת משכנתא לגיל השלישי?</div>
+                    <div class="faq-a">גיל המינימום משתנה בין הגופים הפיננסיים השונים. בבנקים מסוימים ניתן לקבל משכנתא גם בגיל 60 ומעלה, בעוד במוצרים כמו משכנתא הפוכה של חברות הביטוח הגיל המינימלי הוא בדרך כלל 60-65. מומלץ לבדוק את התנאים הספציפיים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם אפשר לקבל משכנתא לגיל השלישי ללא הכנסה קבועה?</div>
+                    <div class="faq-a">כן, במסלולים מסוימים כמו משכנתא הפוכה או משכנתא פנסיונית. במוצרים אלה ההלוואה מאושרת בעיקר על בסיס שווי הנכס ולא על בסיס הכנסה שוטפת, מכיוון שאין החזרים חודשיים שוטפים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מה קורה לדירה ולמשכנתא לאחר פטירת הלווה?</div>
+                    <div class="faq-a">הדירה נשארת בבעלות הלווה ויורשיו לכל אורך חיי ההלוואה. לאחר פטירת הלווה (ובן/בת הזוג אם רלוונטי), היורשים יכולים לבחור לפרוע את ההלוואה ולשמור על הדירה, או למכור את הדירה ולהחזיר את החוב מתמורת המכירה.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן להמשיך לגור בדירה לאחר לקיחת משכנתא לגיל השלישי?</div>
+                    <div class="faq-a">בהחלט. זהו אחד היתרונות המרכזיים של מוצר זה. הלווה ממשיך לגור בדירתו כרגיל ללא הגבלת זמן עד סוף חייו, ובמקרה של בני זוג - עד פטירת שניהם.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">לאילו מטרות ניתן להשתמש בכסף ממשכנתא לגיל השלישי?</div>
+                    <div class="faq-a">הכסף יכול לשמש למגוון מטרות: שיפור איכות החיים, מימון טיפולים רפואיים, סיוע לילדים או נכדים, שיפוץ הדירה, טיולים, או כל צורך אחר. אין בדרך כלל מגבלה על ייעוד הכספים.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">מהם הסיכונים הכרוכים במשכנתא לגיל השלישי?</div>
+                    <div class="faq-a">הסיכונים העיקריים כוללים: צבירת ריבית לאורך זמן שעלולה להגדיל את החוב, הקטנת הירושה שתישאר ליורשים, והתחייבות ארוכת טווח על הנכס. חשוב להבין את כל התנאים ולהתייעץ עם יועץ פיננסי בלתי תלוי.</div>
+                </div>
+                <div class="faq-card">
+                    <div class="faq-q">האם ניתן לפרוע את המשכנתא לגיל השלישי לפני הזמן?</div>
+                    <div class="faq-a">ברוב המקרים כן, ניתן לפרוע את ההלוואה בכל עת. עם זאת, יש לבדוק האם קיימים דמי פירעון מוקדם ומהם התנאים המדויקים בהסכם ההלוואה הספציפי.</div>
+                </div>
+                <details class="schema-wrapper">
+                    <summary>סכמת JSON-LD להטמעה (8 שאלות)</summary>
+                    <div class="schema-code-wrap">
+                        <button class="copy-btn" onclick="copySchema(this)" data-schema-id="anbar-1">העתק</button>
+                        <pre class="schema-code" id="schema-anbar-1">{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי משכנתא לגיל השלישי ובמה היא שונה ממשכנתא רגילה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;משכנתא לגיל השלישי היא הלוואה המיועדת לאנשים מבוגרים (בדרך כלל מגיל 60 ומעלה) המעוניינים לממש את ההון הצבור בדירתם. בניגוד למשכנתא רגילה, בחלק מהמסלולים אין צורך בהחזרים חודשיים, והפירעון מתבצע בעת מכירת הנכס או מהעיזבון.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו גיל המינימום לקבלת משכנתא לגיל השלישי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;גיל המינימום משתנה בין הגופים הפיננסיים השונים. בבנקים מסוימים ניתן לקבל משכנתא גם בגיל 60 ומעלה, בעוד במוצרים כמו משכנתא הפוכה של חברות הביטוח הגיל המינימלי הוא בדרך כלל 60-65. מומלץ לבדוק את התנאים הספציפיים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר לקבל משכנתא לגיל השלישי ללא הכנסה קבועה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, במסלולים מסוימים כמו משכנתא הפוכה או משכנתא פנסיונית. במוצרים אלה ההלוואה מאושרת בעיקר על בסיס שווי הנכס ולא על בסיס הכנסה שוטפת, מכיוון שאין החזרים חודשיים שוטפים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה קורה לדירה ולמשכנתא לאחר פטירת הלווה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הדירה נשארת בבעלות הלווה ויורשיו לכל אורך חיי ההלוואה. לאחר פטירת הלווה (ובן/בת הזוג אם רלוונטי), היורשים יכולים לבחור לפרוע את ההלוואה ולשמור על הדירה, או למכור את הדירה ולהחזיר את החוב מתמורת המכירה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן להמשיך לגור בדירה לאחר לקיחת משכנתא לגיל השלישי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בהחלט. זהו אחד היתרונות המרכזיים של מוצר זה. הלווה ממשיך לגור בדירתו כרגיל ללא הגבלת זמן עד סוף חייו, ובמקרה של בני זוג - עד פטירת שניהם.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;לאילו מטרות ניתן להשתמש בכסף ממשכנתא לגיל השלישי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הכסף יכול לשמש למגוון מטרות: שיפור איכות החיים, מימון טיפולים רפואיים, סיוע לילדים או נכדים, שיפוץ הדירה, טיולים, או כל צורך אחר. אין בדרך כלל מגבלה על ייעוד הכספים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם הסיכונים הכרוכים במשכנתא לגיל השלישי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הסיכונים העיקריים כוללים: צבירת ריבית לאורך זמן שעלולה להגדיל את החוב, הקטנת הירושה שתישאר ליורשים, והתחייבות ארוכת טווח על הנכס. חשוב להבין את כל התנאים ולהתייעץ עם יועץ פיננסי בלתי תלוי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם ניתן לפרוע את המשכנתא לגיל השלישי לפני הזמן?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;ברוב המקרים כן, ניתן לפרוע את ההלוואה בכל עת. עם זאת, יש לבדוק האם קיימים דמי פירעון מוקדם ומהם התנאים המדויקים בהסכם ההלוואה הספציפי.&quot;
+      }
+    }
+  ]
+}</pre>
+                    </div>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <h2>הוראות הטמעה</h2>
+        <p style="margin-bottom:18px;color:var(--text-dim)">כיצד להוסיף את סכמת ה-FAQPage לאתר:</p>
+        <ol>
+            <li>לחצו על כפתור <strong>העתק</strong> ליד הסכמה הרצויה</li>
+            <li>פתחו את עורך העמוד במערכת ניהול התוכן (WordPress, Elementor וכו')</li>
+            <li>הוסיפו את הקוד בתוך תגית <code>&lt;head&gt;</code> של העמוד, לפני תגית <code>&lt;/head&gt;</code></li>
+            <li>שמרו ופרסמו את העמוד</li>
+        </ol>
+        <p style="margin-bottom:10px"><strong>דוגמה להטמעה:</strong></p>
+        <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "השאלה שלכם",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התשובה שלכם"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+        <p style="margin-top:18px;color:var(--text-dim)"><strong>שימו לב:</strong> בעמודים שכבר קיים FAQ (מסומנים בכתום) - אין להוסיף סכמה נוספת. הסכמה הקיימת מספיקה.</p>
+        <p style="margin-top:10px;color:var(--text-dim)"><strong>בדיקה:</strong> לאחר ההטמעה, בדקו ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--teal)">Google Rich Results Test</a> שהסכמה נקראת נכון.</p>
+
+        <p style="margin-top:20px;color:var(--text-dim)"><strong>למשתמשי WordPress / Elementor:</strong></p>
+        <ol>
+            <li>גשו לעמוד בעורך האתר</li>
+            <li>בתפריט Rank Math / Yoast → הגדרות מתקדמות → Schema</li>
+            <li>הדביקו את ה-JSON-LD בתיבת Custom Schema</li>
+            <li>לחלופין: הוסיפו בלוק HTML עם תגית script בתחתית או בסוף העמוד</li>
+        </ol>
+    </div>
+
+    <div class="footer">
+        נוצר באמצעות Claude AI | נדב דיגיטל | פברואר 2026
+    </div>
+</div>
+
+<script>
+function copySchema(btn) {
+    const id = btn.getAttribute('data-schema-id');
+    const pre = document.getElementById('schema-' + id);
+    const text = '<script type="application/ld+json">\n' + pre.textContent + '\n</' + 'script>';
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>
