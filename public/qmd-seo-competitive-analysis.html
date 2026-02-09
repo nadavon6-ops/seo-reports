@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QMD - SEO Competitive Analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a365d 50%, #0d2137 100%);
+            min-height: 100vh;
+            color: #fff;
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 40px;
+        }
+
+        .logo {
+            font-size: 72px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 28px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Page 1 - Overview */
+        .page {
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            padding: 50px 60px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, #3b82f6, #60a5fa);
+            border-radius: 2px;
+        }
+
+        .rtl .page-title {
+            flex-direction: row-reverse;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 18px;
+            padding: 32px 28px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.2);
+        }
+
+        .stat-card.qmd {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-value.small {
+            font-size: 20px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .stat-card.qmd .stat-value {
+            color: #f87171;
+        }
+
+        .stat-card.highlight .stat-value {
+            color: #34d399;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+
+        .comparison-table th {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 20px 24px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 17px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .rtl .comparison-table th {
+            text-align: right;
+        }
+
+        .comparison-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .comparison-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .comparison-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 20px;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .comparison-table tr.qmd-row {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .comparison-table tr.qmd-row td {
+            border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .competitor-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rtl .competitor-name {
+            flex-direction: row-reverse;
+        }
+
+        .competitor-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .competitor-logo.qmd { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .competitor-logo.trelleborg { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .competitor-logo.spectrum { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .competitor-logo.freudenberg { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+        /* Page 2 - Opportunities */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .opportunity-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .opportunity-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+        }
+
+        .kw-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .rtl .kw-header {
+            flex-direction: row-reverse;
+        }
+
+        .kw-name {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .kw-volume {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .kw-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 17px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .rtl .kw-meta {
+            flex-direction: row-reverse;
+        }
+
+        .kw-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rtl .kw-meta span {
+            flex-direction: row-reverse;
+        }
+
+        /* Key Insights */
+        .insights-section {
+            margin-top: 50px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 18px;
+        }
+
+        .insights-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rtl .insights-title {
+            flex-direction: row-reverse;
+        }
+
+        .insights-list {
+            list-style: none;
+        }
+
+        .insights-list li {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            font-size: 20px;
+        }
+
+        .rtl .insights-list li {
+            flex-direction: row-reverse;
+        }
+
+        .insights-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insights-list li::before {
+            content: '>';
+            color: #34d399;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 10px;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+                color: #1a1a1a;
+            }
+            .lang-toggle {
+                display: none;
+            }
+            .page {
+                background: #fff;
+                border: 1px solid #e5e5e5;
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .opportunities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="lang-toggle">
+        <button class="lang-btn active" onclick="switchLang('en')" id="btn-en">English</button>
+        <button class="lang-btn" onclick="switchLang('he')" id="btn-he">עברית</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">QMD</div>
+            <p class="subtitle" data-en="SEO Competitive Analysis" data-he="ניתוח תחרותי SEO">SEO Competitive Analysis</p>
+            <span class="badge" data-en="February 2026" data-he="פברואר 2026">February 2026</span>
+        </header>
+
+        <!-- Page 1: Current State Overview -->
+        <section class="page">
+            <h2 class="page-title" data-en="Current Organic Performance" data-he="ביצועים אורגניים נוכחיים">Current Organic Performance</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card qmd">
+                    <div class="stat-label" data-en="QMD Traffic" data-he="תנועה QMD">QMD Traffic</div>
+                    <div class="stat-value">570</div>
+                    <div class="stat-value small" data-en="42 keywords" data-he="42 מילות מפתח">42 keywords</div>
+                </div>
+                <div class="stat-card highlight">
+                    <div class="stat-label" data-en="Trelleborg Traffic" data-he="תנועה טרלבורג">Trelleborg Traffic</div>
+                    <div class="stat-value">61K</div>
+                    <div class="stat-value small" data-en="4,600 keywords | DR 74" data-he="4,600 מילות מפתח | DR 74">4,600 keywords | DR 74</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label" data-en="Spectrum Traffic" data-he="תנועה ספקטרום">Spectrum Traffic</div>
+                    <div class="stat-value">3.3K</div>
+                    <div class="stat-value small" data-en="417 keywords | DR 37" data-he="417 מילות מפתח | DR 37">417 keywords | DR 37</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label" data-en="Freudenberg Traffic" data-he="תנועה פרוידנברג">Freudenberg Traffic</div>
+                    <div class="stat-value">23.1K</div>
+                    <div class="stat-value small" data-en="1,100 keywords | DR 71" data-he="1,100 מילות מפתח | DR 71">1,100 keywords | DR 71</div>
+                </div>
+            </div>
+
+            <h3 class="page-title" style="font-size: 28px; margin-bottom: 30px;" data-en="Competitive Comparison" data-he="השוואה תחרותית">Competitive Comparison</h3>
+
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th data-en="Company" data-he="חברה">Company</th>
+                        <th data-en="DR" data-he="DR">DR</th>
+                        <th data-en="Keywords" data-he="מילות מפתח">Keywords</th>
+                        <th data-en="Organic Traffic" data-he="תנועה אורגנית">Organic Traffic</th>
+                        <th data-en="Backlinks" data-he="קישורים נכנסים">Backlinks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="qmd-row">
+                        <td>
+                            <div class="competitor-name">
+                                <span class="competitor-logo qmd">Q</span>
+                                <span>QMD</span>
+                            </div>
+                        </td>
+                        <td style="color: #f87171;">~15</td>
+                        <td style="color: #f87171;">42</td>
+                        <td style="color: #f87171;">570</td>
+                        <td style="color: #f87171;">~500</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="competitor-name">
+                                <span class="competitor-logo trelleborg">T</span>
+                                <span>Trelleborg</span>
+                            </div>
+                        </td>
+                        <td style="color: #34d399; font-weight: 600;">74</td>
+                        <td style="color: #34d399; font-weight: 600;">4,600</td>
+                        <td style="color: #34d399; font-weight: 600;">61,000</td>
+                        <td>365,000</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="competitor-name">
+                                <span class="competitor-logo spectrum">S</span>
+                                <span>Spectrum Plastics</span>
+                            </div>
+                        </td>
+                        <td>37</td>
+                        <td>417</td>
+                        <td>3,300</td>
+                        <td>4,400</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="competitor-name">
+                                <span class="competitor-logo freudenberg">F</span>
+                                <span>Freudenberg</span>
+                            </div>
+                        </td>
+                        <td style="color: #34d399; font-weight: 600;">71</td>
+                        <td>1,100</td>
+                        <td>23,100</td>
+                        <td>278,000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="insights-section">
+                <h3 class="insights-title">
+                    <span data-en="Key Findings" data-he="ממצאים מרכזיים">Key Findings</span>
+                </h3>
+                <ul class="insights-list">
+                    <li data-en="QMD has 570 monthly visits vs. Trelleborg's 61,000 — a 107x gap" data-he="ל-QMD יש 570 ביקורים חודשיים לעומת 61,000 של טרלבורג — פער של פי 107">QMD has 570 monthly visits vs. Trelleborg's 61,000 — a 107x gap</li>
+                    <li data-en="QMD ranks for only 42 keywords vs. 4,600 for Trelleborg" data-he="QMD מדורגת רק עבור 42 מילות מפתח לעומת 4,600 של טרלבורג">QMD ranks for only 42 keywords vs. 4,600 for Trelleborg</li>
+                    <li data-en="QMD's only non-brand success: 'temp sensing foley' (Position #1)" data-he="ההצלחה הלא-ממותגת היחידה של QMD: 'temp sensing foley' (מיקום ראשון)">QMD's only non-brand success: "temp sensing foley" (Position #1)</li>
+                    <li data-en="Even smaller competitor Spectrum (DR 37) captures 5.8x more traffic" data-he="גם המתחרה הקטנה יותר ספקטרום (DR 37) לוכדת פי 5.8 יותר תנועה">Even smaller competitor Spectrum (DR 37) captures 5.8x more traffic</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Page 2: Opportunities -->
+        <section class="page">
+            <h2 class="page-title" data-en="Non-Brand Keyword Opportunities" data-he="הזדמנויות מילות מפתח לא ממותגות">Non-Brand Keyword Opportunities</h2>
+
+            <p style="color: rgba(255,255,255,0.8); margin-bottom: 40px; font-size: 20px;" data-en="Keywords directly relevant to QMD's products (Arthesys, Biometrix, Degania):" data-he="מילות מפתח רלוונטיות ישירות למוצרי QMD (ארתסיס, ביומטריקס, דגניה):">Keywords directly relevant to QMD's products (Arthesys, Biometrix, Degania):</p>
+
+            <div class="opportunities-grid">
+                <div class="opportunity-card" style="border-color: rgba(16, 185, 129, 0.4);">
+                    <div class="kw-header">
+                        <span class="kw-name">silicone tubing</span>
+                        <span class="kw-volume" style="background: linear-gradient(135deg, #10b981, #059669);">1,600 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="Degania - Core Product" data-he="דגניה - מוצר ליבה">Degania - Core Product</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card" style="border-color: rgba(16, 185, 129, 0.4);">
+                    <div class="kw-header">
+                        <span class="kw-name">medical tubing</span>
+                        <span class="kw-volume" style="background: linear-gradient(135deg, #10b981, #059669);">600 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="Degania - Core Product" data-he="דגניה - מוצר ליבה">Degania - Core Product</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="kw-header">
+                        <span class="kw-name">medical device injection molding</span>
+                        <span class="kw-volume">500 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="OEM Manufacturing" data-he="ייצור OEM">OEM Manufacturing</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="kw-header">
+                        <span class="kw-name">medical contract manufacturing</span>
+                        <span class="kw-volume">400 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="OEM Services" data-he="שירותי OEM">OEM Services</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card" style="border-color: rgba(139, 92, 246, 0.4);">
+                    <div class="kw-header">
+                        <span class="kw-name">balloon catheters</span>
+                        <span class="kw-volume" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">200 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="Arthesys - PTCA/PTA" data-he="ארתסיס - PTCA/PTA">Arthesys - PTCA/PTA</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card" style="border-color: rgba(139, 92, 246, 0.4);">
+                    <div class="kw-header">
+                        <span class="kw-name">catheter manufacturers</span>
+                        <span class="kw-volume" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">200 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="All Product Lines" data-he="כל קווי המוצר">All Product Lines</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="kw-header">
+                        <span class="kw-name">medical tubing extrusion</span>
+                        <span class="kw-volume">200 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="Manufacturing Capability" data-he="יכולת ייצור">Manufacturing Capability</span>
+                        <span>US</span>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="kw-header">
+                        <span class="kw-name">liquid silicone rubber molding</span>
+                        <span class="kw-volume">200 vol</span>
+                    </div>
+                    <div class="kw-meta">
+                        <span data-en="Core Capability" data-he="יכולת ליבה">Core Capability</span>
+                        <span>US</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="insights-section" style="margin-top: 40px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.02)); border-color: rgba(59, 130, 246, 0.2);">
+                <h3 class="insights-title" style="color: #60a5fa;">
+                    <span data-en="Recommended Strategy" data-he="אסטרטגיה מומלצת">Recommended Strategy</span>
+                </h3>
+                <ul class="insights-list">
+                    <li data-en="Optimize Degania page for 'silicone tubing' + 'medical tubing' (2,200 monthly searches)" data-he="אופטימיזציה לדף דגניה עבור 'silicone tubing' + 'medical tubing' (2,200 חיפושים חודשיים)">Optimize Degania page for "silicone tubing" + "medical tubing" (2,200 monthly searches)</li>
+                    <li data-en="Create 'Balloon Catheter Manufacturing' page targeting Arthesys capabilities" data-he="יצירת דף 'ייצור קטטרי בלון' הממקד ביכולות ארתסיס">Create "Balloon Catheter Manufacturing" page targeting Arthesys capabilities</li>
+                    <li data-en="Add OEM/Contract Manufacturing landing page for 'medical device OEM' cluster" data-he="הוספת דף נחיתה ייצור OEM/חוזה עבור אשכול 'medical device OEM'">Add OEM/Contract Manufacturing landing page for "medical device OEM" cluster</li>
+                    <li data-en="Estimated potential: 8,000+ monthly searches in directly relevant keywords" data-he="פוטנציאל משוער: 8,000+ חיפושים חודשיים במילות מפתח רלוונטיות ישירות">Estimated potential: 8,000+ monthly searches in directly relevant keywords</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">Nadav Digital</div>
+            <p data-en="SEO Competitive Analysis | QMD.net" data-he="ניתוח תחרותי SEO | QMD.net">SEO Competitive Analysis | QMD.net</p>
+        </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) {
+            const isHebrew = lang === 'he';
+            document.body.classList.toggle('rtl', isHebrew);
+
+            // Update button states
+            document.getElementById('btn-en').classList.toggle('active', !isHebrew);
+            document.getElementById('btn-he').classList.toggle('active', isHebrew);
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-en][data-he]').forEach(el => {
+                el.textContent = isHebrew ? el.dataset.he : el.dataset.en;
+            });
+        }
+    </script>
+</body>
+</html>
