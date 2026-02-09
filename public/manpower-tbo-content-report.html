@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manpower TBO - דוח תוכן ומילות מפתח</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.7; direction: rtl; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  header { background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%); padding: 40px 30px; border-radius: 16px; margin-bottom: 30px; border: 1px solid #3d2b5e; }
+  header h1 { font-size: 2em; color: #fff; margin-bottom: 8px; }
+  header .subtitle { font-size: 1.1em; color: #b388ff; margin-bottom: 15px; }
+  header .meta { font-size: 0.85em; color: #8899aa; }
+  header .badge { display: inline-block; background: #7c4dff; color: #fff; padding: 4px 14px; border-radius: 20px; font-size: 0.8em; font-weight: bold; margin-left: 10px; }
+  header .badge.red { background: #e74c3c; }
+
+  .score-bar { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 20px; }
+  .score-item { background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; text-align: center; min-width: 140px; border: 1px solid rgba(255,255,255,0.08); }
+  .score-item .num { font-size: 2em; font-weight: bold; }
+  .score-item .label { font-size: 0.75em; color: #999; margin-top: 4px; }
+  .score-item.red .num { color: #e74c3c; }
+  .score-item.purple .num { color: #b388ff; }
+  .score-item.orange .num { color: #f39c12; }
+  .score-item.blue .num { color: #3498db; }
+
+  section { background: #111118; border-radius: 14px; margin-bottom: 24px; overflow: hidden; border: 1px solid #1a1a2a; }
+  section .section-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  section .section-header h2 { font-size: 1.3em; color: #fff; }
+  section .section-header .count { background: #e74c3c; color: #fff; padding: 3px 12px; border-radius: 15px; font-size: 0.85em; font-weight: bold; }
+  section .section-header .count.purple { background: #7c4dff; }
+  section .section-body { padding: 20px 25px; }
+
+  .fix-card { background: #161622; border-radius: 10px; padding: 18px 22px; margin-bottom: 14px; border-right: 4px solid #e74c3c; }
+  .fix-card.high { border-right-color: #f39c12; }
+  .fix-card.medium { border-right-color: #3498db; }
+  .fix-card.info { border-right-color: #7c4dff; }
+  .fix-card .fix-title { font-size: 1em; font-weight: bold; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .fix-card .fix-title .priority { font-size: 0.7em; padding: 2px 8px; border-radius: 4px; }
+  .fix-card .fix-title .priority.p0 { background: #e74c3c; color: #fff; }
+  .fix-card .fix-title .priority.p1 { background: #f39c12; color: #000; }
+  .fix-card .fix-title .priority.p2 { background: #3498db; color: #fff; }
+  .fix-card .fix-desc { font-size: 0.9em; color: #aaa; margin-bottom: 10px; }
+  .fix-card .fix-action { font-size: 0.85em; color: #b388ff; background: rgba(124,77,255,0.08); padding: 10px 14px; border-radius: 6px; }
+  .fix-card code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 3px; font-size: 0.85em; color: #f0c040; direction: ltr; display: inline-block; }
+
+  .page-card { background: #111118; border-radius: 14px; margin-bottom: 24px; overflow: hidden; border: 1px solid #1a1a2a; }
+  .page-header { padding: 20px 25px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .page-header h3 { font-size: 1.15em; color: #fff; }
+  .page-header .url { font-size: 0.8em; color: #b388ff; direction: ltr; text-align: left; }
+  .page-header .fix-count { background: #e74c3c; color: #fff; padding: 4px 14px; border-radius: 15px; font-size: 0.85em; font-weight: bold; }
+  .page-body { padding: 20px 25px; }
+
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 4px; font-size: 0.75em; margin-left: 6px; }
+  .tag.missing { background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
+  .tag.wrong-place { background: rgba(243,156,18,0.15); color: #f39c12; border: 1px solid rgba(243,156,18,0.3); }
+  .tag.found { background: rgba(39,174,96,0.15); color: #27ae60; border: 1px solid rgba(39,174,96,0.3); }
+  .tag.weak { background: rgba(52,152,219,0.15); color: #3498db; border: 1px solid rgba(52,152,219,0.3); }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  table th { background: rgba(124,77,255,0.1); padding: 10px 14px; text-align: right; font-size: 0.85em; color: #b388ff; border-bottom: 1px solid #222; }
+  table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.9em; }
+  table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .keyword-map { display: grid; grid-template-columns: 1fr auto auto auto auto; gap: 0; margin: 12px 0; font-size: 0.85em; }
+  .keyword-map .kw-header { background: rgba(124,77,255,0.1); padding: 8px 12px; font-weight: bold; color: #b388ff; border-bottom: 1px solid #333; }
+  .keyword-map .kw-cell { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); text-align: center; }
+  .keyword-map .kw-name { text-align: right; }
+
+  .depth-bar { background: #1a1a2e; border-radius: 8px; padding: 3px; margin: 4px 0; }
+  .depth-fill { height: 20px; border-radius: 6px; display: flex; align-items: center; padding-right: 8px; font-size: 0.75em; font-weight: bold; color: #fff; }
+  .depth-fill.low { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+  .depth-fill.medium { background: linear-gradient(90deg, #f39c12, #e67e22); }
+  .depth-fill.good { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+
+  .content-gap { background: rgba(231,76,60,0.06); border: 1px solid rgba(231,76,60,0.2); border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; }
+  .content-gap h4 { color: #e74c3c; margin-bottom: 8px; font-size: 0.95em; }
+
+  footer { text-align: center; padding: 30px; color: #555; font-size: 0.8em; }
+
+  @media (max-width: 768px) {
+    .container { padding: 10px; }
+    header { padding: 20px 15px; }
+    header h1 { font-size: 1.4em; }
+    .score-bar { gap: 8px; }
+    .score-item { min-width: 100px; padding: 10px; }
+    .score-item .num { font-size: 1.5em; }
+    .keyword-map { grid-template-columns: 1fr auto auto; font-size: 0.75em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Manpower TBO - דוח תוכן ומילות מפתח</h1>
+  <div class="subtitle">ניתוח פערי תוכן, מילות מפתח חסרות, ומיקום מונחים שגוי | 7 דפי TBO</div>
+  <div class="meta">
+    <span class="badge">דוח תוכן</span>
+    <span class="badge red">36+ מונחים חסרים</span>
+    תאריך: 09.02.2026 | אתר: www.manpower.co.il
+  </div>
+  <div class="score-bar">
+    <div class="score-item red"><div class="num">36+</div><div class="label">מונחים חסרים לגמרי</div></div>
+    <div class="score-item orange"><div class="num">7/7</div><div class="label">דפים עם פערי תוכן</div></div>
+    <div class="score-item purple"><div class="num">0/7</div><div class="label">H2 עם מילות מפתח</div></div>
+    <div class="score-item blue"><div class="num">~850</div><div class="label">מינימום מילים (ייצור)</div></div>
+  </div>
+</header>
+
+<!-- ===== GLOBAL CONTENT ISSUES ===== -->
+<section>
+  <div class="section-header">
+    <h2>בעיות תוכן גלובליות - כל 7 הדפים</h2>
+    <span class="count">4 בעיות קריטיות</span>
+  </div>
+  <div class="section-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> אף H2 בשום דף לא מכיל מילת מפתח יעד</div>
+      <div class="fix-desc">בכל 7 הדפים, תגיות ה-H2 הן גנריות לחלוטין: "סיפורי לקוחות שהפכו להצלחות", "השאירו פרטים ונחזור אליכם", "מה אנחנו מציעים?" - שום H2 לא מזכיר את מילת המפתח הראשית של הדף. H2 הוא אות חזק לגוגל על נושא הדף.</div>
+      <div class="fix-action">
+        <strong>דוגמאות לתיקון:</strong><br>
+        "השירותים שלנו למעסיקים" ← "שירותי ניהול ותפעול במיקור חוץ"<br>
+        "שאלות ותשובות" ← "שאלות ותשובות על מיקור חוץ"<br>
+        "עם TBO הכל פשוט יותר" ← "שירותי לוגיסטיקה במיקור חוץ"<br>
+        "מובילים בשירות, מובילים בתוצאות" ← "ניהול מערכי שירות בארגונים"
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> "תפוקות מדידות" חסר בכל 7 הדפים</div>
+      <div class="fix-desc">המונח "תפוקות מדידות" (measurable outputs) לא מופיע באף דף. זהו מונח B2B קריטי שמקבלי החלטות מחפשים כשמעריכים ספקי מיקור חוץ. הנתון הזה אמור להיות בכל דף שירות.</div>
+      <div class="fix-action">יש להוסיף לכל דף שירות משפט כמו: "אנו מספקים תפוקות מדידות עם מדדי KPI שקופים ומוגדרים מראש"</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> מונחים באנגלית חסרים - קהל B2B דו-לשוני</div>
+      <div class="fix-desc">מנהלי רכש בישראל מחפשים גם באנגלית. מונחים כמו "BPO", "outsourcing", "Co-Packing", "Staff Augmentation", "Managed Services", "3PL", "Fulfillment" לא מופיעים באף דף.</div>
+      <div class="fix-action">יש להוסיף לפחות פעם אחת בכל דף את המונח האנגלי הרלוונטי לתחום. זה תופס חיפושים באנגלית מקהל ישראלי.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ בשום דף (חוץ מדף ראשי TBO)</div>
+      <div class="fix-desc">6 מ-7 דפים חסרים מקטע שאלות ותשובות לגמרי. FAQ מאפשר כיסוי Long-Tail keywords, מעמיק את התוכן, ונותן הזדמנות ל-Rich Results בגוגל.</div>
+      <div class="fix-action">יש ליצור 4-6 שאלות לכל דף שירות עם תשובות מפורטות. דף ראשי TBO כבר מכיל 4 שאלות אך חסר FAQPage Schema.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== CONTENT DEPTH OVERVIEW ===== -->
+<section>
+  <div class="section-header">
+    <h2>עומק תוכן - השוואת דפים</h2>
+    <span class="count purple">מילים בלבד</span>
+  </div>
+  <div class="section-body">
+    <p style="color:#999;margin-bottom:15px;font-size:0.9em;">דפי שירות מתחרים בדרך כלל מכילים 1,500-2,500 מילים. כל הדפים שלנו מתחת למינימום.</p>
+
+    <table>
+      <tr><th>דף</th><th>מילים (משוער)</th><th>מומלץ</th><th>פער</th></tr>
+      <tr>
+        <td>דף ראשי TBO</td>
+        <td>~1,200</td>
+        <td>2,000+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:60%">60%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td>מוקדי שירות</td>
+        <td>~1,100</td>
+        <td>1,800+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:55%">55%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td>חדרים נקיים</td>
+        <td>~1,300</td>
+        <td>2,000+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill medium" style="width:65%">65%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td>לוגיסטיקה</td>
+        <td>~1,100</td>
+        <td>1,800+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:55%">55%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td style="color:#e74c3c;font-weight:bold">ייצור, הרכבה ואריזה</td>
+        <td style="color:#e74c3c;font-weight:bold">~850</td>
+        <td>1,800+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:42%">42%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td>מערכי שירות</td>
+        <td>~1,000</td>
+        <td>1,800+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:50%">50%</div></div>
+        </td>
+      </tr>
+      <tr>
+        <td>תעשייה טכנולוגית</td>
+        <td>~1,100</td>
+        <td>1,800+</td>
+        <td>
+          <div class="depth-bar"><div class="depth-fill low" style="width:55%">55%</div></div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== PAGE 1: MAIN TBO ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>1. דף ראשי TBO</h3>
+      <div class="url">/employers/tbo</div>
+    </div>
+    <span class="fix-count">6 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> 0 מ-7 H2 מכילים מילות מפתח</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>H2 נוכחי</th><th>בעיה</th><th>H2 מומלץ</th></tr>
+          <tr><td>"המשימה שלכם, הביצוע עלינו"</td><td><span class="tag missing">גנרי</span></td><td>"שירותי מיקור חוץ וניהול פרויקטים"</td></tr>
+          <tr><td>"השירותים שלנו למעסיקים"</td><td><span class="tag missing">גנרי</span></td><td>"שירותי ניהול ותפעול במיקור חוץ"</td></tr>
+          <tr><td>"שאלות ותשובות"</td><td><span class="tag missing">גנרי</span></td><td>"שאלות ותשובות על מיקור חוץ"</td></tr>
+          <tr><td>"סיפורי לקוחות שהפכו להצלחה"</td><td><span class="tag missing">גנרי</span></td><td>"סיפורי הצלחה בניהול מיקור חוץ"</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> אי-התאמה בין H1 לכותרת (Title)</div>
+      <div class="fix-desc">
+        <strong>Title:</strong> "ניהול <u>פרויקטים</u> במיקור חוץ – Manpower TBO"<br>
+        <strong>H1:</strong> "Manpower TBO ניהול <u>פעילויות</u> במיקור חוץ"<br><br>
+        המונח המרכזי שונה: "פרויקטים" בכותרת לעומת "פעילויות" ב-H1. זה שולח אותות מעורבים לגוגל.
+      </div>
+      <div class="fix-action">יש לבחור מונח אחד ראשי ולהשתמש בו בשניהם. מומלץ: "ניהול פרויקטים" (נפח חיפוש גבוה יותר).</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> מילות מפתח חסרות לגמרי</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>חשיבות</th></tr>
+          <tr><td>"יתרונות מיקור חוץ"</td><td><span class="tag missing">לא נמצא</span></td><td>שאילתה מידעית עם נפח חיפוש גבוה</td></tr>
+          <tr><td>"עלויות מיקור חוץ"</td><td><span class="tag missing">לא נמצא</span></td><td>שאילתה מסחרית - כוונת רכישה</td></tr>
+          <tr><td>"BPO"</td><td><span class="tag missing">לא נמצא</span></td><td>מונח בינלאומי, חיפוש באנגלית</td></tr>
+          <tr><td>"outsourcing"</td><td><span class="tag missing">לא נמצא</span></td><td>חיפוש דו-לשוני</td></tr>
+          <tr><td>"חברת מיקור חוץ"</td><td><span class="tag missing">לא נמצא</span></td><td>שאילתה ישירה למציאת ספק</td></tr>
+        </table>
+      </div>
+      <div class="fix-action">יש להוסיף מקטע "יתרונות מיקור חוץ" (400+ מילים), לאזכר "BPO" ו-"outsourcing" לפחות פעם אחת, ולהרחיב תוכן על עלויות וROI.</div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p2">P2</span> מילים שנמצאות אבל במיקום לא אופטימלי</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Body x15</span> <span class="tag found">Title</span> <span class="tag found">H1</span></td><td><span class="tag wrong-place">H2 (0/7!)</span></td></tr>
+          <tr><td>"ניהול פרויקטים"</td><td><span class="tag found">Title</span></td><td><span class="tag wrong-place">H1 (משתמש ב"פעילויות")</span> <span class="tag wrong-place">H2</span></td></tr>
+          <tr><td>"לוגיסטיקה"</td><td><span class="tag found">Body</span> <span class="tag found">H3</span></td><td><span class="tag wrong-place">H2</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> Meta Description ללא CTA</div>
+      <div class="fix-desc">מסתיים ב"ליווי מקצועי להצלחה מלאה" - כללי, לא מזמין. חסר קריאה לפעולה ומספרים/נתונים.</div>
+      <div class="fix-action">דוגמה: "...25+ שנות ניסיון. צרו קשר לייעוץ חינם ←"</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,200 מילים - דליל לדף ראשי TBO</div>
+      <div class="fix-action">יש להרחיב: מתודולוגיית TBO, סטטיסטיקות, טבלת השוואה, ROI, ותהליך עבודה מפורט.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 2: SERVICE CENTER ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>2. מוקדי שירות טלפוניים</h3>
+      <div class="url">/employers-solutions/service-center</div>
+    </div>
+    <span class="fix-count">5 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> מונחים מקצועיים B2B חסרים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>למה חשוב</th></tr>
+          <tr><td>SLA</td><td><span class="tag missing">לא נמצא</span></td><td>מקבלי החלטות מחפשים ספק עם SLA ברור</td></tr>
+          <tr><td>KPI</td><td><span class="tag missing">לא נמצא</span></td><td>"KPI מוקד טלפוני" - שאילתה עם כוונת רכישה</td></tr>
+          <tr><td>Help Desk</td><td><span class="tag missing">לא נמצא</span></td><td>שירות קשור - לוכד חיפושים באנגלית</td></tr>
+          <tr><td>"שירותי מיקור חוץ" (ביטוי מלא)</td><td><span class="tag missing">לא נמצא</span></td><td>רק "מיקור חוץ" מופיע, לא הביטוי המלא</td></tr>
+          <tr><td>"תפוקות מדידות"</td><td><span class="tag missing">לא נמצא</span></td><td>מונח B2B קריטי</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> "חווית לקוח" מופיעה רק פעם אחת</div>
+      <div class="fix-desc">ביטוי מרכזי לדף מוקד טלפוני. מופיע פעם אחת בלבד בעוד שמתחרים משתמשים בו 5-8 פעמים. צריך לחזק.</div>
+      <div class="fix-action">יש להוסיף "חווית לקוח" בהקשרים שונים: כותרת H2, תיאור שירותים, FAQ.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין מקטע FAQ</div>
+      <div class="fix-desc">עבור דף שירות מוקד טלפוני, FAQs הן קריטיות לשאילתות Long-Tail.</div>
+      <div class="fix-action">שאלות מוצעות: "כמה עולה מוקד טלפוני במיקור חוץ?", "מה ההבדל בין מוקד פנימי לחיצוני?", "כמה זמן לוקח להקים מוקד?"</div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p2">P2</span> מיקום מונחים - מה נמצא ומה לא</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"מוקד טלפוני"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body x15</span></td><td><span class="tag wrong-place">H2 (0/3!)</span></td></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body x8</span></td><td><span class="tag wrong-place">H2</span></td></tr>
+          <tr><td>"אאוטסורסינג"</td><td><span class="tag found">Title</span></td><td><span class="tag wrong-place">H1</span> <span class="tag wrong-place">Body (פעמיים בלבד)</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,100 מילים - דליל</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 3: CLEANROOMS ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>3. חדרים נקיים</h3>
+      <div class="url">/employers-solutions/cleanrooms</div>
+    </div>
+    <span class="fix-count">7 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> לא מדורג בגוגל - פער תוכן קריטי</div>
+      <div class="fix-desc">הדף לא מופיע בעמוד 1 של גוגל עבור "חדרים נקיים מיקור חוץ". מתחרים כמו RS NESS, Rinot, FWS ו-ULPA שולטים. הסיבה העיקרית: תוכן דליל ומונחים חסרים.</div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> ISO 14644 לא מוזכר כלל - חובה!</div>
+      <div class="fix-desc">ISO 14644 הוא התקן הבינלאומי המגדיר סיווגי חדרים נקיים (Class 1-9). כל דף סמכותי על חדרים נקיים חייב להזכיר אותו. גם "ISO" בכלל לא מוזכר.</div>
+      <div class="fix-action">יש להוסיף מקטע על תקנים: ISO 14644-1, סיווגי חדרים (Class 1 עד Class 9), רגולציה ענפית. GMP כבר מוזכר פעם אחת - צריך להרחיב.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> מונחים חסרים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>חשיבות</th></tr>
+          <tr><td>"ISO" / "ISO 14644"</td><td><span class="tag missing">לא נמצא</span></td><td>התקן המגדיר של התעשייה</td></tr>
+          <tr><td>"רגולציה"</td><td><span class="tag missing">לא נמצא</span></td><td>מונח B2B - עמידה ברגולציה</td></tr>
+          <tr><td>"outsourcing"</td><td><span class="tag missing">לא נמצא</span></td><td>חיפוש דו-לשוני</td></tr>
+          <tr><td>"חברת ניקיון"</td><td><span class="tag missing">לא נמצא</span></td><td>שאילתה רלוונטית</td></tr>
+          <tr><td>"סיווגי חדרים נקיים"</td><td><span class="tag missing">לא נמצא</span></td><td>Long-Tail בעלת ערך</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p1">P1</span> מיקום מונחים - GMP נמצא אבל חלש</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"חדרים נקיים"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">H2 x2</span> <span class="tag found">Body</span></td><td>תקין</td></tr>
+          <tr><td>"GMP"</td><td><span class="tag weak">Body (פעם אחת בלבד)</span></td><td><span class="tag wrong-place">H2</span> <span class="tag wrong-place">H3</span> <span class="tag wrong-place">Meta</span></td></tr>
+          <tr><td>"Clean Room"</td><td><span class="tag found">Title</span></td><td><span class="tag wrong-place">Body (רק בכותרת)</span></td></tr>
+          <tr><td>"פארמה"</td><td><span class="tag weak">Body (פעם אחת)</span></td><td><span class="tag wrong-place">H2</span> <span class="tag wrong-place">H3</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ - נושא עם שאלות רבות</div>
+      <div class="fix-action">שאלות מוצעות: "מהו סיווג חדר נקי?", "מהו ISO 14644?", "לאילו תעשיות מתאים?", "איזו הכשרה נדרשת?", "מה ההבדל בין Class 100 ל-Class 1000?"</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p1">P1</span> כותרת ארוכה מדי (71 תווים) - סיכון קיצוץ</div>
+      <div class="fix-desc">"חדרים נקיים (Clean Rooms) - שירותי תחזוקה וניקיון | Manpower TBO" - גוגל יקצץ אחרי ~60 תווים.</div>
+      <div class="fix-action">מומלץ: "חדרים נקיים במיקור חוץ | תחזוקה וניקיון | Manpower TBO" (~55 תווים)</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,300 מילים - דליל לתחום תחרותי</div>
+      <div class="fix-action">יש להרחיב עם: סיווגי חדרים, תעשיות (פארמה, אלקטרוניקה, ביוטכנולוגיה), ציוד, הכשרת עובדים.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 4: LOGISTICS ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>4. לוגיסטיקה</h3>
+      <div class="url">/employers-solutions/logistics</div>
+    </div>
+    <span class="fix-count">6 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> 6 מ-9 מונחי מפתח חסרים לחלוטין</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>חשיבות</th></tr>
+          <tr><td>3PL (Third Party Logistics)</td><td><span class="tag missing">לא נמצא</span></td><td>מונח בינלאומי - נפח חיפוש גבוה</td></tr>
+          <tr><td>Fulfillment</td><td><span class="tag missing">לא נמצא</span></td><td>e-commerce logistics</td></tr>
+          <tr><td>"שרשרת אספקה"</td><td><span class="tag missing">לא נמצא</span></td><td>supply chain management</td></tr>
+          <tr><td>"מחסנים"</td><td><span class="tag missing">לא נמצא</span></td><td>ניהול מחסנים - שאילתה ישירה</td></tr>
+          <tr><td>"הפצה"</td><td><span class="tag missing">לא נמצא</span></td><td>שירותי הפצה</td></tr>
+          <tr><td>"שילוח" / "אחסון"</td><td><span class="tag missing">לא נמצא</span></td><td>מונחי ליבה בלוגיסטיקה</td></tr>
+        </table>
+      </div>
+      <div class="fix-action">פער קריטי. דף לוגיסטיקה שלא מזכיר "מחסנים", "הפצה", "שרשרת אספקה" לא יכול להתחרות.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> 0 מ-4 H2 מכילים "לוגיסטיקה"</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>H2 נוכחי</th><th>מומלץ</th></tr>
+          <tr><td>"עם TBO הכל פשוט יותר"</td><td>"שירותי לוגיסטיקה במיקור חוץ - TBO"</td></tr>
+          <tr><td>"מה אנחנו מציעים?"</td><td>"מה אנחנו מציעים בלוגיסטיקה?"</td></tr>
+        </table>
+        מילת המפתח הראשית "לוגיסטיקה" מופיעה ב-Title וב-H1, אבל נעלמת לגמרי מה-H2.
+      </div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p1">P1</span> מילים שנמצאות - מיקום</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"לוגיסטיקה"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body</span> <span class="tag found">Alt (mobile)</span></td><td><span class="tag wrong-place">H2 (0/4!)</span></td></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body</span></td><td><span class="tag wrong-place">H2</span></td></tr>
+          <tr><td>"מלאי"</td><td><span class="tag weak">סיפור הצלחה בלבד</span></td><td><span class="tag wrong-place">תוכן שירות ראשי</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ</div>
+      <div class="fix-action">שאלות: "מהו 3PL?", "אילו שירותי לוגיסטיקה ניתן למקר?", "כמה זמן לוקח להקים מערך?"</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,100 מילים - דליל</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 5: MANUFACTURE ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>5. ייצור, הרכבה ואריזה</h3>
+      <div class="url">/employers-solutions/manufacture</div>
+    </div>
+    <span class="fix-count">8 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="content-gap">
+      <h4>הדף הבעייתי ביותר - 850 מילים בלבד + 9 מונחים חסרים</h4>
+      <div style="font-size:0.9em;color:#ccc">זהו הדף הדליל ביותר מבין כל 7 הדפים, עם הכי הרבה פערי תוכן. הדף לא מדורג כלל בגוגל עבור "ייצור במיקור חוץ".</div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> 9 מונחי תעשייה קריטיים חסרים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>חשיבות</th></tr>
+          <tr><td>Co-Packing</td><td><span class="tag missing">לא נמצא</span></td><td>מונח בינלאומי לאריזה במיקור חוץ</td></tr>
+          <tr><td>Co-Manufacturing</td><td><span class="tag missing">לא נמצא</span></td><td>מונח בינלאומי לייצור במיקור חוץ</td></tr>
+          <tr><td>GMP</td><td><span class="tag missing">לא נמצא</span></td><td>Good Manufacturing Practices - חובה</td></tr>
+          <tr><td>ISO</td><td><span class="tag missing">לא נמצא</span></td><td>תקן איכות בסיסי</td></tr>
+          <tr><td>HACCP</td><td><span class="tag missing">לא נמצא</span></td><td>תקן בטיחות מזון</td></tr>
+          <tr><td>"תעשיית המזון"</td><td><span class="tag missing">לא נמצא</span></td><td>ורטיקל מרכזי</td></tr>
+          <tr><td>"פרמצבטיקה"</td><td><span class="tag missing">לא נמצא</span></td><td>ורטיקל מרכזי</td></tr>
+          <tr><td>"קוסמטיקה"</td><td><span class="tag missing">לא נמצא</span></td><td>ורטיקל מרכזי</td></tr>
+          <tr><td>"שרשרת אספקה"</td><td><span class="tag missing">לא נמצא</span></td><td>supply chain</td></tr>
+        </table>
+      </div>
+      <div class="fix-action">יש להוסיף: מקטע "תעשיות שאנו משרתים" (מזון, פרמה, קוסמטיקה) + מקטע "תקנים ואישורים" (GMP, ISO, HACCP) + מונחים באנגלית Co-Packing, Co-Manufacturing.</div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> ~850 מילים - דליל מאוד</div>
+      <div class="fix-desc">הדף הקצר ביותר מכל 7 הדפים. קורא יותר כמו Landing Page מאשר דף שירות סמכותי. דפי מתחרים בנושא ייצור מכילים 2,000+ מילים.</div>
+      <div class="fix-action">יש להרחיב ל-1,800+ מילים: תעשיות, תקנים, מתודולוגיה, יתרונות, ROI, case studies מפורטים.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> H2 בלי שום מונח מפתח</div>
+      <div class="fix-desc">3 H2 בלבד, אף אחד לא מכיל "ייצור", "אריזה", "הרכבה" או "מיקור חוץ".</div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p2">P2</span> מונחים שכן נמצאים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>מיקום</th></tr>
+          <tr><td>"ייצור" / "קווי ייצור"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body</span> - מכוסה היטב</td></tr>
+          <tr><td>"אריזה"</td><td><span class="tag found">Title</span> <span class="tag found">H1</span> <span class="tag found">Body</span> - מכוסה היטב</td></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Title</span> <span class="tag found">Body</span></td></tr>
+          <tr><td>"Manpower TBO"</td><td><span class="tag found">סיפור הצלחה (אדמה)</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ</div>
+      <div class="fix-action">שאלות: "מהו Co-Packing?", "אילו תקנים נדרשים לייצור?", "מה כולל שירות ניהול קווי ייצור?"</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 6: SERVICE PLANS ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>6. ניהול מערכי שירות</h3>
+      <div class="url">/employers-solutions/service-plans</div>
+    </div>
+    <span class="fix-count">6 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> אי-התאמה Title / H1 - מונחים שונים</div>
+      <div class="fix-desc">
+        <strong>Title:</strong> "ניהול התפעול והשירות <u>הפנים ארגוני</u>"<br>
+        <strong>H1:</strong> "<u>ניהול מערכי שירות</u>"<br><br>
+        שני מונחים שונים לגמרי. גוגל מקבל אותות סותרים לגבי נושא הדף.
+      </div>
+      <div class="fix-action">יש ליישר: לבחור מונח אחד ראשי. מומלץ: "ניהול מערכי שירות במיקור חוץ" - בשניהם.</div>
+    </div>
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> 6 מונחים B2B חסרים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th></tr>
+          <tr><td>Help Desk</td><td><span class="tag missing">לא נמצא</span></td></tr>
+          <tr><td>Back Office</td><td><span class="tag missing">לא נמצא</span></td></tr>
+          <tr><td>SLA</td><td><span class="tag missing">לא נמצא</span></td></tr>
+          <tr><td>Tier 1 / Tier 2 / Tier 3</td><td><span class="tag missing">לא נמצא</span></td></tr>
+          <tr><td>"תפוקות מדידות"</td><td><span class="tag missing">לא נמצא</span></td></tr>
+          <tr><td>"שירות לקוחות"</td><td><span class="tag missing">לא נמצא</span></td></tr>
+        </table>
+        <p style="margin-top:8px"><span class="tag weak">KPI - נמצא פעם אחת בלבד</span></p>
+      </div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p1">P1</span> מיקום מונחים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"מערכי שירות"</td><td><span class="tag found">H1</span> <span class="tag found">H3</span></td><td><span class="tag wrong-place">Title (משתמש ב"תפעול ושירות פנים ארגוני")</span></td></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Title</span> <span class="tag found">Nav</span></td><td><span class="tag wrong-place">H1</span> <span class="tag wrong-place">H2</span></td></tr>
+          <tr><td>KPI</td><td><span class="tag weak">Body (פעם אחת)</span></td><td><span class="tag wrong-place">צריך להיות בולט יותר</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,000 מילים - דליל</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== PAGE 7: TECHNOLOGY ===== -->
+<div class="page-card">
+  <div class="page-header">
+    <div>
+      <h3>7. תעשייה טכנולוגית</h3>
+      <div class="url">/employers-solutions/technology-industry</div>
+    </div>
+    <span class="fix-count">5 בעיות תוכן</span>
+  </div>
+  <div class="page-body">
+
+    <div class="fix-card">
+      <div class="fix-title"><span class="priority p0">P0</span> מונחים אנגליים קריטיים חסרים</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>סטטוס</th><th>למה חשוב</th></tr>
+          <tr><td>Semiconductor</td><td><span class="tag missing">לא נמצא</span></td><td>תעשייה מרכזית - Intel, Tower, TSMC</td></tr>
+          <tr><td>Staff Augmentation</td><td><span class="tag missing">לא נמצא</span></td><td>מודל שירות מרכזי בהיי-טק</td></tr>
+          <tr><td>Managed Services</td><td><span class="tag missing">לא נמצא</span></td><td>מודל שירות - חיפוש באנגלית</td></tr>
+          <tr><td>"תפוקות מדידות"</td><td><span class="tag missing">לא נמצא</span></td><td>מונח B2B</td></tr>
+        </table>
+      </div>
+      <div class="fix-action">מנהלי רכש בהיי-טק הישראלי מחפשים גם באנגלית. חובה להוסיף Semiconductor, Staff Augmentation, Managed Services.</div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> שגיאת כתיב ב-Alt Text</div>
+      <div class="fix-desc">תמונת Hero: alt="ניהול <strong>פרוייקטים</strong> לתעשייה" - שגיאת כתיב. הכתיב הנכון: "פרויקטים" (עם י אחת).</div>
+    </div>
+
+    <div class="fix-card info">
+      <div class="fix-title"><span class="priority p1">P1</span> מונחים שנמצאים - מיקום</div>
+      <div class="fix-desc">
+        <table>
+          <tr><th>מונח</th><th>נמצא ב...</th><th>חסר ב...</th></tr>
+          <tr><td>"היי-טק"</td><td><span class="tag found">Body</span></td><td><span class="tag wrong-place">Title</span> <span class="tag wrong-place">H1 (אין H1!)</span></td></tr>
+          <tr><td>"תעשייה טכנולוגית"</td><td><span class="tag found">H2 (כפול)</span> <span class="tag found">Body</span></td><td><span class="tag wrong-place">Title (משתמש ב"ניהול טכנולוגי")</span></td></tr>
+          <tr><td>"חדרים נקיים"</td><td><span class="tag found">Body</span></td><td>תקין - מונח משלים</td></tr>
+          <tr><td>"קווי ייצור"</td><td><span class="tag found">Body</span></td><td>תקין - מונח משלים</td></tr>
+          <tr><td>"מיקור חוץ"</td><td><span class="tag found">Title</span> <span class="tag found">Meta</span> <span class="tag found">Body</span></td><td><span class="tag wrong-place">H2 (0/7)</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="fix-card high">
+      <div class="fix-title"><span class="priority p1">P1</span> אין FAQ</div>
+      <div class="fix-action">שאלות: "מהו Staff Augmentation?", "אילו שירותים לתעשייה הטכנולוגית?", "מה ההבדל בין Managed Services למיקור חוץ?"</div>
+    </div>
+
+    <div class="fix-card medium">
+      <div class="fix-title"><span class="priority p2">P2</span> ~1,100 מילים - דליל</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== SUMMARY: MISSING KEYWORDS MATRIX ===== -->
+<section>
+  <div class="section-header">
+    <h2>מטריצת מונחים חסרים לפי דף</h2>
+    <span class="count purple">סיכום</span>
+  </div>
+  <div class="section-body">
+    <div style="overflow-x:auto">
+    <table>
+      <tr>
+        <th>מונח חסר</th>
+        <th style="text-align:center">TBO ראשי</th>
+        <th style="text-align:center">מוקדים</th>
+        <th style="text-align:center">חד' נקיים</th>
+        <th style="text-align:center">לוגיסטיקה</th>
+        <th style="text-align:center">ייצור</th>
+        <th style="text-align:center">מערכי שירות</th>
+        <th style="text-align:center">תעשייה טכ'</th>
+      </tr>
+      <tr>
+        <td>"תפוקות מדידות"</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+      </tr>
+      <tr>
+        <td>"BPO" / "outsourcing"</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+      </tr>
+      <tr>
+        <td>SLA</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr>
+        <td>ISO / ISO 14644</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr>
+        <td>GMP / HACCP</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#f39c12">חלקי</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr>
+        <td>3PL / Fulfillment</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr>
+        <td>Semiconductor / Staff Aug.</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+      </tr>
+      <tr>
+        <td>Help Desk / Back Office</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr>
+        <td>Co-Packing / Co-Mfg</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#e74c3c">&#10008;</td>
+        <td style="text-align:center;color:#999">-</td>
+        <td style="text-align:center;color:#999">-</td>
+      </tr>
+      <tr style="background:rgba(124,77,255,0.05)">
+        <td><strong>מילת מפתח ב-H2</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/7</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/3</strong></td>
+        <td style="text-align:center;color:#f39c12"><strong>2/4</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/4</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/3</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/3</strong></td>
+        <td style="text-align:center;color:#e74c3c"><strong>0/7</strong></td>
+      </tr>
+    </table>
+    </div>
+    <p style="margin-top:15px;color:#999;font-size:0.85em;">
+      &#10008; = חסר לגמרי | <span style="color:#f39c12">חלקי</span> = מופיע אבל חלש | - = לא רלוונטי לדף זה
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>Nadav Digital - SEO Agency | Manpower TBO Content Audit | February 2026</p>
+  <p>דוח תוכן ומילות מפתח - נפרד מדוח טכני</p>
+</footer>
+
+</div>
+</body>
+</html>
