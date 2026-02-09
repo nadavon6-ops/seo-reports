@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rayzone Group - Market Opportunity Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #0a1628;
+            --secondary: #1e3a5f;
+            --accent: #00d4ff;
+            --accent2: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --card-bg: rgba(30, 58, 95, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #0f2744 50%, var(--primary) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(180deg, rgba(0,212,255,0.1) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(0,212,255,0.2);
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .header .subtitle {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .header .date {
+            font-size: 0.95rem;
+            color: var(--accent);
+        }
+
+        /* Executive Summary */
+        .exec-summary {
+            background: linear-gradient(135deg, var(--card-bg), rgba(124,58,237,0.15));
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 50px;
+        }
+
+        .exec-summary h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+        }
+
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .metric-card {
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .chart-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,212,255,0.1);
+        }
+
+        .data-table th {
+            background: rgba(0,212,255,0.1);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        .data-table tr:hover {
+            background: rgba(0,212,255,0.05);
+        }
+
+        .data-table td:first-child {
+            font-weight: 500;
+        }
+
+        .volume-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-bar .bar {
+            height: 8px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            border-radius: 4px;
+            min-width: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-easy {
+            background: rgba(16,185,129,0.2);
+            color: #34d399;
+        }
+
+        .badge-medium {
+            background: rgba(245,158,11,0.2);
+            color: #fbbf24;
+        }
+
+        .badge-hard {
+            background: rgba(239,68,68,0.2);
+            color: #f87171;
+        }
+
+        /* Opportunities Section */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .opportunity-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .opportunity-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .opportunity-card.priority-high {
+            border-left: 4px solid var(--success);
+        }
+
+        .opportunity-card.priority-medium {
+            border-left: 4px solid var(--warning);
+        }
+
+        .opportunity-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .opportunity-card p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .opportunity-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .opportunity-stat {
+            background: rgba(10,22,40,0.5);
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .opportunity-stat .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .opportunity-stat .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(124,58,237,0.1));
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .recommendations h2 {
+            color: var(--success);
+            margin-bottom: 25px;
+        }
+
+        .recommendation-list {
+            list-style: none;
+        }
+
+        .recommendation-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .recommendation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rec-number {
+            background: var(--success);
+            color: var(--primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .rec-content h4 {
+            margin-bottom: 5px;
+        }
+
+        .rec-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(0,212,255,0.2);
+            color: var(--text-muted);
+        }
+
+        .footer .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-value {
+                font-size: 2rem;
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                color: #1a1a1a;
+            }
+
+            .header h1 {
+                background: none;
+                -webkit-text-fill-color: #0a1628;
+                color: #0a1628;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Rayzone Group</h1>
+        <p class="subtitle">Search Market Opportunity Analysis</p>
+        <p class="date">Intelligence & Cybersecurity Keywords | USA & Europe | February 2026</p>
+    </div>
+
+    <div class="container">
+        <!-- Executive Summary -->
+        <div class="exec-summary">
+            <h2>Executive Summary</h2>
+            <p>Analysis of search demand for intelligence and cybersecurity keywords across 5 key markets reveals a combined monthly search volume of <strong>22,060 searches</strong>. The USA represents the dominant market (73.6%), with significant opportunities in niche segments where competition is low.</p>
+
+            <div class="key-metrics">
+                <div class="metric-card">
+                    <div class="metric-value">22,060</div>
+                    <div class="metric-label">Monthly Searches</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">5</div>
+                    <div class="metric-label">Target Markets</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">34</div>
+                    <div class="metric-label">Keywords Analyzed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">$8.50</div>
+                    <div class="metric-label">Avg. CPC Value</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Distribution Charts -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📊</span> Market Distribution</h2>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Search Volume by Region</h3>
+                    <div class="chart-container">
+                        <canvas id="regionChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Top Keywords by Volume</h3>
+                    <div class="chart-container">
+                        <canvas id="keywordChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Regional Breakdown -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🌍</span> Regional Search Volume</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th>Monthly Volume</th>
+                        <th>Market Share</th>
+                        <th>Top Keyword</th>
+                        <th>Opportunity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>🇺🇸 United States</td>
+                        <td>
+                            <div class="volume-bar">
+                                <span>16,220</span>
+                                <div class="bar" style="width: 200px;"></div>
+                            </div>
+                        </td>
+                        <td>73.6%</td>
+                        <td>OSINT Tools (5,700)</td>
+                        <td><span class="badge badge-easy">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td>🇬🇧 United Kingdom</td>
+                        <td>
+                            <div class="volume-bar">
+                                <span>2,290</span>
+                                <div class="bar" style="width: 28px;"></div>
+                            </div>
+                        </td>
+                        <td>10.4%</td>
+                        <td>Threat Intelligence (390)</td>
+                        <td><span class="badge badge-easy">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td>🇩🇪 Germany</td>
+                        <td>
+                            <div class="volume-bar">
+                                <span>1,260</span>
+                                <div class="bar" style="width: 16px;"></div>
+                            </div>
+                        </td>
+                        <td>5.7%</td>
+                        <td>Cyber Threat Intel (320)</td>
+                        <td><span class="badge badge-medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td>🇫🇷 France</td>
+                        <td>
+                            <div class="volume-bar">
+                                <span>1,100</span>
+                                <div class="bar" style="width: 14px;"></div>
+                            </div>
+                        </td>
+                        <td>5.0%</td>
+                        <td>Cyber Threat Intel (480)</td>
+                        <td><span class="badge badge-medium">MEDIUM</span></td>
+                    </tr>
+                    <tr>
+                        <td>🇳🇱 Netherlands</td>
+                        <td>
+                            <div class="volume-bar">
+                                <span>1,190</span>
+                                <div class="bar" style="width: 15px;"></div>
+                            </div>
+                        </td>
+                        <td>5.4%</td>
+                        <td>OSINT Tools (480)</td>
+                        <td><span class="badge badge-easy">HIGH</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Keyword Analysis -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🔑</span> Keyword Performance Analysis</h2>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Total Volume</th>
+                        <th>USA</th>
+                        <th>UK</th>
+                        <th>Europe</th>
+                        <th>CPC</th>
+                        <th>Difficulty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>OSINT Tools</strong></td>
+                        <td>6,230</td>
+                        <td>5,700</td>
+                        <td>10</td>
+                        <td>520</td>
+                        <td>$2.33</td>
+                        <td><span class="badge badge-medium">39</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Geospatial Intelligence</strong></td>
+                        <td>3,940</td>
+                        <td>3,600</td>
+                        <td>170</td>
+                        <td>170</td>
+                        <td>$1.92</td>
+                        <td><span class="badge badge-medium">44</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cyber Threat Intelligence</strong></td>
+                        <td>2,900</td>
+                        <td>1,800</td>
+                        <td>130</td>
+                        <td>970</td>
+                        <td>$7.79</td>
+                        <td><span class="badge badge-medium">42</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>AML Software</strong></td>
+                        <td>1,050</td>
+                        <td>590</td>
+                        <td>320</td>
+                        <td>140</td>
+                        <td>$6.99</td>
+                        <td><span class="badge badge-easy">10</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Threat Intelligence Platform</strong></td>
+                        <td>930</td>
+                        <td>290</td>
+                        <td>390</td>
+                        <td>250</td>
+                        <td>$13.00</td>
+                        <td><span class="badge badge-easy">21</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>KYC Software</strong></td>
+                        <td>840</td>
+                        <td>360</td>
+                        <td>260</td>
+                        <td>220</td>
+                        <td>$16.82</td>
+                        <td><span class="badge badge-easy">19</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Anti Money Laundering Software</strong></td>
+                        <td>650</td>
+                        <td>480</td>
+                        <td>170</td>
+                        <td>-</td>
+                        <td>$9.15</td>
+                        <td><span class="badge badge-easy">9</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fraud Detection Software</strong></td>
+                        <td>630</td>
+                        <td>410</td>
+                        <td>140</td>
+                        <td>80</td>
+                        <td>$12.14</td>
+                        <td><span class="badge badge-medium">30</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Data Fusion</strong></td>
+                        <td>610</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>610</td>
+                        <td>$3.50</td>
+                        <td><span class="badge badge-easy">18</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Defense Cybersecurity</strong></td>
+                        <td>590</td>
+                        <td>590</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>$6.19</td>
+                        <td><span class="badge badge-easy">15</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Location Intelligence Software</strong></td>
+                        <td>490</td>
+                        <td>480</td>
+                        <td>10</td>
+                        <td>-</td>
+                        <td>$6.70</td>
+                        <td><span class="badge badge-easy">20</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Law Enforcement Software</strong></td>
+                        <td>280</td>
+                        <td>260</td>
+                        <td>20</td>
+                        <td>-</td>
+                        <td>$4.87</td>
+                        <td><span class="badge badge-easy">9</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Border Security</strong></td>
+                        <td>300</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>300</td>
+                        <td>$2.50</td>
+                        <td><span class="badge badge-easy">15</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Competitive Opportunities -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">🎯</span> Competitive Opportunities</h2>
+            <div class="opportunities-grid">
+                <div class="opportunity-card priority-high">
+                    <h4>🥇 Quick Win: AML & Compliance</h4>
+                    <p>Financial compliance keywords have high commercial intent with low competition. Ideal for immediate targeting.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">2,540/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Avg CPC</div>
+                            <div class="value">$11.32</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Difficulty</div>
+                            <div class="value">9-19</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-card priority-high">
+                    <h4>🥇 High Volume: OSINT Market</h4>
+                    <p>OSINT-related keywords show highest search volume. Strong alignment with Rayzone's core offerings.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">6,440/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Avg CPC</div>
+                            <div class="value">$2.48</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Difficulty</div>
+                            <div class="value">21-39</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-card priority-high">
+                    <h4>🥇 Niche: Law Enforcement</h4>
+                    <p>Government & law enforcement keywords have extremely low competition with high conversion potential.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">550/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Avg CPC</div>
+                            <div class="value">$4.87</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Difficulty</div>
+                            <div class="value">4-11</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-card priority-medium">
+                    <h4>🥈 Growth: Threat Intelligence</h4>
+                    <p>Threat intelligence platform keywords show strong B2B intent and premium CPC values across all markets.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">3,830/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Avg CPC</div>
+                            <div class="value">$10.40</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Difficulty</div>
+                            <div class="value">21-42</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-card priority-medium">
+                    <h4>🥈 Geographic: European Market</h4>
+                    <p>European markets (DE/FR/NL) show untapped potential for English-language content targeting international buyers.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">3,550/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Markets</div>
+                            <div class="value">3</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Growth</div>
+                            <div class="value">+15% YoY</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="opportunity-card priority-medium">
+                    <h4>🥈 Emerging: Border Security</h4>
+                    <p>Border protection and customs intelligence keywords align perfectly with BORDERINT solution positioning.</p>
+                    <div class="opportunity-stats">
+                        <div class="opportunity-stat">
+                            <div class="label">Volume</div>
+                            <div class="value">600/mo</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Avg CPC</div>
+                            <div class="value">$3.25</div>
+                        </div>
+                        <div class="opportunity-stat">
+                            <div class="label">Difficulty</div>
+                            <div class="value">9-21</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Difficulty Analysis Chart -->
+        <div class="section">
+            <h2 class="section-title"><span class="icon">📈</span> Opportunity Matrix</h2>
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>Volume vs Difficulty (Bubble Size = CPC Value)</h3>
+                    <div class="chart-container">
+                        <canvas id="bubbleChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>Keywords by Category</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="recommendations">
+            <h2>Strategic Recommendations</h2>
+            <ul class="recommendation-list">
+                <li>
+                    <span class="rec-number">1</span>
+                    <div class="rec-content">
+                        <h4>Prioritize USA Market</h4>
+                        <p>With 73.6% of total search volume, the US market offers the highest ROI potential. Focus content and paid campaigns on US-based keywords first.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="rec-number">2</span>
+                    <div class="rec-content">
+                        <h4>Target Low-Difficulty Keywords First</h4>
+                        <p>Keywords like "AML Software" (Diff: 10), "Law Enforcement Software" (Diff: 9), and "Criminal Intelligence Software" (Diff: 4) offer quick ranking wins.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="rec-number">3</span>
+                    <div class="rec-content">
+                        <h4>Create Dedicated Landing Pages</h4>
+                        <p>Build optimized landing pages for each solution category (OSINT, BORDERINT, CARINT) targeting specific keyword clusters.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="rec-number">4</span>
+                    <div class="rec-content">
+                        <h4>Invest in High-CPC Keywords</h4>
+                        <p>"KYC Software" ($16.82), "Threat Intelligence Platform" ($13.00), and "Fraud Detection" ($12.14) indicate high buyer intent and premium value.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="rec-number">5</span>
+                    <div class="rec-content">
+                        <h4>Expand European Presence</h4>
+                        <p>English-language searches in DE/FR/NL total 3,550/month. Create localized content to capture international government and enterprise buyers.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="logo">Nadav Digital</div>
+            <p>SEO Market Analysis | Data Source: SE Ranking API</p>
+            <p>Report Generated: February 2026</p>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js configuration
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.borderColor = 'rgba(0,212,255,0.1)';
+
+        // Region Pie Chart
+        new Chart(document.getElementById('regionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['USA', 'UK', 'Germany', 'France', 'Netherlands'],
+                datasets: [{
+                    data: [16220, 2290, 1260, 1100, 1190],
+                    backgroundColor: [
+                        '#00d4ff',
+                        '#7c3aed',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ec4899'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Keyword Bar Chart
+        new Chart(document.getElementById('keywordChart'), {
+            type: 'bar',
+            data: {
+                labels: ['OSINT Tools', 'Geospatial Intel', 'Cyber Threat Intel', 'AML Software', 'Threat Intel Platform', 'KYC Software'],
+                datasets: [{
+                    label: 'Monthly Searches',
+                    data: [6230, 3940, 2900, 1050, 930, 840],
+                    backgroundColor: 'rgba(0,212,255,0.7)',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0,212,255,0.1)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bubble Chart (Volume vs Difficulty)
+        new Chart(document.getElementById('bubbleChart'), {
+            type: 'bubble',
+            data: {
+                datasets: [{
+                    label: 'Keywords',
+                    data: [
+                        {x: 39, y: 6230, r: 8, label: 'OSINT Tools'},
+                        {x: 44, y: 3940, r: 6, label: 'Geospatial Intel'},
+                        {x: 42, y: 2900, r: 12, label: 'Cyber Threat Intel'},
+                        {x: 10, y: 1050, r: 10, label: 'AML Software'},
+                        {x: 21, y: 930, r: 15, label: 'Threat Intel Platform'},
+                        {x: 19, y: 840, r: 18, label: 'KYC Software'},
+                        {x: 9, y: 650, r: 12, label: 'AML Software'},
+                        {x: 30, y: 630, r: 14, label: 'Fraud Detection'},
+                        {x: 9, y: 280, r: 8, label: 'Law Enforcement'},
+                        {x: 4, y: 100, r: 5, label: 'Criminal Intel'}
+                    ],
+                    backgroundColor: 'rgba(0,212,255,0.6)',
+                    borderColor: '#00d4ff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Difficulty Score (Lower = Easier)',
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(0,212,255,0.1)'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Search Volume',
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            color: 'rgba(0,212,255,0.1)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Volume: ${context.raw.y.toLocaleString()} | Difficulty: ${context.raw.x}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Category Chart
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'polarArea',
+            data: {
+                labels: ['OSINT & Intelligence', 'Financial Compliance', 'Threat Intelligence', 'Law Enforcement', 'Border Security', 'Geolocation'],
+                datasets: [{
+                    data: [6440, 2540, 3830, 550, 600, 4430],
+                    backgroundColor: [
+                        'rgba(0,212,255,0.7)',
+                        'rgba(124,58,237,0.7)',
+                        'rgba(16,185,129,0.7)',
+                        'rgba(245,158,11,0.7)',
+                        'rgba(236,72,153,0.7)',
+                        'rgba(59,130,246,0.7)'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
