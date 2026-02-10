@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקה שבועית - נפח חיפוש מותג אורגני | צ'רי ישראל | 10.02.2026</title>
+    <style>
+        :root {
+            --green: #10b981; --green-bg: #ecfdf5; --green-dark: #065f46;
+            --red: #ef4444; --red-bg: #fef2f2; --red-dark: #991b1b;
+            --yellow: #f59e0b; --yellow-bg: #fffbeb; --yellow-dark: #92400e;
+            --blue: #3b82f6; --blue-bg: #eff6ff;
+            --gray: #6b7280; --dark: #111827; --border: #e5e7eb;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; color: var(--dark); line-height: 1.7; }
+        .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+            color: white; padding: 36px 40px; border-radius: 16px; margin-bottom: 24px;
+        }
+        .header h1 { font-size: 1.8em; margin-bottom: 4px; }
+        .header .sub { opacity: 0.8; font-size: 0.95em; margin-bottom: 14px; }
+        .header .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .header .tag { background: rgba(255,255,255,0.12); padding: 5px 14px; border-radius: 8px; font-size: 0.85em; }
+
+        /* ── Answer Box ── */
+        .answer-box {
+            border-radius: 14px; padding: 32px 36px; margin-bottom: 24px;
+            text-align: center;
+        }
+        .answer-box.green { background: var(--green-bg); border: 3px solid var(--green); }
+        .answer-box.red { background: var(--red-bg); border: 3px solid var(--red); }
+        .answer-box.yellow { background: var(--yellow-bg); border: 3px solid var(--yellow); }
+        .answer-status { font-size: 3.5em; line-height: 1; margin-bottom: 8px; }
+        .answer-title { font-size: 1.5em; font-weight: 700; margin-bottom: 6px; }
+        .answer-desc { font-size: 1em; max-width: 680px; margin: 0 auto; }
+
+        .section {
+            background: white; border-radius: 12px; padding: 28px;
+            margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .section h2 { font-size: 1.2em; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.92em; }
+        th { background: #f9fafb; padding: 11px 14px; text-align: right; font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+        tr:hover td { background: #fafbfc; }
+        .num { text-align: left; direction: ltr; font-variant-numeric: tabular-nums; }
+        .pos { color: var(--green); font-weight: 700; }
+        .neg { color: var(--red); font-weight: 700; }
+        .flat { color: var(--gray); }
+
+        .threshold-row { font-weight: 700; font-size: 1em; }
+        .threshold-row td { border-top: 3px solid var(--border); padding-top: 14px; }
+
+        .note {
+            background: var(--blue-bg); border-right: 4px solid var(--blue);
+            padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.92em;
+        }
+        .note strong { color: #1e40af; }
+
+        .warn-note {
+            background: var(--yellow-bg); border-right: 4px solid var(--yellow);
+            padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 0.92em;
+        }
+        .warn-note strong { color: var(--yellow-dark); }
+
+        .bottom-line {
+            background: #0f172a; color: white; border-radius: 12px;
+            padding: 28px; margin-bottom: 20px; text-align: center;
+        }
+        .bottom-line h2 { color: white; border: none; padding: 0; margin-bottom: 12px; font-size: 1.2em; }
+        .bottom-line p { color: rgba(255,255,255,0.85); font-size: 0.95em; max-width: 700px; margin: 0 auto; }
+
+        .pos-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.83em; font-weight: 600; }
+        .pos-gold { background: #fef3c7; color: #92400e; }
+        .pos-silver { background: #f3f4f6; color: #374151; }
+        .pos-gray { background: #f3f4f6; color: #6b7280; }
+
+        .footer { text-align: center; padding: 20px; color: var(--gray); font-size: 0.82em; line-height: 1.8; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .header { padding: 24px; }
+            .header h1 { font-size: 1.4em; }
+            .answer-box { padding: 24px 20px; }
+            .answer-status { font-size: 2.5em; }
+            .answer-title { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="header">
+    <h1>בדיקה שבועית - נפח חיפוש מותג אורגני</h1>
+    <div class="sub">צ'רי ישראל | cheryisrael.co.il | Google Search Console בלבד</div>
+    <div class="tags">
+        <span class="tag">תאריך: 10.02.2026</span>
+        <span class="tag">נתוני GSC עד: 07.02.2026</span>
+        <span class="tag">אורגני בלבד</span>
+        <span class="tag">סף התראה: ירידה של 10%</span>
+    </div>
+</div>
+
+<!-- ═══════════ MAIN ANSWER ═══════════ -->
+<div class="answer-box green">
+    <div class="answer-status">&#10003;</div>
+    <div class="answer-title" style="color: var(--green-dark);">אין ירידה בנפח חיפושי המותג</div>
+    <div class="answer-desc" style="color: var(--green-dark);">
+        חשיפות מותג בחיפוש האורגני עלו <strong>+14.1%</strong> בהשוואה שבועית
+        ו-<strong>+2.1%</strong> בהשוואה חודשית.<br>
+        סף ההתראה של 10% ירידה <strong>לא נחצה</strong>.
+        לא נדרשת פעולה מיידית בפרסום ממומן להגנה על המותג.
+    </div>
+</div>
+
+<!-- ═══════════ OBJECTIVE ═══════════ -->
+<div class="section">
+    <h2>מטרת הבדיקה</h2>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 35%; font-weight: 600; color: var(--gray);">מטרה</td>
+                <td>לבדוק האם קיימת ירידה בנפח חיפושי המותג האורגניים כדי לזהות צורך בהשקעה בפרסום ממומן</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">דגל אדום</td>
+                <td>ירידה של <strong>10% ומעלה</strong> בנפח חיפושי מותג אורגניים = חשד שמתחרים מנסים לגנוב חשיפה דרך קמפיינים ממומנים</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">מקור נתונים</td>
+                <td>Google Search Console - אורגני בלבד (type=web) - אתר cheryisrael.co.il</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">הגדרת שאילתות מותג</td>
+                <td>צ'רי, צרי, chery, cherry + שמות דגמים (טיגו, אריזו, אומודה, FX, Tiggo וכו')</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ═══════════ WEEKLY COMPARISON ═══════════ -->
+<div class="section">
+    <h2>השוואה שבועית: 01.02 - 07.02 מול 25.01 - 31.01</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>מדד</th>
+                <th class="num">שבוע נוכחי</th>
+                <th class="num">שבוע קודם</th>
+                <th class="num">שינוי</th>
+                <th>סטטוס</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>חשיפות מותג (נפח חיפוש)</strong></td>
+                <td class="num"><strong>42,280</strong></td>
+                <td class="num"><strong>37,042</strong></td>
+                <td class="num pos"><strong>+14.1%</strong></td>
+                <td class="pos">תקין - עלייה</td>
+            </tr>
+            <tr>
+                <td>קליקים מותג</td>
+                <td class="num">8,659</td>
+                <td class="num">9,742</td>
+                <td class="num neg">-11.1%</td>
+                <td class="neg">ירידה</td>
+            </tr>
+            <tr>
+                <td>שיעור הקלקה (CTR)</td>
+                <td class="num">20.5%</td>
+                <td class="num">26.3%</td>
+                <td class="num neg">-22.1%</td>
+                <td class="neg">ירידה</td>
+            </tr>
+            <tr>
+                <td>מיקום ממוצע</td>
+                <td class="num">4.4</td>
+                <td class="num">5.5</td>
+                <td class="num pos">שיפור</td>
+                <td class="pos">תקין</td>
+            </tr>
+            <tr>
+                <td>שאילתות מותג (מגוון)</td>
+                <td class="num">2,411</td>
+                <td class="num">2,416</td>
+                <td class="num flat">-0.2%</td>
+                <td class="flat">יציב</td>
+            </tr>
+            <tr class="threshold-row">
+                <td>בדיקת סף 10% ירידה בחשיפות</td>
+                <td class="num" colspan="2"></td>
+                <td class="num pos">+14.1%</td>
+                <td class="pos">לא נחצה</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="warn-note" style="margin-top: 16px;">
+        <strong>הערה לגבי ירידת הקליקים (-11.1%):</strong>
+        נפח החיפוש (חשיפות) עלה, אבל הקליקים ירדו. הסיבה העיקרית: השאילתה "צ'רי" קפצה מ-687 ל-6,708 חשיפות (+876%), אך עם CTR של 5.6% בלבד (לעומת 48.3% בשבוע הקודם). גוגל הרחיב את ההצגה של האתר בתוצאות נוספות - אך המשתמשים באותן תוצאות לא לחצו. זה לא מעיד על גניבת חשיפה ממתחרים, אלא על שינוי באופן שגוגל מציג את התוצאות.
+    </div>
+</div>
+
+<!-- ═══════════ MONTHLY COMPARISON ═══════════ -->
+<div class="section">
+    <h2>השוואה חודשית: 11.01 - 07.02 מול 14.12 - 10.01 (28 ימים)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>מדד</th>
+                <th class="num">נוכחי</th>
+                <th class="num">קודם</th>
+                <th class="num">שינוי</th>
+                <th>סטטוס</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>חשיפות מותג (נפח חיפוש)</strong></td>
+                <td class="num"><strong>153,743</strong></td>
+                <td class="num"><strong>150,618</strong></td>
+                <td class="num pos"><strong>+2.1%</strong></td>
+                <td class="pos">תקין - יציב</td>
+            </tr>
+            <tr>
+                <td>קליקים מותג</td>
+                <td class="num">38,096</td>
+                <td class="num">37,643</td>
+                <td class="num pos">+1.2%</td>
+                <td class="pos">תקין</td>
+            </tr>
+            <tr>
+                <td>שיעור הקלקה (CTR)</td>
+                <td class="num">24.8%</td>
+                <td class="num">25.0%</td>
+                <td class="num flat">-0.9%</td>
+                <td class="flat">יציב</td>
+            </tr>
+            <tr>
+                <td>מיקום ממוצע</td>
+                <td class="num">5.4</td>
+                <td class="num">6.9</td>
+                <td class="num pos">שיפור</td>
+                <td class="pos">תקין</td>
+            </tr>
+            <tr class="threshold-row">
+                <td>בדיקת סף 10% ירידה בחשיפות</td>
+                <td class="num" colspan="2"></td>
+                <td class="num pos">+2.1%</td>
+                <td class="pos">לא נחצה</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ═══════════ TOP BRAND QUERIES ═══════════ -->
+<div class="section">
+    <h2>שאילתות מותג עיקריות - שבוע נוכחי</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>שאילתה</th>
+                <th class="num">חשיפות</th>
+                <th class="num">קליקים</th>
+                <th class="num">CTR</th>
+                <th class="num">מיקום</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>צ'רי</td>
+                <td class="num">6,708</td>
+                <td class="num">375</td>
+                <td class="num">5.6%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>צרי</td>
+                <td class="num">1,904</td>
+                <td class="num">835</td>
+                <td class="num">43.9%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery</td>
+                <td class="num">1,525</td>
+                <td class="num">657</td>
+                <td class="num">43.1%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>cherry</td>
+                <td class="num">1,134</td>
+                <td class="num">298</td>
+                <td class="num">26.3%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צרי טיגו 4</td>
+                <td class="num">730</td>
+                <td class="num">127</td>
+                <td class="num">17.4%</td>
+                <td class="num"><span class="pos-badge pos-silver">3</span></td>
+            </tr>
+            <tr>
+                <td>צרי טיגו 8</td>
+                <td class="num">688</td>
+                <td class="num">219</td>
+                <td class="num">31.8%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery tiggo 4 pro</td>
+                <td class="num">570</td>
+                <td class="num">36</td>
+                <td class="num">6.3%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery tiggo 8 pro</td>
+                <td class="num">530</td>
+                <td class="num">90</td>
+                <td class="num">17.0%</td>
+                <td class="num"><span class="pos-badge pos-gray">12</span></td>
+            </tr>
+            <tr>
+                <td>צ'רי טיגו 8</td>
+                <td class="num">480</td>
+                <td class="num">118</td>
+                <td class="num">24.6%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>צרי טיגו 7</td>
+                <td class="num">443</td>
+                <td class="num">151</td>
+                <td class="num">34.1%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צרי fx</td>
+                <td class="num">431</td>
+                <td class="num">111</td>
+                <td class="num">25.8%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery tiggo 4</td>
+                <td class="num">418</td>
+                <td class="num">90</td>
+                <td class="num">21.5%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>chery fx</td>
+                <td class="num">417</td>
+                <td class="num">88</td>
+                <td class="num">21.1%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>צ'רי טיגו 4</td>
+                <td class="num">408</td>
+                <td class="num">107</td>
+                <td class="num">26.2%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>טיגו 4</td>
+                <td class="num">392</td>
+                <td class="num">45</td>
+                <td class="num">11.5%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery fx ev</td>
+                <td class="num">373</td>
+                <td class="num">81</td>
+                <td class="num">21.7%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צרי טיגו 9</td>
+                <td class="num">356</td>
+                <td class="num">146</td>
+                <td class="num">41.0%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>טיגו 9</td>
+                <td class="num">345</td>
+                <td class="num">117</td>
+                <td class="num">33.9%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צרי טיגו 8 פלאג אין</td>
+                <td class="num">330</td>
+                <td class="num">93</td>
+                <td class="num">28.2%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צ'רי טיגו 7</td>
+                <td class="num">317</td>
+                <td class="num">91</td>
+                <td class="num">28.7%</td>
+                <td class="num"><span class="pos-badge pos-gold">2</span></td>
+            </tr>
+            <tr>
+                <td>chery tiggo 7 pro</td>
+                <td class="num">281</td>
+                <td class="num">44</td>
+                <td class="num">15.7%</td>
+                <td class="num"><span class="pos-badge pos-gray">13</span></td>
+            </tr>
+            <tr>
+                <td>chery israel</td>
+                <td class="num">279</td>
+                <td class="num">136</td>
+                <td class="num">48.7%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>טיגו 4 היברידי</td>
+                <td class="num">274</td>
+                <td class="num">47</td>
+                <td class="num">17.2%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>צרי אריזו 8</td>
+                <td class="num">258</td>
+                <td class="num">77</td>
+                <td class="num">29.8%</td>
+                <td class="num"><span class="pos-badge pos-gold">1</span></td>
+            </tr>
+            <tr>
+                <td>chery arrizo 8</td>
+                <td class="num">248</td>
+                <td class="num">56</td>
+                <td class="num">22.6%</td>
+                <td class="num"><span class="pos-badge pos-silver">4</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="note" style="margin-top: 16px;">
+        <strong>סיכום שאילתות מותג:</strong>
+        2,411 שאילתות מותג ייחודיות זוהו השבוע. שאילתות ליבה (צ'רי, צרי, chery) ושאילתות דגם (טיגו 4/7/8/9, FX, אריזו 8) פעילות ויציבות. רוב השאילתות המותגיות נמצאות במיקום 1-2 באורגני.
+    </div>
+</div>
+
+<!-- ═══════════ BOTTOM LINE ═══════════ -->
+<div class="bottom-line">
+    <h2>שורה תחתונה</h2>
+    <p>
+        <strong style="color: #34d399; font-size: 1.1em;">אין ירידה בנפח חיפושי המותג.</strong><br><br>
+        סף ההתראה של 10% ירידה <strong>לא נחצה</strong> - לא בהשוואה שבועית ולא בחודשית.<br>
+        חשיפות מותג עלו 14.1% שבועית ו-2.1% חודשית. מיקום ממוצע השתפר.<br>
+        לא זוהו סימנים לגניבת חשיפה על ידי מתחרים דרך קמפיינים ממומנים.<br><br>
+        <strong>המלצה:</strong> כרגע אין צורך בהשקעה בפרסום ממומן להגנה על שם המותג.<br>
+        נמשיך לנטר שבועית. אם בשבועות הבאים חשיפות מותג יירדו מתחת לסף - נעדכן מיידית.
+    </p>
+</div>
+
+<!-- ═══════════ DATA SOURCE VERIFICATION ═══════════ -->
+<div class="section">
+    <h2>אימות מקור נתונים</h2>
+    <table>
+        <tbody>
+            <tr>
+                <td style="width: 40%; font-weight: 600; color: var(--gray);">מקור</td>
+                <td>Google Search Console API</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">אתר</td>
+                <td>https://cheryisrael.co.il/ (URL-prefix property)</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">סוג נתונים</td>
+                <td>type=web (אורגני בלבד - לא כולל תמונות, וידאו, חדשות או Ads)</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">הרשאה</td>
+                <td>siteFullUser</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">עיכוב נתונים (GSC lag)</td>
+                <td>3 ימים - נתונים עד 07.02.2026</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">כיסוי שאילתות</td>
+                <td>66.6% מהקליקים | 64.5% מהחשיפות (שאר = שאילתות אנונימיות מוסתרות על ידי גוגל)</td>
+            </tr>
+            <tr>
+                <td style="font-weight: 600; color: var(--gray);">דפוסי מותג</td>
+                <td>18 דפוסים: צ'רי, צרי, chery, cherry, טיגו, tiggo, אריזו, arrizo, אומודה, omoda, ג'קו, jaecoo, exeed, אקסיד, icecar, איסקר, eq7, eq5</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div class="footer">
+    <p>בדיקה שבועית - ניטור נפח חיפוש מותג אורגני | צ'רי ישראל | Nadav Digital</p>
+    <p>מקור: Google Search Console | אורגני בלבד | cheryisrael.co.il</p>
+    <p>הופק: 10.02.2026 | שבוע נבדק: 01.02 - 07.02.2026</p>
+</div>
+
+</div>
+</body>
+</html>
