@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missing Schemas Audit - Multi Site | Manpower Group</title>
+<style>
+  :root {
+    --primary: #1a237e;
+    --primary-light: #3949ab;
+    --accent: #ff6f00;
+    --success: #2e7d32;
+    --danger: #c62828;
+    --warning: #f57f17;
+    --bg: #f5f5f5;
+    --card-bg: #ffffff;
+    --text: #212121;
+    --text-secondary: #616161;
+    --border: #e0e0e0;
+    --code-bg: #263238;
+    --code-text: #eeffff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    direction: rtl;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  /* Header */
+  .report-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  .report-header h1 { font-size: 2rem; margin-bottom: 10px; }
+  .report-header .subtitle { opacity: 0.9; font-size: 1.1rem; }
+  .report-header .meta {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
+    margin-top: 20px; font-size: 0.9rem; opacity: 0.85;
+  }
+  .report-header .meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; }
+
+  /* Summary Cards */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px; margin-bottom: 30px;
+  }
+  .summary-card {
+    background: var(--card-bg); border-radius: 10px; padding: 20px;
+    text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .summary-card .number { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+  .summary-card .label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 5px; }
+
+  /* Site Section */
+  .site-section {
+    background: var(--card-bg); border-radius: 12px;
+    margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .site-header {
+    background: var(--primary);
+    color: white; padding: 18px 25px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .site-header h2 { font-size: 1.3rem; }
+  .site-header .domain { font-size: 0.85rem; opacity: 0.8; direction: ltr; }
+  .site-header .badge {
+    background: var(--danger); color: white;
+    padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;
+  }
+  .site-header .badge.partial { background: var(--warning); }
+  .site-header .badge.good { background: var(--success); }
+
+  .site-body { padding: 25px; }
+
+  /* Found/Existing schemas */
+  .existing-schemas {
+    background: #e8f5e9; border-radius: 8px; padding: 15px;
+    margin-bottom: 20px; border-right: 4px solid var(--success);
+  }
+  .existing-schemas h4 { color: var(--success); margin-bottom: 8px; }
+  .existing-schemas ul { padding-right: 20px; }
+  .existing-schemas li { margin-bottom: 4px; color: #2e7d32; }
+
+  /* Pages checked */
+  .pages-checked {
+    background: #e3f2fd; border-radius: 8px; padding: 15px;
+    margin-bottom: 20px; border-right: 4px solid #1565c0;
+  }
+  .pages-checked h4 { color: #1565c0; margin-bottom: 8px; }
+
+  /* Missing Schema Item */
+  .missing-item {
+    border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 20px; overflow: hidden;
+    border-right: 4px solid var(--danger);
+  }
+  .missing-item-header {
+    background: #fce4ec; padding: 15px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .missing-item-header h4 { color: var(--danger); }
+  .missing-item-header .priority {
+    font-size: 0.75rem; padding: 3px 10px; border-radius: 12px;
+    font-weight: 600;
+  }
+  .priority-high { background: #ffcdd2; color: #b71c1c; }
+  .priority-medium { background: #fff3e0; color: #e65100; }
+  .priority-low { background: #e0e0e0; color: #424242; }
+
+  .missing-item-body { padding: 20px; }
+
+  .evidence {
+    background: #fff3e0; border-radius: 6px; padding: 12px;
+    margin-bottom: 15px; font-size: 0.9rem;
+    border-right: 3px solid var(--accent);
+  }
+  .evidence strong { color: var(--accent); }
+
+  .implementation { margin-bottom: 15px; }
+  .implementation h5 { margin-bottom: 8px; color: var(--primary); }
+
+  pre {
+    background: var(--code-bg); color: var(--code-text);
+    padding: 15px; border-radius: 8px; overflow-x: auto;
+    font-size: 0.82rem; line-height: 1.5;
+    direction: ltr; text-align: left;
+    margin-bottom: 10px;
+  }
+  code { font-family: 'Consolas', 'Courier New', monospace; }
+
+  .validation-badge {
+    display: inline-block; padding: 4px 12px;
+    border-radius: 20px; font-size: 0.75rem; font-weight: 600;
+  }
+  .valid { background: #c8e6c9; color: #1b5e20; }
+  .needs-check { background: #fff9c4; color: #f57f17; }
+
+  /* Table */
+  table {
+    width: 100%; border-collapse: collapse; margin: 15px 0;
+    font-size: 0.9rem;
+  }
+  th { background: #e8eaf6; padding: 10px 12px; text-align: right; font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: #f5f5f5; }
+  .status-missing { color: var(--danger); font-weight: 600; }
+  .status-found { color: var(--success); font-weight: 600; }
+  .status-fix { color: var(--warning); font-weight: 600; }
+
+  /* Notes */
+  .note {
+    background: #ede7f6; border-radius: 6px; padding: 12px;
+    margin: 10px 0; font-size: 0.85rem; border-right: 3px solid #7e57c2;
+  }
+
+  /* Appendix */
+  .appendix {
+    background: var(--card-bg); border-radius: 12px; padding: 25px;
+    margin-top: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .appendix h3 { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container { padding: 10px; }
+    .report-header { padding: 20px; }
+    .report-header h1 { font-size: 1.5rem; }
+    pre { font-size: 0.75rem; padding: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ==================== HEADER ==================== -->
+<div class="report-header">
+  <h1>ביקורת סכמות חסרות - מולטי סייט</h1>
+  <div class="subtitle">Missing Schemas Audit | Manpower Group Sites</div>
+  <div class="meta">
+    <span>תאריך: 10 בפברואר 2026</span>
+    <span>שיטה: בדיקה חיה בלבד</span>
+    <span>8 עמודים נבדקו</span>
+    <span>4 סוגי סכמה</span>
+  </div>
+  <div class="meta" style="margin-top:10px;">
+    <span>מקור 1: <a href="https://docs.google.com/spreadsheets/d/1lqFJwr-HFE47VUDlX86Msdazrnmwk_To_aXYDS6Geq4/edit?gid=5366670" style="color:#bbdefb;">גיליון ישן</a></span>
+    <span>מקור 2: <a href="https://docs.google.com/spreadsheets/d/1CGbe6Jb6UJwL2ctaCey8-IQHK6jEq0gDe5S-9dJizf4/edit?gid=5366670" style="color:#bbdefb;">גיליון חדש</a></span>
+  </div>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="number">8</div>
+    <div class="label">עמודים/אתרים נבדקו</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:var(--danger);">24</div>
+    <div class="label">סכמות חסרות סה"כ</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:var(--success);">12</div>
+    <div class="label">סכמות קיימות (לא בדוח)</div>
+  </div>
+  <div class="summary-card">
+    <div class="number" style="color:var(--warning);">2</div>
+    <div class="label">סכמות שדורשות תיקון</div>
+  </div>
+</div>
+
+<!-- ==================== OVERVIEW TABLE ==================== -->
+<div class="site-section">
+  <div class="site-header" style="background:#37474f;">
+    <h2>סקירה כללית - מצב סכמות לפי אתר</h2>
+  </div>
+  <div class="site-body">
+    <table>
+      <thead>
+        <tr>
+          <th>אתר</th>
+          <th>Organization</th>
+          <th>WebSite</th>
+          <th>BreadcrumbList</th>
+          <th>FAQPage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>manpower.co.il</strong></td>
+          <td class="status-found">&#10004; קיים</td>
+          <td class="status-found">&#10004; קיים + SearchAction</td>
+          <td class="status-found">&#10004; קיים</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>manpowergroup.co.il</strong></td>
+          <td class="status-found">&#10004; קיים</td>
+          <td class="status-fix">&#9888; דורש תיקון (דומיין שגוי)</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-found">&#10004; מאושר (Google Doc)</td>
+        </tr>
+        <tr>
+          <td><strong>manpower.co.il/employers/tbo</strong></td>
+          <td class="status-missing">&#10008; לא מוטמע בעמוד</td>
+          <td class="status-missing">&#10008; לא מוטמע בעמוד</td>
+          <td class="status-fix">&#9888; קיים (חלקי)</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>experis.co.il</strong></td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>experis.co.il/service/experis-cyber</strong></td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>experis.co.il/service/experis-academy</strong></td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>manpowercare.co.il</strong></td>
+          <td class="status-found">&#10004; קיים</td>
+          <td class="status-missing">&#10008; חסר</td>
+          <td class="status-found">&#10004; קיים</td>
+          <td class="status-missing">&#10008; חסר</td>
+        </tr>
+        <tr>
+          <td><strong>talentsolutions.manpowergroup.co.il</strong></td>
+          <td class="status-found">&#10004; קיים (מינימלי)</td>
+          <td class="status-fix">&#9888; קיים ללא SearchAction</td>
+          <td class="status-found">&#10004; קיים</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 1: www.manpower.co.il -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header">
+    <div>
+      <h2>מנפאואר ישראל</h2>
+      <div class="domain">www.manpower.co.il</div>
+    </div>
+    <span class="badge">1 סכמה חסרה</span>
+  </div>
+  <div class="site-body">
+
+    <div class="existing-schemas">
+      <h4>&#10004; סכמות קיימות באתר (לא כלולות בדוח)</h4>
+      <ul>
+        <li><strong>Organization</strong> - מלא: שם, לוגו, כתובת, טלפון, רשתות חברתיות</li>
+        <li><strong>WebSite + SearchAction</strong> - כולל חיפוש: /search?search={term}</li>
+        <li><strong>BreadcrumbList</strong> - מוטמע דינמית בכל עמודי האתר</li>
+      </ul>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://www.manpower.co.il/ (דף הבית) | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: FAQPage -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> בדיקה חיה של https://www.manpower.co.il/ - לא נמצא JSON-LD מסוג FAQPage.
+          האתר מכיל תוכן FAQ באקורדיון בעמוד הראשי ובעמודים פנימיים, אך ללא סכמה מובנית.
+        </div>
+
+        <div class="note">
+          <strong>הערה:</strong> לפי מעקב הגיליונות - הסכמה נשלחה (v) אך לא הוטמעה.
+          מדריך מוכן: <a href="https://report.n-c.digital/manpower-experis-faq-schemas.html">manpower-experis-faq-schemas.html</a>
+          <br>9 עמודים צריכים FAQPage: דף הבית, FAQ, אודות, מעסיקים, מחשבון שכר, מקצועות, חיפוש עבודה, TBO, צור קשר.
+        </div>
+
+        <div class="implementation">
+          <h5>דוגמה - FAQPage לדף הבית (5 שאלות):</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה עושה מנפאואר ישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חברת השמה ותעסוקה בת 65 שנה המחברת מועמדים מוכשרים עם אלפי מעסיקים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה לחפש עבודה דרך מנפאואר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גישה למשרות בלעדיות, ליווי קריירה אישי, ודברים אחרים שקשה למצוא לבד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מוצאים משרה באתר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סינון לפי תחום, אזור, רמת ניסיון; הגשת מועמדות ישירה דרך הלוח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו סוגי משרות מציעה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "משרות בכל רמות וכל תחומים: הייטק, פיננסים, HR, לוגיסטיקה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש עלות לדורשי עבודה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שירות חינם לחלוטין; עמלה משולמת על ידי המעסיקים בלבד."
+      }
+    }
+  ]
+}</code></pre>
+          <p><strong>מיקום הטמעה:</strong> הוסף כ-<code>&lt;script type="application/ld+json"&gt;</code> בכל עמוד רלוונטי.</p>
+          <p><strong>פלטפורמה:</strong> Next.js - הוסף ב-Head component של כל עמוד.</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין - Schema.org</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 2: manpowergroup.co.il -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header">
+    <div>
+      <h2>מנפאואר גרופ ישראל</h2>
+      <div class="domain">manpowergroup.co.il</div>
+    </div>
+    <span class="badge">2 סכמות חסרות + 1 תיקון</span>
+  </div>
+  <div class="site-body">
+
+    <div class="existing-schemas">
+      <h4>&#10004; סכמות קיימות באתר</h4>
+      <ul>
+        <li><strong>Organization</strong> - קיים: שם, לוגו, תיאור, רשתות חברתיות</li>
+        <li><strong>FAQPage</strong> - מאושר ומוטמע (נבדק ואושר ע"י צוות SEO)</li>
+      </ul>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://manpowergroup.co.il/ (דף הבית) | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: BreadcrumbList -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>BreadcrumbList Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> בדיקה חיה - לא נמצא JSON-LD מסוג BreadcrumbList.
+          קיים מנגנון CSS breadcrumb (<code>.hs-breadcrumb-menu</code>) אך ללא Schema markup.
+        </div>
+        <div class="note">
+          <strong>הערה:</strong> לפי הגיליון - נשלח (v) אך לא הוטמע. 11 עמודים זקוקים לסכמת breadcrumb.
+          <br>מדריך: <a href="https://report.n-c.digital/manpowergroup-breadcrumbs.html">manpowergroup-breadcrumbs.html</a>
+        </div>
+        <div class="implementation">
+          <h5>דוגמה - BreadcrumbList לעמוד "אודותינו":</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://manpowergroup.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "אודותינו"
+    }
+  ]
+}</code></pre>
+          <p><strong>מיקום:</strong> HubSpot: Settings &rarr; Website &rarr; Pages &rarr; Advanced options &rarr; Head HTML</p>
+          <p><strong>עמודים שדורשים Breadcrumb:</strong> אודותינו, חזון וערכים, הכרה בהישגים, קיימות ואחריות, הנהלת הקבוצה, הפתרונות שלנו, מחסור בכישרונות, מגמות בכוח העבודה, מועמדים, צרו קשר, סקר צפי תעסוקה</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Fix: WebSite Schema (wrong domain) -->
+    <div class="missing-item" style="border-right-color: var(--warning);">
+      <div class="missing-item-header" style="background: #fff3e0;">
+        <h4>WebSite Schema - דורש תיקון (דומיין שגוי)</h4>
+        <span class="priority priority-high">עדיפות גבוהה - תיקון</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> נמצא WebSite schema באתר, אך מפנה לדומיין השגוי <code>www.manpower.co.il</code> במקום <code>manpowergroup.co.il</code>.
+          <br>ה-SearchAction מפנה ל-manpower.co.il/search - לא רלוונטי עבור manpowergroup.
+        </div>
+        <div class="implementation">
+          <h5>הסכמה הנוכחית (שגויה):</h5>
+<pre><code>// WRONG - מפנה לדומיין אחר:
+{
+  "@type": "WebSite",
+  "name": "Manpower",
+  "url": "https://www.manpower.co.il/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.manpower.co.il/search?search={search_term_string}"
+  }
+}</code></pre>
+          <h5>סכמה מתוקנת עבור manpowergroup.co.il:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://manpowergroup.co.il/#website",
+  "name": "ManpowerGroup Israel",
+  "url": "https://manpowergroup.co.il/",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://manpowergroup.co.il/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://manpowergroup.co.il/hs-search-results?term={search_term_string}"
+    },
+    "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+    }
+  }
+}</code></pre>
+          <p><strong>מיקום:</strong> HubSpot: Settings &rarr; Website &rarr; Pages &rarr; Site Header HTML - <strong>החלף</strong> את הסכמה הקיימת.</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 3: www.manpower.co.il/employers/tbo -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header">
+    <div>
+      <h2>מנפאואר TBO</h2>
+      <div class="domain">www.manpower.co.il/employers/tbo</div>
+    </div>
+    <span class="badge">2 סכמות חסרות + 1 תיקון</span>
+  </div>
+  <div class="site-body">
+
+    <div class="existing-schemas">
+      <h4>&#10004; סכמות קיימות בעמוד</h4>
+      <ul>
+        <li><strong>BreadcrumbList</strong> - קיים (חלקי - חסר URL בפוזיציה 1)</li>
+      </ul>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://www.manpower.co.il/employers/tbo | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <div class="note">
+      <strong>הערה חשובה:</strong> Organization ו-WebSite קיימים בדף הבית של manpower.co.il אך <strong>לא נמצאו בעמוד TBO</strong>.
+      ההטמעה צריכה להיות sitewide (בכל העמודים) ולא רק בדף הבית.
+      ההמלצה: להעביר את הסכמות לקובץ layout.tsx כך שיופיעו בכל עמודי האתר.
+    </div>
+
+    <!-- Missing: Sitewide Organization -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>Organization + WebSite - לא מוטמעים בעמוד זה (Sitewide נדרש)</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> בדיקת העמוד /employers/tbo מצאה רק BreadcrumbList.
+          סכמות Organization ו-WebSite קיימות רק בדף הבית - לא מוזרקות לכל העמודים.
+        </div>
+        <div class="implementation">
+          <h5>פתרון:</h5>
+          <p>העבר את הסכמות Organization ו-WebSite+SearchAction מדף הבית ל-<code>layout.tsx</code> או <code>_app.tsx</code> כך שיופיעו בכל עמודי האתר אוטומטית. הסכמות עצמן כבר קיימות ותקינות - צריך רק לשנות את מיקום ההזרקה.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Missing: FAQPage for TBO -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר</h4>
+        <span class="priority priority-medium">עדיפות בינונית</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> בעמוד TBO קיים תוכן FAQ באקורדיון (4 שאלות) אך ללא סכמה מובנית.
+        </div>
+        <div class="implementation">
+          <h5>FAQPage עבור עמוד TBO:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהו TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TBO (Total Business Outsourcing) הוא מודל של ניהול פרויקטים ושירותי מיקור חוץ מקצה לקצה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי כדאי לבחור בשירות TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כאשר ארגון מעוניין למקד את המשאבים בליבת העסק ולהעביר ניהול תהליכים תפעוליים לגורם מקצועי חיצוני."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם היתרונות של TBO לעומת העסקה ישירה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גמישות תפעולית, חיסכון בעלויות ניהול, מומחיות מקצועית, וניהול סיכונים משופר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו תחומים פועלת מנפאואר TBO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לוגיסטיקה, ייצור, חדרים נקיים, שירותי תמיכה ועוד."
+      }
+    }
+  ]
+}</code></pre>
+          <p><strong>מיקום:</strong> Next.js - הוסף ב-Head של עמוד /employers/tbo.</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Fix: BreadcrumbList -->
+    <div class="missing-item" style="border-right-color: var(--warning);">
+      <div class="missing-item-header" style="background: #fff3e0;">
+        <h4>BreadcrumbList - דורש תיקון (חסר URL)</h4>
+        <span class="priority priority-medium">תיקון</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> BreadcrumbList קיים אך חסר ה-<code>item</code> (URL) בפוזיציה 1.
+          נוכחי: <code>{"position": 1, "name": "בית"}</code> - ללא URL.
+        </div>
+        <div class="implementation">
+          <h5>גרסה מתוקנת:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "בית",
+      "item": "https://www.manpower.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "פתרונות למעסיקים",
+      "item": "https://www.manpower.co.il/employers-solutions/employers-solutions"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ניהול פרויקטים במיקור חוץ – Manpower TBO"
+    }
+  ]
+}</code></pre>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 4: experis.co.il -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header" style="background: #b71c1c;">
+    <div>
+      <h2>אקספריס ישראל</h2>
+      <div class="domain">experis.co.il</div>
+    </div>
+    <span class="badge" style="background: #ff1744;">4 סכמות חסרות - אפס סכמות באתר!</span>
+  </div>
+  <div class="site-body">
+
+    <div class="evidence" style="background:#ffebee; border-right-color:#c62828;">
+      <strong>&#9888; מצב קריטי:</strong> לאתר experis.co.il אין אף סכמה מובנית (JSON-LD/Microdata/RDFa).
+      נמצא רק Google Analytics tracking code. <strong>זהו הפער הגדול ביותר בביקורת.</strong>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://experis.co.il/ (דף הבית) | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: Organization -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>Organization Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות קריטית</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> לא נמצא שום JSON-LD באתר. אין Organization, אין זיהוי מותג.
+        </div>
+        <div class="implementation">
+          <h5>Organization Schema (Sitewide - הוסף ב-_app.tsx):</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Experis Israel",
+  "alternateName": "אקספריס ישראל",
+  "url": "https://experis.co.il/",
+  "logo": "https://experis.co.il/logo.svg",
+  "description": "פתרונות ושירותי IT מובילים - גיוס טכנולוגי, שירותי Managed, אקדמיית הכשרה",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "areaServed": "IL",
+    "availableLanguage": ["he", "en"]
+  },
+  "sameAs": [
+    "https://www.linkedin.com/company/experis-israel/",
+    "https://www.facebook.com/ExperisIsrael"
+  ],
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "ManpowerGroup",
+    "url": "https://manpowergroup.co.il/"
+  }
+}</code></pre>
+          <p><strong>מיקום:</strong> Next.js <code>_app.tsx</code> (sitewide) או <code>layout.tsx</code></p>
+          <p><strong>מדריך מוכן:</strong> <a href="https://report.n-c.digital/schemas.html">schemas.html</a></p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: WebSite + SearchAction -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>WebSite + SearchAction Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות קריטית</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> לא נמצא WebSite schema. לאתר יש פונקציונליות חיפוש (/search?search=).
+        </div>
+        <div class="implementation">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://experis.co.il/#website",
+  "name": "Experis Israel",
+  "alternateName": "אקספריס ישראל",
+  "url": "https://experis.co.il/",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://experis.co.il/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://experis.co.il/search?search={search_term_string}"
+    },
+    "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+    }
+  }
+}</code></pre>
+          <p><strong>מיקום:</strong> Next.js <code>_app.tsx</code> (sitewide)</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: BreadcrumbList -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>BreadcrumbList Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> לא נמצא BreadcrumbList בשום פורמט באתר.
+        </div>
+        <div class="implementation">
+          <h5>BreadcrumbList דינמי - דוגמה לדף הבית:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס"
+    }
+  ]
+}</code></pre>
+          <h5>דוגמה לעמוד שירות:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "השירותים שלנו",
+      "item": "https://experis.co.il/our-services/services"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "שם השירות"
+    }
+  ]
+}</code></pre>
+          <p><strong>מיקום:</strong> Next.js - קומפוננטה דינמית לפי URL path.</p>
+          <p><strong>מדריך:</strong> <a href="https://report.n-c.digital/breadcrumb-new.html">breadcrumb-new.html</a></p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: FAQPage -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> האתר מכיל תוכן FAQ באקורדיון בדף הבית (6 שאלות) אך ללא סכמה.
+        </div>
+        <div class="implementation">
+          <h5>FAQPage לדף הבית של אקספריס (6 שאלות):</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "למה לבחור באקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אקספריס היא חברת הטכנולוגיה של ManpowerGroup, עם התמחות ייחודית בגיוס וניהול כוח אדם טכנולוגי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו תפקידים טכנולוגיים מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "פיתוח, סייבר, DevOps, Cloud, QA, Data, ועוד - בכל הרמות מג'וניור ועד בכיר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים תהליך גיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צרו קשר דרך האתר, ציינו את הצרכים הטכנולוגיים, ונתחיל בתהליך מותאם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה היתרונות למעסיקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "גישה למאגר מועמדים טכנולוגי רחב, סינון מקצועי, זמני גיוס קצרים, וליווי מלא."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהי אקדמיית אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תכנית הכשרה טכנולוגית אינטנסיבית להסבת קריירה עם התחייבות להשמה בתעשייה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך יוצרים קשר עם אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "דרך טופס יצירת הקשר באתר, או ישירות דרך עמודי השירותים הרלוונטיים."
+      }
+    }
+  ]
+}</code></pre>
+          <p><strong>מדריך מלא:</strong> <a href="https://report.n-c.digital/manpower-experis-faq-schemas.html">manpower-experis-faq-schemas.html</a> (9 עמודים)</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 5: experis.co.il/service/experis-cyber -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header" style="background: #b71c1c;">
+    <div>
+      <h2>אקספריס סייבר</h2>
+      <div class="domain">experis.co.il/service/experis-cyber</div>
+    </div>
+    <span class="badge" style="background: #ff1744;">4 סכמות חסרות</span>
+  </div>
+  <div class="site-body">
+
+    <div class="evidence" style="background:#ffebee; border-right-color:#c62828;">
+      <strong>&#9888; מצב קריטי:</strong> לעמוד אין אף סכמה מובנית. אפס JSON-LD, Microdata, או RDFa.
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://experis.co.il/service/experis-cyber | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <div class="note">
+      <strong>הערה:</strong> סכמות Organization, WebSite, BreadcrumbList צריכות להיות sitewide ולהגיע מ-experis.co.il.
+      כשיוטמעו באתר הראשי (סעיף קודם), עמוד זה יירש אותן. סעיף זה מפרט את הסכמות <strong>הספציפיות לעמוד</strong>.
+    </div>
+
+    <!-- Missing: FAQPage for Cyber -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר (7 שאלות בתוכן הקיים)</h4>
+        <span class="priority priority-high">עדיפות גבוהה - Quick Win</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> העמוד מכיל אקורדיון FAQ עם 7 שאלות על שירותי סייבר - צריך רק להוסיף סכמה.
+        </div>
+        <div class="implementation">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "אילו שירותי סייבר מציעה אקספריס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניטור SOC 24/7, שירותי אבטחה מנוהלים, בדיקות חדירה, הערכת אבטחת שרשרת אספקה, ומומחיות סייבר במיקור חוץ."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה לבחור באקספריס לגיוס סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התמחות ייעודית בתחום הסייבר, שיתופי פעולה עם חברות אבטחה גלובליות מובילות, ומאגר מועמדים מקצועי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם שירותי SOC מנוהלים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מרכז תפעול אבטחה (SOC) שפועל 24/7 לניטור, זיהוי ונטרול איומי סייבר בזמן אמת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם השירותים מתאימים לסטארטאפים וארגונים גדולים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, אקספריס סייבר מספקת פתרונות מותאמים לכל גודל ארגון - מסטארטאפים ועד ארגוני Enterprise."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו הסמכות נדרשות בתחום הסייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "CISSP, CEH, CompTIA Security+, OSCP ועוד - תלוי בתפקיד הספציפי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח תהליך גיוס סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תלוי במורכבות התפקיד, בדרך כלל בין 2-6 שבועות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחילים לעבוד עם אקספריס סייבר?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צרו קשר דרך העמוד או טופס יצירת הקשר, נתאם שיחת ייעוץ ראשונית."
+      }
+    }
+  ]
+}</code></pre>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: BreadcrumbList specific -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>BreadcrumbList - חסר (ספציפי לעמוד)</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "השירותים שלנו",
+      "item": "https://experis.co.il/our-services/services"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "אקספריס סייבר"
+    }
+  ]
+}</code></pre>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Sitewide reminders -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>Organization + WebSite - יורשים מ-sitewide (ראה סעיף experis.co.il)</h4>
+        <span class="priority priority-high">תלוי בהטמעת Sitewide</span>
+      </div>
+      <div class="missing-item-body">
+        <p>סכמות אלו יוטמעו ברמת ה-layout הכללי של experis.co.il (ראה סעיף 4 בדוח). לאחר ההטמעה, עמוד זה יירש אותן אוטומטית.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 6: experis.co.il/service/experis-academy -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header" style="background: #b71c1c;">
+    <div>
+      <h2>אקספריס אקדמי</h2>
+      <div class="domain">experis.co.il/service/experis-academy</div>
+    </div>
+    <span class="badge" style="background: #ff1744;">4 סכמות חסרות</span>
+  </div>
+  <div class="site-body">
+
+    <div class="evidence" style="background:#ffebee; border-right-color:#c62828;">
+      <strong>&#9888; מצב קריטי:</strong> אפס סכמות מובנות. עמוד עם פוטנציאל SEO גבוה (אקדמיה, bootcamps, הכשרות).
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://experis.co.il/service/experis-academy | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: FAQPage for Academy -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר (7 שאלות בתוכן הקיים)</h4>
+        <span class="priority priority-high">עדיפות גבוהה - Quick Win</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> העמוד מכיל אקורדיון FAQ עם 7 שאלות על תכניות ההכשרה - צריך רק להוסיף סכמה.
+        </div>
+        <div class="implementation">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהו סילבוס הלימודים של הקורס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תכנית אינטנסיבית הכוללת למידה מעשית, פרויקטים, וליווי מנטורים מהתעשייה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה שעות לימוד נדרשות בשבוע?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תכנית ה-bootcamp היא במשרה מלאה - כ-40 שעות שבועיות במשך 90 יום."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם דרישות הקבלה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תהליך מיון קפדני עם שיעור קבלה של 1.5% - כולל ראיון, מבחני התאמה, ומוטיבציה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם קיימת תעודה או הסמכה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, בוגרי האקדמיה מקבלים תעודת סיום והשמה בתעשיית ההייטק."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה עולה הקורס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צרו קשר לקבלת מידע מפורט על מחירים ואפשרויות מימון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהו תהליך הקבלה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הגשת מועמדות, מבחני מיון, ראיון אישי, וקבלה לתכנית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש תמיכה בהשמה לעבודה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, אקספריס אקדמי מתחייבת להשמה בתעשייה עם מעל 2,000 בוגרים שכבר הוטמעו."
+      }
+    }
+  ]
+}</code></pre>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: EducationalOrganization -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>EducationalOrganization Schema - חסר (ספציפי לאקדמיה)</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> עמוד של מוסד הכשרה עם 168 bootcamps, 2,000+ בוגרים, 12 שנות פעילות - ללא סכמת מוסד חינוכי.
+        </div>
+        <div class="implementation">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Experis Academy",
+  "alternateName": "אקדמיית אקספריס",
+  "url": "https://experis.co.il/service/experis-academy",
+  "description": "אקדמיה טכנולוגית מובילה עם 168 bootcamps, 2,000+ בוגרים, ושיעור קבלה של 1.5%",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "יגאל אלון 90",
+    "addressLocality": "תל אביב",
+    "addressCountry": "IL"
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Experis Israel",
+    "@id": "https://experis.co.il/#organization"
+  },
+  "foundingDate": "2014",
+  "numberOfEmployees": {
+    "@type": "QuantitativeValue",
+    "description": "2,000+ בוגרים הוטמעו בתעשייה"
+  }
+}</code></pre>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: BreadcrumbList -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>BreadcrumbList - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "אקספריס",
+      "item": "https://experis.co.il/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "השירותים שלנו",
+      "item": "https://experis.co.il/our-services/services"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "אקספריס אקדמי"
+    }
+  ]
+}</code></pre>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Sitewide -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>Organization + WebSite - יורשים מ-sitewide</h4>
+        <span class="priority priority-high">תלוי בהטמעת Sitewide</span>
+      </div>
+      <div class="missing-item-body">
+        <p>סכמות אלו יוטמעו ברמת ה-layout של experis.co.il (ראה סעיף 4 בדוח).</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 7: manpowercare.co.il -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header">
+    <div>
+      <h2>מנפאואר קר</h2>
+      <div class="domain">manpowercare.co.il</div>
+    </div>
+    <span class="badge">2 סכמות חסרות</span>
+  </div>
+  <div class="site-body">
+
+    <div class="existing-schemas">
+      <h4>&#10004; סכמות קיימות באתר</h4>
+      <ul>
+        <li><strong>Organization</strong> - קיים (בסיסי: שם, לוגו, URL, @id)</li>
+        <li><strong>WebPage</strong> - קיים (שם, תיאור, שפה, תאריכים)</li>
+        <li><strong>BreadcrumbList</strong> - קיים (מינימלי - דף הבית בלבד, בבדיקה)</li>
+      </ul>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://manpowercare.co.il/ (דף הבית) | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: WebSite -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>WebSite Schema - חסר</h4>
+        <span class="priority priority-high">עדיפות גבוהה</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> לא נמצא WebSite schema באתר. קיים Organization אך ללא WebSite.
+        </div>
+        <div class="note">
+          <strong>הערה:</strong> לפי CLAUDE.md - לאתר אין חיפוש גלוי, לכן <strong>ללא SearchAction</strong>.
+        </div>
+        <div class="implementation">
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://manpowercare.co.il/#website",
+  "name": "Manpower Care",
+  "alternateName": "מנפאואר קר - חברת סיעוד",
+  "url": "https://manpowercare.co.il/",
+  "description": "חברת סיעוד מובילה עם שלושה עשורים של ניסיון בשירותי סיעוד בבית",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://manpowercare.co.il/#organization"
+  }
+}</code></pre>
+          <p><strong>מיקום:</strong> WordPress - הוסף ב-header.php או דרך Rank Math/Yoast SEO.</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <!-- Missing: FAQPage -->
+    <div class="missing-item">
+      <div class="missing-item-header">
+        <h4>FAQPage Schema - חסר</h4>
+        <span class="priority priority-medium">עדיפות בינונית</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> האתר מציע שירותי סיעוד מגוונים - יש פוטנציאל ל-FAQ עם שאלות נפוצות על שירותי סיעוד.
+        </div>
+        <div class="note">
+          <strong>הערה:</strong> נדרש ליצור תוכן FAQ בעמוד לפני הוספת הסכמה. FAQPage Schema דורש שאלות ותשובות גלויות בעמוד.
+        </div>
+        <div class="implementation">
+          <h5>דוגמה מוצעת (דורשת יצירת תוכן מתאים בעמוד):</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהם שירותי הסיעוד של Manpower Care?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סיעוד בבית, השמת עובדי סיעוד זרים, סיעוד לקשישים, סיעוד לבעלי מוגבלות, ייעוץ לגמלת סיעוד, ועוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מגישים בקשה לגמלת סיעוד?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "צרו קשר ב-*9055 לייעוץ חינם. הצוות המקצועי ילווה אתכם בתהליך מול ביטוח לאומי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם השירות זמין 24/7?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, מנפאואר קר זמינה 24/7 בטלפון *9055 לכל שאלה או מקרה חירום."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "באילו אזורים בארץ ניתן שירות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שירות ארצי עם סניפים בכל רחבי ישראל - צפון, מרכז, דרום וירושלים."
+      }
+    }
+  ]
+}</code></pre>
+          <p><strong>דגש:</strong> יש ליצור תוכן FAQ גלוי בעמוד (אקורדיון) לפני הוספת הסכמה.</p>
+        </div>
+        <span class="validation-badge needs-check">&#9888; דורש יצירת תוכן בעמוד</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- SITE 8: talentsolutions.manpowergroup.co.il -->
+<!-- ====================================================================== -->
+<div class="site-section">
+  <div class="site-header">
+    <div>
+      <h2>טאלנט סולושנס</h2>
+      <div class="domain">talentsolutions.manpowergroup.co.il</div>
+    </div>
+    <span class="badge partial">1 תיקון נדרש</span>
+  </div>
+  <div class="site-body">
+
+    <div class="existing-schemas">
+      <h4>&#10004; סכמות קיימות באתר</h4>
+      <ul>
+        <li><strong>Organization</strong> - קיים (בסיסי: שם, URL, לוגו)</li>
+        <li><strong>WebSite</strong> - קיים (שם, URL, שפה)</li>
+        <li><strong>WebPage</strong> - קיים (שם, תיאור, תאריכים)</li>
+        <li><strong>BreadcrumbList</strong> - קיים (מינימלי - דף הבית)</li>
+      </ul>
+    </div>
+
+    <div class="pages-checked">
+      <h4>&#128269; עמודים שנבדקו</h4>
+      <p>https://talentsolutions.manpowergroup.co.il/ (דף הבית) | בדיקה חיה: 10/02/2026</p>
+    </div>
+
+    <!-- Missing: SearchAction -->
+    <div class="missing-item" style="border-right-color: var(--warning);">
+      <div class="missing-item-header" style="background: #fff3e0;">
+        <h4>SearchAction - חסר מתוך WebSite Schema הקיים</h4>
+        <span class="priority priority-medium">עדיפות בינונית</span>
+      </div>
+      <div class="missing-item-body">
+        <div class="evidence">
+          <strong>ראיה:</strong> האתר מכיל תיבת חיפוש גלויה (WordPress ?s=) אך הסכמת WebSite הקיימת לא כוללת SearchAction.
+        </div>
+        <div class="implementation">
+          <h5>עדכון WebSite Schema - הוסף SearchAction:</h5>
+<pre><code>{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://talentsolutions.manpowergroup.co.il/#website",
+  "url": "https://talentsolutions.manpowergroup.co.il/",
+  "name": "Talent Solutions Israel",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://talentsolutions.manpowergroup.co.il/#organization"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://talentsolutions.manpowergroup.co.il/?s={search_term_string}"
+    },
+    "query-input": {
+      "@type": "PropertyValueSpecification",
+      "valueRequired": true,
+      "valueName": "search_term_string"
+    }
+  }
+}</code></pre>
+          <p><strong>מיקום:</strong> WordPress - עדכן את הסכמה הקיימת ב-header או דרך Rank Math.</p>
+        </div>
+        <span class="validation-badge valid">&#10004; JSON-LD תקין</span>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>הערה על Organization:</strong> הסכמה הקיימת מינימלית (שם, URL, לוגו בלבד). מומלץ להרחיב עם:
+      contactPoint, description, sameAs, parentOrganization (ManpowerGroup), address.
+      אך זהו <strong>שיפור</strong> ולא סכמה חסרה - לכן לא נכלל כפריט חסר בדוח.
+    </div>
+
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- APPENDIX -->
+<!-- ====================================================================== -->
+<div class="appendix">
+  <h3>נספח א' - רשימת עמודים שנבדקו</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>URL</th>
+        <th>פלטפורמה</th>
+        <th>זמן בדיקה</th>
+        <th>סכמות שנמצאו</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>https://www.manpower.co.il/</td>
+        <td>Next.js</td>
+        <td>10/02/2026</td>
+        <td>Organization, WebSite+SearchAction, BreadcrumbList</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>https://manpowergroup.co.il/</td>
+        <td>HubSpot</td>
+        <td>10/02/2026</td>
+        <td>Organization, WebSite+SearchAction (דומיין שגוי)</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>https://www.manpower.co.il/employers/tbo</td>
+        <td>Next.js</td>
+        <td>10/02/2026</td>
+        <td>BreadcrumbList (חלקי)</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>https://experis.co.il/</td>
+        <td>Next.js</td>
+        <td>10/02/2026</td>
+        <td>אין (רק GA tracking)</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>https://experis.co.il/service/experis-cyber</td>
+        <td>Next.js</td>
+        <td>10/02/2026</td>
+        <td>אין</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>https://experis.co.il/service/experis-academy</td>
+        <td>Next.js</td>
+        <td>10/02/2026</td>
+        <td>אין</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>https://manpowercare.co.il/</td>
+        <td>WordPress</td>
+        <td>10/02/2026</td>
+        <td>Organization, WebPage, BreadcrumbList</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>https://talentsolutions.manpowergroup.co.il/</td>
+        <td>WordPress</td>
+        <td>10/02/2026</td>
+        <td>Organization, WebSite, WebPage, BreadcrumbList</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="appendix">
+  <h3>נספח ב' - הערות וחסימות</h3>
+  <ul style="padding-right: 20px;">
+    <li><strong>Experis (Next.js):</strong> אתר מרנדר בצד שרת. כל הסכמות שנמצאו הן מה-HTML הראשוני - לא זוהו סכמות שמוזרקות דינמית אחרי טעינה.</li>
+    <li><strong>ManpowerGroup (HubSpot):</strong> WebSite Schema מפנה לדומיין manpower.co.il - ייתכן שהועתק בטעות מאתר אחר.</li>
+    <li><strong>Manpower TBO:</strong> Organization ו-WebSite קיימים בדף הבית אך לא בעמוד TBO - דורש העברה ל-layout sitewide.</li>
+    <li><strong>FAQ Content:</strong> עמודי Experis Cyber ו-Academy מכילים תוכן FAQ באקורדיון - Quick Win להוספת סכמה.</li>
+    <li><strong>גיליונות Google:</strong> הגיליונות מאפשרים צפייה אך לא ייצוא CSV (דרוש "Publish to web"). הנתונים חולצו דרך Google Visualization API.</li>
+  </ul>
+</div>
+
+<div class="appendix">
+  <h3>נספח ג' - מדריכי הטמעה מוכנים</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>מדריך</th>
+        <th>URL</th>
+        <th>תוכן</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Organization Schemas</td>
+        <td><a href="https://report.n-c.digital/schemas.html">schemas.html</a></td>
+        <td>סכמות Organization ל-17 אתרים</td>
+      </tr>
+      <tr>
+        <td>Manpower Schema</td>
+        <td><a href="https://report.n-c.digital/manpower-schema.html">manpower-schema.html</a></td>
+        <td>Organization + BreadcrumbList + WebSite למנפאואר</td>
+      </tr>
+      <tr>
+        <td>WebSite Schemas</td>
+        <td><a href="https://report.n-c.digital/website-schemas.html">website-schemas.html</a></td>
+        <td>WebSite + SearchAction ל-22 אתרים</td>
+      </tr>
+      <tr>
+        <td>Breadcrumb New</td>
+        <td><a href="https://report.n-c.digital/breadcrumb-new.html">breadcrumb-new.html</a></td>
+        <td>BreadcrumbList ל-4 אתרים חסרים</td>
+      </tr>
+      <tr>
+        <td>ManpowerGroup Breadcrumbs</td>
+        <td><a href="https://report.n-c.digital/manpowergroup-breadcrumbs.html">manpowergroup-breadcrumbs.html</a></td>
+        <td>Breadcrumbs ל-11 עמודים של MPG</td>
+      </tr>
+      <tr>
+        <td>ManpowerGroup HubSpot Schema</td>
+        <td><a href="https://report.n-c.digital/manpowergroup-schema-hubspot.html">manpowergroup-schema-hubspot.html</a></td>
+        <td>Organization + BreadcrumbList ל-HubSpot</td>
+      </tr>
+      <tr>
+        <td>FAQ Schemas</td>
+        <td><a href="https://report.n-c.digital/manpower-experis-faq-schemas.html">manpower-experis-faq-schemas.html</a></td>
+        <td>FAQPage ל-18 עמודים (מנפאואר + אקספריס)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="text-align:center; padding:30px; color: var(--text-secondary); font-size: 0.85rem;">
+  <p>&#169; Nadav Digital | ביקורת סכמות מולטי-סייט | 10 בפברואר 2026</p>
+  <p>נוצר על ידי מערכת ביקורת אוטומטית עם אימות חי מול אתרים</p>
+</div>
+
+</div>
+</body>
+</html>
