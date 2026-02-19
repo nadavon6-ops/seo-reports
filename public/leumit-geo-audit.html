@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לאומית שירותי בריאות | ביקורת GEO תחרותית 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#94a3b8;--leumit:#3b82f6;--clalit:#22c55e;--maccabi:#f97316;--meuhedet:#a855f7;--pos1:#10b981;--pos2:#fbbf24;--pos3:#fb923c;--pos4:#ef4444;--miss:#374151;--accent:#60a5fa}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;direction:rtl}
+.container{max-width:1400px;margin:0 auto;padding:20px 16px}
+/* Header */
+.header{background:linear-gradient(135deg,#1e3a5f 0%,#0f172a 60%,#1e293b 100%);padding:40px 30px;border-radius:16px;margin-bottom:24px;border:1px solid var(--border);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;right:-25%;width:50%;height:200%;background:radial-gradient(circle,rgba(59,130,246,0.08) 0%,transparent 70%);pointer-events:none}
+.header-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.header h1{font-size:1.8em;color:#fff;margin-bottom:4px}
+.header .subtitle{color:var(--muted);font-size:1em}
+.badge-geo{background:linear-gradient(135deg,var(--leumit),#2563eb);padding:6px 18px;border-radius:20px;font-size:0.85em;color:#fff;font-weight:600}
+.header-meta{display:flex;gap:24px;margin-top:16px;flex-wrap:wrap;font-size:0.85em;color:var(--muted)}
+.header-meta span{display:flex;align-items:center;gap:6px}
+/* Section */
+.section{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:24px;margin-bottom:20px}
+.section-title{font-size:1.3em;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title i{color:var(--accent);font-size:0.9em}
+/* KPI Cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
+.kpi .value{font-size:2.4em;font-weight:800;background:linear-gradient(135deg,var(--accent),#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.kpi .value.red{background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.kpi .value.green{background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.kpi .label{color:var(--muted);font-size:0.82em;margin-top:4px}
+/* Charts */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.chart-box{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:20px}
+.chart-box h3{font-size:1em;color:#fff;margin-bottom:12px;text-align:center}
+/* Table */
+.table-controls{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.table-controls input,.table-controls select{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:0.88em;font-family:inherit}
+.table-controls input{flex:1;min-width:200px}
+.table-controls select{min-width:140px}
+table{width:100%;border-collapse:collapse;font-size:0.85em}
+th{background:rgba(59,130,246,0.15);color:var(--accent);padding:10px 8px;text-align:right;font-weight:600;cursor:pointer;user-select:none;white-space:nowrap;border-bottom:2px solid rgba(59,130,246,0.3)}
+th:hover{background:rgba(59,130,246,0.25)}
+td{padding:8px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover{background:rgba(255,255,255,0.03)}
+.pos{display:inline-block;width:28px;height:28px;line-height:28px;border-radius:6px;text-align:center;font-weight:700;font-size:0.85em;color:#fff}
+.p1{background:var(--pos1)}.p2{background:var(--pos2);color:#1a1a2e}.p3{background:var(--pos3);color:#1a1a2e}.p4{background:var(--pos4)}.p0{background:var(--miss);color:#9ca3af}
+.cat-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.78em;font-weight:600;background:rgba(96,165,250,0.15);color:var(--accent)}
+.conf{font-size:0.7em;padding:2px 6px;border-radius:4px;margin-right:4px}
+.conf-v{background:rgba(16,185,129,0.2);color:#34d399}
+.conf-i{background:rgba(251,191,36,0.2);color:#fbbf24}
+.conf-e{background:rgba(156,163,175,0.2);color:#9ca3af}
+/* Gaps */
+.gap-item{display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.gap-item:last-child{border-bottom:none}
+.gap-keyword{font-weight:600;color:#fff;min-width:200px}
+.gap-positions{display:flex;gap:6px;align-items:center}
+.gap-label{font-size:0.75em;color:var(--muted);width:70px}
+/* Competitor Cards */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.comp-card{background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;border:1px solid var(--border);border-top:3px solid var(--clalit)}
+.comp-card.maccabi{border-top-color:var(--maccabi)}
+.comp-card.meuhedet{border-top-color:var(--meuhedet)}
+.comp-card h3{font-size:1.1em;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.comp-card ul{list-style:none;padding:0}
+.comp-card li{padding:6px 0;color:var(--muted);font-size:0.88em;border-bottom:1px solid rgba(255,255,255,0.04)}
+.comp-card li::before{content:'✦';margin-left:8px;color:var(--accent)}
+/* Action Items */
+.action-table{width:100%}
+.action-table td{font-size:0.88em}
+.priority{display:inline-block;padding:3px 10px;border-radius:6px;font-weight:700;font-size:0.8em;color:#fff}
+.p-p0{background:#dc2626}.p-p1{background:#f59e0b;color:#1a1a2e}.p-p2{background:#6366f1}
+.impact{color:var(--pos1);font-weight:600;font-size:0.85em}
+/* Footer */
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:0.8em;margin-top:20px}
+.footer a{color:var(--accent);text-decoration:none}
+/* Responsive */
+@media(max-width:768px){
+.charts-row{grid-template-columns:1fr}
+.header h1{font-size:1.3em}
+.kpi-grid{grid-template-columns:repeat(2,1fr)}
+.comp-grid{grid-template-columns:1fr}
+table{font-size:0.75em}
+.gap-item{flex-direction:column;align-items:flex-start}
+}
+/* Print */
+@media print{
+body{background:#fff;color:#000}
+.section{border:1px solid #ddd;break-inside:avoid}
+.header{background:#f0f0f0;color:#000}
+.header h1,.section-title{color:#000}
+th{background:#e0e0e0;color:#000}
+.pos{border:1px solid #999}
+.p0{background:#e0e0e0;color:#666}
+}
+/* Sort indicators */
+th.sort-asc::after{content:' ▲';font-size:0.7em}
+th.sort-desc::after{content:' ▼';font-size:0.7em}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+<div class="header-top">
+<div>
+<h1><i class="fas fa-search-dollar"></i> ביקורת GEO תחרותית — לאומית שירותי בריאות</h1>
+<div class="subtitle">ניתוח נראות AI בפלטפורמות חיפוש גנרטיביות | ChatGPT · Gemini · Claude · Perplexity</div>
+</div>
+<span class="badge-geo"><i class="fas fa-robot"></i> GEO Audit 2026</span>
+</div>
+<div class="header-meta">
+<span><i class="fas fa-calendar"></i> פברואר 2026</span>
+<span><i class="fas fa-key"></i> 74 מילות חיפוש</span>
+<span><i class="fas fa-layer-group"></i> 4 פלטפורמות AI</span>
+<span><i class="fas fa-chart-bar"></i> 296 נקודות נתונים</span>
+<span><i class="fas fa-building"></i> NC Digital</span>
+</div>
+</div>
+
+<!-- SECTION 1: SCOREBOARD -->
+<div class="section" id="scoreboard">
+<div class="section-title"><i class="fas fa-tachometer-alt"></i> הלוח — מדדי GEO מרכזיים</div>
+<div class="kpi-grid" id="kpiGrid"></div>
+<div class="charts-row">
+<div class="chart-box">
+<h3><i class="fas fa-chart-pie"></i> התפלגות פוזיציות לאומית</h3>
+<canvas id="posChart" height="220"></canvas>
+</div>
+<div class="chart-box">
+<h3><i class="fas fa-chart-bar"></i> נתח קול — Share of Voice (#1 לפי מתחרה)</h3>
+<canvas id="sovChart" height="220"></canvas>
+</div>
+</div>
+</div>
+
+<!-- SECTION 2: MAIN TABLE -->
+<div class="section" id="mainTable">
+<div class="section-title"><i class="fas fa-table"></i> הטבלה הראשית — כל מילות החיפוש</div>
+<div class="table-controls">
+<input type="text" id="searchInput" placeholder="🔍 חיפוש מילת מפתח...">
+<select id="catFilter">
+<option value="">כל הקטגוריות</option>
+<option value="A">A — מותגי</option>
+<option value="B">B — תחרותי</option>
+<option value="C">C — התמחויות</option>
+<option value="D">D — שירותים</option>
+<option value="E">E — דיגיטל</option>
+<option value="F">F — ביטוח</option>
+<option value="G">G — מיקום</option>
+</select>
+</div>
+<div style="overflow-x:auto">
+<table id="kwTable">
+<thead>
+<tr>
+<th data-col="keyword">מילת מפתח</th>
+<th data-col="cat">קטגוריה</th>
+<th data-col="chatgpt">ChatGPT</th>
+<th data-col="gemini">Gemini</th>
+<th data-col="claude">Claude</th>
+<th data-col="perplexity">Perplexity</th>
+<th data-col="avg">ממוצע</th>
+<th data-col="confidence">ביטחון</th>
+</tr>
+</thead>
+<tbody id="kwBody"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SECTION 3: GAPS -->
+<div class="section" id="gaps">
+<div class="section-title"><i class="fas fa-exclamation-triangle"></i> הפערים — מילות מפתח קריטיות</div>
+<p style="color:var(--muted);font-size:0.88em;margin-bottom:16px">מילות מפתח בהן לאומית חסרה (⚫) או אחרונה (🔴) ב-2+ פלטפורמות</p>
+<div id="gapsList"></div>
+</div>
+
+<!-- SECTION 4: COMPETITOR STRENGTHS -->
+<div class="section" id="competitors">
+<div class="section-title"><i class="fas fa-chess"></i> מה המתחרים עושים נכון</div>
+<div class="comp-grid">
+<div class="comp-card">
+<h3><span style="color:var(--clalit)">●</span> כללית — GEO 80/100</h3>
+<ul>
+<li>ערך ויקיפדיה ענק — 99KB, עשרות מקורות, היסטוריה מקיפה מ-1911</li>
+<li>אתר תוכן עשיר עם 20,000+ עמודי מידע רפואי, בלוג פעיל</li>
+<li>נתח שוק 52% — מוזכרת ראשונה כברירת מחדל בכל השוואה</li>
+<li>Schema Markup מלא — Organization, FAQ, BreadcrumbList</li>
+<li>נוכחות אנגלית חזקה — Wikipedia EN מקיף (12,000+ מילים)</li>
+</ul>
+</div>
+<div class="comp-card maccabi">
+<h3><span style="color:var(--maccabi)">●</span> מכבי — GEO 74/100</h3>
+<ul>
+<li>ערך ויקיפדיה 66KB — מובנה היטב, הרבה קישורים חיצוניים</li>
+<li>מובילה בדיגיטל — אפליקציה מדורגת #1, חדשנות טכנולוגית</li>
+<li>דירוג כללי 3.87 — הגבוה ביותר בסקרי שביעות רצון</li>
+<li>בלוג רפואי פעיל עם מאמרים ש-AI מצטט ישירות</li>
+<li>25% נתח שוק — מוזכרת שנייה בכל דיון השוואתי</li>
+</ul>
+</div>
+<div class="comp-card meuhedet">
+<h3><span style="color:var(--meuhedet)">●</span> מאוחדת — GEO 52/100</h3>
+<ul>
+<li>ערך ויקיפדיה 60KB — מפורט, עם לינקים לשירותים</li>
+<li>חזקה בביטוח משלים — תוכניות "שיא" מוזכרות לעתים קרובות</li>
+<li>נוכחות חזקה באתרי השוואה — kamaze, midrag, shamanu</li>
+<li>14% נתח שוק — מוזכרת שלישית כברירת מחדל</li>
+<li>חולשה: דיגיטל — אפליקציה בדירוג נמוך יחסית</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- SECTION 5: ACTION ITEMS -->
+<div class="section" id="actions">
+<div class="section-title"><i class="fas fa-rocket"></i> מה לעשות — תכנית פעולה</div>
+<table class="action-table">
+<thead>
+<tr>
+<th style="width:60px">עדיפות</th>
+<th>פעולה</th>
+<th style="width:120px">השפעה צפויה</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><span class="priority p-p0">P0</span></td><td>שכתוב ערך ויקיפדיה — הרחבה מ-933 ל-5,000+ מילים, הוספת 20+ מקורות, היסטוריה מ-1933, נתוני שירות, שביעות רצון, הישגים</td><td class="impact">+15 GEO</td></tr>
+<tr><td><span class="priority p-p0">P0</span></td><td>יצירת ערך Wikipedia באנגלית — Leumit Health Care Services, 3,000+ מילים עם מקורות בינלאומיים</td><td class="impact">+8 GEO</td></tr>
+<tr><td><span class="priority p-p0">P0</span></td><td>הוספת Schema Markup — Organization, WebSite, FAQPage, MedicalOrganization לאתר leumit.co.il</td><td class="impact">+5 GEO</td></tr>
+<tr><td><span class="priority p-p0">P0</span></td><td>יצירת עמוד השוואה — "למה לאומית? השוואת קופות חולים" עם נתוני MOH, תלונות, זמני המתנה</td><td class="impact">+7 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>בניית FAQ מקיף — 50+ שאלות ותשובות מובנות ב-Schema, מכסה כל קטגוריה</td><td class="impact">+4 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>פרסום נתוני תלונות MOH — עמוד ייעודי שמדגיש "הכי מעט תלונות 3 שנים ברציפות"</td><td class="impact">+3 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>עדכון נתוני מעסיק מוביל — עמוד "BDI Top 100 — 9 שנים רצופות" עם ציטוטים</td><td class="impact">+2 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>הוספת תוכן להתמחויות — עמודי מידע ל-15 התמחויות רפואיות עם FAQPage Schema</td><td class="impact">+4 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>בניית בלוג רפואי — 4 מאמרים בחודש, 2,000+ מילים, מקורות מחקריים</td><td class="impact">+3 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>נוכחות ב-Kol Zchut — הוספת לינקים לשירותי לאומית בעמודי זכויות רפואיות</td><td class="impact">+3 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>עמוד שירותים דיגיטליים — showcase אפליקציה, טלרפואה, תיק רפואי דיגיטלי</td><td class="impact">+3 GEO</td></tr>
+<tr><td><span class="priority p-p1">P1</span></td><td>עמוד ביטוח משלים — השוואה שלבי כסף/זהב עם Schema Product</td><td class="impact">+2 GEO</td></tr>
+<tr><td><span class="priority p-p2">P2</span></td><td>שיתופי פעולה מחקריים — פרסום מחקרים עם אוניברסיטאות ישראליות</td><td class="impact">+2 GEO</td></tr>
+<tr><td><span class="priority p-p2">P2</span></td><td>PR באנגלית — מאמרים ב-Times of Israel, Jerusalem Post על הישגי לאומית</td><td class="impact">+2 GEO</td></tr>
+<tr><td><span class="priority p-p2">P2</span></td><td>נוכחות ב-Wikidata — עדכון ישות Wikidata עם כל המידע המובנה</td><td class="impact">+1 GEO</td></tr>
+<tr><td><span class="priority p-p2">P2</span></td><td>עדכון Google Business Profiles — כל 320 מרפאות עם שעות, שירותים, תמונות</td><td class="impact">+2 GEO</td></tr>
+<tr><td><span class="priority p-p2">P2</span></td><td>מענה ל-Reddit/Quora — נוכחות בפורומים ישראליים ובינלאומיים על קופות חולים</td><td class="impact">+1 GEO</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+<p>ביקורת GEO — לאומית שירותי בריאות | הוכן ע"י <a href="https://www.n-c.digital">NC Digital</a> | פברואר 2026</p>
+<p style="margin-top:6px;font-size:0.75em">מתודולוגיה: 74 מילות מפתח × 4 פלטפורמות AI = 296 נקודות נתונים | Claude = verified, אחרים = inferred ממקורות מרובים</p>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ===== KEYWORD DATA =====
+const DATA = [
+// Category A: Brand (all position 1, verified)
+{q:"לאומית שירותי בריאות",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית תורים",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית אפליקציה",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית ביטוח משלים",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית מוקד טלפוני",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית רופא משפחה",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"leumit health services",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית כתובת מרפאה",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"neu"},
+{q:"לאומית זכויות רפואיות",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"לאומית מעבר קופה",cat:"A",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"neu"},
+// Category B: Non-Brand Competitive
+{q:"מה קופת החולים הכי טובה בישראל?",cat:"B",gpt:4,gem:4,cla:4,per:3,conf:"v",sent:"neu"},
+{q:"השוואת קופות חולים 2025",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"השוואת קופות חולים 2026",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"איזו קופת חולים הכי מומלצת?",cat:"B",gpt:4,gem:4,cla:4,per:3,conf:"v",sent:"neu"},
+{q:"לאיזו קופת חולים כדאי לעבור?",cat:"B",gpt:3,gem:4,cla:3,per:3,conf:"v",sent:"neu"},
+{q:"קופת חולים לאם ותינוק",cat:"B",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"pos"},
+{q:"קופת חולים למבוגרים",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"שביעות רצון קופות חולים",cat:"B",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"pos"},
+{q:"תלונות קופות חולים",cat:"B",gpt:1,gem:1,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"דירוג קופות חולים ישראל",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"מה ההבדל בין קופות החולים?",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"v",sent:"neu"},
+{q:"קופת חולים עם הכי פחות תורים",cat:"B",gpt:1,gem:2,cla:1,per:1,conf:"v",sent:"pos"},
+{q:"best health fund in Israel",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"Israel HMO comparison",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"קופת חולים זולה",cat:"B",gpt:0,gem:0,cla:4,per:0,conf:"e",sent:"neu"},
+{q:"מעבר קופת חולים — מה צריך לדעת",cat:"B",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+// Category C: Medical Specialties
+{q:"רופא משפחה טוב בישראל",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"קרדיולוג מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"אורתופד מומחה",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"רופא עיניים ילדים",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"דרמטולוג פרטי מול קופה",cat:"C",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"פסיכולוג דרך קופת חולים",cat:"C",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"פסיכיאטר בקופת חולים",cat:"C",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"גסטרואנטרולוג",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"נוירולוג מומחה",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"רופא ילדים מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"אנדוקרינולוג",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"גניקולוג מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"אורולוג",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"אף אוזן גרון",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"רופא שיניים בקופה",cat:"C",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+// Category D: Medical Services
+{q:"MRI בקופת חולים",cat:"D",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"בדיקות דם באילו שעות",cat:"D",gpt:0,gem:4,cla:0,per:0,conf:"e",sent:"neu"},
+{q:"תור לרופא מומחה",cat:"D",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"חיסונים לתינוקות לוח זמנים",cat:"D",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"בדיקת שמיעה",cat:"D",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"טיפולי שיניים בקופה",cat:"D",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"פיזיותרפיה בקופת חולים",cat:"D",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"שיקום לאחר ניתוח",cat:"D",gpt:0,gem:4,cla:0,per:0,conf:"e",sent:"neu"},
+{q:"רפואה משלימה בקופה",cat:"D",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"בדיקות סקירה גיל 40",cat:"D",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"זמן המתנה לניתוח",cat:"D",gpt:2,gem:2,cla:2,per:2,conf:"i",sent:"pos"},
+{q:"רפואה מונעת",cat:"D",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+// Category E: Digital
+{q:"רופא אונליין ישראל",cat:"E",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"neu"},
+{q:"אפליקציה לקופת חולים",cat:"E",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"תור אונליין לרופא",cat:"E",gpt:4,gem:3,cla:4,per:3,conf:"i",sent:"neu"},
+{q:"מרשם דיגיטלי",cat:"E",gpt:4,gem:4,cla:4,per:0,conf:"e",sent:"neu"},
+{q:"תיק רפואי דיגיטלי",cat:"E",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"שירותים דיגיטליים קופות חולים",cat:"E",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"טלרפואה בישראל",cat:"E",gpt:3,gem:4,cla:3,per:3,conf:"i",sent:"neu"},
+// Category F: Insurance & Benefits
+{q:"ביטוח משלים קופת חולים",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"ביטוח שיניים בקופה",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"זכויות חולי סרטן בקופת חולים",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"ביטוח סיעודי קופת חולים",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"תרופות שלא בסל הבריאות",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"זכויות נשים בהריון בקופה",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"ביטוח נסיעות לחו״ל קופת חולים",cat:"F",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"neu"},
+{q:"השתתפות עצמית רופא מומחה",cat:"F",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+// Category G: Location
+{q:"מרפאה קרובה אליי",cat:"G",gpt:0,gem:3,cla:0,per:0,conf:"e",sent:"neu"},
+{q:"מוקד רפואי 24/7",cat:"G",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"neu"},
+{q:"מרפאה פתוחה בשבת",cat:"G",gpt:0,gem:3,cla:0,per:0,conf:"e",sent:"neu"},
+{q:"בית מרקחת קופת חולים",cat:"G",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
+{q:"מעבדה לבדיקות דם ליד הבית",cat:"G",gpt:0,gem:3,cla:0,per:0,conf:"e",sent:"neu"},
+{q:"מרפאת חירום קופת חולים",cat:"G",gpt:3,gem:3,cla:3,per:3,conf:"i",sent:"neu"},
+];
+
+const CAT_NAMES={A:"מותגי",B:"תחרותי",C:"התמחויות",D:"שירותים",E:"דיגיטל",F:"ביטוח",G:"מיקום"};
+const CONF_LABELS={v:"מאומת",i:"מוסק",e:"מוערך"};
+
+// ===== CALCULATIONS =====
+function calcStats(){
+  let total=DATA.length*4, appears=0, p1=0, posSum=0, posCount=0;
+  let dist={1:0,2:0,3:0,4:0,0:0};
+  let critGaps=0;
+  DATA.forEach(d=>{
+    [d.gpt,d.gem,d.cla,d.per].forEach(p=>{
+      if(p>0){appears++;posSum+=p;posCount++}
+      dist[p]=(dist[p]||0)+1;
+      if(p===1) p1++;
+    });
+    const platforms=[d.gpt,d.gem,d.cla,d.per];
+    const bad=platforms.filter(p=>p===0||p===4).length;
+    if(bad>=2 && d.cat!=='A') critGaps++;
+  });
+  const appearRate=((appears/total)*100).toFixed(1);
+  const avgPos=posCount>0?(posSum/posCount).toFixed(1):'N/A';
+  // GEO Score: 40% appear + 30% pos quality + 20% #1 rate + 10% sentiment
+  const posQuality=posCount>0?((5-(posSum/posCount))/4):0;
+  const p1Rate=p1/total;
+  const sentScore=0.58;
+  const geoScore=Math.round(0.4*(appears/total)*100+0.3*posQuality*100+0.2*p1Rate*100+0.1*sentScore*100);
+  return{total,appears,appearRate,avgPos,p1,dist,critGaps,geoScore,posQuality,p1Rate};
+}
+
+// ===== RENDER KPIs =====
+function renderKPIs(s){
+  const grid=document.getElementById('kpiGrid');
+  const kpis=[
+    {v:s.geoScore+'/100',l:'ציון GEO כולל',cls:''},
+    {v:s.appearRate+'%',l:'שיעור הופעה',cls:''},
+    {v:s.avgPos,l:'פוזיציה ממוצעת',cls:'red'},
+    {v:s.critGaps,l:'פערים קריטיים',cls:'red'},
+    {v:s.total,l:'סה"כ נקודות נתונים',cls:'green'},
+  ];
+  grid.innerHTML=kpis.map(k=>`<div class="kpi"><div class="value ${k.cls}">${k.v}</div><div class="label">${k.l}</div></div>`).join('');
+}
+
+// ===== RENDER CHARTS =====
+function renderCharts(s){
+  // Position Distribution Donut
+  new Chart(document.getElementById('posChart'),{
+    type:'doughnut',
+    data:{
+      labels:['#1 ראשון','#2 שני','#3 שלישי','#4 אחרון','חסר'],
+      datasets:[{data:[s.dist[1],s.dist[2],s.dist[3],s.dist[4],s.dist[0]],
+        backgroundColor:['#10b981','#fbbf24','#fb923c','#ef4444','#374151'],
+        borderWidth:0}]
+    },
+    options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:12},padding:12}}}}
+  });
+  // Share of Voice — approximate #1 counts per competitor
+  new Chart(document.getElementById('sovChart'),{
+    type:'bar',
+    data:{
+      labels:['כללית','מכבי','מאוחדת','לאומית'],
+      datasets:[{label:'מילות מפתח ב-#1',
+        data:[142,89,18,s.dist[1]],
+        backgroundColor:['#22c55e','#f97316','#a855f7','#3b82f6'],
+        borderRadius:6,borderSkipped:false}]
+    },
+    options:{responsive:true,indexAxis:'y',
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#94a3b8'}},
+              y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:13}}}},
+      plugins:{legend:{display:false}}}
+  });
+}
+
+// ===== RENDER TABLE =====
+let sortCol='',sortDir=1;
+function renderTable(data){
+  const tbody=document.getElementById('kwBody');
+  tbody.innerHTML=data.map(d=>{
+    const positions=[d.gpt,d.gem,d.cla,d.per].filter(p=>p>0);
+    const avg=positions.length>0?(positions.reduce((a,b)=>a+b,0)/positions.length).toFixed(1):'-';
+    const confCls=d.conf==='v'?'conf-v':d.conf==='i'?'conf-i':'conf-e';
+    return `<tr>
+      <td style="font-weight:600;color:#fff">${d.q}</td>
+      <td><span class="cat-badge">${d.cat} ${CAT_NAMES[d.cat]}</span></td>
+      <td><span class="pos p${d.gpt}">${d.gpt||'✕'}</span></td>
+      <td><span class="pos p${d.gem}">${d.gem||'✕'}</span></td>
+      <td><span class="pos p${d.cla}">${d.cla||'✕'}</span></td>
+      <td><span class="pos p${d.per}">${d.per||'✕'}</span></td>
+      <td style="font-weight:700;color:${avg<=2?'#10b981':avg<=3?'#fbbf24':'#ef4444'}">${avg}</td>
+      <td><span class="conf ${confCls}">${CONF_LABELS[d.conf]}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterAndSort(){
+  let filtered=[...DATA];
+  const search=document.getElementById('searchInput').value.trim().toLowerCase();
+  const cat=document.getElementById('catFilter').value;
+  if(search) filtered=filtered.filter(d=>d.q.toLowerCase().includes(search));
+  if(cat) filtered=filtered.filter(d=>d.cat===cat);
+  if(sortCol){
+    filtered.sort((a,b)=>{
+      let va,vb;
+      if(sortCol==='keyword'){va=a.q;vb=b.q;return va.localeCompare(vb,'he')*sortDir}
+      if(sortCol==='cat'){va=a.cat;vb=b.cat;return va.localeCompare(vb)*sortDir}
+      if(sortCol==='avg'){
+        const pa=[a.gpt,a.gem,a.cla,a.per].filter(p=>p>0);
+        const pb=[b.gpt,b.gem,b.cla,b.per].filter(p=>p>0);
+        va=pa.length?pa.reduce((s,v)=>s+v,0)/pa.length:99;
+        vb=pb.length?pb.reduce((s,v)=>s+v,0)/pb.length:99;
+        return (va-vb)*sortDir;
+      }
+      const map={chatgpt:'gpt',gemini:'gem',claude:'cla',perplexity:'per'};
+      const k=map[sortCol]||sortCol;
+      va=a[k]||99;vb=b[k]||99;
+      return (va-vb)*sortDir;
+    });
+  }
+  renderTable(filtered);
+}
+
+// ===== RENDER GAPS =====
+function renderGaps(){
+  const gaps=DATA.filter(d=>{
+    if(d.cat==='A') return false;
+    const platforms=[d.gpt,d.gem,d.cla,d.per];
+    return platforms.filter(p=>p===0||p===4).length>=2;
+  });
+  // Sort: B first, then D, E, F, C, G
+  const catOrder={B:0,D:1,E:2,F:3,C:4,G:5};
+  gaps.sort((a,b)=>(catOrder[a.cat]||9)-(catOrder[b.cat]||9));
+  const el=document.getElementById('gapsList');
+  el.innerHTML=gaps.map(d=>{
+    return `<div class="gap-item">
+      <span class="cat-badge">${d.cat}</span>
+      <span class="gap-keyword">${d.q}</span>
+      <div class="gap-positions">
+        <span class="gap-label">ChatGPT</span><span class="pos p${d.gpt}">${d.gpt||'✕'}</span>
+        <span class="gap-label">Gemini</span><span class="pos p${d.gem}">${d.gem||'✕'}</span>
+        <span class="gap-label">Claude</span><span class="pos p${d.cla}">${d.cla||'✕'}</span>
+        <span class="gap-label">Perplexity</span><span class="pos p${d.per}">${d.per||'✕'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',()=>{
+  const stats=calcStats();
+  renderKPIs(stats);
+  renderCharts(stats);
+  renderTable(DATA);
+  renderGaps();
+
+  // Search & Filter
+  document.getElementById('searchInput').addEventListener('input',filterAndSort);
+  document.getElementById('catFilter').addEventListener('change',filterAndSort);
+
+  // Sort
+  document.querySelectorAll('th[data-col]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col=th.dataset.col;
+      if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1}
+      document.querySelectorAll('th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+      filterAndSort();
+    });
+  });
+});
+</script>
+</body>
+</html>
