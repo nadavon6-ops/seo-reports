@@ -6,1990 +6,531 @@
     <title>מחקר מילות מפתח - כחול לבן | Manpower Israel</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
             --primary: #0a2647;
-            --secondary: #144272;
-            --accent: #205295;
-            --highlight: #2C74B3;
+            --accent: #2C74B3;
             --success: #059669;
             --warning: #d97706;
             --danger: #dc2626;
             --light: #f0f4f8;
-            --white: #ffffff;
+            --white: #fff;
             --text: #1e293b;
-            --text-light: #64748b;
+            --muted: #64748b;
             --border: #e2e8f0;
-            --gold: #f59e0b;
-            --silver: #6b7280;
-            --bronze: #b45309;
         }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--light); color: var(--text); line-height: 1.6; }
+
+        .header { background: var(--primary); color: white; padding: 30px; }
+        .header-inner { max-width: 1100px; margin: 0 auto; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { opacity: 0.8; font-size: 0.9rem; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 25px; }
+
+        .problem-box { background: #fef2f2; border: 2px solid #fca5a5; border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .problem-box h2 { color: #991b1b; font-size: 1.15rem; margin-bottom: 10px; }
+        .problem-box ul { padding-right: 20px; font-size: 0.9rem; color: #7f1d1d; }
+        .problem-box li { margin-bottom: 4px; }
+
+        .status-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.9rem; }
+        .status-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: right; }
+        .status-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); background: white; }
+        .up { color: var(--success); font-weight: 600; }
+        .down { color: var(--danger); font-weight: 600; }
+        .zero { color: var(--danger); font-weight: 700; }
+
+        .cat-card { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .cat-head { padding: 16px 22px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .cat-head h2 { font-size: 1.2rem; }
+        .cat-head .stats { font-size: 0.85rem; opacity: 0.9; }
+        .c1 .cat-head { background: #1e40af; }
+        .c2 .cat-head { background: #b45309; }
+        .c3 .cat-head { background: #065f46; }
+        .c4 .cat-head { background: #7c2d12; }
+        .c5 .cat-head { background: #581c87; }
+        .c6 .cat-head { background: #991b1b; }
+        .c7 .cat-head { background: #155e75; }
+        .c8 .cat-head { background: #4a044e; }
+        .c9 .cat-head { background: #1e3a5f; }
+
+        .cat-body { padding: 20px 22px; }
+        .cat-body h3 { font-size: 0.95rem; color: var(--primary); margin: 15px 0 8px; }
+        .cat-body h3:first-child { margin-top: 0; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+        .tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.82rem; }
+        .tag-main { background: var(--primary); color: white; font-weight: 600; }
+        .tag-var { background: #e0f2fe; color: #0369a1; }
+        .tag-long { background: #f0fdf4; color: #166534; }
+        .tag-loc { background: #fef3c7; color: #92400e; }
+
+        .action-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-top: 12px; }
+        .action-box h4 { font-size: 0.9rem; color: var(--accent); margin-bottom: 8px; }
+        .action-list { list-style: none; padding: 0; }
+        .action-list li { padding: 4px 0; font-size: 0.85rem; padding-right: 18px; position: relative; }
+        .action-list li::before { content: '\2192'; position: absolute; right: 0; color: var(--accent); }
+
+        .priority-section { background: white; border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .priority-section h2 { color: var(--primary); font-size: 1.2rem; margin-bottom: 15px; border-bottom: 3px solid var(--accent); padding-bottom: 8px; }
+        .pri-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .pri-col h4 { padding: 8px; border-radius: 6px 6px 0 0; color: white; text-align: center; font-size: 0.9rem; }
+        .pri-col.t1 h4 { background: var(--danger); }
+        .pri-col.t2 h4 { background: var(--warning); }
+        .pri-col.t3 h4 { background: var(--success); }
+        .pri-col ul { list-style: none; padding: 0; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; }
+        .pri-col li { padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+        .pri-col li:last-child { border-bottom: none; }
+
+        .mod-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .mod-table th { background: var(--light); padding: 8px 10px; text-align: right; color: var(--primary); border-bottom: 2px solid var(--border); }
+        .mod-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); }
+
+        .footer { background: var(--primary); color: white; padding: 20px; text-align: center; margin-top: 30px; }
+        .footer p { font-size: 0.8rem; opacity: 0.7; }
+
+        .note { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
-            color: white;
-            padding: 40px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 15px;
-        }
-
-        .header-meta {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            font-size: 0.9rem;
-            opacity: 0.85;
-        }
-
-        .header-meta span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Nav */
-        .nav-bar {
-            background: var(--white);
-            border-bottom: 2px solid var(--border);
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 30px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .nav-link {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            text-decoration: none;
-            color: var(--text);
-            background: var(--light);
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .nav-link:hover {
-            background: var(--highlight);
-            color: white;
-        }
-
-        /* Main */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px;
-        }
-
-        /* Alert Box */
-        .alert-box {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border: 2px solid var(--warning);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .alert-box h2 {
-            color: #92400e;
-            font-size: 1.3rem;
-            margin-bottom: 12px;
-        }
-
-        .alert-box p {
-            color: #78350f;
-            font-size: 0.95rem;
-        }
-
-        .alert-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .alert-stat {
-            background: rgba(255,255,255,0.7);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .alert-stat .number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--danger);
-        }
-
-        .alert-stat .label {
-            font-size: 0.8rem;
-            color: #92400e;
-        }
-
-        /* Overview Stats */
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            border-right: 4px solid var(--highlight);
-        }
-
-        .stat-card .label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 5px;
-        }
-
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-card .change {
-            font-size: 0.85rem;
-            margin-top: 3px;
-        }
-
-        .change-up { color: var(--success); }
-        .change-down { color: var(--danger); }
-
-        /* Category Section */
-        .category-section {
-            background: var(--white);
-            border-radius: 16px;
-            margin-bottom: 30px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .category-header {
-            padding: 25px 30px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .cat-production .category-header { background: linear-gradient(135deg, #1e40af, #3b82f6); }
-        .cat-electrician .category-header { background: linear-gradient(135deg, #b45309, #f59e0b); }
-        .cat-technician .category-header { background: linear-gradient(135deg, #065f46, #059669); }
-        .cat-plumber .category-header { background: linear-gradient(135deg, #7c2d12, #ea580c); }
-        .cat-equipment .category-header { background: linear-gradient(135deg, #581c87, #9333ea); }
-        .cat-drivers .category-header { background: linear-gradient(135deg, #991b1b, #ef4444); }
-        .cat-sales .category-header { background: linear-gradient(135deg, #155e75, #06b6d4); }
-        .cat-admin .category-header { background: linear-gradient(135deg, #4a044e, #c026d3); }
-        .cat-callcenter .category-header { background: linear-gradient(135deg, #1e3a5f, #3b82f6); }
-
-        .category-header h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .category-header .cat-stats {
-            display: flex;
-            gap: 20px;
-        }
-
-        .cat-stat-item {
-            text-align: center;
-        }
-
-        .cat-stat-item .num {
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-
-        .cat-stat-item .lbl {
-            font-size: 0.75rem;
-            opacity: 0.85;
-        }
-
-        .category-body {
-            padding: 25px 30px;
-        }
-
-        /* Keyword Tables */
-        .keyword-group {
-            margin-bottom: 25px;
-        }
-
-        .keyword-group h3 {
-            font-size: 1.1rem;
-            color: var(--secondary);
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .keyword-group h4 {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            margin: 15px 0 8px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-        }
-
-        table th {
-            background: var(--light);
-            padding: 10px 12px;
-            text-align: right;
-            font-weight: 600;
-            color: var(--secondary);
-            border-bottom: 2px solid var(--border);
-        }
-
-        table td {
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        table tr:hover td {
-            background: #f8fafc;
-        }
-
-        .keyword-tag {
-            display: inline-block;
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            margin: 2px;
-            font-weight: 500;
-        }
-
-        .keyword-tag.primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .keyword-tag.long-tail {
-            background: #f0fdf4;
-            color: #166534;
-        }
-
-        .keyword-tag.location {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        /* Placement Boxes */
-        .placement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .placement-box {
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .placement-box h5 {
-            font-size: 0.9rem;
-            color: var(--accent);
-            margin-bottom: 8px;
-        }
-
-        .placement-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .placement-box li {
-            font-size: 0.85rem;
-            padding: 3px 0;
-            border-bottom: 1px dashed var(--border);
-        }
-
-        .placement-box li:last-child {
-            border-bottom: none;
-        }
-
-        /* Anchor Links */
-        .anchor-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 10px 0;
-        }
-
-        .anchor-item {
-            background: #f1f5f9;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 0.85rem;
-        }
-
-        .anchor-item .arrow {
-            color: var(--highlight);
-            margin: 0 5px;
-        }
-
-        /* Priority Badge */
-        .priority {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .priority-high {
-            background: #fef2f2;
-            color: var(--danger);
-            border: 1px solid #fecaca;
-        }
-
-        .priority-medium {
-            background: #fffbeb;
-            color: var(--warning);
-            border: 1px solid #fde68a;
-        }
-
-        .priority-low {
-            background: #f0fdf4;
-            color: var(--success);
-            border: 1px solid #bbf7d0;
-        }
-
-        /* Position Badge */
-        .pos-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 700;
-        }
-
-        .pos-gold { background: #fef3c7; color: #92400e; }
-        .pos-silver { background: #f3f4f6; color: #4b5563; }
-        .pos-bronze { background: #fed7aa; color: #9a3412; }
-        .pos-gray { background: #f1f5f9; color: #64748b; }
-        .pos-none { background: #fef2f2; color: #dc2626; }
-
-        /* Recommendations */
-        .rec-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 1px solid #93c5fd;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-
-        .rec-box h4 {
-            color: #1e40af;
-            margin-bottom: 10px;
-        }
-
-        .rec-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .rec-list li {
-            padding: 6px 0;
-            padding-right: 20px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-
-        .rec-list li::before {
-            content: '\2713';
-            position: absolute;
-            right: 0;
-            color: var(--success);
-            font-weight: 700;
-        }
-
-        /* Target Page Type */
-        .page-type {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .page-category { background: #dbeafe; color: #1e40af; }
-        .page-landing { background: #d1fae5; color: #065f46; }
-        .page-blog { background: #fef3c7; color: #92400e; }
-        .page-faq { background: #e0e7ff; color: #3730a3; }
-
-        /* Competitive Row */
-        .competitive-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .comp-card {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .comp-card h5 {
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-
-        .comp-card.competitors { border-right: 3px solid var(--danger); }
-        .comp-card.opportunity { border-right: 3px solid var(--success); }
-
-        /* Summary Section */
-        .summary-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .summary-section h2 {
-            color: var(--primary);
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 3px solid var(--highlight);
-        }
-
-        /* Priority Matrix */
-        .priority-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .priority-col h4 {
-            padding: 10px;
-            border-radius: 8px 8px 0 0;
-            color: white;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-
-        .priority-col.tier1 h4 { background: var(--danger); }
-        .priority-col.tier2 h4 { background: var(--warning); }
-        .priority-col.tier3 h4 { background: var(--success); }
-
-        .priority-col ul {
-            list-style: none;
-            padding: 0;
-            border: 1px solid var(--border);
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .priority-col li {
-            padding: 8px 12px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--primary);
-            color: white;
-            padding: 25px;
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .footer p {
-            font-size: 0.85rem;
-            opacity: 0.8;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .header h1 { font-size: 1.6rem; }
-            .container { padding: 15px; }
-            .category-body { padding: 15px; }
-            .competitive-row { grid-template-columns: 1fr; }
-            .priority-matrix { grid-template-columns: 1fr; }
-            .nav-content { gap: 4px; }
-            .nav-link { font-size: 0.75rem; padding: 4px 10px; }
-            .header-meta { flex-direction: column; gap: 5px; }
+            .container { padding: 12px; }
+            .pri-grid { grid-template-columns: 1fr; }
+            .cat-head { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
-    <div class="header-content">
-        <h1>מחקר מילות מפתח - משרות צווארון כחול</h1>
-        <p class="subtitle">Manpower Israel (manpower.co.il) | שחזור דירוגים אורגניים</p>
-        <div class="header-meta">
-            <span>תאריך: 19.02.2026</span>
-            <span>לקוח: מנפאוור ישראל</span>
-            <span>דומיין: manpower.co.il</span>
-            <span>קטגוריות: 9 תחומי כחול-לבן</span>
-            <span>NC Digital</span>
-        </div>
-    </div>
-</div>
-
-<!-- Navigation -->
-<div class="nav-bar">
-    <div class="nav-content">
-        <a href="#overview" class="nav-link">סקירה</a>
-        <a href="#production" class="nav-link">עובדי ייצור</a>
-        <a href="#electricians" class="nav-link">חשמלאים</a>
-        <a href="#technicians" class="nav-link">טכנאים</a>
-        <a href="#plumbers" class="nav-link">אינסטלטורים</a>
-        <a href="#equipment" class="nav-link">ציוד כבד</a>
-        <a href="#drivers" class="nav-link">נהגים</a>
-        <a href="#sales" class="nav-link">מכירות</a>
-        <a href="#admin" class="nav-link">מנהלה</a>
-        <a href="#callcenter" class="nav-link">מוקדנים</a>
-        <a href="#priorities" class="nav-link">סדרי עדיפויות</a>
+    <div class="header-inner">
+        <h1>מחקר מילות מפתח - צווארון כחול | Manpower Israel</h1>
+        <p>manpower.co.il | 9 קטגוריות | פברואר 2026 | NC Digital</p>
     </div>
 </div>
 
 <div class="container">
 
-<!-- Market Alert -->
-<div class="alert-box">
-    <h2>הקשר שוק קריטי: מחסור בעובדי כחול-לבן בישראל</h2>
-    <p>שוק העבודה הכחול-לבן בישראל עובר שינוי מבני מאז אוקטובר 2023. ביקוש חריג לשירותי השמה בתחומי ייצור, בנייה, ולוגיסטיקה. <strong>הזדמנות אסטרטגית למנפאוור לחזק נוכחות אורגנית בתחומים אלו.</strong></p>
-    <div class="alert-stats">
-        <div class="alert-stat">
-            <div class="number">81%</div>
-            <div class="label">ירידה בעובדים פלסטינים</div>
-        </div>
-        <div class="alert-stat">
-            <div class="number">38,000</div>
-            <div class="label">מחסור בענף הבנייה</div>
-        </div>
-        <div class="alert-stat">
-            <div class="number">342</div>
-            <div class="label">קליקים כחול-לבן ב-GSC (מ-19,994)</div>
-        </div>
-        <div class="alert-stat">
-            <div class="number">1.7%</div>
-            <div class="label">אחוז תנועה כחול-לבן מסה"כ</div>
-        </div>
-    </div>
+<!-- Problem Statement -->
+<div class="problem-box">
+    <h2>הבעיה: מנפאוור כמעט בלתי נראית בחיפושי עבודה כחול-לבן</h2>
+    <ul>
+        <li><strong>342 קליקים</strong> מ-19,994 סה"כ (1.7%) מגיעים ממשרות כחול-לבן</li>
+        <li><strong>אפס תוכן ייחודי</strong> בדפי קטגוריה - כולם מציגים "Search Results - Manpower" אחיד</li>
+        <li><strong>אינסטלטורים + ציוד כבד = 0</strong> קליקים, 0 חשיפות - לא קיימים ב-Google</li>
+        <li>כל התנועה הכחול-לבן מגיעה ממאמרי <strong>שכר</strong>, לא מדפי <strong>משרות</strong></li>
+        <li>מתחרים (ORS, CBC Group) - חברות השמה שכן מדורגות, מוכיחות שזה אפשרי</li>
+    </ul>
 </div>
 
-<!-- Overview Section -->
-<div class="summary-section" id="overview">
-    <h2>סקירת מצב נוכחי - manpower.co.il</h2>
+<!-- Current Status -->
+<table class="status-table">
+    <thead>
+        <tr>
+            <th>קטגוריה</th>
+            <th>קליקים (GSC)</th>
+            <th>שינוי</th>
+            <th>מצב דירוג</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><strong>מנהלה / מזכירות</strong></td><td>224</td><td class="down">-16%</td><td>עמדה 6-7 | שאילתות שכר בלבד</td></tr>
+        <tr><td><strong>טכנאים</strong></td><td>39</td><td class="up">+86%</td><td>עמדה 8-10 | צמיחה מתוכן שכר</td></tr>
+        <tr><td><strong>חשמלאים</strong></td><td>34</td><td class="down">-53%</td><td>#1 לשכר, לא מדורג ל"דרוש"</td></tr>
+        <tr><td><strong>עובדי ייצור</strong></td><td>25</td><td class="up">+39%</td><td>~#8 ב-SERP, עמדה 7-17 ב-GSC</td></tr>
+        <tr><td><strong>מכירות</strong></td><td>8</td><td class="up">+5 קליקים</td><td>#1 לשכר</td></tr>
+        <tr><td><strong>מוקדנים</strong></td><td>8</td><td class="up">+6 קליקים</td><td>#3 לשכר</td></tr>
+        <tr><td><strong>נהגים</strong></td><td>4</td><td>חדש</td><td>לא ב-top 10</td></tr>
+        <tr><td><strong>אינסטלטורים</strong></td><td class="zero">0</td><td>-</td><td class="zero">לא קיים</td></tr>
+        <tr><td><strong>ציוד כבד / צמ"ה</strong></td><td class="zero">0</td><td>-</td><td class="zero">לא קיים</td></tr>
+    </tbody>
+</table>
+<p class="note">GSC: דצמבר 2025 - פברואר 2026 מול ספטמבר - נובמבר 2025. מספרים קטנים = אחוזים מוגזמים.</p>
 
-    <div class="overview-grid">
-        <div class="stat-card">
-            <div class="label">סה"כ קליקים (GSC)</div>
-            <div class="value">19,994</div>
-            <div class="change change-up">+2% מתקופה קודמת</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">קליקים כחול-לבן</div>
-            <div class="value">342</div>
-            <div class="change change-down">-11% מתקופה קודמת</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">שאילתות כחול-לבן</div>
-            <div class="value">131</div>
-            <div class="change">רובן תוכן שכר, לא משרות</div>
-        </div>
-        <div class="stat-card">
-            <div class="label">קטגוריות ללא נוכחות</div>
-            <div class="value" style="color: var(--danger);">2</div>
-            <div class="change">אינסטלטורים + ציוד כבד = 0</div>
-        </div>
-    </div>
+<!-- ====== CATEGORIES ====== -->
 
-    <div class="rec-box">
-        <h4>ממצא מרכזי: אפס תוכן ייחודי בדפי קטגוריה</h4>
-        <ul class="rec-list">
-            <li>כל דפי /search?JOBEXPERTISE= מציגים כותרת זהה: "Search Results - Manpower"</li>
-            <li>אין H1 ייחודי, אין תיאור מטא ייחודי, אין טקסט גוף בשום דף קטגוריה</li>
-            <li>כל התנועה הכחול-לבן מגיעה ממאמרי שכר ("כמה מרוויח..."), לא מדפי משרות</li>
-            <li>מתחרים כמו Drushim, AllJobs, Pakash, ORS - כולם עם דפי נחיתה ייעודיים לכל תפקיד</li>
-            <li>0 מילות מפתח כחול-לבן נעקבות ב-SE Ranking (91 מילים - כולן white-collar)</li>
-        </ul>
-    </div>
-
-    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:15px; margin-bottom:20px; font-size:0.85rem;">
-        <strong>מתודולוגיה ומקורות נתונים:</strong>
-        <ul style="margin:8px 0 0 0; padding-right:20px;">
-            <li><strong>GSC API (חי):</strong> נתוני קליקים, חשיפות, CTR ועמדה ממוצעת - מקור אמת ראשי. תקופה נוכחית: 01.12.25-15.02.26 (77 ימים), תקופה קודמת: 01.09.25-30.11.25 (91 ימים). מוגבל ל-5,000 שורות לתקופה.</li>
-            <li><strong>SE Ranking API (חי):</strong> 91 מילות מפתח נעקבות, התפלגות עמדות, נראות.</li>
-            <li><strong>ניתוח SERP (חי):</strong> 3 שאילתות נבדקו ב-Google Israel בזמן אמת - עובדי ייצור, חשמלאים, נהגי משאית.</li>
-            <li><strong>מחקר מילים:</strong> אומת מול AllJobs, Drushim, JobMaster, JobKarov, Indeed, Mploy. נפחי חיפוש מוערכים - לא ממקור נפח ייעודי.</li>
-            <li><strong>הערה חשובה:</strong> אחוזי שינוי (כמו +300% במוקדנים) מבוססים על מספרים קטנים (8 מ-2) - יש לפרש בזהירות.</li>
-        </ul>
-    </div>
-
-    <!-- Current Rankings -->
-    <h3 style="margin: 20px 0 15px; color: var(--secondary);">דירוג נוכחי לפי קטגוריה (GSC, דצמבר 2025 - פברואר 2026)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>קטגוריה</th>
-                <th>קליקים</th>
-                <th>שינוי</th>
-                <th>שאילתות</th>
-                <th>דירוג SERP</th>
-                <th>עדיפות</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>מנהלה / מזכירות</strong></td>
-                <td>224</td>
-                <td class="change-down">-16%</td>
-                <td>66</td>
-                <td><span class="pos-silver">עמדה 6-7</span></td>
-                <td><span class="priority priority-high">גבוהה</span></td>
-            </tr>
-            <tr>
-                <td><strong>טכנאים</strong></td>
-                <td>39</td>
-                <td class="change-up">+86%</td>
-                <td>24</td>
-                <td><span class="pos-bronze">עמדה 8-10</span></td>
-                <td><span class="priority priority-medium">בינונית</span></td>
-            </tr>
-            <tr>
-                <td><strong>חשמלאים</strong></td>
-                <td>34</td>
-                <td class="change-down">-53%</td>
-                <td>14</td>
-                <td><span class="pos-gold">עמדה 1-2 (שכר)</span></td>
-                <td><span class="priority priority-high">גבוהה</span></td>
-            </tr>
-            <tr>
-                <td><strong>עובדי ייצור</strong></td>
-                <td>25</td>
-                <td class="change-up">+39%</td>
-                <td>14</td>
-                <td><span class="pos-gray">עמדה 7-17</span></td>
-                <td><span class="priority priority-high">גבוהה</span></td>
-            </tr>
-            <tr>
-                <td><strong>נציגי מכירות</strong></td>
-                <td>8</td>
-                <td class="change-up">+167%*</td>
-                <td>5</td>
-                <td><span class="pos-gold">עמדה 1-3 (שכר)</span></td>
-                <td><span class="priority priority-medium">בינונית</span></td>
-            </tr>
-            <tr>
-                <td><strong>מוקדנים</strong></td>
-                <td>8</td>
-                <td class="change-up">+300%*</td>
-                <td>4</td>
-                <td><span class="pos-silver">עמדה 3</span></td>
-                <td><span class="priority priority-medium">בינונית</span></td>
-            </tr>
-            <tr>
-                <td><strong>נהגים</strong></td>
-                <td>4</td>
-                <td class="change-up">חדש</td>
-                <td>4</td>
-                <td><span class="pos-gray">עמדה 6-19</span></td>
-                <td><span class="priority priority-high">גבוהה</span></td>
-            </tr>
-            <tr>
-                <td><strong>אינסטלטורים</strong></td>
-                <td>0</td>
-                <td>-</td>
-                <td>0</td>
-                <td><span class="pos-none">לא מדורג</span></td>
-                <td><span class="priority priority-medium">בינונית</span></td>
-            </tr>
-            <tr>
-                <td><strong>ציוד כבד / צמ"ה</strong></td>
-                <td>0</td>
-                <td>-</td>
-                <td>0</td>
-                <td><span class="pos-none">לא מדורג</span></td>
-                <td><span class="priority priority-medium">בינונית</span></td>
-            </tr>
-        </tbody>
-    </table>
-    <p style="font-size:0.8rem; color:var(--text-light); margin-top:-10px;">* אחוזי שינוי גבוהים מבוססים על מספרים קטנים מאוד (למשל: +300% = 8 מ-2 קליקים). תקופות שונות באורכן (77 vs 91 ימים).</p>
-</div>
-
-<!-- ==================== CATEGORY 1: PRODUCTION WORKERS ==================== -->
-<div class="category-section cat-production" id="production">
-    <div class="category-header">
-        <div>
-            <h2>1. עובדי ייצור</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Production Workers | ייצור ותעשייה</span>
+<!-- 1. Production -->
+<div class="cat-card c1">
+    <div class="cat-head"><h2>1. עובדי ייצור</h2><span class="stats">25 קליקים | ~#8 ב-SERP</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">עובדי ייצור דרושים</span>
+            <span class="tag tag-main">עובד ייצור דרוש</span>
+            <span class="tag tag-main">דרושים ייצור ותעשייה</span>
         </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">25</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">483</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">#8</div>
-                <div class="lbl">דירוג SERP</div>
-            </div>
+        <div class="tags">
+            <span class="tag tag-var">פועלי ייצור</span>
+            <span class="tag tag-var">עובד מפעל</span>
+            <span class="tag tag-var">עבודה במפעל</span>
+            <span class="tag tag-var">פס ייצור</span>
+            <span class="tag tag-var">מפעיל מכונות</span>
         </div>
-    </div>
-    <div class="category-body">
-
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-
-            <h4>מילות מפתח ראשיות</h4>
-            <div>
-                <span class="keyword-tag primary">עובדי ייצור דרושים</span>
-                <span class="keyword-tag primary">עובד ייצור דרוש</span>
-                <span class="keyword-tag primary">דרושים ייצור ותעשייה</span>
-            </div>
-
-            <h4>וריאציות ומילים נרדפות</h4>
-            <div>
-                <span class="keyword-tag">פועלי ייצור</span>
-                <span class="keyword-tag">עובד מפעל</span>
-                <span class="keyword-tag">עבודה במפעל</span>
-                <span class="keyword-tag">פס ייצור</span>
-                <span class="keyword-tag">עוזר ייצור</span>
-                <span class="keyword-tag">מפעיל מכונות</span>
-                <span class="keyword-tag">עבודות ייצור</span>
-                <span class="keyword-tag">עובד יצור</span>
-            </div>
-
-            <h4>שאילתות Long-Tail (כוונת חיפוש גבוהה)</h4>
-            <div>
-                <span class="keyword-tag long-tail">עבודה במפעל ללא ניסיון</span>
-                <span class="keyword-tag long-tail">עובד ייצור משמרות</span>
-                <span class="keyword-tag long-tail">עבודה במפעל שכר שעתי</span>
-                <span class="keyword-tag long-tail">פס ייצור ללא ניסיון דרושים</span>
-                <span class="keyword-tag long-tail">עובדי ייצור משמרת לילה</span>
-                <span class="keyword-tag long-tail">עבודה במפעל מזון</span>
-                <span class="keyword-tag long-tail">עובדי ייצור עבודה מועדפת</span>
-                <span class="keyword-tag long-tail">עבודה במפעל קרוב לבית</span>
-                <span class="keyword-tag long-tail">מפעל מתכת דרושים</span>
-                <span class="keyword-tag long-tail">עבודה במפעל אלקטרוניקה</span>
-            </div>
-
-            <h4>וריאציות מיקום</h4>
-            <div>
-                <span class="keyword-tag location">עובדי ייצור דרושים חולון</span>
-                <span class="keyword-tag location">עבודה במפעל פתח תקווה</span>
-                <span class="keyword-tag location">עובדי ייצור אזור תעשייה</span>
-                <span class="keyword-tag location">עבודה במפעל באר שבע</span>
-                <span class="keyword-tag location">עובד ייצור מרכז</span>
-                <span class="keyword-tag location">דרושים ייצור כרמיאל</span>
-            </div>
+        <div class="tags">
+            <span class="tag tag-long">עבודה במפעל ללא ניסיון</span>
+            <span class="tag tag-long">עובד ייצור משמרות</span>
+            <span class="tag tag-long">עובדי ייצור משמרת לילה</span>
+            <span class="tag tag-long">עבודה במפעל מזון</span>
         </div>
-
-        <!-- Placements -->
-        <div class="keyword-group">
-            <h3>מיקום מומלץ באתר</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1 (כותרת ראשית)</h5>
-                    <ul>
-                        <li>דרושים עובדי ייצור - משרות ייצור ותעשייה | מנפאוור</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2 (כותרות משנה)</h5>
-                    <ul>
-                        <li>משרות פס ייצור ואריזה</li>
-                        <li>עבודה במפעל ללא ניסיון</li>
-                        <li>עובדי ייצור משמרות - בוקר / ערב / לילה</li>
-                        <li>מפעילי מכונות ייצור</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>טקסט גוף (200-400 מילים)</h5>
-                    <ul>
-                        <li>תיאור סוגי תפקידים</li>
-                        <li>אזורים עם ביקוש</li>
-                        <li>דרישות ותנאים</li>
-                        <li>יתרונות דרך מנפאוור</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ Schema</h5>
-                    <ul>
-                        <li>כמה מרוויח עובד ייצור?</li>
-                        <li>האם צריך ניסיון לעבודת ייצור?</li>
-                        <li>אילו משמרות קיימות?</li>
-                        <li>איפה יש מפעלים שמגייסים?</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="tags">
+            <span class="tag tag-loc">עובדי ייצור דרושים חולון</span>
+            <span class="tag tag-loc">עבודה במפעל פתח תקווה</span>
+            <span class="tag tag-loc">עבודה במפעל באר שבע</span>
         </div>
-
-        <!-- Internal Linking -->
-        <div class="keyword-group">
-            <h3>אנקורים ללינקים פנימיים</h3>
-            <div class="anchor-list">
-                <div class="anchor-item">
-                    <strong>משרות ייצור ותעשייה</strong> <span class="arrow">&larr;</span> דף קטגוריה
-                </div>
-                <div class="anchor-item">
-                    <strong>כמה מרוויח עובד ייצור</strong> <span class="arrow">&larr;</span> מאמר שכר
-                </div>
-                <div class="anchor-item">
-                    <strong>עבודה במפעל ללא ניסיון</strong> <span class="arrow">&larr;</span> דף נחיתה
-                </div>
-                <div class="anchor-item">
-                    <strong>דרושים עובדי ייצור מנפאוור</strong> <span class="arrow">&larr;</span> דף הבית
-                </div>
-                <div class="anchor-item">
-                    <strong>מפעילי מכונות דרושים</strong> <span class="arrow">&larr;</span> דף תת-קטגוריה
-                </div>
-            </div>
-        </div>
-
-        <!-- Target Page -->
-        <div class="keyword-group">
-            <h3>סוג דף יעד מומלץ</h3>
-            <p>
-                <span class="page-type page-category">דף קטגוריה ראשי</span> -
-                יצירת /jobs/production-workers/ עם H1 ייחודי, טקסט מקדים 300 מילים, רשימת משרות דינמית, ו-FAQ Schema
-            </p>
-            <p style="margin-top:8px;">
-                <span class="page-type page-landing">דף נחיתה</span> -
-                /jobs/production-workers/no-experience/ למחפשי עבודה ללא ניסיון
-            </p>
-            <p style="margin-top:8px;">
-                <span class="page-type page-blog">מאמר</span> -
-                "כמה מרוויח עובד ייצור ב-2026?" + לינק לדף הקטגוריה
-            </p>
-        </div>
-
-        <!-- Competition -->
-        <div class="competitive-row">
-            <div class="comp-card competitors">
-                <h5>מתחרים מובילים ב-SERP</h5>
-                <ol style="padding-right:20px; font-size:0.85rem;">
-                    <li><strong>Drushim.co.il</strong> - דף קטגוריה ייעודי (1,270 משרות)</li>
-                    <li><strong>AllJobs.co.il</strong> - פילטר לפי position=553</li>
-                    <li><strong>JobMaster.co.il</strong> - חיפוש "עובד ייצור"</li>
-                    <li><strong>ORS.co.il</strong> - דף ייעודי עם slug עברי</li>
-                    <li><strong>Indeed Israel</strong> - אגרגטור עם 100+ משרות</li>
-                </ol>
-            </div>
-            <div class="comp-card opportunity">
-                <h5>הזדמנויות</h5>
-                <ul style="list-style:none; font-size:0.85rem;">
-                    <li>+ מנפאוור מדורג ~#8 - קרוב לעמוד 1</li>
-                    <li>+ ORS (חברת השמה) מדורגת - מוכיח שהמודל עובד</li>
-                    <li>+ URL דינמי (/search?...) - שדרוג ל-slug עברי ישפר</li>
-                    <li>+ תוכן שכר כבר מדורג #1 - יש authority</li>
-                    <li>+ ביקוש שוק גבוה מאוד (מחסור עובדים)</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 2: ELECTRICIANS ==================== -->
-<div class="category-section cat-electrician" id="electricians">
-    <div class="category-header">
-        <div>
-            <h2>2. חשמלאים</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Electricians | חשמל ואלקטרוניקה</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">34</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">1,337</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">לא ב-10</div>
-                <div class="lbl">דירוג "דרוש"</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-
-            <h4>מילות מפתח ראשיות</h4>
-            <div>
-                <span class="keyword-tag primary">חשמלאי דרוש</span>
-                <span class="keyword-tag primary">דרושים חשמלאים</span>
-                <span class="keyword-tag primary">חשמלאי מוסמך דרוש</span>
-            </div>
-
-            <h4>וריאציות ומילים נרדפות</h4>
-            <div>
-                <span class="keyword-tag">חשמלאי מוסמך</span>
-                <span class="keyword-tag">חשמלאי מעשי</span>
-                <span class="keyword-tag">טכנאי חשמל</span>
-                <span class="keyword-tag">עוזר חשמלאי</span>
-                <span class="keyword-tag">חשמלאי ראשי</span>
-                <span class="keyword-tag">חשמלאי בניין</span>
-                <span class="keyword-tag">חשמלאי תעשייה</span>
-                <span class="keyword-tag">חשמלאי אחזקה</span>
-            </div>
-
-            <h4>שאילתות Long-Tail</h4>
-            <div>
-                <span class="keyword-tag long-tail">חשמלאי מוסמך דרוש ללא ניסיון</span>
-                <span class="keyword-tag long-tail">עוזר חשמלאי דרוש</span>
-                <span class="keyword-tag long-tail">חשמלאי אחזקה דרוש</span>
-                <span class="keyword-tag long-tail">חשמלאי בניין דרוש</span>
-                <span class="keyword-tag long-tail">עבודה כחשמלאי ללא ניסיון</span>
-                <span class="keyword-tag long-tail">חשמלאי עם רכב צמוד</span>
-                <span class="keyword-tag long-tail">כמה מרוויח חשמלאי מוסמך</span>
-                <span class="keyword-tag long-tail">רישיון חשמלאי מוסמך</span>
-            </div>
-
-            <h4>וריאציות מיקום (שכיח מאוד - עבודת שטח)</h4>
-            <div>
-                <span class="keyword-tag location">חשמלאי דרוש תל אביב</span>
-                <span class="keyword-tag location">חשמלאי דרוש חיפה</span>
-                <span class="keyword-tag location">חשמלאי דרוש ירושלים</span>
-                <span class="keyword-tag location">חשמלאי דרוש באר שבע</span>
-                <span class="keyword-tag location">חשמלאי מרכז</span>
-                <span class="keyword-tag location">חשמלאי דרוש שרון</span>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ באתר</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul>
-                        <li>דרושים חשמלאים - משרות חשמל ואלקטרוניקה | מנפאוור</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>חשמלאי מוסמך - משרות פתוחות</li>
-                        <li>חשמלאי בניין ותעשייה</li>
-                        <li>עוזר חשמלאי - כניסה לתחום</li>
-                        <li>חשמלאי אחזקה</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>טקסט גוף</h5>
-                    <ul>
-                        <li>סוגי רישיונות (מעשי/מוסמך)</li>
-                        <li>תחומי התמחות</li>
-                        <li>טווח שכר</li>
-                        <li>דרישות מקצועיות</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ Schema</h5>
-                    <ul>
-                        <li>כמה מרוויח חשמלאי מוסמך?</li>
-                        <li>מה ההבדל בין חשמלאי מעשי למוסמך?</li>
-                        <li>איך מוציאים רישיון חשמלאי?</li>
-                        <li>האם יש ביקוש לחשמלאים?</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>אנקורים ללינקים פנימיים</h3>
-            <div class="anchor-list">
-                <div class="anchor-item"><strong>משרות חשמלאים</strong> <span class="arrow">&larr;</span> דף קטגוריה</div>
-                <div class="anchor-item"><strong>כמה מרוויח חשמלאי</strong> <span class="arrow">&larr;</span> מאמר שכר (קיים, #1)</div>
-                <div class="anchor-item"><strong>חשמלאי דרוש - הגש מועמדות</strong> <span class="arrow">&larr;</span> דף משרה</div>
-                <div class="anchor-item"><strong>עבודה בחשמל דרך מנפאוור</strong> <span class="arrow">&larr;</span> דף הבית</div>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>סוג דף יעד</h3>
-            <p><span class="page-type page-category">דף קטגוריה</span> - /jobs/electricians/ | <span class="page-type page-faq">FAQ</span> - שאלות על רישיון ושכר</p>
-            <p style="margin-top:8px;font-size:0.9rem;"><strong>הערה:</strong> תוכן שכר כבר מדורג #1 (חשמלאי מוסמך שכר) - לנצל authority קיים ע"י לינקים מהמאמר לדף משרות חדש</p>
-        </div>
-
-        <div class="competitive-row">
-            <div class="comp-card competitors">
-                <h5>מתחרים ב-SERP</h5>
-                <ol style="padding-right:20px; font-size:0.85rem;">
-                    <li><strong>AllJobs</strong> - קטגוריה position=486</li>
-                    <li><strong>Drushim</strong> - דף חיפוש עם slug עברי</li>
-                    <li><strong>חברת החשמל</strong> - careers.iec.co.il</li>
-                    <li><strong>JobMaster</strong></li>
-                    <li><strong>Muvtal</strong> - מומחה כחול-לבן</li>
-                </ol>
-            </div>
-            <div class="comp-card opportunity">
-                <h5>הזדמנויות</h5>
-                <ul style="list-style:none; font-size:0.85rem;">
-                    <li>+ 367+ משרות חשמלאי ב-Drushim - ביקוש עצום</li>
-                    <li>+ מנפאוור #1 לשאילתות שכר - authority קיים</li>
-                    <li>+ CTR נמוך (1.1%) ב-#1 = SERP features - צריך FAQ Schema</li>
-                    <li>+ מחסור 38K עובדי בנייה = ביקוש לחשמלאים</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 3: TECHNICIANS ==================== -->
-<div class="category-section cat-technician" id="technicians">
-    <div class="category-header">
-        <div>
-            <h2>3. טכנאים</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Technicians | מיזוג אוויר, מעליות, HVAC</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">39</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">+86%</div>
-                <div class="lbl">צמיחה</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה A: טכנאי מיזוג אוויר</h3>
-            <div>
-                <span class="keyword-tag primary">טכנאי מיזוג אוויר דרוש</span>
-                <span class="keyword-tag">מתקין מזגנים</span>
-                <span class="keyword-tag">טכנאי מיזוג וקירור</span>
-                <span class="keyword-tag">עוזר טכנאי מיזוג אוויר</span>
-                <span class="keyword-tag">טכנאי מערכות מיזוג</span>
-                <span class="keyword-tag">מהנדס מיזוג אוויר</span>
-            </div>
-            <div style="margin-top:10px;">
-                <span class="keyword-tag long-tail">טכנאי מיזוג אוויר ללא ניסיון</span>
-                <span class="keyword-tag long-tail">מתקין מזגנים דרוש</span>
-                <span class="keyword-tag long-tail">טכנאי מיזוג אוויר שכר</span>
-                <span class="keyword-tag long-tail">קורס מיזוג אוויר</span>
-                <span class="keyword-tag long-tail">טכנאי מיזוג אוויר חילנים / צ'ילרים</span>
-            </div>
-            <p style="margin-top:8px; font-size:0.85rem; color: var(--warning);"><strong>עונתיות גבוהה מאוד:</strong> שיא מרץ-יוני לפני הקיץ, גל שני ספטמבר</p>
-        </div>
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה B: טכנאי מעליות</h3>
-            <div>
-                <span class="keyword-tag primary">טכנאי מעליות דרוש</span>
-                <span class="keyword-tag">מתקין מעליות</span>
-                <span class="keyword-tag">מרכיב מעליות</span>
-                <span class="keyword-tag">עובד מעליות</span>
-            </div>
-            <div style="margin-top:10px;">
-                <span class="keyword-tag long-tail">טכנאי מעליות ללא ניסיון</span>
-                <span class="keyword-tag long-tail">טכנאי מעליות שכר</span>
-                <span class="keyword-tag long-tail">רישיון טכנאי מעליות</span>
-                <span class="keyword-tag long-tail">טכנאי מעליות קונה / אלקטרה</span>
-            </div>
-            <p style="margin-top:8px; font-size:0.85rem;">27 משרות פעילות ב-Drushim - נישה קטנה אך ממוקדת</p>
-        </div>
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה C: HVAC / אחזקה</h3>
-            <div>
-                <span class="keyword-tag primary">טכנאי מערכות מיזוג אוויר</span>
-                <span class="keyword-tag">טכנאי אחזקה מיזוג</span>
-                <span class="keyword-tag">טכנאי אחזקה</span>
-                <span class="keyword-tag">טכנאי שטח</span>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים טכנאים - מיזוג אוויר, מעליות ואחזקה | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>טכנאי מיזוג אוויר וקירור</li>
-                        <li>טכנאי מעליות</li>
-                        <li>טכנאי אחזקה כללי</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ Schema</h5>
-                    <ul>
-                        <li>כמה מרוויח טכנאי מיזוג אוויר?</li>
-                        <li>מה צריך ללמוד כדי להיות טכנאי?</li>
-                        <li>האם יש ביקוש לטכנאי מעליות?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים פנימיים</h5>
-                    <ul>
-                        <li>משרות טכנאים &larr; דף קטגוריה</li>
-                        <li>שכר טכנאי מיזוג אוויר &larr; מאמר</li>
-                        <li>דרוש טכנאי מעליות &larr; משרה</li>
-                    </ul>
-                </div>
-            </div>
-            <p><span class="page-type page-category">דף קטגוריה</span> /jobs/technicians/ עם תת-דפים לכל התמחות</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 4: PLUMBERS ==================== -->
-<div class="category-section cat-plumber" id="plumbers">
-    <div class="category-header">
-        <div>
-            <h2>4. אינסטלטורים / שרברבים</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Plumbers | אינסטלציה</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">0</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">0</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">--</div>
-                <div class="lbl">לא מדורג כלל</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-            <h4>מילות מפתח ראשיות</h4>
-            <div>
-                <span class="keyword-tag primary">אינסטלטור דרוש</span>
-                <span class="keyword-tag primary">שרברב דרוש</span>
-                <span class="keyword-tag primary">אינסטלטור מוסמך</span>
-            </div>
-            <h4>וריאציות</h4>
-            <div>
-                <span class="keyword-tag">עבודות אינסטלציה</span>
-                <span class="keyword-tag">עבודה באינסטלציה</span>
-                <span class="keyword-tag">אינסטלטור שיפוצים</span>
-                <span class="keyword-tag">אינסטלטור קבלן</span>
-                <span class="keyword-tag">אינסטלטור אחזקה</span>
-                <span class="keyword-tag">אינסטלטור FM</span>
-            </div>
-            <h4>Long-Tail</h4>
-            <div>
-                <span class="keyword-tag long-tail">אינסטלטור ללא ניסיון</span>
-                <span class="keyword-tag long-tail">אינסטלטור מוסמך שכר</span>
-                <span class="keyword-tag long-tail">אינסטלטור שיפוצים דרוש</span>
-                <span class="keyword-tag long-tail">עבודות אינסטלציה דרושים</span>
-            </div>
-            <h4>מיקום (שכיח מאוד - עבודת שטח)</h4>
-            <div>
-                <span class="keyword-tag location">אינסטלטור דרוש מרכז</span>
-                <span class="keyword-tag location">שרברב דרוש תל אביב</span>
-                <span class="keyword-tag location">אינסטלטור ירושלים</span>
-                <span class="keyword-tag location">אינסטלטור שרון</span>
-            </div>
-            <p style="margin-top:10px; font-size:0.85rem;"><strong>הבחנה חשובה:</strong> "שרברב" = מונח עממי (צרכנים), "אינסטלטור" = מונח מקצועי (משרות). יש לטרגט שניהם.</p>
-        </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים אינסטלטורים ושרברבים | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>אינסטלטור מוסמך - משרות פתוחות</li>
-                        <li>אינסטלטור שיפוצים ובנייה</li>
-                        <li>אינסטלטור אחזקה ו-FM</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויח אינסטלטור?</li>
-                        <li>מה ההבדל בין שרברב לאינסטלטור?</li>
-                        <li>איך נכנסים לתחום?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות אינסטלציה &larr; קטגוריה</li>
-                        <li>אינסטלטור דרוש &larr; משרה</li>
-                        <li>עבודה באינסטלציה &larr; מאמר</li>
-                    </ul>
-                </div>
-            </div>
-            <p><span class="page-type page-landing">דף נחיתה חדש</span> /jobs/plumbers/ - נדרש יצירה מאפס, אין נוכחות כלל</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 5: HEAVY EQUIPMENT ==================== -->
-<div class="category-section cat-equipment" id="equipment">
-    <div class="category-header">
-        <div>
-            <h2>5. מפעילי ציוד כבד / צמ"ה</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Heavy Equipment Operators | ציוד מכני הנדסי</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">0</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">0</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-            <h4>מילות מפתח ראשיות (צמ"ה = המונח הישראלי הדומיננטי)</h4>
-            <div>
-                <span class="keyword-tag primary">מפעיל צמ"ה דרוש</span>
-                <span class="keyword-tag primary">מפעיל ציוד כבד דרוש</span>
-                <span class="keyword-tag primary">דרושים מפעילי צמ"ה</span>
-            </div>
-            <h4>וריאציות</h4>
-            <div>
-                <span class="keyword-tag">מפעיל באגר</span>
-                <span class="keyword-tag">מפעיל מנוף</span>
-                <span class="keyword-tag">מפעיל שופל</span>
-                <span class="keyword-tag">מפעיל טרקטור</span>
-                <span class="keyword-tag">נהג צמ"ה</span>
-                <span class="keyword-tag">מפעיל מכונה ניידת</span>
-                <span class="keyword-tag">עבודות עפר</span>
-            </div>
-            <h4>Long-Tail (כולל מידע גבוה)</h4>
-            <div>
-                <span class="keyword-tag long-tail">קורס צמ"ה</span>
-                <span class="keyword-tag long-tail">רישיון מכונה ניידת</span>
-                <span class="keyword-tag long-tail">מפעיל באגר דרוש</span>
-                <span class="keyword-tag long-tail">מפעיל צמ"ה שכר</span>
-                <span class="keyword-tag long-tail">קורס צמ"ה מחיר</span>
-                <span class="keyword-tag long-tail">רישיון צמ"ה אזרחי</span>
-                <span class="keyword-tag long-tail">עבודות עפר ופיתוח דרושים</span>
-            </div>
-            <p style="margin-top:8px; font-size:0.85rem;"><strong>Intent מעורב:</strong> מידע גבוה (קורסים, רישיון) + טרנזקציוני (משרות). עונתיות: אפריל-אוקטובר (עונת בנייה)</p>
-        </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים מפעילי צמ"ה וציוד כבד | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>מפעיל באגר ושופל</li>
-                        <li>מפעיל מנוף</li>
-                        <li>עבודות עפר ופיתוח</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויח מפעיל צמ"ה?</li>
-                        <li>איך מוציאים רישיון מכונה ניידת?</li>
-                        <li>כמה עולה קורס צמ"ה?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות ציוד כבד &larr; קטגוריה</li>
-                        <li>מפעיל צמ"ה דרוש &larr; משרה</li>
-                        <li>מדריך רישיון צמ"ה &larr; מאמר</li>
-                    </ul>
-                </div>
-            </div>
-            <p><span class="page-type page-landing">דף נחיתה חדש</span> + <span class="page-type page-blog">מאמר מקצועי</span> על קורסים ורישיון (intent מידע גבוה)</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 6: DRIVERS ==================== -->
-<div class="category-section cat-drivers" id="drivers">
-    <div class="category-header">
-        <div>
-            <h2>6. נהגים</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Drivers | מלגזה, משאית, רכב כבד</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">4</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">140</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">לא ב-10</div>
-                <div class="lbl">דירוג SERP</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה A: מלגזנים (נפח חיפוש גבוה מאוד)</h3>
-            <div>
-                <span class="keyword-tag primary">מלגזן דרוש</span>
-                <span class="keyword-tag primary">נהג מלגזה דרוש</span>
-                <span class="keyword-tag">מפעיל מלגזה</span>
-                <span class="keyword-tag">מלגזן מחסן</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag long-tail">מלגזן משמרות</span>
-                <span class="keyword-tag long-tail">מלגזן ללא ניסיון</span>
-                <span class="keyword-tag long-tail">מלגזן עבודה ערב</span>
-                <span class="keyword-tag long-tail">רישיון מלגזה</span>
-                <span class="keyword-tag long-tail">מלגזן שכר שעתי</span>
-                <span class="keyword-tag long-tail">מלגזן עבודה במחסן</span>
-            </div>
-            <p style="font-size:0.85rem; color:var(--danger);">108+ משרות פעילות ב-Drushim - ביקוש עצום. מנפאוור לא מדורג.</p>
-        </div>
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה B: נהגי משאית</h3>
-            <div>
-                <span class="keyword-tag primary">נהג משאית דרוש</span>
-                <span class="keyword-tag primary">נהג רכב כבד דרוש</span>
-                <span class="keyword-tag">נהג ג'</span>
-                <span class="keyword-tag">נהג מעל 15 טון</span>
-                <span class="keyword-tag">נהג C1</span>
-                <span class="keyword-tag">נהג חלוקה והפצה</span>
-                <span class="keyword-tag">נהג הובלות</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag long-tail">נהג משאית מעל 15 טון דרוש</span>
-                <span class="keyword-tag long-tail">נהג C1 דרוש</span>
-                <span class="keyword-tag long-tail">נהג חלוקה דרוש</span>
-                <span class="keyword-tag long-tail">נהג משאית שכר</span>
-                <span class="keyword-tag long-tail">נהג משאית מנוף</span>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>תת-קטגוריה C: נהגי טריילר / רכב כבד</h3>
-            <div>
-                <span class="keyword-tag primary">נהג טריילר דרוש</span>
-                <span class="keyword-tag">נהג שלפ</span>
-                <span class="keyword-tag">רישיון C+E</span>
-                <span class="keyword-tag">נהג דרגה E</span>
-                <span class="keyword-tag">נהג רכב מפרקי</span>
-            </div>
-        </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים נהגים - משאית, מלגזה ורכב כבד | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>מלגזן/ית - משרות מחסן ולוגיסטיקה</li>
-                        <li>נהג משאית ורכב כבד</li>
-                        <li>נהגי חלוקה והפצה</li>
-                        <li>נהג טריילר ורכב מפרקי</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויח נהג משאית?</li>
-                        <li>מה ההבדל בין רישיון C ל-C+E?</li>
-                        <li>האם צריך ניסיון למלגזן?</li>
-                        <li>מהם סוגי רישיונות הנהיגה?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות נהגים &larr; קטגוריה</li>
-                        <li>מלגזן דרוש &larr; תת-קטגוריה</li>
-                        <li>נהג משאית מנפאוור &larr; דף הבית</li>
-                        <li>שכר נהג משאית &larr; מאמר</li>
-                    </ul>
-                </div>
-            </div>
-            <p>
-                <span class="page-type page-category">דף קטגוריה ראשי</span> /jobs/drivers/ +
-                <span class="page-type page-landing">תת-דפים</span> /jobs/drivers/forklift/ , /jobs/drivers/truck/
-            </p>
-            <p style="margin-top:8px; font-size:0.85rem;"><strong>CBC Group</strong> (חברת השמה) מדורגת #5 לנהג משאית - מוכיח שחברות השמה יכולות לדרג. קריטי ליצור דפים ייעודיים.</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 7: SALES ==================== -->
-<div class="category-section cat-sales" id="sales">
-    <div class="category-header">
-        <div>
-            <h2>7. נציגי מכירות</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Sales Representatives | שטח וטלפון</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">8</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">+167%</div>
-                <div class="lbl">צמיחה</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-            <div>
-                <span class="keyword-tag primary">נציג מכירות דרוש</span>
-                <span class="keyword-tag primary">איש מכירות דרוש</span>
-                <span class="keyword-tag primary">סוכן מכירות שטח דרוש</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag">סוכן מכירות</span>
-                <span class="keyword-tag">מכירות שטח</span>
-                <span class="keyword-tag">מכירות טלפוניות</span>
-                <span class="keyword-tag">נציג/ת מכירות טלפונית</span>
-                <span class="keyword-tag">עבודה במכירות</span>
-                <span class="keyword-tag">מנהל מכירות</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag long-tail">עבודה במכירות ללא ניסיון</span>
-                <span class="keyword-tag long-tail">סוכן מכירות שטח דרוש</span>
-                <span class="keyword-tag long-tail">מכירות עם רכב צמוד</span>
-                <span class="keyword-tag long-tail">משרות מכירות שכר + עמלות</span>
-                <span class="keyword-tag long-tail">איש מכירות B2B דרוש</span>
-                <span class="keyword-tag long-tail">עבודה במכירות מהבית</span>
-            </div>
-        </div>
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים נציגי מכירות - שטח וטלפון | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>סוכני מכירות שטח</li>
-                        <li>מכירות טלפוניות</li>
-                        <li>עבודה במכירות ללא ניסיון</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויח איש מכירות?</li>
-                        <li>מה ההבדל בין מכירות שטח לטלפון?</li>
-                        <li>האם צריך ניסיון לעבוד במכירות?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות מכירות &larr; קטגוריה</li>
-                        <li>שכר איש מכירות &larr; מאמר (#1)</li>
-                        <li>נציג מכירות דרוש &larr; משרה</li>
-                    </ul>
-                </div>
-            </div>
-            <p><span class="page-type page-category">דף קטגוריה</span> /jobs/sales/ | 331 משרות סוכן מכירות שטח ב-Drushim</p>
-        </div>
-    </div>
-</div>
-
-<!-- ==================== CATEGORY 8: ADMIN ==================== -->
-<div class="category-section cat-admin" id="admin">
-    <div class="category-header">
-        <div>
-            <h2>8. עובדי מנהלה</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Administrative Staff | מזכירות ופקידות</span>
-        </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">224</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">8,051</div>
-                <div class="lbl">חשיפות</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">-16%</div>
-                <div class="lbl">ירידה</div>
-            </div>
-        </div>
-    </div>
-    <div class="category-body">
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח (הקטגוריה הגדולה ביותר)</h3>
-            <div>
-                <span class="keyword-tag primary">מזכירה דרושה</span>
-                <span class="keyword-tag primary">פקידה דרושה</span>
-                <span class="keyword-tag primary">דרושים אדמיניסטרציה</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag">עובד/ת מנהלה</span>
-                <span class="keyword-tag">עוזרת אישית</span>
-                <span class="keyword-tag">מזכירה רפואית</span>
-                <span class="keyword-tag">קלדנית</span>
-                <span class="keyword-tag">ניהול משרד</span>
-                <span class="keyword-tag">מנהלת משרד</span>
-                <span class="keyword-tag">פקידת קבלה</span>
-                <span class="keyword-tag">back office</span>
-                <span class="keyword-tag">אדמיניסטרציה</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag long-tail">פקידה ללא ניסיון</span>
-                <span class="keyword-tag long-tail">מזכירה רפואית דרושה</span>
-                <span class="keyword-tag long-tail">עוזרת אישית דרושה</span>
-                <span class="keyword-tag long-tail">פקידה משרה חלקית</span>
-                <span class="keyword-tag long-tail">עבודה משרדית ללא ניסיון</span>
-                <span class="keyword-tag long-tail">מזכירה חצי משרה</span>
-                <span class="keyword-tag long-tail">עובדת מנהלה משרה מלאה</span>
-                <span class="keyword-tag long-tail">שכר מנהלת משרד</span>
-                <span class="keyword-tag long-tail">טבלאות שכר אדמיניסטרציה</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag location">פקידה הרצליה</span>
-                <span class="keyword-tag location">פקידה בת ים</span>
-                <span class="keyword-tag location">מזכירה תל אביב</span>
-                <span class="keyword-tag location">מזכירה ירושלים</span>
-                <span class="keyword-tag location">עבודות מנהלה פתח תקווה</span>
-            </div>
-        </div>
-
-        <div class="rec-box">
-            <h4>ממצא GSC קריטי</h4>
-            <ul class="rec-list">
-                <li>"דרושים אדמיניסטרציה" - 1,081 חשיפות, CTR 1.4%, עמדה 7 - הזדמנות לשיפור מהיר</li>
-                <li>"שכר מנהלת משרד" - עמדה 1, CTR 24.2% - מאמר שכר מצליח</li>
-                <li>ירידה של -16% נגרמת מנפילת עמדה אחת (7→8) בכמה שאילתות</li>
-                <li>1,810 משרות מנהלה ב-Drushim - שוק ענק, מנפאוור תופסת רק פירורים</li>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים עובדי ייצור - משרות ייצור ותעשייה | מנפאוור</li>
+                <li><strong>H2:</strong> משרות פס ייצור ואריזה | עבודה במפעל ללא ניסיון | עובדי ייצור משמרות</li>
+                <li><strong>דף חדש:</strong> /jobs/production-workers/ עם 300 מילים + FAQ + רשימת משרות</li>
+                <li><strong>FAQ:</strong> כמה מרוויח עובד ייצור? | האם צריך ניסיון? | אילו משמרות קיימות?</li>
+                <li><strong>לינקים פנימיים:</strong> "משרות ייצור" ← קטגוריה | "כמה מרוויח עובד ייצור" ← מאמר שכר | "עבודה במפעל ללא ניסיון" ← נחיתה</li>
             </ul>
         </div>
+    </div>
+</div>
 
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים מנהלה ומזכירות - משרות אדמיניסטרציה | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>מזכירה / פקידה - משרות פתוחות</li>
-                        <li>מזכירה רפואית</li>
-                        <li>עוזרת אישית / ניהול משרד</li>
-                        <li>משרות מנהלה ללא ניסיון</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויחה מזכירה?</li>
-                        <li>מה ההבדל בין מנהלת משרד לפקידה?</li>
-                        <li>האם יש משרות מנהלה ללא ניסיון?</li>
-                        <li>מהן שעות העבודה הנפוצות?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות מנהלה &larr; קטגוריה</li>
-                        <li>טבלת שכר מנהלה &larr; מאמר (#1)</li>
-                        <li>מזכירה דרושה &larr; משרה</li>
-                        <li>פקידה ללא ניסיון &larr; נחיתה</li>
-                    </ul>
-                </div>
-            </div>
-            <p>
-                <span class="page-type page-category">דף קטגוריה</span> /jobs/admin/ +
-                <span class="page-type page-landing">דף ללא ניסיון</span> /jobs/admin/no-experience/
-            </p>
-            <p style="margin-top:8px; font-size:0.85rem;"><strong>Quick Win:</strong> שיפור H1, title, ו-meta description של דף הקטגוריה הקיים (/search?JOBEXPERTISE=4142) - עם 1,081 חשיפות ב-CTR 1.4% בעמדה 7, שדרוג on-page בסיסי צפוי לשפר CTR משמעותית</p>
+<!-- 2. Electricians -->
+<div class="cat-card c2">
+    <div class="cat-head"><h2>2. חשמלאים</h2><span class="stats">34 קליקים | #1 לשכר, לא מדורג ל"דרוש"</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">חשמלאי דרוש</span>
+            <span class="tag tag-main">חשמלאי מוסמך דרוש</span>
+            <span class="tag tag-main">דרושים חשמלאים</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-var">חשמלאי מוסמך</span>
+            <span class="tag tag-var">חשמלאי מעשי</span>
+            <span class="tag tag-var">טכנאי חשמל</span>
+            <span class="tag tag-var">עוזר חשמלאי</span>
+            <span class="tag tag-var">חשמלאי בניין</span>
+            <span class="tag tag-var">חשמלאי תעשייה</span>
+            <span class="tag tag-var">חשמלאי אחזקה</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">עוזר חשמלאי דרוש</span>
+            <span class="tag tag-long">חשמלאי אחזקה דרוש</span>
+            <span class="tag tag-long">כמה מרוויח חשמלאי מוסמך</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-loc">חשמלאי דרוש תל אביב</span>
+            <span class="tag tag-loc">חשמלאי דרוש חיפה</span>
+            <span class="tag tag-loc">חשמלאי דרוש ירושלים</span>
+            <span class="tag tag-loc">חשמלאי דרוש באר שבע</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים חשמלאים - משרות חשמל ואלקטרוניקה | מנפאוור</li>
+                <li><strong>H2:</strong> חשמלאי מוסמך - משרות פתוחות | חשמלאי בניין ותעשייה | עוזר חשמלאי</li>
+                <li><strong>דף חדש:</strong> /jobs/electricians/ + לינק ממאמר שכר שכבר מדורג #1</li>
+                <li><strong>FAQ:</strong> כמה מרוויח חשמלאי מוסמך? | מה ההבדל בין מעשי למוסמך?</li>
+                <li><strong>לינקים:</strong> "משרות חשמלאים" ← קטגוריה | "כמה מרוויח חשמלאי" ← מאמר (#1)</li>
+            </ul>
+            <p class="note">מאמר שכר קיים מדורג #1 ל"חשמלאי מוסמך שכר" (272 חשיפות) - להוסיף לינק ממנו לדף משרות חדש</p>
         </div>
     </div>
 </div>
 
-<!-- ==================== CATEGORY 9: CALL CENTER ==================== -->
-<div class="category-section cat-callcenter" id="callcenter">
-    <div class="category-header">
-        <div>
-            <h2>9. נציגי שירות / מוקדנים / טלמרקטינג</h2>
-            <span style="opacity:0.8; font-size:0.9rem;">Call Center / Telemarketers</span>
+<!-- 3. Technicians -->
+<div class="cat-card c3">
+    <div class="cat-head"><h2>3. טכנאים (מיזוג, מעליות, HVAC)</h2><span class="stats">39 קליקים | +86%</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">טכנאי מיזוג אוויר דרוש</span>
+            <span class="tag tag-main">טכנאי מעליות דרוש</span>
         </div>
-        <div class="cat-stats">
-            <div class="cat-stat-item">
-                <div class="num">8</div>
-                <div class="lbl">קליקים</div>
-            </div>
-            <div class="cat-stat-item">
-                <div class="num">+300%</div>
-                <div class="lbl">צמיחה</div>
-            </div>
+        <div class="tags">
+            <span class="tag tag-var">מתקין מזגנים</span>
+            <span class="tag tag-var">טכנאי מיזוג וקירור</span>
+            <span class="tag tag-var">מתקין מעליות</span>
+            <span class="tag tag-var">טכנאי אחזקה</span>
         </div>
-    </div>
-    <div class="category-body">
-        <div class="keyword-group">
-            <h3>אשכול מילות מפתח</h3>
-            <div>
-                <span class="keyword-tag primary">נציג שירות לקוחות דרוש</span>
-                <span class="keyword-tag primary">מוקדן/ית דרוש/ה</span>
-                <span class="keyword-tag primary">עבודה במוקד טלפוני</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag">טלמרקטינג</span>
-                <span class="keyword-tag">נציגי טלמרקטינג</span>
-                <span class="keyword-tag">מכירות טלפוניות</span>
-                <span class="keyword-tag">מוקד טלפוני</span>
-                <span class="keyword-tag">שירות לקוחות</span>
-                <span class="keyword-tag">טלמיטינג</span>
-                <span class="keyword-tag">שימור לקוחות</span>
-                <span class="keyword-tag">תמיכה טכנית</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag long-tail">עבודה במוקד ללא ניסיון</span>
-                <span class="keyword-tag long-tail">עבודה במוקד סטודנטים</span>
-                <span class="keyword-tag long-tail">עבודה במוקד מהבית</span>
-                <span class="keyword-tag long-tail">עבודה במוקד משמרות</span>
-                <span class="keyword-tag long-tail">עבודה במוקד ערב</span>
-                <span class="keyword-tag long-tail">מוקד מכירות טלפוני דרוש</span>
-                <span class="keyword-tag long-tail">טלמרקטינג עבודה מהבית</span>
-                <span class="keyword-tag long-tail">מוקדן לילה דרוש</span>
-                <span class="keyword-tag long-tail">עבודה במוקד חלקית</span>
-            </div>
-            <div style="margin-top:8px;">
-                <span class="keyword-tag location">עבודה במוקד פתח תקווה</span>
-                <span class="keyword-tag location">נציג שירות תל אביב</span>
-                <span class="keyword-tag location">עבודה במוקד הרצליה</span>
-                <span class="keyword-tag location">עבודה במוקד באר שבע</span>
-            </div>
-            <p style="margin-top:8px; font-size:0.85rem;"><strong>דמוגרפיה:</strong> פופולרי מאוד בקרב סטודנטים ומחפשי משרה חלקית. שיאי חיפוש לפני סמסטרים (ספטמבר, פברואר)</p>
+        <div class="tags">
+            <span class="tag tag-long">טכנאי מיזוג אוויר ללא ניסיון</span>
+            <span class="tag tag-long">טכנאי מעליות שכר</span>
+            <span class="tag tag-long">קורס מיזוג אוויר</span>
         </div>
-
-        <div class="keyword-group">
-            <h3>מיקום מומלץ</h3>
-            <div class="placement-grid">
-                <div class="placement-box">
-                    <h5>H1</h5>
-                    <ul><li>דרושים מוקדנים ונציגי שירות | מנפאוור</li></ul>
-                </div>
-                <div class="placement-box">
-                    <h5>H2</h5>
-                    <ul>
-                        <li>נציג/ת שירות לקוחות</li>
-                        <li>טלמרקטינג ומכירות טלפוניות</li>
-                        <li>עבודה במוקד - סטודנטים</li>
-                        <li>עבודה מהבית - מוקד טלפוני</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>FAQ</h5>
-                    <ul>
-                        <li>כמה מרוויח נציג שירות לקוחות?</li>
-                        <li>האם יש עבודת מוקד מהבית?</li>
-                        <li>מה ההבדל בין שירות לטלמרקטינג?</li>
-                        <li>האם מתאים לסטודנטים?</li>
-                    </ul>
-                </div>
-                <div class="placement-box">
-                    <h5>אנקורים</h5>
-                    <ul>
-                        <li>משרות מוקד &larr; קטגוריה</li>
-                        <li>שכר נציג שירות &larr; מאמר (#3)</li>
-                        <li>עבודה במוקד מהבית &larr; נחיתה</li>
-                    </ul>
-                </div>
-            </div>
-            <p>
-                <span class="page-type page-category">דף קטגוריה</span> /jobs/call-center/ +
-                <span class="page-type page-landing">דף סטודנטים</span> /jobs/call-center/students/
-            </p>
-            <p style="margin-top:8px; font-size:0.85rem;">מנפאוור כבר #3 ל"כמה מרוויח נציג שירות לקוחות" - authority קיים, צריך רק לינק לדף משרות</p>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים טכנאים - מיזוג אוויר, מעליות ואחזקה | מנפאוור</li>
+                <li><strong>דף חדש:</strong> /jobs/technicians/ עם תת-דפים לכל התמחות</li>
+                <li><strong>FAQ:</strong> כמה מרוויח טכנאי מיזוג אוויר? | האם יש ביקוש לטכנאי מעליות?</li>
+            </ul>
+            <p class="note">עונתיות: שיא מרץ-יוני. 27 משרות טכנאי מעליות ב-Drushim.</p>
         </div>
     </div>
 </div>
 
-<!-- ==================== PRIORITIES SECTION ==================== -->
-<div class="summary-section" id="priorities">
-    <h2>סדרי עדיפויות ליישום</h2>
+<!-- 4. Plumbers -->
+<div class="cat-card c4">
+    <div class="cat-head"><h2>4. אינסטלטורים / שרברבים</h2><span class="stats">0 קליקים | לא קיים</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">אינסטלטור דרוש</span>
+            <span class="tag tag-main">שרברב דרוש</span>
+            <span class="tag tag-var">עבודות אינסטלציה</span>
+            <span class="tag tag-var">אינסטלטור שיפוצים</span>
+            <span class="tag tag-var">אינסטלטור אחזקה</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">אינסטלטור ללא ניסיון</span>
+            <span class="tag tag-loc">אינסטלטור דרוש מרכז</span>
+            <span class="tag tag-loc">שרברב דרוש תל אביב</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים אינסטלטורים ושרברבים | מנפאוור</li>
+                <li><strong>דף חדש:</strong> /jobs/plumbers/ - יצירה מאפס</li>
+                <li><strong>FAQ:</strong> כמה מרוויח אינסטלטור? | מה ההבדל בין שרברב לאינסטלטור?</li>
+            </ul>
+            <p class="note">"שרברב" = עממי, "אינסטלטור" = מקצועי. לטרגט שניהם.</p>
+        </div>
+    </div>
+</div>
 
-    <div class="priority-matrix">
-        <div class="priority-col tier1">
-            <h4>Tier 1 - יישום מיידי</h4>
+<!-- 5. Heavy Equipment -->
+<div class="cat-card c5">
+    <div class="cat-head"><h2>5. מפעילי צמ"ה / ציוד כבד</h2><span class="stats">0 קליקים | לא קיים</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">מפעיל צמ"ה דרוש</span>
+            <span class="tag tag-main">מפעיל ציוד כבד דרוש</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-var">מפעיל באגר</span>
+            <span class="tag tag-var">מפעיל מנוף</span>
+            <span class="tag tag-var">מפעיל שופל</span>
+            <span class="tag tag-var">נהג צמ"ה</span>
+            <span class="tag tag-var">עבודות עפר</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">קורס צמ"ה</span>
+            <span class="tag tag-long">רישיון מכונה ניידת</span>
+            <span class="tag tag-long">מפעיל צמ"ה שכר</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים מפעילי צמ"ה וציוד כבד | מנפאוור</li>
+                <li><strong>דף חדש:</strong> /jobs/heavy-equipment/ + מאמר על קורסים ורישיון</li>
+                <li><strong>FAQ:</strong> כמה מרוויח מפעיל צמ"ה? | איך מוציאים רישיון?</li>
+            </ul>
+            <p class="note">צמ"ה = המונח הישראלי, לא "ציוד כבד". עונתיות: אפריל-אוקטובר.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Drivers -->
+<div class="cat-card c6">
+    <div class="cat-head"><h2>6. נהגים (מלגזה, משאית, רכב כבד)</h2><span class="stats">4 קליקים | לא ב-top 10</span></div>
+    <div class="cat-body">
+        <h3>מלגזנים</h3>
+        <div class="tags">
+            <span class="tag tag-main">מלגזן דרוש</span>
+            <span class="tag tag-main">נהג מלגזה דרוש</span>
+            <span class="tag tag-var">מפעיל מלגזה</span>
+            <span class="tag tag-var">מלגזן מחסן</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">מלגזן משמרות</span>
+            <span class="tag tag-long">מלגזן ללא ניסיון</span>
+            <span class="tag tag-long">רישיון מלגזה</span>
+        </div>
+        <h3>נהגי משאית ורכב כבד</h3>
+        <div class="tags">
+            <span class="tag tag-main">נהג משאית דרוש</span>
+            <span class="tag tag-main">נהג רכב כבד דרוש</span>
+            <span class="tag tag-var">נהג ג'</span>
+            <span class="tag tag-var">נהג מעל 15 טון</span>
+            <span class="tag tag-var">נהג C1</span>
+            <span class="tag tag-var">נהג חלוקה והפצה</span>
+            <span class="tag tag-var">נהג טריילר</span>
+            <span class="tag tag-var">רישיון C+E</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים נהגים - משאית, מלגזה ורכב כבד | מנפאוור</li>
+                <li><strong>H2:</strong> מלגזן/ית - משרות מחסן | נהג משאית ורכב כבד | נהגי חלוקה</li>
+                <li><strong>דף חדש:</strong> /jobs/drivers/ + תת-דפים /forklift/ , /truck/</li>
+                <li><strong>FAQ:</strong> כמה מרוויח נהג משאית? | מה ההבדל בין C ל-C+E?</li>
+            </ul>
+            <p class="note">108+ משרות מלגזן ב-Drushim. CBC Group (חברת השמה) מדורגת #5 לנהג משאית.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Sales -->
+<div class="cat-card c7">
+    <div class="cat-head"><h2>7. נציגי מכירות</h2><span class="stats">8 קליקים | #1 לשכר</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">נציג מכירות דרוש</span>
+            <span class="tag tag-main">איש מכירות דרוש</span>
+            <span class="tag tag-main">סוכן מכירות שטח דרוש</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-var">מכירות שטח</span>
+            <span class="tag tag-var">מכירות טלפוניות</span>
+            <span class="tag tag-long">עבודה במכירות ללא ניסיון</span>
+            <span class="tag tag-long">מכירות עם רכב צמוד</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים נציגי מכירות - שטח וטלפון | מנפאוור</li>
+                <li><strong>דף חדש:</strong> /jobs/sales/</li>
+                <li><strong>לינקים:</strong> "שכר איש מכירות" ← מאמר שכר (#1)</li>
+            </ul>
+            <p class="note">331 משרות סוכן מכירות שטח ב-Drushim.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 8. Admin -->
+<div class="cat-card c8">
+    <div class="cat-head"><h2>8. מנהלה / מזכירות</h2><span class="stats">224 קליקים | -16% | הגדולה ביותר</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">מזכירה דרושה</span>
+            <span class="tag tag-main">פקידה דרושה</span>
+            <span class="tag tag-main">דרושים אדמיניסטרציה</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-var">עובד/ת מנהלה</span>
+            <span class="tag tag-var">עוזרת אישית</span>
+            <span class="tag tag-var">מזכירה רפואית</span>
+            <span class="tag tag-var">מנהלת משרד</span>
+            <span class="tag tag-var">פקידת קבלה</span>
+            <span class="tag tag-var">back office</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">פקידה ללא ניסיון</span>
+            <span class="tag tag-long">מזכירה רפואית דרושה</span>
+            <span class="tag tag-long">פקידה משרה חלקית</span>
+            <span class="tag tag-long">עבודה משרדית ללא ניסיון</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-loc">פקידה הרצליה</span>
+            <span class="tag tag-loc">מזכירה תל אביב</span>
+            <span class="tag tag-loc">עבודות מנהלה פתח תקווה</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים מנהלה ומזכירות - משרות אדמיניסטרציה | מנפאוור</li>
+                <li><strong>H2:</strong> מזכירה / פקידה | מזכירה רפואית | משרות מנהלה ללא ניסיון</li>
+                <li><strong>שדרוג דף קיים:</strong> (/search?JOBEXPERTISE=4142) + דף /jobs/admin/no-experience/</li>
+                <li><strong>FAQ:</strong> כמה מרוויחה מזכירה? | האם יש משרות ללא ניסיון?</li>
+                <li><strong>לינקים:</strong> "טבלת שכר מנהלה" ← מאמר (#1) | "פקידה ללא ניסיון" ← נחיתה</li>
+            </ul>
+            <p class="note">"דרושים אדמיניסטרציה" = 1,081 חשיפות, CTR 1.4%, עמדה 7. שדרוג title + H1 צפוי לשפר CTR.</p>
+        </div>
+    </div>
+</div>
+
+<!-- 9. Call Center -->
+<div class="cat-card c9">
+    <div class="cat-head"><h2>9. מוקדנים / נציגי שירות / טלמרקטינג</h2><span class="stats">8 קליקים | #3 לשכר</span></div>
+    <div class="cat-body">
+        <h3>מילות מפתח</h3>
+        <div class="tags">
+            <span class="tag tag-main">נציג שירות לקוחות דרוש</span>
+            <span class="tag tag-main">מוקדן/ית דרוש/ה</span>
+            <span class="tag tag-main">עבודה במוקד טלפוני</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-var">טלמרקטינג</span>
+            <span class="tag tag-var">מכירות טלפוניות</span>
+            <span class="tag tag-var">שימור לקוחות</span>
+        </div>
+        <div class="tags">
+            <span class="tag tag-long">עבודה במוקד ללא ניסיון</span>
+            <span class="tag tag-long">עבודה במוקד סטודנטים</span>
+            <span class="tag tag-long">עבודה במוקד מהבית</span>
+            <span class="tag tag-long">עבודה במוקד ערב</span>
+        </div>
+        <div class="action-box">
+            <h4>מה לעשות</h4>
+            <ul class="action-list">
+                <li><strong>H1:</strong> דרושים מוקדנים ונציגי שירות | מנפאוור</li>
+                <li><strong>H2:</strong> נציג/ת שירות | טלמרקטינג | עבודה במוקד - סטודנטים | עבודה מהבית</li>
+                <li><strong>דף חדש:</strong> /jobs/call-center/ + /jobs/call-center/students/</li>
+                <li><strong>לינקים:</strong> "שכר נציג שירות" ← מאמר (#3) | "עבודה במוקד מהבית" ← נחיתה</li>
+            </ul>
+            <p class="note">פופולרי בקרב סטודנטים. שיאי חיפוש ספטמבר + פברואר.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ====== PRIORITIES ====== -->
+<div class="priority-section">
+    <h2>סדרי עדיפויות</h2>
+    <div class="pri-grid">
+        <div class="pri-col t1">
+            <h4>עכשיו</h4>
             <ul>
-                <li><strong>תיקון תבנית קטגוריה:</strong> H1, title, meta ייחודיים לכל דף /search?JOBEXPERTISE=</li>
-                <li><strong>עובדי ייצור:</strong> דף /jobs/production-workers/ עם 300 מילים + FAQ</li>
-                <li><strong>חשמלאים:</strong> דף /jobs/electricians/ + לינק ממאמר שכר (#1)</li>
-                <li><strong>נהגים:</strong> דף /jobs/drivers/ + תת-דפים מלגזה/משאית</li>
-                <li><strong>מנהלה:</strong> שדרוג דף קיים (7→5 = הכפלת קליקים)</li>
-                <li><strong>לינקים פנימיים:</strong> חיבור מאמרי שכר → דפי משרות חדשים</li>
+                <li>H1 + title + meta ייחודיים לכל דף קטגוריה</li>
+                <li>דף /jobs/production-workers/</li>
+                <li>דף /jobs/electricians/ + לינק ממאמר שכר</li>
+                <li>דף /jobs/drivers/ + תת-דפים</li>
+                <li>שדרוג דף מנהלה קיים</li>
+                <li>חיבור מאמרי שכר ← דפי משרות</li>
             </ul>
         </div>
-        <div class="priority-col tier2">
-            <h4>Tier 2 - תוך חודש</h4>
+        <div class="pri-col t2">
+            <h4>תוך חודש</h4>
             <ul>
-                <li><strong>מוקדנים:</strong> דף /jobs/call-center/ + דף סטודנטים</li>
-                <li><strong>מכירות:</strong> דף /jobs/sales/ + שטח/טלפון</li>
-                <li><strong>טכנאים:</strong> דף /jobs/technicians/ + תתי-דפים</li>
-                <li><strong>FAQ Schema:</strong> הוספה לכל דף קטגוריה חדש</li>
-                <li><strong>מאמרי שכר חדשים:</strong> מלגזן, אינסטלטור, מפעיל צמ"ה</li>
-                <li><strong>מעקב SE Ranking:</strong> הוספת מילות מפתח כחול-לבן</li>
+                <li>דף /jobs/call-center/</li>
+                <li>דף /jobs/sales/</li>
+                <li>דף /jobs/technicians/</li>
+                <li>FAQ Schema לכל דף חדש</li>
+                <li>מאמרי שכר: מלגזן, אינסטלטור, צמ"ה</li>
+                <li>הוספת מילות כחול-לבן ל-SE Ranking</li>
             </ul>
         </div>
-        <div class="priority-col tier3">
-            <h4>Tier 3 - תוך רבעון</h4>
+        <div class="pri-col t3">
+            <h4>תוך רבעון</h4>
             <ul>
-                <li><strong>אינסטלטורים:</strong> דף /jobs/plumbers/ (נישה קטנה)</li>
-                <li><strong>צמ"ה:</strong> דף /jobs/heavy-equipment/ + מאמר רישיון</li>
-                <li><strong>דפי מיקום:</strong> /jobs/[role]/[city]/ לערים מרכזיות</li>
-                <li><strong>JobPosting Schema:</strong> על דפי קטגוריה</li>
-                <li><strong>BreadcrumbList Schema:</strong> היררכיה מלאה</li>
-                <li><strong>מאמרי תוכן:</strong> מדריכי קריירה לכל תחום</li>
+                <li>דף /jobs/plumbers/</li>
+                <li>דף /jobs/heavy-equipment/</li>
+                <li>דפי מיקום: /jobs/[role]/[city]/</li>
+                <li>JobPosting Schema</li>
+                <li>BreadcrumbList Schema</li>
             </ul>
         </div>
     </div>
+</div>
 
-    <!-- Universal Modifiers -->
-    <h3 style="margin: 25px 0 15px; color: var(--secondary);">מודיפיירים אוניברסליים (רלוונטיים לכל הקטגוריות)</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>מודיפייר</th>
-                <th>משמעות</th>
-                <th>נפח חיפוש</th>
-                <th>דוגמה</th>
-            </tr>
-        </thead>
+<!-- Modifiers -->
+<div class="priority-section">
+    <h2>מודיפיירים לשלב בכל הקטגוריות</h2>
+    <table class="mod-table">
+        <thead><tr><th>מודיפייר</th><th>דוגמה</th><th>הערה</th></tr></thead>
         <tbody>
-            <tr>
-                <td><strong>דרושים / דרוש</strong></td>
-                <td>"מבוקש" - המודיפייר #1 בישראל</td>
-                <td>הגבוה ביותר</td>
-                <td>חשמלאי דרוש, עובדי ייצור דרושים</td>
-            </tr>
-            <tr>
-                <td><strong>ללא ניסיון</strong></td>
-                <td>"ללא ניסיון קודם"</td>
-                <td>גבוה מאוד</td>
-                <td>פקידה ללא ניסיון, עבודה במפעל ללא ניסיון</td>
-            </tr>
-            <tr>
-                <td><strong>משמרות</strong></td>
-                <td>עבודת משמרות</td>
-                <td>גבוה</td>
-                <td>מלגזן משמרות, עובד ייצור משמרת לילה</td>
-            </tr>
-            <tr>
-                <td><strong>שכר / משכורת</strong></td>
-                <td>כמה מרוויחים</td>
-                <td>גבוה (מידע)</td>
-                <td>חשמלאי מוסמך שכר, כמה מרוויח נהג משאית</td>
-            </tr>
-            <tr>
-                <td><strong>עבודה מהבית</strong></td>
-                <td>עבודה מרחוק</td>
-                <td>גדל (מוקד, מנהלה)</td>
-                <td>עבודה במוקד מהבית, טלמרקטינג מהבית</td>
-            </tr>
-            <tr>
-                <td><strong>עבודה מועדפת</strong></td>
-                <td>עבודה לחיילים משוחררים</td>
-                <td>עונתי</td>
-                <td>עובדי ייצור עבודה מועדפת</td>
-            </tr>
-            <tr>
-                <td><strong>[עיר / אזור]</strong></td>
-                <td>חיפוש מיקומי</td>
-                <td>גבוה - כחול-לבן</td>
-                <td>חשמלאי דרוש תל אביב, מלגזן פתח תקווה</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Structural Recommendations -->
-    <h3 style="margin: 25px 0 15px; color: var(--secondary);">שינויים מבניים נדרשים (Next.js)</h3>
-    <div class="rec-box">
-        <h4>תיקון ברמת תבנית - השפעה על כל הקטגוריות</h4>
-        <ul class="rec-list">
-            <li><strong>Meta Title ייחודי:</strong> "דרושים [קטגוריה] | [X] משרות חדשות | מנפאוור ישראל" (במקום "Search Results - Manpower" הגנרי)</li>
-            <li><strong>H1 ייחודי:</strong> כל דף /search?JOBEXPERTISE= חייב H1 עם שם הקטגוריה + "דרושים"</li>
-            <li><strong>Meta Description ייחודי:</strong> תיאור של 150-160 תווים לכל קטגוריה</li>
-            <li><strong>טקסט מקדים:</strong> 200-400 מילים מעל רשימת המשרות - תיאור תחום, דרישות, טווח שכר</li>
-            <li><strong>URL Structure:</strong> מעבר מ-/search?JOBEXPERTISE=4880 ל-/jobs/production-workers/ עם slug קריא</li>
-            <li><strong>תת-קטגוריות:</strong> לינקים פנימיים מדף קטגוריה ראשי לדפי תפקיד ספציפיים</li>
-            <li><strong>Schema Markup:</strong> JobPosting aggregate, FAQ, BreadcrumbList לכל דף</li>
-        </ul>
-    </div>
-
-    <!-- Competitor Benchmark -->
-    <h3 style="margin: 25px 0 15px; color: var(--secondary);">השוואת מתחרים - מה חסר</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>תכונה</th>
-                <th>manpower.co.il</th>
-                <th>drushim.co.il</th>
-                <th>pakash.co.il</th>
-                <th>alljobs.co.il</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>H1 ייחודי לקטגוריה</td>
-                <td style="color:var(--danger);">לא</td>
-                <td style="color:var(--success);">כן</td>
-                <td style="color:var(--success);">כן</td>
-                <td style="color:var(--success);">כן</td>
-            </tr>
-            <tr>
-                <td>Title ייחודי</td>
-                <td style="color:var(--danger);">לא - "Search Results"</td>
-                <td style="color:var(--success);">כן</td>
-                <td style="color:var(--success);">כן</td>
-                <td style="color:var(--success);">כן</td>
-            </tr>
-            <tr>
-                <td>טקסט מקדים</td>
-                <td style="color:var(--danger);">0 מילים</td>
-                <td>~150 תווים</td>
-                <td style="color:var(--success);">~200 מילים + FAQ</td>
-                <td>מינימלי</td>
-            </tr>
-            <tr>
-                <td>תת-קטגוריות</td>
-                <td style="color:var(--danger);">לא</td>
-                <td style="color:var(--success);">מקיף</td>
-                <td style="color:var(--success);">כן</td>
-                <td style="color:var(--success);">כן</td>
-            </tr>
-            <tr>
-                <td>דפי מיקום</td>
-                <td style="color:var(--danger);">פילטר בלבד</td>
-                <td>פילטר + לינקים</td>
-                <td style="color:var(--success);">דפי עיר</td>
-                <td>דפי אזור</td>
-            </tr>
-            <tr>
-                <td>FAQ Section</td>
-                <td style="color:var(--danger);">לא</td>
-                <td>לא</td>
-                <td style="color:var(--success);">כן</td>
-                <td>לא</td>
-            </tr>
-            <tr>
-                <td>JobPosting Schema</td>
-                <td style="color:var(--danger);">Organization בלבד</td>
-                <td style="color:var(--success);">כן</td>
-                <td>Article</td>
-                <td style="color:var(--success);">כן</td>
-            </tr>
+            <tr><td><strong>דרושים / דרוש</strong></td><td>חשמלאי דרוש, עובדי ייצור דרושים</td><td>#1 בישראל</td></tr>
+            <tr><td><strong>ללא ניסיון</strong></td><td>פקידה ללא ניסיון</td><td>נפח גבוה מאוד</td></tr>
+            <tr><td><strong>משמרות</strong></td><td>מלגזן משמרות, עובד ייצור משמרת לילה</td><td>ייצור + מלגזה + מוקד</td></tr>
+            <tr><td><strong>שכר / כמה מרוויח</strong></td><td>חשמלאי מוסמך שכר</td><td>intent מידע - לינק למשרות</td></tr>
+            <tr><td><strong>עבודה מהבית</strong></td><td>עבודה במוקד מהבית</td><td>מוקד + מנהלה</td></tr>
+            <tr><td><strong>[עיר / אזור]</strong></td><td>חשמלאי דרוש תל אביב</td><td>שכיח בכחול-לבן</td></tr>
         </tbody>
     </table>
 </div>
 
-<!-- Footer -->
+</div>
+
 <div class="footer">
-    <p>NC Digital | מחקר מילות מפתח - כחול לבן | Manpower Israel</p>
-    <p>פברואר 2026 | נתונים: GSC API (חי) + SE Ranking API (חי) + Google SERP Analysis (חי)</p>
-    <p style="font-size:0.75rem; margin-top:8px; opacity:0.7;">הערה: נפחי חיפוש מוערכים על בסיס חשיפות GSC וכמות משרות פעילות בלוחות דרושים - לא מכלי נפח ייעודי. מיקומי SERP הם snapshot נקודתי מ-19.02.2026, מיקומי GSC הם ממוצע לתקופה. נתוני GSC מוגבלים ל-5,000 שורות לתקופה.</p>
+    <p>NC Digital | Manpower Israel | פברואר 2026</p>
+    <p>GSC API + SE Ranking API + SERP Analysis + אימות מול 6 לוחות דרושים ישראליים</p>
 </div>
 
-</div><!-- container -->
 </body>
 </html>
