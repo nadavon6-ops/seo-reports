@@ -23,17 +23,6 @@ body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--t
 .section{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:24px;margin-bottom:20px}
 .section-title{font-size:1.3em;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .section-title i{color:var(--accent);font-size:0.9em}
-/* KPI Cards */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
-.kpi{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
-.kpi .value{font-size:2.4em;font-weight:800;background:linear-gradient(135deg,var(--accent),#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.kpi .value.red{background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.kpi .value.green{background:linear-gradient(135deg,#10b981,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.kpi .label{color:var(--muted);font-size:0.82em;margin-top:4px}
-/* Charts */
-.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.chart-box{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:12px;padding:20px}
-.chart-box h3{font-size:1em;color:#fff;margin-bottom:12px;text-align:center}
 /* Table */
 .table-controls{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .table-controls input,.table-controls select{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:8px;font-size:0.88em;font-family:inherit}
@@ -181,7 +170,7 @@ th.sort-desc::after{content:' ▼';font-size:0.7em}
 <ul>
 <li>ערך ויקיפדיה מובנה היטב — קישורים חיצוניים רבים</li>
 <li>מובילה בדיגיטל — אפליקציה חזקה, חדשנות טכנולוגית</li>
-<li>דירוג כללי 3.72 — הגבוה ביותר בסקרי שביעות רצון (אוניברסיטת חיפה)</li>
+<li>דירוג כללי 3.716 — הגבוה ביותר בסקרי שביעות רצון (אוניברסיטת חיפה)</li>
 <li>בלוג רפואי פעיל עם מאמרים ש-AI מצטט ישירות</li>
 <li>~27% נתח שוק — מוזכרת שנייה בכל דיון השוואתי</li>
 </ul>
@@ -202,6 +191,7 @@ th.sort-desc::after{content:' ▼';font-size:0.7em}
 <!-- SECTION 5: ACTION ITEMS -->
 <div class="section" id="actions">
 <div class="section-title"><i class="fas fa-rocket"></i> מה לעשות — תכנית פעולה</div>
+<p style="color:var(--muted);font-size:0.85em;margin-bottom:14px">* ההשפעות אינן מצטברות לחלוטין — חלקן חופפות. ביצוע כל הפעולות צפוי להעלות את ציון ה-GEO ל-75-85/100.</p>
 <table class="action-table">
 <thead>
 <tr>
@@ -283,7 +273,7 @@ const DATA = [
 {q:"נוירולוג מומחה",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
 {q:"רופא ילדים מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
 {q:"אנדוקרינולוג",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
-{q:"גניקולוג מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
+{q:"גינקולוג מומלץ",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
 {q:"אורולוג",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
 {q:"אף אוזן גרון",cat:"C",gpt:0,gem:0,cla:0,per:0,conf:"v",sent:"neu"},
 {q:"רופא שיניים בקופה",cat:"C",gpt:4,gem:4,cla:4,per:4,conf:"i",sent:"neu"},
@@ -329,31 +319,6 @@ const DATA = [
 const CAT_NAMES={A:"מותגי",B:"תחרותי",C:"התמחויות",D:"שירותים",E:"דיגיטל",F:"ביטוח",G:"מיקום"};
 const CONF_LABELS={v:"מאומת",i:"מוסק",e:"מוערך"};
 
-// ===== CALCULATIONS =====
-function calcStats(){
-  let total=DATA.length*4, appears=0, p1=0, posSum=0, posCount=0;
-  let dist={1:0,2:0,3:0,4:0,0:0};
-  let critGaps=0;
-  DATA.forEach(d=>{
-    [d.gpt,d.gem,d.cla,d.per].forEach(p=>{
-      if(p>0){appears++;posSum+=p;posCount++}
-      dist[p]=(dist[p]||0)+1;
-      if(p===1) p1++;
-    });
-    const platforms=[d.gpt,d.gem,d.cla,d.per];
-    const bad=platforms.filter(p=>p===0||p===4).length;
-    if(bad>=2 && d.cat!=='A') critGaps++;
-  });
-  const appearRate=((appears/total)*100).toFixed(1);
-  const avgPos=posCount>0?(posSum/posCount).toFixed(1):'N/A';
-  // GEO Score: 40% appear + 30% pos quality + 20% #1 rate + 10% sentiment
-  const posQuality=posCount>0?((5-(posSum/posCount))/4):0;
-  const p1Rate=p1/total;
-  const sentScore=0.58;
-  const geoScore=Math.round(0.4*(appears/total)*100+0.3*posQuality*100+0.2*p1Rate*100+0.1*sentScore*100);
-  return{total,appears,appearRate,avgPos,p1,dist,critGaps,geoScore,posQuality,p1Rate};
-}
-
 // ===== RENDER TABLE =====
 let sortCol='',sortDir=1;
 function renderTable(data){
@@ -393,7 +358,7 @@ function filterAndSort(){
         vb=pb.length?pb.reduce((s,v)=>s+v,0)/pb.length:99;
         return (va-vb)*sortDir;
       }
-      const map={chatgpt:'gpt',gemini:'gem',claude:'cla',perplexity:'per'};
+      const map={chatgpt:'gpt',gemini:'gem',claude:'cla',perplexity:'per',confidence:'conf'};
       const k=map[sortCol]||sortCol;
       va=a[k]||99;vb=b[k]||99;
       return (va-vb)*sortDir;
@@ -429,7 +394,6 @@ function renderGaps(){
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded',()=>{
-  const stats=calcStats();
   renderTable(DATA);
   renderGaps();
 
