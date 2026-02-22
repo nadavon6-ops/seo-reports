@@ -104,6 +104,10 @@
       <strong>כל עמודי המשרות (<code>/job/*</code>) חסרים תיאור מטא לחלוטין.</strong><br>
       שדה <code>metaDesc</code> ב-Yoast/WPGraphQL מחזיר מחרוזת ריקה (<code>""</code>) → Next.js לא מרנדר תגית <code>&lt;meta name="description"&gt;</code> → גוגל מייצר snippet אוטומטי מתוכן העמוד → אובדן 15-30% מה-CTR.
     </div>
+    <div class="detail"><strong>היקף:</strong> כל עמודי <code>/job/*</code> ללא יוצא מן הכלל (כולל משרות פעילות ומשרות שתוקפן פג).</div>
+    <div class="alert alert-blue">
+      <strong>למה ב-Next.js ולא ב-Yoast?</strong> עמודי המשרות נבנים דינמית מ-API — לכל משרה כותרת ומיקום שונים. ל-Yoast אין גישה לשדות האלה כדי לייצר תיאור דינמי. לכן הפתרון חייב להיות בשכבת ה-Next.js שבה נתוני המשרה כבר זמינים.
+    </div>
     <div class="detail"><strong>מצב נוכחי (אומת 2026-02-09):</strong></div>
     <div class="example-google">
       <div class="eg-title">מנהל/ת חשבונות - Manpower</div>
@@ -125,6 +129,10 @@
   <div class="section-body">
     <div class="format-box">
       <div class="format-text">דרוש/ה [JOB_TITLE] – משרה ב[LOCATION] | מנפאואר ישראל. הגישו מועמדות עכשיו.</div>
+    </div>
+
+    <div class="alert alert-red">
+      <strong>כלל חובה: המילה "דרוש/ה" חייבת להופיע בתחילת כל תיאור מטא של משרה.</strong> זוהי דרישה קבועה — אין לשנות, להסיר או להחליף אותה. המילה "דרוש/ה" היא המילה הראשונה בכל מקרה (גם ב-fallback ללא מיקום).
     </div>
 
     <table>
@@ -178,7 +186,11 @@
     <div class="alert alert-red" style="margin-top:0.75rem;">
       <strong>שימו לב — <code>jobAreas</code> הוא אובייקט מקונן, לא מחרוזת!</strong><br>
       כדי לגשת לשם האזור יש להשתמש ב: <code>job.jobAreas?.nodes?.[0]?.name</code><br>
+      אם <code>nodes</code> מכיל יותר מאזור אחד — <strong>להשתמש רק בראשון</strong> (<code>[0]</code>).<br>
       דוגמאות ערכים: <code>"השפלה"</code>, <code>"חיפה והצפון"</code>, <code>"מרכז"</code>, <code>"תל אביב"</code>
+    </div>
+    <div class="alert alert-blue" style="margin-top:0.5rem;">
+      <strong>אין לשנות את תגית ה-<code>&lt;title&gt;</code> הקיימת.</strong> המימוש הזה מוסיף רק <code>&lt;meta name="description"&gt;</code> ו-<code>&lt;meta property="og:description"&gt;</code>. תגית ה-title (<code>"[שם המשרה] - Manpower"</code>) נשארת כפי שהיא.
     </div>
   </div>
 </div>
@@ -189,7 +201,7 @@
   <div class="section-body">
     <div class="detail">המימוש מתבצע בקומפוננטת עמוד המשרה (<code>/job/[slug]</code>). יש להוסיף את הלוגיקה שמייצרת את התיאור הדינמי ומזריקה אותו לתגית <code>&lt;Head&gt;</code>.</div>
 
-    <div class="code-label">שלב 1: פונקציית יצירת התיאור הדינמי</div>
+    <div class="code-label">שלב 1: להוסיף את הפונקציה הבאה מעל הגדרת הקומפוננטה (מחוץ לה)</div>
 <div class="code-block">/**
  * Generate dynamic meta description for job pages.
  * Format: "דרוש/ה [TITLE] – משרה ב[LOCATION] | מנפאואר ישראל. הגישו מועמדות עכשיו."
@@ -396,7 +408,14 @@ export async function generateMetadata({ params }) {
 <div class="section">
   <div class="section-header"><span class="section-num">8</span> בדיקת תקינות (QA)</div>
   <div class="section-body">
-    <div class="detail"><strong>לאחר המימוש, יש לבדוק את הנקודות הבאות:</strong></div>
+    <div class="detail"><strong>כתובות לבדיקה:</strong></div>
+    <table>
+      <tr><th>URL</th><th>תוצאה צפויה</th></tr>
+      <tr><td><code>manpower.co.il/job/236844</code></td><td>דרוש/ה מנהל/ת חשבונות – משרה בהשפלה | מנפאואר ישראל. הגישו מועמדות עכשיו.</td></tr>
+      <tr><td><code>manpower.co.il/job/202626</code></td><td>דרוש/ה נציג/ת מוקד לגיל השלישי – משרה בחיפה והצפון | מנפאואר ישראל. הגישו מועמדות עכשיו.</td></tr>
+      <tr><td>משרה ללא <code>jobAreas</code></td><td>דרוש/ה [כותרת] | מנפאואר ישראל. הגישו מועמדות עכשיו.</td></tr>
+    </table>
+    <div class="detail" style="margin-top:0.75rem;"><strong>רשימת בדיקות:</strong></div>
     <ul class="checklist">
       <li>פתיחת View Source בדפדפן → חיפוש <code>&lt;meta name="description"</code> → וידוא שהתגית קיימת ומכילה טקסט דינמי</li>
       <li>בדיקה שהתיאור מתחיל ב-"דרוש/ה"</li>
@@ -415,43 +434,6 @@ document.querySelector('meta[name="description"]')?.content
 
 document.querySelector('meta[property="og:description"]')?.content
 // Expected: same value as above</div>
-  </div>
-</div>
-
-<!-- Section 9: Summary -->
-<div class="section">
-  <div class="section-header"><span class="section-num">9</span> סיכום פעולות נדרשות</div>
-  <div class="section-body">
-    <table>
-      <tr>
-        <th>#</th>
-        <th>פעולה</th>
-        <th>קובץ</th>
-        <th>מאמץ</th>
-      </tr>
-      <tr>
-        <td>1</td>
-        <td>להוסיף פונקציית <code>generateJobMetaDescription(job)</code> לקובץ הקומפוננטה</td>
-        <td><code>/job/[slug]</code></td>
-        <td>5 דקות</td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>להוסיף שתי תגיות meta ב-<code>&lt;Head&gt;</code>: <code>description</code> + <code>og:description</code></td>
-        <td><code>/job/[slug]</code></td>
-        <td>3 דקות</td>
-      </tr>
-      <tr>
-        <td>3</td>
-        <td>בדיקת QA — View Source + בדיקת fallback (משרה ללא מיקום)</td>
-        <td>דפדפן</td>
-        <td>5 דקות</td>
-      </tr>
-    </table>
-    <div class="alert alert-green" style="margin-top:1rem;">
-      <strong>סה"כ מאמץ משוער: ~13 דקות פיתוח + QA</strong><br>
-      שינוי בקובץ אחד בלבד. ללא תלויות חיצוניות. ללא שינוי ב-API או ב-WordPress.
-    </div>
   </div>
 </div>
 
