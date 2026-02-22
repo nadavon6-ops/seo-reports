@@ -142,7 +142,7 @@
       </tr>
       <tr>
         <td><code>[LOCATION]</code></td>
-        <td><code>pageProps.job.jobAreas</code> (ערך ראשון)</td>
+        <td><code>pageProps.job.jobAreas.nodes[0].name</code></td>
         <td>השפלה</td>
         <td><span class="field-required">חובה — עם fallback</span></td>
       </tr>
@@ -161,18 +161,24 @@
     <div class="detail">כל נתוני המשרה כבר זמינים ב-<code>pageProps.job</code> שמגיע מה-SSR. אין צורך בקריאת API נוספת.</div>
     <div class="code-label">מבנה הנתונים הרלוונטי (מתוך pageProps.job):</div>
 <div class="code-block">pageProps.job = {
-  code:         "236844",              // מזהה משרה
-  title:        "מנהל/ת חשבונות",       // ← JOB_TITLE ★
-  jobAreas:     "השפלה",               // ← LOCATION (אזור) ★
-  scope:        "משרה מלאה",            // היקף משרה
-  domain:       "פיננסים וכספים",       // תחום מקצועי
-  subProfession:"מנהח״ש",              // תת-תחום
-  experience:   "נדרש ניסיון",          // דרישת ניסיון
-  description:  "&lt;p&gt;חברה במודיעין...&lt;/p&gt;"  // תיאור HTML
+  code:         "236844",                          // מזהה משרה
+  title:        "מנהל/ת חשבונות",                   // ← JOB_TITLE ★
+  jobAreas: {                                      // ← LOCATION ★
+    nodes: [
+      { name: "השפלה" }                            // ← שם האזור כאן
+    ]
+  },
+  scope:        "משרה מלאה",                        // היקף משרה
+  domain:       "פיננסים וכספים",                    // תחום מקצועי
+  subProfession:"מנהח״ש",                           // תת-תחום
+  experience:   "נדרש ניסיון",                       // דרישת ניסיון
+  description:  "&lt;p&gt;חברה במודיעין...&lt;/p&gt;"              // תיאור HTML
 }</div>
 
-    <div class="alert alert-blue" style="margin-top:0.75rem;">
-      <strong>שימו לב:</strong> שדה <code>jobAreas</code> מכיל את האזור (למשל "השפלה", "מרכז", "תל אביב"). זהו השדה שממופה ל-<code>[LOCATION]</code> בתיאור הדינמי.
+    <div class="alert alert-red" style="margin-top:0.75rem;">
+      <strong>שימו לב — <code>jobAreas</code> הוא אובייקט מקונן, לא מחרוזת!</strong><br>
+      כדי לגשת לשם האזור יש להשתמש ב: <code>job.jobAreas?.nodes?.[0]?.name</code><br>
+      דוגמאות ערכים: <code>"השפלה"</code>, <code>"חיפה והצפון"</code>, <code>"מרכז"</code>, <code>"תל אביב"</code>
     </div>
   </div>
 </div>
@@ -190,49 +196,41 @@
  * Max length: 155 characters.
  */
 function generateJobMetaDescription(job) {
-  const title    = job.title    || '';
-  const location = job.jobAreas || '';
+  const title    = job.title || '';
+  const location = job.jobAreas?.nodes?.[0]?.name || '';
 
   if (!title) {
-    // Fallback: no title available
     return 'משרות חדשות במנפאואר ישראל. הגישו מועמדות עכשיו.';
   }
 
   if (!location) {
-    // Fallback: title exists but no location
     return `דרוש/ה ${title} | מנפאואר ישראל. הגישו מועמדות עכשיו.`;
   }
 
   // Full format
-  const desc = `דרוש/ה ${title} – משרה ב${location} | מנפאואר ישראל. הגישו מועמדות עכשיו.`;
+  let desc = `דרוש/ה ${title} – משרה ב${location} | מנפאואר ישראל. הגישו מועמדות עכשיו.`;
 
-  // Truncate if over 155 characters
+  // If over 155 chars, try shorter version without "משרה ב"
   if (desc.length > 155) {
-    return `דרוש/ה ${title} – ${location} | מנפאואר ישראל. הגישו מועמדות עכשיו.`;
+    desc = `דרוש/ה ${title} – ${location} | מנפאואר ישראל. הגישו מועמדות עכשיו.`;
+  }
+
+  // Final safety: hard truncate at 155
+  if (desc.length > 155) {
+    desc = desc.slice(0, 152) + '...';
   }
 
   return desc;
 }</div>
 
-    <div class="code-label">שלב 2: הזרקה ל-Head בקומפוננטת העמוד</div>
-<div class="code-block">// In: pages/job/[slug].js (or .tsx)
+    <div class="code-label">שלב 2: להוסיף לתוך ה-Head הקיים בקומפוננטה (לא להחליף!)</div>
+<div class="code-block">// Inside the existing JobPage component in /job/[slug]:
 
-import Head from 'next/head';
+const metaDescription = generateJobMetaDescription(job);
 
-export default function JobPage({ job }) {
-  const metaDescription = generateJobMetaDescription(job);
-
-  return (
-    &lt;&gt;
-      &lt;Head&gt;
-        &lt;meta name="description" content={metaDescription} /&gt;
-        &lt;meta property="og:description" content={metaDescription} /&gt;
-      &lt;/Head&gt;
-
-      {/* ... rest of page content ... */}
-    &lt;/&gt;
-  );
-}</div>
+// Add these 2 lines inside the existing &lt;Head&gt; block:
+&lt;meta name="description" content={metaDescription} /&gt;
+&lt;meta property="og:description" content={metaDescription} /&gt;</div>
 
     <div class="alert alert-green" style="margin-top:0.75rem;">
       <strong>שימו לב:</strong> מכיוון שהנתונים כבר מגיעים ב-SSR (דרך <code>getServerSideProps</code> / <code>getStaticProps</code>), התיאור הדינמי יהיה בתוך ה-HTML הראשוני שגוגל מקבל — ללא צורך ב-JavaScript בצד הלקוח.
@@ -246,9 +244,9 @@ export default function JobPage({ job }) {
   <div class="section-body">
     <div class="detail">לא בכל המשרות יש את כל השדות. זהו סדר ה-fallback:</div>
 
-    <div class="flowchart">┌──────────────────────────────────────────────────────────┐
-│  Input: job.title + job.jobAreas                         │
-└──────────────────────┬───────────────────────────────────┘
+    <div class="flowchart">┌──────────────────────────────────────────────────────────────┐
+│  Input: job.title + job.jobAreas?.nodes?.[0]?.name           │
+└──────────────────────┬───────────────────────────────────────┘
                        │
                ┌───────▼────────┐
                │ title exists?  │
@@ -256,8 +254,8 @@ export default function JobPage({ job }) {
                    │YES     │NO
                    ▼        ▼
           ┌────────────┐  ┌───────────────────────────────────────────┐
-          │location    │  │"משרות חדשות במנפאואר ישראל.              │
-          │exists?     │  │ הגישו מועמדות עכשיו."                    │
+          │ location   │  │ "משרות חדשות במנפאואר ישראל.              │
+          │ exists?    │  │  הגישו מועמדות עכשיו."                    │
           └──┬─────┬───┘  └───────────────────────────────────────────┘
              │YES  │NO
              ▼     ▼
@@ -278,7 +276,18 @@ export default function JobPage({ job }) {
           │ Remove     │  │ Return │
           │ "משרה ב"   │  │ as-is  │
           │ keep area  │  │        │
-          └────────────┘  └────────┘</div>
+          └──────┬─────┘  └────────┘
+                 │
+         ┌───────▼────────┐
+         │ STILL > 155?   │
+         └───┬────────┬───┘
+             │YES     │NO
+             ▼        ▼
+    ┌──────────────┐  ┌────────┐
+    │ Hard truncate│  │ Return │
+    │ at 152 chars │  │ as-is  │
+    │ + "..."      │  │        │
+    └──────────────┘  └────────┘</div>
 
     <table>
       <tr>
@@ -304,7 +313,7 @@ export default function JobPage({ job }) {
       <tr>
         <td>כותרת ארוכה + מיקום (מעל 155 תווים)</td>
         <td>קיצור</td>
-        <td>דרוש/ה מהנדס/ת תוכנה בכיר/ה — פול-סטאק – תל אביב | מנפאואר ישראל. הגישו מועמדות עכשיו.</td>
+        <td>דרוש/ה מהנדס/ת תוכנה בכיר/ה פול-סטאק – תל אביב | מנפאואר ישראל. הגישו מועמדות...</td>
       </tr>
     </table>
   </div>
@@ -322,11 +331,11 @@ export default function JobPage({ job }) {
       <div class="eg-desc"><strong>דרוש/ה</strong> מנהל/ת חשבונות – משרה בהשפלה | מנפאואר ישראל. הגישו מועמדות עכשיו.</div>
     </div>
 
-    <div class="example-label">דוגמה 2: מזכיר/ה רפואי/ת (משרה 202626)</div>
+    <div class="example-label">דוגמה 2: נציג/ת מוקד (משרה 202626)</div>
     <div class="example-google">
-      <div class="eg-title">מזכיר/ה רפואי/ת - Manpower</div>
+      <div class="eg-title">נציג/ת מוקד לגיל השלישי - Manpower</div>
       <div class="eg-url">www.manpower.co.il › job › 202626</div>
-      <div class="eg-desc"><strong>דרוש/ה</strong> מזכיר/ה רפואי/ת – משרה במרכז | מנפאואר ישראל. הגישו מועמדות עכשיו.</div>
+      <div class="eg-desc"><strong>דרוש/ה</strong> נציג/ת מוקד לגיל השלישי – משרה בחיפה והצפון | מנפאואר ישראל. הגישו מועמדות עכשיו.</div>
     </div>
 
     <div class="example-label">דוגמה 3: ללא מיקום (fallback)</div>
@@ -345,32 +354,38 @@ export default function JobPage({ job }) {
   <div class="section-body">
     <table>
       <tr>
-        <th>קובץ</th>
+        <th>מבנה פרויקט</th>
+        <th>קובץ לעריכה</th>
         <th>פעולה</th>
       </tr>
       <tr>
-        <td><code>pages/job/[slug].js</code><br><span style="font-size:0.75rem;color:var(--gray-600);">(או <code>.tsx</code> אם TypeScript)</span></td>
-        <td>
+        <td>Pages Router</td>
+        <td><code>pages/job/[slug].js</code><br><span style="font-size:0.75rem;color:var(--gray-600);">(או <code>.tsx</code>)</span></td>
+        <td rowspan="2">
           <strong>להוסיף:</strong><br>
           1. פונקציית <code>generateJobMetaDescription(job)</code><br>
-          2. תגית <code>&lt;meta name="description"&gt;</code> בתוך <code>&lt;Head&gt;</code><br>
-          3. תגית <code>&lt;meta property="og:description"&gt;</code> בתוך <code>&lt;Head&gt;</code>
+          2. שתי תגיות meta בתוך <code>&lt;Head&gt;</code> (ראו סעיף 4)
         </td>
+      </tr>
+      <tr>
+        <td>App Router</td>
+        <td><code>app/job/[slug]/page.js</code><br><span style="font-size:0.75rem;color:var(--gray-600);">(או <code>layout.js</code> + <code>generateMetadata</code>)</span></td>
       </tr>
     </table>
 
     <div class="alert alert-blue" style="margin-top:0.75rem;">
-      <strong>חלופה — מימוש ב-SSR:</strong> אם עדיף ליצור את ה-description בצד השרת, ניתן להוסיף את הלוגיקה ישירות ב-<code>getServerSideProps</code> / <code>getStaticProps</code> ולהעביר את התיאור כ-prop נוסף:
+      <strong>הפונקציה מוגדרת באותו קובץ של הקומפוננטה.</strong> מכיוון שהנתונים כבר מגיעים ב-SSR, אין צורך בקריאת API נוספת — רק לחלץ את <code>title</code> ו-<code>jobAreas.nodes[0].name</code> מתוך ה-props הקיימים.
     </div>
 
-    <div class="code-label">חלופה: יצירה ב-getServerSideProps</div>
-<div class="code-block">export async function getServerSideProps({ params }) {
-  const job = await fetchJob(params.slug);
+    <div class="code-label">אם משתמשים ב-App Router עם generateMetadata:</div>
+<div class="code-block">// app/job/[slug]/page.js
 
+export async function generateMetadata({ params }) {
+  const job = await fetchJob(params.slug);
   return {
-    props: {
-      job,
-      metaDescription: generateJobMetaDescription(job),
+    description: generateJobMetaDescription(job),
+    openGraph: {
+      description: generateJobMetaDescription(job),
     },
   };
 }</div>
@@ -386,11 +401,11 @@ export default function JobPage({ job }) {
       <li>פתיחת View Source בדפדפן → חיפוש <code>&lt;meta name="description"</code> → וידוא שהתגית קיימת ומכילה טקסט דינמי</li>
       <li>בדיקה שהתיאור מתחיל ב-"דרוש/ה"</li>
       <li>בדיקה שכותרת המשרה (<code>job.title</code>) מופיעה בתיאור</li>
-      <li>בדיקה שהמיקום (<code>job.jobAreas</code>) מופיע כשזמין</li>
+      <li>בדיקה שהמיקום (<code>job.jobAreas.nodes[0].name</code>) מופיע כשזמין</li>
       <li>בדיקת fallback — משרה ללא מיקום → תיאור ללא אזור (אבל עדיין תקין)</li>
       <li>אורך תיאור ≤ 155 תווים</li>
       <li>וידוא שגם <code>og:description</code> מעודכן (לשיתוף ברשתות חברתיות)</li>
-      <li>בדיקה ב-<a href="https://search.google.com/test/rich-results" target="_blank" style="color:var(--blue);">Google Rich Results Test</a> שהתיאור נקרא</li>
+      <li>בדיקה ב-Google Search Console → URL Inspection → בדיקת ה-HTML המרונדר שהתגית מופיעה</li>
     </ul>
 
     <div class="code-label">בדיקה מהירה בדפדפן (DevTools Console):</div>
@@ -416,31 +431,25 @@ document.querySelector('meta[property="og:description"]')?.content
       </tr>
       <tr>
         <td>1</td>
-        <td>להוסיף פונקציית <code>generateJobMetaDescription(job)</code></td>
-        <td><code>pages/job/[slug].js</code></td>
+        <td>להוסיף פונקציית <code>generateJobMetaDescription(job)</code> לקובץ הקומפוננטה</td>
+        <td><code>/job/[slug]</code></td>
         <td>5 דקות</td>
       </tr>
       <tr>
         <td>2</td>
-        <td>להוסיף <code>&lt;meta name="description"&gt;</code> דינמי ב-<code>&lt;Head&gt;</code></td>
-        <td><code>pages/job/[slug].js</code></td>
-        <td>2 דקות</td>
+        <td>להוסיף שתי תגיות meta ב-<code>&lt;Head&gt;</code>: <code>description</code> + <code>og:description</code></td>
+        <td><code>/job/[slug]</code></td>
+        <td>3 דקות</td>
       </tr>
       <tr>
         <td>3</td>
-        <td>להוסיף <code>&lt;meta property="og:description"&gt;</code> דינמי ב-<code>&lt;Head&gt;</code></td>
-        <td><code>pages/job/[slug].js</code></td>
-        <td>1 דקה</td>
-      </tr>
-      <tr>
-        <td>4</td>
-        <td>בדיקת QA — view source + fallback</td>
+        <td>בדיקת QA — View Source + בדיקת fallback (משרה ללא מיקום)</td>
         <td>דפדפן</td>
         <td>5 דקות</td>
       </tr>
     </table>
     <div class="alert alert-green" style="margin-top:1rem;">
-      <strong>סה"כ מאמץ משוער: ~15 דקות פיתוח + QA</strong><br>
+      <strong>סה"כ מאמץ משוער: ~13 דקות פיתוח + QA</strong><br>
       שינוי בקובץ אחד בלבד. ללא תלויות חיצוניות. ללא שינוי ב-API או ב-WordPress.
     </div>
   </div>
