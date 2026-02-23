@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סכמות חסרות - midot.co.il | Product & Person Schema</title>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-light: #dcfce7;
+            --warning: #ea580c;
+            --warning-light: #fff7ed;
+            --bg-dark: #1e293b;
+            --bg-light: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #334155 100%);
+            color: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        header h1 { font-size: 2.4rem; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+
+        header .meta {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            border-right: 4px solid;
+        }
+
+        .summary-card .number { font-size: 2.8rem; font-weight: 700; }
+        .summary-card .label { color: var(--text-secondary); font-size: 0.95rem; margin-top: 5px; }
+
+        .summary-card.blue { border-color: var(--primary); }
+        .summary-card.blue .number { color: var(--primary); }
+        .summary-card.green { border-color: var(--success); }
+        .summary-card.green .number { color: var(--success); }
+        .summary-card.orange { border-color: var(--warning); }
+        .summary-card.orange .number { color: var(--warning); }
+
+        section {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            color: var(--bg-dark);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .schema-block {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .schema-header {
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: var(--primary-light);
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .schema-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .schema-url {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            direction: ltr;
+            text-align: left;
+        }
+
+        .schema-body { padding: 22px; }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-product { background: var(--primary); }
+        .badge-service { background: #7c3aed; }
+        .badge-person { background: #0891b2; }
+
+        .code-block {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            line-height: 1.6;
+            white-space: pre;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-family: 'Segoe UI', sans-serif;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover { background: #64748b; }
+
+        .info-box {
+            background: var(--primary-light);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            font-size: 0.92rem;
+        }
+
+        .warn-box {
+            background: var(--warning-light);
+            border: 1px solid #fdba74;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            font-size: 0.92rem;
+        }
+
+        .success-box {
+            background: var(--success-light);
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 15px 18px;
+            margin-bottom: 20px;
+            font-size: 0.92rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .status-new { color: var(--primary); font-weight: 600; }
+
+        .toc {
+            background: #f8fafc;
+            padding: 25px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 { margin-bottom: 15px; color: var(--bg-dark); }
+        .toc ul { list-style: none; padding: 0; }
+
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toc li:last-child { border-bottom: none; }
+
+        .toc a {
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toc a:hover { color: var(--primary); }
+
+        .toc .count {
+            background: var(--border);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .impl-steps {
+            counter-reset: step;
+            padding: 0;
+            list-style: none;
+        }
+
+        .impl-steps li {
+            counter-increment: step;
+            padding: 12px 15px 12px 0;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            padding-right: 45px;
+        }
+
+        .impl-steps li::before {
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 12px;
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.8rem; }
+            header .meta { flex-direction: column; gap: 10px; }
+            section { padding: 20px; }
+            .schema-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .code-block { font-size: 0.72rem; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <header>
+            <h1>סכמות חסרות - Product & Person</h1>
+            <div class="subtitle">midot.co.il | מכון מידות</div>
+            <div class="meta">
+                <span>תאריך: פברואר 2026</span>
+                <span>סוג: Schema.org Implementation</span>
+                <span>מקור: ביקורת טכנית SEO</span>
+            </div>
+        </header>
+
+        <!-- Summary -->
+        <div class="summary-grid">
+            <div class="summary-card blue">
+                <div class="number">12</div>
+                <div class="label">Product Schema חדשים</div>
+            </div>
+            <div class="summary-card green">
+                <div class="number">6</div>
+                <div class="label">Person Schema חדשים</div>
+            </div>
+            <div class="summary-card orange">
+                <div class="number">18</div>
+                <div class="label">סכמות להטמעה</div>
+            </div>
+        </div>
+
+        <!-- TOC -->
+        <div class="toc">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#overview">סקירה כללית <span class="count">מצב נוכחי</span></a></li>
+                <li><a href="#products">Product Schema - דפי מוצרים <span class="count">12 סכמות</span></a></li>
+                <li><a href="#persons">Person Schema - דפי צוות <span class="count">6 סכמות</span></a></li>
+                <li><a href="#implementation">הנחיות הטמעה <span class="count">Yoast / Custom</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Overview -->
+        <section id="overview">
+            <h2>מצב נוכחי - סכמות קיימות מול חסרות</h2>
+
+            <div class="success-box">
+                <strong>סכמות קיימות באתר (תקינות):</strong> Organization, ProfessionalService, WebSite, WebPage, BreadcrumbList, FAQPage
+            </div>
+
+            <div class="warn-box">
+                <strong>סכמות חסרות (דו"ח זה):</strong> Product Schema בדפי מוצרים (12 דפים) + Person Schema בדפי צוות (6 דפים)
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>סוג דף</th>
+                        <th>כמות</th>
+                        <th>סכמה קיימת</th>
+                        <th>סכמה חסרה</th>
+                        <th>סטטוס</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>דפי מוצרים (/product/)</td>
+                        <td>12</td>
+                        <td>WebPage, BreadcrumbList</td>
+                        <td>Product</td>
+                        <td class="status-new">חסר</td>
+                    </tr>
+                    <tr>
+                        <td>דפי צוות (/manager/)</td>
+                        <td>6</td>
+                        <td>WebPage</td>
+                        <td>Person</td>
+                        <td class="status-new">חסר</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Product Schemas -->
+        <section id="products">
+            <h2>Product Schema - דפי מוצרים (12 סכמות)</h2>
+
+            <div class="info-box">
+                <strong>הערה:</strong> מכיוון שאין מחירים פומביים לשירותים, הסכמות בנויות ללא שדה <code>offers</code>. ניתן להוסיף מחיר בעתיד.
+                כל סכמה כוללת קישור ל-Organization הקיים באתר באמצעות <code>@id</code>.
+            </div>
+
+            <!-- 1. IntegriTEST -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">IntegriTEST - מבחן אמינות ממוחשב</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/integritest/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-integritest"><button class="copy-btn" onclick="copySchema('schema-integritest')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/integritest/#product",
+  "name": "IntegriTEST - מבחן אמינות ממוחשב",
+  "description": "כלי אבחון מקוון למדידת אמינות ויושרה של מועמדים לעבודה. המבחן מעריך עמדות, דעות והתנהגויות לזיהוי סיכוני התנהגות בלתי הולמת במקום העבודה, כולל גניבה, הונאה, הפרת כללים ושוחד.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/integritest/",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/integritest-product.jpg",
+  "category": "מבחני יושרה ואמינות",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך המבחן",
+      "value": "כ-20 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מספר שאלות",
+      "value": "96-194 שאלות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "מבחן מקוון ממוחשב עם שאלות דינמיות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "שפות",
+      "value": "עברית, אנגלית"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 2. TRUSTEE -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">TRUSTEE - מבחן אמינות תקופתי לעובדים</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/trustee/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-trustee"><button class="copy-btn" onclick="copySchema('schema-trustee')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/trustee/#product",
+  "name": "TRUSTEE - מבחן אמינות תקופתי לעובדים",
+  "description": "מבחן לאבחון תקופתי של יושרה ונאמנות עובדים לאורך תקופת העסקתם. המבחן מודד רמות סיכון פוטנציאליות בנוגע להתנהגות בלתי הולמת במקום העבודה, ומעריך עמדות כלפי יושרה, ציות לכללים ארגוניים ורגישות להתנהגויות בעייתיות.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/trustee/",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/trustee-product.jpg",
+  "category": "מבחני יושרה ואמינות",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך המבחן",
+      "value": "כ-35 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מספר פריטים",
+      "value": "156 פריטים"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "מבחן מקוון - רב-ברירה ושאלות פתוחות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מימדי מדידה",
+      "value": "14 מימדים כולל גניבה, שימוש בסמים, מחויבות ארגונית, מודעות ביטחונית"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 3. Podium -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">Podium - מערכת ניהול גיוס והערכת מועמדים</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/podium/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-podium"><button class="copy-btn" onclick="copySchema('schema-podium')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/podium/#product",
+  "name": "Podium - מערכת ניהול גיוס והערכת מועמדים",
+  "description": "מערכת מרכזית לניהול תהליך הגיוס וההערכה בארגון. Podium מאפשרת לנהל את כל שלבי הגיוס ממשרה ועד החלטת קבלה, לבצע מבחנים, הערכות וסקרים, תוך התאמה מלאה לצרכי הארגון.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/podium/",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/podium-product.jpg",
+  "category": "פלטפורמות ניהול גיוס",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "אבטחה",
+      "value": "ISO 27001, GDPR, אימות דו-שלבי"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "יכולות",
+      "value": "בדיקת אלפי מועמדים במקביל, ניטור מרחוק במצלמה, כרטיסי מועמדים"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "פלטפורמה מקוונת - תומכת בכל הדפדפנים ומכשירים ניידים"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 4. StabiliTEST -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">StabiliTEST - חיזוי סיכויי התפטרות</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/stabilitest/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-stabilitest"><button class="copy-btn" onclick="copySchema('schema-stabilitest')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/stabilitest/#product",
+  "name": "StabiliTEST - חיזוי סיכויי התפטרות",
+  "description": "כלי הערכה טרום-תעסוקתי המיועד לחזות סיכון להתפטרות מוקדמת בקרב מועמדים לעבודה, באמצעות ניתוח מאפיינים אישיים, התאמה לתפקיד וגורמי היסטוריית תעסוקה.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/stabilitest/",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/stabilitest-product.jpg",
+  "category": "מבחני מיון והערכה",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך המבחן",
+      "value": "12-15 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מספר פריטים",
+      "value": "62-77 פריטים"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "תת-מדדים",
+      "value": "ביצועים בעבר, תכונות אישיות, רצון בתפקיד, כוונת הישארות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "מבחן מקוון - באתר או מרחוק"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 5. IntegriEXIT -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">IntegriEXIT - שאלון עזיבה</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/integriexit/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-integriexit"><button class="copy-btn" onclick="copySchema('schema-integriexit')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/integriexit/#product",
+  "name": "IntegriEXIT - שאלון עזיבה",
+  "description": "שאלון עזיבה מקוון להערכת יושרה והתנהגויות בלתי הולמות בקרב עובדים העוזבים את הארגון. הכלי אוסף משוב אמין מעובדים יוצאים אודות תנאי העבודה והתנהלות בלתי אתית.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/integriexit/",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/integriexit-product.jpg",
+  "category": "שאלוני עזיבה והערכה",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך מילוי",
+      "value": "כ-10 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מספר שאלות",
+      "value": "20-28 שאלות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מודולים",
+      "value": "שביעות רצון כללית, יושרת עמיתים/מנהלים, התנהגויות בלתי הולמות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "שאלון מקוון אנונימי"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 6. Midot Shilad -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">מידות שילד - הערכת אמינות מטפלים</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%a9%d7%99%d7%9c%d7%93/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-shilad"><button class="copy-btn" onclick="copySchema('schema-shilad')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/%d7%a9%d7%99%d7%9c%d7%93/#product",
+  "name": "מידות שילד - הערכת אמינות מטפלים",
+  "description": "תהליך אבחון המיועד במיוחד לאנשי טיפול העובדים עם אוכלוסיות פגיעות, כולל מטפלים, גננות ועובדי סיעוד. הכלי סוקר פוטנציאל להתנהגות אגרסיבית, אמינות, רקע ויציבות תעסוקתית.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/%d7%a9%d7%99%d7%9c%d7%93/",
+  "category": "מבחני מיון למטפלים",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך מילוי",
+      "value": "כ-10 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מספר שאלות",
+      "value": "20-28 שאלות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "שאלון מקוון"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 7. HR Avatar -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">HR Avatar</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/hr-avatar/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-hravatar"><button class="copy-btn" onclick="copySchema('schema-hravatar')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/hr-avatar/#product",
+  "name": "HR Avatar",
+  "description": "פתרון אבחון והערכת כוח אדם מבית מכון מידות, חלק מסוית הכלים המתקדמים לבדיקת יושרה ואמינות בתהליכי גיוס והערכה ארגונית.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/hr-avatar/",
+  "category": "פתרונות הערכת כוח אדם"
+}</div>
+                </div>
+            </div>
+
+            <!-- 8. בדיקת פוליגרף -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-service">Service</span>
+                        <span class="schema-title">בדיקת פוליגרף לעובדים</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%a4%d7%95%d7%9c%d7%99%d7%92%d7%a8%d7%a3/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-polygraph"><button class="copy-btn" onclick="copySchema('schema-polygraph')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%a4%d7%95%d7%9c%d7%99%d7%92%d7%a8%d7%a3/#product",
+  "name": "בדיקת פוליגרף לעובדים",
+  "description": "שירות בדיקת פוליגרף מקצועי למדידת תגובות פיזיולוגיות להערכת מהימנות עובדים ומועמדים. הבדיקה מבוצעת על ידי בודקים מוסמכים ומנוסים, בהסכמה מלאה ובכבוד לנבדק.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%a4%d7%95%d7%9c%d7%99%d7%92%d7%a8%d7%a3/",
+  "category": "בדיקות פוליגרף",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך הבדיקה",
+      "value": "60-90 דקות"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "בדיקה פרונטאלית עם שאלות מותאמות אישית"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "שימושים",
+      "value": "סינון טרום-תעסוקתי, בדיקות תקופתיות, חקירת חשדות"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 9. מבדקי כישורים -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">מבדקי כישורים - מבחני מיון לעבודה</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%9e%d7%91%d7%93%d7%a7%d7%99-%d7%9b%d7%99%d7%a9%d7%95%d7%a8%d7%99%d7%9d/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-skills"><button class="copy-btn" onclick="copySchema('schema-skills')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/%d7%9e%d7%91%d7%93%d7%a7%d7%99-%d7%9b%d7%99%d7%a9%d7%95%d7%a8%d7%99%d7%9d/#product",
+  "name": "מבדקי כישורים - מבחני מיון לעבודה",
+  "description": "מבחנים פסיכומטריים להערכת התאמת מועמדים באמצעות מדידת יכולות קוגניטיביות, ידע, כישורים, תכונות אישיות, אינטליגנציה רגשית והתנהגויות הקשורות לעבודה. כלי הערכה ייעודיים המותאמים לכל תפקיד.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/%d7%9e%d7%91%d7%93%d7%a7%d7%99-%d7%9b%d7%99%d7%a9%d7%95%d7%a8%d7%99%d7%9d/",
+  "category": "מבחני מיון והערכה",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "סוגי מבחנים",
+      "value": "מבחנים קוגניטיביים, שאלוני אישיות, סימולציות, ראיונות מובנים"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "שילוב מבחנים ממוחשבים, שאלונים וראיונות"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 10. הונאות פנים ארגוניות -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-service">Service</span>
+                        <span class="schema-title">הונאות פנים ארגוניות - חקירות פנים</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%94%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%a4%d7%a0%d7%99%d7%9d-%d7%90%d7%a8%d7%92%d7%95%d7%a0%d7%99%d7%95%d7%aa/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-fraud"><button class="copy-btn" onclick="copySchema('schema-fraud')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/%d7%94%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%a4%d7%a0%d7%99%d7%9d-%d7%90%d7%a8%d7%92%d7%95%d7%a0%d7%99%d7%95%d7%aa/#product",
+  "name": "חקירות הונאות פנים ארגוניות",
+  "description": "שירות מקצועי לזיהוי עבירות תעסוקתיות והתנהלות לא ישרה של עובדים בתוך ארגונים. הצוות המקצועי מבצע חקירות אובייקטיביות של חשדות להונאה, כולל הערכת מחלקות, סינון תקופתי, ניתוח נתונים וראיונות עובדים.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/%d7%94%d7%95%d7%a0%d7%90%d7%95%d7%aa-%d7%a4%d7%a0%d7%99%d7%9d-%d7%90%d7%a8%d7%92%d7%95%d7%a0%d7%99%d7%95%d7%aa/",
+  "category": "חקירות ארגוניות",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "שלבים",
+      "value": "הערכת מחלקה, איסוף נתונים, ראיונות עובדים, דוח ממצאים"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "ביקורת פנים באתר הלקוח"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 11. ראיון מהימנות פרונטאלי -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-service">Service</span>
+                        <span class="schema-title">ראיון מהימנות פרונטאלי</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%a4%d7%a8%d7%95%d7%a0%d7%98%d7%90%d7%9c%d7%99/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-interview"><button class="copy-btn" onclick="copySchema('schema-interview')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "@id": "https://midot.co.il/product/%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%a4%d7%a8%d7%95%d7%a0%d7%98%d7%90%d7%9c%d7%99/#product",
+  "name": "ראיון מהימנות פרונטאלי",
+  "description": "שירות ראיון פנים אל פנים מקצועי להערכת יושרה ואמינות תעסוקתית של מועמד. מראיין מיומן ואובייקטיבי מנהל את השיחה תוך ניתוח תגובות מילוליות ולא מילוליות, ומאמת ממצאים מול מעסיקים וממליצים.",
+  "brand": {
+    "@type": "Brand",
+    "name": "מכון מידות"
+  },
+  "manufacturer": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "url": "https://midot.co.il/product/%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%a4%d7%a8%d7%95%d7%a0%d7%98%d7%90%d7%9c%d7%99/",
+  "category": "שירותי הערכה פרונטליים",
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "משך",
+      "value": "כשעה"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "פורמט",
+      "value": "ראיון אחד-על-אחד"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "מתאים ל",
+      "value": "כל התפקידים והדרגות הארגוניות"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- 12. מידות שילד עיצוב חדש (if exists) -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-product">Product</span>
+                        <span class="schema-title">מידות שילד - עיצוב חדש</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/product/%d7%9e%d7%99%d7%93%d7%95%d7%aa-%d7%a9%d7%99%d7%9c%d7%93/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="warn-box">
+                        <strong>שימו לב:</strong> דף זה מחזיר 404. יש לבדוק אם הדף הוסר או הועבר. אם הדף פעיל - יש להשתמש באותה סכמה של מידות שילד למעלה עם עדכון ה-URL.
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Person Schemas -->
+        <section id="persons">
+            <h2>Person Schema - דפי צוות (6 סכמות)</h2>
+
+            <div class="info-box">
+                <strong>הערה:</strong> כל סכמת Person מקושרת ל-Organization הקיים באתר. שדה <code>worksFor</code> מצביע על <code>@id</code> של הארגון.
+                ה-<code>image</code> חולץ ישירות מהדפים.
+            </div>
+
+            <!-- Person 1: Itai Horowitz -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">איתי הורוביץ - מנכ"ל</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/איתי-הורוביץ/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-itai"><button class="copy-btn" onclick="copySchema('schema-itai')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%90%d7%99%d7%aa%d7%99-%d7%94%d7%95%d7%a8%d7%95%d7%91%d7%99%d7%a5/#person",
+  "name": "איתי הורוביץ",
+  "givenName": "איתי",
+  "familyName": "הורוביץ",
+  "jobTitle": "מנכ\"ל גלובלי",
+  "description": "מנכ\"ל גלובלי של מכון מידות מאז 2007. בעבר כיהן כמנכ\"ל מידות ישראל וסמנכ\"ל פיתוח עסקי. לפני מכון מידות עבד כיועץ אבטחת מידע בבנק לאומי וניהל פרויקטי רכש בקבוצת תלדור.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/Itai-Horowitz.jpg",
+  "url": "https://midot.co.il/manager/%d7%90%d7%99%d7%aa%d7%99-%d7%94%d7%95%d7%a8%d7%95%d7%91%d7%99%d7%a5/",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "University of Derby"
+  },
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר שני במנהל עסקים - University of Derby"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "הסמכת ISACA - מנתח מערכות מידע ואבטחת מידע"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- Person 2: Amit Primor -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">עמית פרימור - משנה למנכ"ל</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/עמית-פרימור/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-amit"><button class="copy-btn" onclick="copySchema('schema-amit')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%a2%d7%9e%d7%99%d7%aa-%d7%a4%d7%a8%d7%99%d7%9e%d7%95%d7%a8/#person",
+  "name": "עמית פרימור",
+  "givenName": "עמית",
+  "familyName": "פרימור",
+  "jobTitle": "משנה למנכ\"ל",
+  "description": "אחראי על תחומי הכספים, התפעול, המשפט וטכנולוגיית המידע במכון מידות. בעבר שימש כמנהל מסחרי בחברת הנדל\"ן 'דרום יהודה'.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/Amit-Primor.jpg",
+  "url": "https://midot.co.il/manager/%d7%a2%d7%9e%d7%99%d7%aa-%d7%a4%d7%a8%d7%99%d7%9e%d7%95%d7%a8/",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "האוניברסיטה העברית בירושלים"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "המכללה למנהל והסמכה"
+    }
+  ],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר שני במנהל עסקים - האוניברסיטה העברית בירושלים"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר ראשון במנהל עסקים - המכללה למנהל"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "הסמכה בניתוח מערכות מידע - הוועדה הישראלית למערכות מידע"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- Person 3: Dr. Peleg -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">דר' פלג - ראש תחום פסיכולוגיה חקירתית</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/דר-פלג/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-peleg"><button class="copy-btn" onclick="copySchema('schema-peleg')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%93%d7%a8-%d7%a4%d7%9c%d7%92/#person",
+  "name": "דר' פלג",
+  "jobTitle": "ראש תחום פסיכולוגיה חקירתית",
+  "description": "מנהל את מחלקת הפוליגרף במכון מידות. בעבר שימש כראש מעבדת הפוליגרף, מחלקת הפסיכולוגיה החקירתית ויחידת הזיהוי הפלילי באגף החקירות של משטרת ישראל.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/Dar-Peleg.jpg",
+  "url": "https://midot.co.il/manager/%d7%93%d7%a8-%d7%a4%d7%9c%d7%92/",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "אוניברסיטת תל אביב"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "אוניברסיטת בר-אילן"
+    }
+  ],
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר שני בפסיכולוגיה חברתית - אוניברסיטת תל אביב"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר שני במשפטים - אוניברסיטת בר-אילן"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- Person 4: Dr. Saul Pein -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">ד"ר סול פיין - מנהל מחקר ופיתוח</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/דר-סול-פיין/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-saul"><button class="copy-btn" onclick="copySchema('schema-saul')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%93%d7%a8-%d7%a1%d7%95%d7%9c-%d7%a4%d7%99%d7%99%d7%9f/#person",
+  "name": "ד\"ר סול פיין",
+  "givenName": "סול",
+  "familyName": "פיין",
+  "jobTitle": "מנהל מחקר ופיתוח",
+  "description": "פסיכולוג תעסוקתי מוסמך המתמחה בסלקציה והערכה. בעבר שימש כסמנכ\"ל פתרונות הערכה ב-Career-Harmony (חברת בת של ManpowerGroup) וכקצין מחקר בחיל כוח אדם בצה\"ל. מרצה חיצוני בפסיכולוגיה באוניברסיטת חיפה. מחקריו פורסמו בכתבי עת אקדמיים והוצגו בכנסים בינלאומיים.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2019/04/Saul-Fine.jpg",
+  "url": "https://midot.co.il/manager/%d7%93%d7%a8-%d7%a1%d7%95%d7%9c-%d7%a4%d7%99%d7%99%d7%9f/",
+  "honorificPrefix": "ד\"ר",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "אוניברסיטת חיפה"
+  },
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "name": "דוקטורט בפסיכולוגיה תעסוקתית - אוניברסיטת חיפה"
+  }
+}</div>
+                </div>
+            </div>
+
+            <!-- Person 5: Javier Norberto Ortiz -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">חאבייר נורברטו אורטיז - ראש מחלקת יעוץ בטיחות</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/חאבייר-נורברטו-אורטיז/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-javier"><button class="copy-btn" onclick="copySchema('schema-javier')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%97%d7%90%d7%91%d7%99%d7%99%d7%a8-%d7%a0%d7%95%d7%a8%d7%91%d7%a8%d7%98%d7%95-%d7%90%d7%95%d7%a8%d7%98%d7%99%d7%96/#person",
+  "name": "חאבייר נורברטו אורטיז",
+  "jobTitle": "ראש מחלקת יעוץ לבטיחות",
+  "description": "מומחה בטיחות ורווחה עם 25 שנות ניסיון בבטיחות תעסוקתית במדינות רבות. בעבר כיהן 15 שנים בתפקידי ניהול שונים ב-Danone Waters בתחום הבטיחות התעסוקתית. הישגיו הוכרו על ידי ממשלת מקסיקו, מועצת הבטיחות האמריקאית ו-DuPont.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2020/01/javier2.jpg",
+  "url": "https://midot.co.il/manager/%d7%97%d7%90%d7%91%d7%99%d7%99%d7%a8-%d7%a0%d7%95%d7%a8%d7%91%d7%a8%d7%98%d7%95-%d7%90%d7%95%d7%a8%d7%98%d7%99%d7%96/",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר ראשון בבטיחות תעסוקתית"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר ראשון בטוקסיקולוגיה תעסוקתית"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "הסמכת מאמן בתרבות בטיחות ארגונית"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+            <!-- Person 6: Fernando Calderon -->
+            <div class="schema-block">
+                <div class="schema-header">
+                    <div>
+                        <span class="badge badge-person">Person</span>
+                        <span class="schema-title">פרננדו קלדרון - מנכ"ל אמריקה הלטינית</span>
+                    </div>
+                    <span class="schema-url">midot.co.il/manager/פרננדו-קלדרון/</span>
+                </div>
+                <div class="schema-body">
+                    <div class="code-block" id="schema-fernando"><button class="copy-btn" onclick="copySchema('schema-fernando')">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://midot.co.il/manager/%d7%a4%d7%a8%d7%a0%d7%a0%d7%93%d7%95-%d7%a7%d7%9c%d7%93%d7%a8%d7%95%d7%9f/#person",
+  "name": "פרננדו קלדרון",
+  "givenName": "פרננדו",
+  "familyName": "קלדרון",
+  "jobTitle": "מנכ\"ל אמריקה הלטינית (LATAM)",
+  "description": "מביא מעל 20 שנות ניסיון מקצועי בשיווק טכנולוגי ו-HR Tech. עבד עם חברות מובילות כגון Walmart, Avantel, Axtel, OccMundial ו-Banco Sabadell.",
+  "image": "https://midot.co.il/wp-content/uploads/sites/8/2020/01/fernando.jpg",
+  "url": "https://midot.co.il/manager/%d7%a4%d7%a8%d7%a0%d7%a0%d7%93%d7%95-%d7%a7%d7%9c%d7%93%d7%a8%d7%95%d7%9f/",
+  "worksFor": {
+    "@id": "https://midot.co.il/#organization"
+  },
+  "hasCredential": [
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "תואר ראשון במנהל עסקים - התמחות בשיווק ומימון"
+    },
+    {
+      "@type": "EducationalOccupationalCredential",
+      "name": "דיפלומות בתקשורת ושיווק"
+    }
+  ]
+}</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Implementation Guide -->
+        <section id="implementation">
+            <h2>הנחיות הטמעה</h2>
+
+            <h3 style="margin-bottom: 15px;">אפשרות 1: Yoast SEO (מומלץ)</h3>
+            <div class="info-box">
+                Yoast SEO Premium תומך ב-Schema מותאם אישית. ניתן להגדיר סוג Schema לכל Post Type.
+            </div>
+            <ol class="impl-steps">
+                <li><strong>דפי מוצרים:</strong> SEO → Search Appearance → Content Types → Products → Schema type → בחרו "Product"</li>
+                <li><strong>דפי צוות:</strong> SEO → Search Appearance → Content Types → Manager → Schema type → בחרו "Person"</li>
+                <li>Yoast ייצור Schema בסיסי אוטומטית, אך הוא לא יכלול את כל השדות המפורטים בדו"ח זה</li>
+            </ol>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">אפשרות 2: הטמעה ידנית (מלא יותר)</h3>
+            <div class="success-box">
+                <strong>מומלץ להטמעה מלאה</strong> - הסכמות בדו"ח זה מפורטות יותר מ-Yoast אוטומטי ומכילות שדות ספציפיים לכל מוצר/אדם.
+            </div>
+            <ol class="impl-steps">
+                <li>העתיקו את קוד ה-JSON-LD מהדו"ח (כפתור "העתק")</li>
+                <li>בעריכת הדף ב-WordPress → עברו ל-"Custom HTML" או השתמשו ב-Yoast → Advanced → Custom Schema</li>
+                <li>הוסיפו את הקוד בתוך תגית <code style="direction: ltr;">&lt;script type="application/ld+json"&gt;</code></li>
+                <li>בדקו תקינות ב-<a href="https://search.google.com/test/rich-results" style="color: var(--primary);" target="_blank">Google Rich Results Test</a></li>
+                <li>אמתו ב-<a href="https://validator.schema.org/" style="color: var(--primary);" target="_blank">Schema.org Validator</a></li>
+            </ol>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">אפשרות 3: פלאגין ייעודי</h3>
+            <ol class="impl-steps">
+                <li>התקינו פלאגין כמו <strong>Schema Pro</strong> או <strong>WP Schema Plugin</strong></li>
+                <li>הגדירו תבנית Product עבור Post Type "product"</li>
+                <li>הגדירו תבנית Person עבור Post Type "manager"</li>
+                <li>מפו את השדות מה-Custom Fields לשדות ה-Schema</li>
+            </ol>
+
+            <h3 style="margin-top: 30px; margin-bottom: 15px;">דוגמת הטמעה בקוד</h3>
+            <div class="code-block" id="schema-example"><button class="copy-btn" onclick="copySchema('schema-example')">העתק</button>&lt;!-- הוסיפו לפני תגית &lt;/head&gt; או בתוך תוכן הדף --&gt;
+&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "שם המוצר",
+  "description": "תיאור המוצר",
+  ...
+}
+&lt;/script&gt;</div>
+
+            <div class="warn-box" style="margin-top: 25px;">
+                <strong>חשוב:</strong> הסכמות החדשות יתווספו <strong>בנוסף</strong> לסכמות הקיימות (WebPage, BreadcrumbList). אין למחוק את הסכמות הקיימות.
+            </div>
+        </section>
+
+        <footer>
+            <p>NC Digital | SEO Agency</p>
+            <p>פברואר 2026</p>
+        </footer>
+    </div>
+
+    <script>
+    function copySchema(elementId) {
+        const block = document.getElementById(elementId);
+        let text = block.textContent || block.innerText;
+        // Remove the "העתק" button text
+        text = text.replace(/^העתק/, '').trim();
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = block.querySelector('.copy-btn');
+            const original = btn.textContent;
+            btn.textContent = 'הועתק!';
+            setTimeout(() => btn.textContent = original, 2000);
+        });
+    }
+    </script>
+</body>
+</html>
