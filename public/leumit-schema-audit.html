@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leumit Schema Audit — Corrected JSON-LD</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.6; direction: ltr; text-align: left; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 48px; }
+  .header h1 { font-size: 32px; font-weight: 700; color: #f8fafc; margin-bottom: 8px; }
+  .header .subtitle { font-size: 16px; color: #94a3b8; }
+  .header .date { font-size: 13px; color: #64748b; margin-top: 6px; }
+  .logo-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+  .logo-row img { height: 40px; }
+
+  /* Audit Summary */
+  .audit-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+  .audit-card { background: #1e293b; border-radius: 12px; padding: 24px; text-align: center; border: 1px solid #334155; }
+  .audit-card.pass { border-color: #22c55e40; }
+  .audit-card.fail { border-color: #ef444440; }
+  .audit-card .schema-name { font-size: 14px; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .audit-card .status { font-size: 28px; font-weight: 700; }
+  .audit-card.pass .status { color: #22c55e; }
+  .audit-card.fail .status { color: #ef4444; }
+  .audit-card .detail { font-size: 13px; color: #64748b; margin-top: 8px; }
+
+  /* Schema Sections */
+  .schema-section { margin-bottom: 48px; }
+  .schema-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .schema-header h2 { font-size: 22px; font-weight: 600; color: #f8fafc; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-fix { background: #f59e0b20; color: #fbbf24; border: 1px solid #f59e0b40; }
+  .badge-missing { background: #ef444420; color: #f87171; border: 1px solid #ef444440; }
+  .badge-new { background: #3b82f620; color: #60a5fa; border: 1px solid #3b82f640; }
+
+  .schema-desc { font-size: 14px; color: #94a3b8; margin-bottom: 16px; }
+
+  /* Issues Table */
+  .issues-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+  .issues-table th { text-align: left; padding: 10px 14px; background: #1e293b; color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #334155; }
+  .issues-table td { padding: 10px 14px; border-bottom: 1px solid #1e293b; font-size: 14px; }
+  .issues-table tr:hover { background: #1e293b40; }
+  .issue-critical { color: #f87171; }
+  .issue-warning { color: #fbbf24; }
+  .issue-pass { color: #4ade80; }
+
+  /* Code Block */
+  .code-wrapper { position: relative; background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow: hidden; }
+  .code-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #0f172a; border-bottom: 1px solid #334155; }
+  .code-toolbar .label { font-size: 13px; color: #94a3b8; font-weight: 500; }
+  .copy-btn { background: #3b82f6; color: white; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; font-weight: 500; transition: background 0.2s; }
+  .copy-btn:hover { background: #2563eb; }
+  .copy-btn.copied { background: #22c55e; }
+  pre { padding: 20px; overflow-x: auto; font-size: 13px; line-height: 1.7; color: #e2e8f0; }
+  code { font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace; }
+
+  /* Changes highlight */
+  .change-marker { background: #22c55e15; border-left: 3px solid #22c55e; padding-left: 8px; display: inline-block; width: 100%; }
+
+  /* Instructions */
+  .instructions { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-top: 48px; }
+  .instructions h3 { font-size: 18px; color: #f8fafc; margin-bottom: 12px; }
+  .instructions ol { padding-left: 20px; }
+  .instructions li { margin-bottom: 10px; font-size: 14px; color: #cbd5e1; }
+  .instructions code { background: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #60a5fa; }
+
+  /* Diff section */
+  .diff-section { margin-top: 12px; margin-bottom: 20px; }
+  .diff-header { font-size: 14px; font-weight: 600; color: #fbbf24; margin-bottom: 8px; }
+  .diff-list { list-style: none; padding: 0; }
+  .diff-list li { padding: 6px 12px; font-size: 13px; border-radius: 6px; margin-bottom: 4px; }
+  .diff-add { background: #22c55e10; color: #4ade80; border-left: 3px solid #22c55e; }
+  .diff-remove { background: #ef444410; color: #f87171; border-left: 3px solid #ef4444; text-decoration: line-through; }
+  .diff-change { background: #f59e0b10; color: #fbbf24; border-left: 3px solid #f59e0b; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid #1e293b; }
+  .footer p { font-size: 13px; color: #475569; }
+
+  @media (max-width: 768px) {
+    .audit-summary { grid-template-columns: 1fr; }
+    .container { padding: 24px 16px; }
+    .header h1 { font-size: 24px; }
+    pre { font-size: 11px; padding: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-row">
+      <img src="https://www.leumit.co.il/media/rwsdhs1u/36467_113985_leumit_website_bnrs_logo_208x52_05.png" alt="Leumit Logo">
+    </div>
+    <h1>Leumit Schema Audit</h1>
+    <p class="subtitle">Organization &bull; WebSite &bull; MedicalOrganization — Verification &amp; Corrected Code</p>
+    <p class="date">Audit Date: February 25, 2026 &bull; Site: www.leumit.co.il</p>
+  </div>
+
+  <!-- Audit Summary -->
+  <div class="audit-summary">
+    <div class="audit-card pass">
+      <div class="schema-name">Organization</div>
+      <div class="status">LIVE</div>
+      <div class="detail">Implemented — 4 issues to fix</div>
+    </div>
+    <div class="audit-card pass">
+      <div class="schema-name">WebSite</div>
+      <div class="status">LIVE</div>
+      <div class="detail">Implemented — 2 issues to fix</div>
+    </div>
+    <div class="audit-card fail">
+      <div class="schema-name">MedicalOrganization</div>
+      <div class="status">MISSING</div>
+      <div class="detail">Not found anywhere on site</div>
+    </div>
+  </div>
+
+  <!-- ========== SCHEMA 1: ORGANIZATION + MEDICAL (MERGED) ========== -->
+  <div class="schema-section">
+    <div class="schema-header">
+      <h2>Schema 1: Organization → MedicalOrganization</h2>
+      <span class="badge badge-fix">REPLACE EXISTING</span>
+    </div>
+    <p class="schema-desc">
+      Replace the current Organization schema with this corrected version. Since <code>MedicalOrganization</code> is a subtype of <code>Organization</code>, changing <code>@type</code> to <code>MedicalOrganization</code> inherits all Organization properties — no need for a type array.
+    </p>
+
+    <div class="diff-section">
+      <div class="diff-header">Changes from current implementation:</div>
+      <ul class="diff-list">
+        <li class="diff-change"><strong>@type:</strong> "Organization" → "MedicalOrganization"</li>
+        <li class="diff-change"><strong>@id:</strong> added trailing slash — #organization → /#organization</li>
+        <li class="diff-change"><strong>url:</strong> added trailing slash — leumit.co.il → leumit.co.il/</li>
+        <li class="diff-add"><strong>+ description:</strong> Hebrew description added</li>
+        <li class="diff-add"><strong>+ legalName:</strong> "קופת חולים לאומית" added</li>
+        <li class="diff-add"><strong>+ areaServed:</strong> "IL" added</li>
+        <li class="diff-add"><strong>+ medicalSpecialty:</strong> PrimaryCare + CommunityHealth</li>
+        <li class="diff-add"><strong>+ isAcceptingNewPatients:</strong> true</li>
+        <li class="diff-add"><strong>+ address.postalCode:</strong> added</li>
+        <li class="diff-add"><strong>+ sameAs:</strong> Hebrew Wikipedia link added</li>
+      </ul>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-toolbar">
+        <span class="label">application/ld+json — MedicalOrganization</span>
+        <button class="copy-btn" onclick="copySchema(this, 'schema1')">Copy JSON-LD</button>
+      </div>
+<pre><code id="schema1">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "MedicalOrganization",
+  "@id": "https://www.leumit.co.il/#organization",
+  "name": "לאומית שירותי בריאות",
+  "alternateName": "Leumit Health Services",
+  "legalName": "קופת חולים לאומית",
+  "url": "https://www.leumit.co.il/",
+  "description": "קופת חולים לאומית - שירותי בריאות, רפואה מתקדמת, ביטוח משלים ושירותים דיגיטליים",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://www.leumit.co.il/media/rwsdhs1u/36467_113985_leumit_website_bnrs_logo_208x52_05.png",
+    "width": 208,
+    "height": 52
+  },
+  "foundingDate": "1933",
+  "telephone": "*507",
+  "areaServed": "IL",
+  "medicalSpecialty": [
+    "https://schema.org/PrimaryCare",
+    "https://schema.org/CommunityHealth"
+  ],
+  "isAcceptingNewPatients": true,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "שפרינצק 23",
+    "addressLocality": "תל אביב-יפו",
+    "postalCode": "6473723",
+    "addressCountry": "IL"
+  },
+  "sameAs": [
+    "https://www.facebook.com/leumit",
+    "https://www.instagram.com/leumit_healthcare/",
+    "https://he.wikipedia.org/wiki/לאומית_שירותי_בריאות"
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "telephone": "*507",
+      "contactType": "customer service",
+      "areaServed": "IL",
+      "availableLanguage": ["Hebrew", "Arabic", "Russian", "English"]
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ========== SCHEMA 2: WEBSITE ========== -->
+  <div class="schema-section">
+    <div class="schema-header">
+      <h2>Schema 2: WebSite</h2>
+      <span class="badge badge-fix">REPLACE EXISTING</span>
+    </div>
+    <p class="schema-desc">
+      Replace the current WebSite schema. Fixes the <code>@id</code> slash issue and updates the <code>publisher</code> reference to match the corrected Organization <code>@id</code>.
+    </p>
+
+    <div class="diff-section">
+      <div class="diff-header">Changes from current implementation:</div>
+      <ul class="diff-list">
+        <li class="diff-change"><strong>@id:</strong> added trailing slash — #website → /#website</li>
+        <li class="diff-change"><strong>url:</strong> added trailing slash — leumit.co.il → leumit.co.il/</li>
+        <li class="diff-change"><strong>publisher.@id:</strong> updated to match corrected /#organization</li>
+      </ul>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-toolbar">
+        <span class="label">application/ld+json — WebSite</span>
+        <button class="copy-btn" onclick="copySchema(this, 'schema2')">Copy JSON-LD</button>
+      </div>
+<pre><code id="schema2">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "https://www.leumit.co.il/#website",
+  "name": "לאומית שירותי בריאות",
+  "alternateName": "Leumit Health Services",
+  "url": "https://www.leumit.co.il/",
+  "description": "קופת חולים לאומית - שירותי בריאות, רפואה מתקדמת, ביטוח משלים ושירותים דיגיטליים",
+  "inLanguage": "he-IL",
+  "publisher": {
+    "@id": "https://www.leumit.co.il/#organization"
+  }
+}
+&lt;/script&gt;</code></pre>
+    </div>
+  </div>
+
+  <!-- ========== IMPORTANT NOTES ========== -->
+  <div class="instructions">
+    <h3>Implementation Instructions</h3>
+    <ol>
+      <li><strong>Remove</strong> the 2 existing <code>&lt;script type="application/ld+json"&gt;</code> blocks from the <code>&lt;head&gt;</code> section of the homepage.</li>
+      <li><strong>Paste</strong> the 2 corrected schema blocks above into the <code>&lt;head&gt;</code> section (order doesn't matter).</li>
+      <li><strong>Key change:</strong> Schema 1 now uses <code>@type: "MedicalOrganization"</code> instead of <code>"Organization"</code>. Since MedicalOrganization is a subtype of Organization, all existing properties remain valid — plus it adds <code>medicalSpecialty</code> and <code>isAcceptingNewPatients</code>.</li>
+      <li><strong>Verify the postal code</strong> <code>6473723</code> — confirm this is correct for שפרינצק 23, תל אביב.</li>
+      <li><strong>Validate after deployment</strong> using:
+        <br>• <a href="https://search.google.com/test/rich-results" style="color:#60a5fa">Google Rich Results Test</a>
+        <br>• <a href="https://validator.schema.org/" style="color:#60a5fa">Schema.org Validator</a>
+      </li>
+      <li><strong>No SearchAction</strong> is included in the WebSite schema — this is intentional since Leumit uses a complex healthcare API, not a standard search box.</li>
+    </ol>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>NC Digital &bull; Schema Audit &bull; February 2026</p>
+  </div>
+
+</div>
+
+<script>
+function copySchema(btn, id) {
+  const code = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy JSON-LD';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
