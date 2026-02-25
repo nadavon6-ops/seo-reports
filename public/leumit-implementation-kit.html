@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ערכת יישום GEO — לאומית שירותי בריאות</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--border:rgba(255,255,255,0.08);--text:#e2e8f0;--muted:#94a3b8;--accent:#60a5fa;--green:#10b981;--red:#ef4444;--yellow:#fbbf24;--purple:#a855f7;--p0:#ef4444;--p1:#fbbf24;--p2:#60a5fa}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;direction:rtl}
+.container{max-width:1400px;margin:0 auto;padding:20px 16px}
+
+/* Header */
+.header{background:linear-gradient(135deg,#064e3b 0%,#0f172a 60%,#1e293b 100%);padding:40px 30px;border-radius:16px;margin-bottom:24px;border:1px solid var(--border);position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-50%;right:-25%;width:50%;height:200%;background:radial-gradient(circle,rgba(16,185,129,0.1) 0%,transparent 70%);pointer-events:none}
+.header h1{font-size:1.8em;color:#fff;margin-bottom:4px}
+.header-sub{color:var(--muted);font-size:0.95em;margin-top:8px}
+.badge{background:linear-gradient(135deg,var(--green),#059669);padding:6px 18px;border-radius:20px;font-size:0.85em;color:#fff;font-weight:600;display:inline-block}
+
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:10px;padding:16px;text-align:center;border:1px solid var(--border)}
+.stat-card .num{font-size:1.8em;font-weight:700;color:#fff}
+.stat-card .label{font-size:0.8em;color:var(--muted);margin-top:4px}
+.stat-card.done{border-color:var(--green);background:rgba(16,185,129,0.08)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin-bottom:0;flex-wrap:wrap;border-bottom:2px solid var(--border)}
+.tab{padding:12px 24px;cursor:pointer;color:var(--muted);font-size:0.9em;font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;user-select:none}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-content{display:none;padding-top:20px}
+.tab-content.active{display:block}
+
+/* Section */
+.section{background:var(--card);border-radius:14px;border:1px solid var(--border);margin-bottom:16px;overflow:hidden}
+.section-header{padding:18px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background 0.2s}
+.section-header:hover{background:rgba(255,255,255,0.03)}
+.section-title{font-size:1.05em;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
+.section-meta{display:flex;align-items:center;gap:10px}
+.section-body{padding:0 20px 20px;display:none}
+.section-body.open{display:block}
+
+/* Priority badges */
+.priority{padding:3px 10px;border-radius:12px;font-size:0.75em;font-weight:700;color:#fff}
+.priority.p0{background:var(--p0)}
+.priority.p1{background:var(--p1);color:#000}
+.priority.p2{background:var(--p2)}
+
+/* Status badges */
+.status{padding:3px 10px;border-radius:12px;font-size:0.75em;font-weight:600}
+.status.ready{background:rgba(16,185,129,0.15);color:var(--green)}
+.status.done{background:rgba(16,185,129,0.15);color:var(--green)}
+
+/* Code blocks */
+.code-block{position:relative;margin:12px 0;border-radius:8px;overflow:hidden}
+.code-header{background:#1a1a2e;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1)}
+.code-label{color:var(--muted);font-size:0.8em;font-weight:600}
+.code-target{color:var(--accent);font-size:0.78em}
+.copy-btn{background:rgba(96,165,250,0.15);color:var(--accent);border:1px solid rgba(96,165,250,0.3);padding:4px 14px;border-radius:6px;cursor:pointer;font-size:0.8em;font-weight:600;transition:all 0.2s}
+.copy-btn:hover{background:rgba(96,165,250,0.3)}
+.copy-btn.copied{background:rgba(16,185,129,0.2);color:var(--green);border-color:rgba(16,185,129,0.3)}
+pre.code{background:#0d1117;padding:16px;margin:0;overflow-x:auto;font-size:0.82em;line-height:1.5;color:#c9d1d9;font-family:'Fira Code','Consolas',monospace;direction:ltr;text-align:left;white-space:pre;max-height:500px;overflow-y:auto}
+
+/* Content blocks (Hebrew content) */
+.content-block{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:20px;margin:12px 0;direction:rtl;line-height:1.8;font-size:0.92em}
+.content-block h2{color:var(--green);font-size:1.1em;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
+.content-block h3{color:var(--accent);font-size:1em;margin:16px 0 8px}
+.content-block ul{margin:8px 20px 12px 0;padding:0}
+.content-block li{margin-bottom:6px}
+.content-block table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.9em}
+.content-block th{background:rgba(16,185,129,0.1);padding:8px 12px;text-align:right;border:1px solid var(--border);font-weight:600}
+.content-block td{padding:8px 12px;border:1px solid var(--border)}
+.impl-note{background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.85em;color:var(--accent)}
+.impl-note i{margin-left:6px}
+
+/* Blog outline */
+.blog-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:20px;margin:12px 0}
+.blog-card h4{color:#fff;margin-bottom:8px}
+.blog-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;font-size:0.82em;color:var(--muted)}
+.blog-meta span{display:flex;align-items:center;gap:4px}
+
+/* Responsive */
+@media(max-width:768px){
+.header h1{font-size:1.3em}
+.stats-row{grid-template-columns:repeat(2,1fr)}
+.tabs{overflow-x:auto}
+.tab{white-space:nowrap;padding:10px 16px;font-size:0.82em}
+pre.code{font-size:0.72em}
+}
+
+/* Footer */
+.footer{text-align:center;padding:20px;color:var(--muted);font-size:0.8em;margin-top:20px}
+.footer a{color:var(--accent);text-decoration:none}
+
+/* Chevron */
+.chevron{transition:transform 0.2s;color:var(--muted);font-size:0.8em}
+.chevron.open{transform:rotate(180deg)}
+
+/* Progress bar */
+.progress-bar{background:rgba(255,255,255,0.08);border-radius:8px;height:8px;overflow:hidden;margin-top:12px}
+.progress-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--green),#34d399);transition:width 0.5s}
+
+@media print{
+body{background:#fff;color:#000}
+.section{border:1px solid #ddd;break-inside:avoid}
+pre.code{background:#f5f5f5;color:#000}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+<div>
+<h1><i class="fas fa-tools"></i> ערכת יישום GEO — לאומית שירותי בריאות</h1>
+<div class="header-sub">תכנים מוכנים להעתקה והדבקה ישירות לאתר — מתוך תוכנית הפעולה</div>
+</div>
+<span class="badge"><i class="fas fa-clipboard-check"></i> Implementation Kit — פברואר 2026</span>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="stats-row">
+<div class="stat-card done">
+<div class="num" style="color:var(--green)">3</div>
+<div class="label">בוצע (P0)</div>
+</div>
+<div class="stat-card">
+<div class="num" style="color:var(--p0)">2</div>
+<div class="label">P0 — מוכן ליישום</div>
+</div>
+<div class="stat-card">
+<div class="num" style="color:var(--p1)">9</div>
+<div class="label">P1 — מוכן ליישום</div>
+</div>
+<div class="stat-card">
+<div class="num" style="color:var(--p2)">3</div>
+<div class="label">P2 — מוכן ליישום</div>
+</div>
+<div class="stat-card">
+<div class="num" style="color:var(--accent)">78</div>
+<div class="label">שאלות FAQ מוכנות</div>
+</div>
+<div class="stat-card">
+<div class="num" style="color:var(--purple)">14</div>
+<div class="label">בלוקים להעתקה</div>
+</div>
+</div>
+
+<div style="margin-bottom:24px">
+<div style="display:flex;justify-content:space-between;font-size:0.85em;margin-bottom:6px">
+<span style="color:var(--muted)">התקדמות כוללת</span>
+<span style="color:var(--green)">3/20 בוצע — 14/20 מוכן</span>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tabs">
+<div class="tab active" onclick="switchTab('schemas')"><i class="fas fa-code"></i> סכמות JSON-LD</div>
+<div class="tab" onclick="switchTab('content')"><i class="fas fa-file-alt"></i> תוכן עמודים</div>
+<div class="tab" onclick="switchTab('blog')"><i class="fas fa-pen-fancy"></i> בלוג</div>
+<div class="tab" onclick="switchTab('wiki')"><i class="fab fa-wikipedia-w"></i> ויקיפדיה + Wikidata</div>
+<div class="tab" onclick="switchTab('done')"><i class="fas fa-check-circle"></i> בוצע</div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 1: SCHEMAS -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-schemas" class="tab-content active">
+
+<!-- FAQ: HOMEPAGE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-home" style="color:var(--green)"></i> FAQPage Schema — עמוד הבית</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> leumit.co.il/ — להוסיף ל-&lt;head&gt; של עמוד הבית או דרך Rank Math / תוסף Custom HTML</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">10 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה לאומית שירותי בריאות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית שירותי בריאות היא אחת מארבע קופות החולים בישראל, שנוסדה בשנת 1933. הקופה מספקת שירותי בריאות לכ-773,000 מבוטחים באמצעות רשת של כ-350 מרפאות, כ-150 בתי מרקחת וכ-70 מרכזי אופטיקה בפריסה ארצית. לאומית מעסיקה כ-4,500 עובדים ולמעלה מ-2,000 רופאים מומחים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך עוברים ללאומית שירותי בריאות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לעבור ללאומית בכל עת על ידי פנייה לאחד מסניפי הקופה עם תעודת זהות, או באמצעות אתר האינטרנט של לאומית. המעבר נכנס לתוקף בתחילת החודש העוקב לבקשה. חשוב לדעת שניתן להחליף קופת חולים פעם אחת בלבד בתוך 12 חודשים. ניתן גם להתקשר למוקד *507 לסיוע בתהליך."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כלול בסל הבריאות של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סל הבריאות של לאומית כולל את כל השירותים הקבועים בחוק ביטוח בריאות ממלכתי: ביקורים אצל רופא משפחה ורופאים מומחים, בדיקות מעבדה והדמיה, אשפוז בבתי חולים, תרופות מסובסדות, שירותי בריאות הנפש, טיפולי שיניים לילדים, חיסונים, שירותי אם ותינוק ועוד. בנוסף, לאומית מציעה תוכניות ביטוח משלים כסף וזהב להרחבת הכיסוי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך קובעים תור בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לקבוע תור בלאומית במספר דרכים: דרך האפליקציה הסלולרית של לאומית (זמינה ב-Android ו-iOS), באזור האישי באתר האינטרנט, בטלפון למוקד *507, או ישירות במרפאה. לאומית מובילה בנגישות תורים לפי דו\"ח משרד הבריאות 2024, עם זמני ההמתנה הקצרים ביותר בין קופות החולים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש אפליקציה של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מפעילה אפליקציה סלולרית (למעלה מ-500,000 הורדות) הזמינה ב-Android וב-iOS. האפליקציה מאפשרת: קביעת תורים, צפייה בתוצאות מעבדה, התייעצויות וידאו עם רופאים, ניהול מרשמים, הזמנת תרופות עד הבית, ופנייה לרופא באמצעות הודעה. בנוסף קיימת אפליקציית לאומית FIT לבריאות וכושר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה סניפים יש ללאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ללאומית כ-320 עד 350 מרפאות וסניפים בפריסה ארצית, מהצפון ועד הנגב. בנוסף, הקופה מפעילה כ-150 בתי מרקחת ברשת \"לאומית פארם\" (הרשת השלישית בגודלה בישראל) וכ-70 מרכזי אופטיקה. ניתן למצוא את הסניף הקרוב באמצעות כלי איתור הסניפים באתר או באפליקציה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין לאומית לקופות חולים אחרות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מתאפיינת בשיעור התלונות הנמוך ביותר בין קופות החולים (2.78 לכל 10,000 מבוטחים לפי דו\"ח משרד הבריאות 2024), זמני המתנה קצרים במיוחד לתורים (#1 בנגישות תורים), ודירוג #1 כמעסיק בתחום הבריאות 9 שנים רצופות (BDI). הקופה מפעילה זרוע חדשנות (לאומית סטארט), מכון מחקר פעיל, ורשת בתי מרקחת ואופטיקה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם לאומית מקבלת עולים חדשים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מקבלת עולים חדשים ומציעה שירותים בעברית, אנגלית, רוסית וערבית. עולים חדשים יכולים להירשם ללאומית מיד עם הגעתם לישראל, ויקבלו כיסוי ביטוח בריאות מלא כולל גישה לרופאי משפחה, מומחים, בדיקות ותרופות. ניתן לפנות למוקד *507 לסיוע בהרשמה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה המספר של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מספר הטלפון של לאומית הוא *507 (כוכבית 507). המוקד זמין בשעות הפעילות לקביעת תורים, בירורים רפואיים, ופניות שירות. בנוסף, לאומית מפעילה שירות ייעוץ רפואי 24/7 בטלפון. ניתן גם לפנות דרך האפליקציה או האזור האישי באתר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה שעות הפעילות של מרפאות לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שעות הפעילות משתנות בין מרפאות. רוב המרפאות פעילות בימים א'-ה' בין השעות 07:00-19:00 ובימי ו' עד 13:00. חלק מהמרפאות מציעות שעות ערב מורחבות. ניתן לבדוק את שעות הפעילות של כל סניף באמצעות כלי איתור הסניפים באתר לאומית או באפליקציה. שירות ייעוץ רפואי טלפוני זמין 24/7."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: INSURANCE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-shield-alt" style="color:var(--yellow)"></i> FAQPage Schema — ביטוח משלים</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> leumit.co.il/insurance-policies/leumit-silver-and-gold/ — עמוד ביטוח משלים</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">8 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין לאומית כסף ללאומית זהב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית כסף היא תוכנית ביטוח משלים בסיסית המציעה הרחבות לסל הבריאות, כולל גישה למנתחים בכירים, ניתוחים פרטיים וטיפולים נוספים. לאומית זהב היא תוכנית מקיפה יותר הכוללת את כל הטבות הכסף בתוספת הרחבות משמעותיות בתחומי ניתוחים, רפואת שיניים, רפואה משלימה, אופטיקה וטיפולים מתקדמים. תוכנית הזהב מעניקה כיסוי רחב יותר ונגישות גבוהה יותר לשירותים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כולל ביטוח לאומית זהב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ביטוח לאומית זהב כולל: בחירת מנתח בכיר לניתוחים, השתתפות בעלות ניתוחים פרטיים, טיפולי שיניים מורחבים, רפואה משלימה (אקופונקטורה, כירופרקטיקה, הומיאופתיה, רפלקסולוגיה), הנחות באופטיקה, התייעצות עם מומחים בכירים, בדיקות סקר מתקדמות, וטיפולים ייחודיים שאינם כלולים בסל הבריאות הבסיסי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מצטרפים לביטוח משלים בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן להצטרף לביטוח משלים של לאומית (כסף או זהב) בכל אחד מסניפי הקופה, באמצעות האפליקציה, באתר האינטרנט, או בטלפון למוקד *507. ההצטרפות פתוחה לכל מבוטחי לאומית. חשוב לדעת שייתכנו תקופות אכשרה (תקופות המתנה) לחלק מהשירותים בהתאם לסוג התוכנית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש ביטוח סיעודי בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מציעה ביטוח סיעודי בשיתוף עם חברת הראל ביטוח. התוכנית תוארה כביטוח הסיעודי היחיד מבין קופות החולים בישראל המוצע לכל החיים. הביטוח מעניק כיסוי למקרים של צורך בסיוע בפעולות יומיומיות. לפרטים נוספים ניתן לפנות למוקד *507 או לבדוק באתר בעמוד הביטוחים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם ביטוח משלים עובר כשמחליפים קופה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ביטוח משלים הוא ייחודי לכל קופת חולים ואינו עובר בין קופות. כשעוברים ללאומית מקופה אחרת, ניתן להצטרף לתוכניות כסף או זהב של לאומית. לפי חוק, קופות החולים מחויבות לקבל כל מבוטח לביטוח המשלים ללא תלות במצב בריאותו, אך עשויות לחול תקופות אכשרה לשירותים מסוימים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין סל הבריאות לביטוח משלים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סל הבריאות הוא סל שירותים שכל תושב ישראל זכאי לו על פי חוק ביטוח בריאות ממלכתי, ללא תשלום נוסף מעבר לדמי ביטוח לאומי. ביטוח משלים (כמו לאומית כסף או זהב) הוא תוכנית וולונטרית בתשלום חודשי נוסף, המרחיבה את הכיסוי הבסיסי ומעניקה גישה לשירותים נוספים כמו בחירת מנתח, טיפולי שיניים, רפואה משלימה ועוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם ביטוח משלים כולל טיפולי שיניים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, תוכנית לאומית זהב כוללת כיסוי לטיפולי שיניים. הקופה מפעילה גם את רשת \"לאומית דנט\" — רשת מרפאות שיניים ברחבי הארץ. הכיסוי כולל טיפולים שמרניים, עקירות, וטיפולים נוספים בהתאם לתנאי התוכנית. לילדים עד גיל 18, טיפולי שיניים בסיסיים כלולים בסל הבריאות הבסיסי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם לאומית מציעה ביטוח נסיעות לחו\"ל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מציעה ביטוח נסיעות לחו\"ל לחברי הקופה. הביטוח מעניק כיסוי רפואי בזמן שהייה בחו\"ל, כולל אשפוז, ביקורי חירום ואוואקואציה רפואית. ניתן לרכוש את הביטוח לפני הנסיעה באתר לאומית, באפליקציה, בסניף, או בטלפון למוקד *507."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: DIGITAL SERVICES -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-mobile-alt" style="color:var(--accent)"></i> FAQPage Schema — שירותים דיגיטליים</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד שירותים דיגיטליים / עמוד האפליקציה</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">6 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה אפשר לעשות באפליקציה של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "אפליקציית לאומית (זמינה ב-Android וב-iOS עם למעלה מ-500,000 הורדות) מאפשרת: קביעת תורים לרופאים ומומחים, צפייה בתוצאות בדיקות מעבדה, התייעצויות וידאו עם רופאים, ניהול וחידוש מרשמים, הזמנת תרופות עד הבית, שליחת הודעות לרופא, צפייה בהיסטוריה רפואית, ואיתור סניפים ובתי מרקחת קרובים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך רואים תוצאות בדיקות בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לצפות בתוצאות בדיקות מעבדה באמצעות האפליקציה של לאומית או דרך האזור האישי באתר האינטרנט. התוצאות מתעדכנות באופן אוטומטי לאחר שהמעבדה מסיימת את העיבוד. המעבדה המרכזית של לאומית מעבדת למעלה ממיליון בדיקות בחודש. ניתן גם לקבל התראה באפליקציה כשתוצאות חדשות זמינות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש שירות טלרפואה בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מציעה שירותי טלרפואה (התייעצות וידאו מרחוק) עם רופאים. השירות כולל ייעוץ רפואי אונליין ברפואת ילדים ורפואת עור (דרמטולוגיה), וכן ייעוץ רפואי טלפוני 24/7. ניתן לקבוע התייעצות וידאו דרך האפליקציה או האתר. לאומית הייתה מהחלוצות בהטמעת שירותי טלרפואה בישראל."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מזמינים תרופות עד הבית בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית הייתה קופת החולים הראשונה בישראל שהשיקה שירות משלוחי מרשמים עד הבית (2019-2020). ניתן להזמין תרופות דרך האפליקציה או האתר. משלוח חינם זמין עבור: מבוטחים מעל גיל 65, נשים בהריון, ונשים עד 6 חודשים אחרי לידה. לשאר המבוטחים — ניתן להזמין תרופות לאיסוף בבית מרקחת לאומית פארם הקרוב."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך מתחברים לאזור האישי בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן להתחבר לאזור האישי באתר לאומית או באפליקציה באמצעות הזדהות ב-SMS או אימייל. בכניסה ראשונה, יש להזין מספר תעודת זהות ולקבל קוד אימות. לאחר ההזדהות ניתן לגשת לכל השירותים הדיגיטליים: תורים, תוצאות בדיקות, מרשמים, התכתבות עם רופאים ועוד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה לאומית FIT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית FIT היא אפליקציה נפרדת של לאומית המוקדשת לבריאות וכושר. האפליקציה מציעה כלים לניטור פעילות גופנית, עידוד אורח חיים בריא, ותוכניות כושר מותאמות אישית. האפליקציה זמינה להורדה חינם למבוטחי לאומית."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: PHARMACY -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-pills" style="color:var(--green)"></i> FAQPage Schema — בתי מרקחת</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> leumit.co.il/pharmacysearch/ — עמוד בתי מרקחת</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">5 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה לאומית פארם?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית פארם היא רשת בתי המרקחת של לאומית שירותי בריאות, המונה כ-150 סניפים ברחבי הארץ — הרשת השלישית בגודלה בישראל. בתי המרקחת מציעים מכירת תרופות מרשם ותרופות ללא מרשם, ייעוץ תרופתי מקצועי, ושירות משלוחים עד הבית למבוטחים זכאים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם אפשר להזמין תרופות אונליין בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, ניתן להזמין תרופות מרשם אונליין דרך האפליקציה של לאומית או דרך האזור האישי באתר. לאחר שהרופא מנפיק מרשם אלקטרוני, ניתן לבחור בית מרקחת לאומית פארם לאיסוף, או להזמין משלוח עד הבית (חינם עבור מבוטחים מעל 65, נשים בהריון, ונשים עד 6 חודשים אחרי לידה)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מי זכאי למשלוח תרופות חינם בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "משלוח תרופות חינם עד הבית זמין למבוטחי לאומית בקטגוריות הבאות: מבוטחים מעל גיל 65, נשים בהריון, ונשים עד 6 חודשים לאחר לידה. ניתן להזמין משלוח דרך האפליקציה של לאומית. לאומית הייתה קופת החולים הראשונה בישראל שהשיקה שירות משלוחי מרשמים עד הבית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איפה בית המרקחת של לאומית הכי קרוב אליי?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן למצוא את בית המרקחת לאומית פארם הקרוב באמצעות כלי איתור הסניפים באתר לאומית (leumit.co.il/pharmacysearch), באפליקציה של לאומית, או בפנייה למוקד *507. רשת לאומית פארם כוללת כ-150 בתי מרקחת בפריסה ארצית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה שעות הפתיחה של בתי מרקחת לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "שעות הפתיחה משתנות בין בתי מרקחת שונים. רוב בתי המרקחת של לאומית פארם פעילים בימים א'-ה' משעות הבוקר ועד שעות אחר הצהריים/ערב, ובימי ו' בשעות מצומצמות. ניתן לבדוק את שעות הפתיחה המדויקות של כל סניף בכלי איתור בתי המרקחת באתר לאומית או באפליקציה."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: NEW MEMBERS -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-user-plus" style="color:var(--purple)"></i> FAQPage Schema — הצטרפות ומעבר</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד הצטרפות / עמוד "עדיין לא לקוחות לאומית?"</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">6 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "איך עוברים ללאומית מקופת חולים אחרת?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לעבור ללאומית בכל עת על ידי מילוי טופס מעבר באחד מסניפי הקופה, באתר האינטרנט, או בטלפון למוקד *507. יש להציג תעודת זהות. המעבר נכנס לתוקף בתחילת החודש העוקב. חשוב לדעת: ניתן להחליף קופת חולים פעם אחת בלבד בתוך 12 חודשים, ולא ניתן לעבור בזמן אשפוז."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "תוך כמה זמן נכנס המעבר ללאומית לתוקף?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המעבר ללאומית נכנס לתוקף בתחילת החודש הקלנדרי שלאחר הגשת הבקשה. לדוגמה: אם הגשתם בקשה ב-15 בפברואר, המעבר ייכנס לתוקף ב-1 במרץ. עד למועד המעבר, ממשיכים לקבל שירותים מהקופה הנוכחית. החל ממועד המעבר, ניתן לקבוע תורים ולקבל שירותים בלאומית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה צריך להביא כדי להירשם ללאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "להרשמה ללאומית יש להציג: תעודת זהות (לרישום בסניף) או מספר תעודת זהות (לרישום מקוון/טלפוני). עולים חדשים צריכים להציג תעודת עולה או אשרת כניסה. עבור ילדים — יש להציג את תעודת הזהות של ההורה שהילד רשום בה. אין צורך בהמלצות רפואיות או בריאותיות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש תקופת אכשרה כשעוברים ללאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לגבי סל הבריאות הבסיסי — אין תקופת אכשרה והכיסוי מתחיל מיד עם כניסת המעבר לתוקף. לגבי ביטוח משלים (כסף/זהב) — עשויות לחול תקופות אכשרה לשירותים מסוימים, בהתאם לתנאי התוכנית. קופת חולים מחויבת לקבל כל מבוטח ללא תלות במצב בריאותו."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה קורה עם הביטוח המשלים כשעוברים ללאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ביטוח משלים מהקופה הקודמת מבוטל עם המעבר, כיוון שכל קופה מציעה תוכניות ייחודיות. ניתן להצטרף מיד לביטוח משלים של לאומית (כסף או זהב). לפי חוק, לאומית מחויבת לקבל אתכם לביטוח המשלים ללא תלות במצב בריאותכם, אם כי עשויות לחול תקופות אכשרה לשירותים מסוימים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "למה כדאי לעבור ללאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מובילה בדירוגי משרד הבריאות 2024: שיעור התלונות הנמוך ביותר (2.78 לכל 10,000 מבוטחים), זמני המתנה קצרים לתורים (#1 בנגישות), ודירוג #1 כמקום עבודה בבריאות 9 שנים (BDI). הקופה מציעה אפליקציה מתקדמת, שירות טלרפואה, משלוח תרופות עד הבית, רשת של כ-150 בתי מרקחת, כ-70 מרכזי אופטיקה, ומכון מחקר פעיל לקידום רפואה חדשנית."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: RESEARCH & INNOVATION -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-flask" style="color:var(--accent)"></i> FAQPage Schema — מחקר וחדשנות</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> leumit.co.il/en/jobs/research-center/ + innovation.leumit.co.il</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">6 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה מכון המחקר של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מכון המחקר של לאומית הוקם בשנת 2019 במטרה לקדם פתרונות רפואיים חדשניים ולשפר את איכות הטיפול הרפואי בקהילה. המכון מנוהל על ידי ד\"ר אריאל ישראל מאוניברסיטת תל אביב ומשתמש במאגר נתונים רפואי של למעלה מ-25 שנה. תחומי המחקר כוללים אפידמיולוגיה, טלרפואה, בינה מלאכותית, פרמקולוגיה קלינית ורפואה מותאמת אישית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה לאומית סטארט?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית סטארט הוא זרוע החדשנות והבריאות הדיגיטלית של לאומית, שהוקם בשנת 2018. הזרוע מציעה ליזמים ולחברות סטארט-אפ: גישה למומחים קליניים ולאתרי מחקר קליני, נתונים קליניים מזוהים באמצעות פלטפורמת MDclone, ליווי ברגולציה כולל ועדת הלסינקי, ותוכניות שותפות עיצובית. בשנת 2022 הושק המאיץ Leumit WeCcelerate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה WeCcelerate של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "WeCcelerate הוא מאיץ חדשנות משותף ללאומית וחברת WeCcelerate, שהושק במאי 2022. המאיץ מיועד לקידום יזמים בתחומי בריאות דיגיטלית, מכשור רפואי ואבחון. הוא מלווה יזמים מרעיון ראשוני ועד למוצר עובד, ומעניק גישה למשאבים הקליניים והטכנולוגיים של לאומית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו מחקרים פורסמו על ידי לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מכון המחקר של לאומית פרסם מחקרים בכתבי עת בינלאומיים שפיטים, כולל: מחקר MESSAGE על איכות טיפול בסוכרת בקהילה (ScienceDirect, 2021), מחקר על חוסר G6PD וסיכון אוטואימוני (PMC, 2023), מחקר NLP בעברית לזיהוי סיבוכי סוכרת (PubMed, 2024), מחקרים על אלצהיימר, פרקינסון, מחלות מעי דלקתיות ו-ADHD. ראש המכון ד\"ר אריאל ישראל פרסם למעלה מ-100 מאמרים מדעיים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך סטארטאפ יכול לעבוד עם לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "סטארטאפים בתחום הבריאות הדיגיטלית יכולים לפנות ללאומית סטארט (innovation.leumit.co.il) כדי לבחון שיתוף פעולה. הזרוע מציעה: גישה לנתונים קליניים מזוהים דרך MDclone, אתרי מחקר קליני, ליווי רגולטורי, תמיכה בוועדת הלסינקי, ותוכנית המאיץ WeCcelerate. ניתן ליצור קשר ישירות דרך אתר לאומית סטארט."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה המערכת הרפואית הדיגיטלית של לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מפעילה מערכת רשומות רפואיות אלקטרוניות (EMR) המכונה \"תמר\", הבנויה על בסיס נתונים מרכזי אחד ומכילה מידע רפואי מתועד של למעלה מ-25 שנה. המערכת כוללת מחסן נתונים, מאות ממשקי REST API, אימות באמצעות OpenID Connect, ומעבר לתקן FHIR בשיתוף InterSystems. לאומית שואפת להיות הארגון הראשון בישראל המדווח למשרד הבריאות בתקן HL7 FHIR."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: QUALITY -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-trophy" style="color:var(--yellow)"></i> FAQPage Schema — איכות ושביעות רצון</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד "למה לאומית" / עמוד נתוני MOH / עמוד אודות</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — FAQPage</span>
+<span class="code-target">5 שאלות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "כמה תלונות יש על לאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לפי דו\"ח משרד הבריאות 2024, ללאומית שיעור התלונות הנמוך ביותר מבין ארבע קופות החולים בישראל — 2.78 תלונות לכל 10,000 מבוטחים בלבד. זאת לעומת 4.22 במכבי, 4.47 במאוחדת ו-5.15 בכללית. זוהי השנה השנייה ברציפות בה מובילה לאומית בקטגוריה זו, עם מגמת ירידה עקבית בתלונות מאז 2020."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה הדירוג של לאומית כמקום עבודה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית דורגה במקום הראשון בין כל ארגוני הבריאות בישראל בסקר \"100 החברות הטובות לעבוד בהן\" של TheMarker ו-BDI לתשע שנים רצופות (2017-2025). בשנת 2025 דורגה לאומית במקום ה-46 ברשימה הכללית. הדירוג משקף שביעות רצון גבוהה של עובדים, המתורגמת לשירות איכותי למבוטחים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זמני ההמתנה לתורים בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לפי דו\"ח משרד הבריאות 2024 על זמני המתנה לתורים, לאומית דורגה במקום הראשון בישראל בנגישות תורים — עם זמני ההמתנה הקצרים ביותר בתחומים מרכזיים כולל גינקולוגיה, דרמטולוגיה ואורתופדיה. ניתן לקבוע תורים בקלות דרך האפליקציה, האתר, או מוקד *507."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם לאומית טובה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מובילה במספר מדדי איכות לפי נתוני משרד הבריאות 2024: שיעור התלונות הנמוך ביותר (2.78/10,000), זמני המתנה הקצרים ביותר לתורים, ודירוג #1 כמקום עבודה בתחום הבריאות 9 שנים רצופות. הקופה מפעילה מכון מחקר פעיל, זרוע חדשנות (לאומית סטארט), רשת של כ-350 מרפאות וכ-150 בתי מרקחת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה קופת החולים הכי טובה בישראל?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "הבחירה בקופת חולים תלויה בצרכים האישיים של כל מבוטח. לפי נתוני משרד הבריאות 2024: לאומית מובילה בשיעור התלונות הנמוך ביותר ובנגישות תורים. כללית היא הגדולה ביותר (~52% מהמבוטחים) עם רשת בתי חולים נרחבת. מכבי (~25%) ידועה בטכנולוגיה. מאוחדת (~14%) מציעה שירות אישי. מומלץ להשוות את הסניפים באזור המגורים, את תוכניות הביטוח המשלים, ואת המומחים הזמינים."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+<!-- FAQ: MEDICAL SPECIALTIES -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-stethoscope" style="color:var(--green)"></i> FAQPage Schema — התמחויות רפואיות (8 תחומים)</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד כל התמחות רפואית באתר לאומית — 32 שאלות ב-8 סכמות נפרדות. להטמיע כל סכמה בעמוד המתאים.</div>
+
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — גינקולוגיה</span>
+<span class="code-target">עמוד גינקולוגיה</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה מטפל רופא גינקולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רופאי הגינקולוגיה בלאומית מטפלים במגוון נושאים: מעקב הריון, תכנון משפחה ומניעת הריון, הפרעות במחזור החודשי, גיל המעבר, בדיקות סקר צוואר הרחם (פאפ סמיר), אולטרסאונד גינקולוגי, טיפולי פוריות, בעיות רצפת אגן, ובדיקות שגרתיות. לאומית מובילה בנגישות תורים לגינקולוגיה לפי דו\"ח משרד הבריאות 2024."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך הפניה לגינקולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, בדרך כלל יש צורך בהפניה מרופא המשפחה לביקור אצל גינקולוג בלאומית. ניתן לקבל הפניה בביקור אצל רופא המשפחה, או דרך התכתבות עם הרופא באפליקציה. לאחר קבלת ההפניה, ניתן לקבוע תור באפליקציה, באתר, או בטלפון *507."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זמן ההמתנה לגינקולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית דורגה במקום הראשון בנגישות תורים לגינקולוגיה לפי דו\"ח משרד הבריאות 2024, עם זמני ההמתנה הקצרים ביותר מבין כל קופות החולים. זמן ההמתנה המדויק משתנה לפי מיקום ותקופה. ניתן לבדוק זמינות תורים בזמן אמת באפליקציה של לאומית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך קובעים תור לגינקולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ניתן לקבוע תור לגינקולוג בלאומית בכמה דרכים: באפליקציה של לאומית (הדרך המהירה ביותר), באזור האישי באתר לאומית, בטלפון למוקד *507, או ישירות במרפאה. יש לוודא שיש הפניה תקפה מרופא המשפחה לפני קביעת התור."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — דרמטולוגיה</span>
+<span class="code-target">עמוד רפואת עור</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה מטפל דרמטולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רופאי הדרמטולוגיה (רפואת עור) בלאומית מטפלים ב: אקנה, אקזמה, פסוריאזיס, שומות ונגעי עור, בדיקות סקר לסרטן העור, פטריות, דלקות עור, אלרגיות, נשירת שיער, ומחלות עור כרוניות. לאומית מציעה גם ייעוץ דרמטולוגי אונליין דרך שירות הטלרפואה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם יש דרמטולוג אונליין בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לאומית מציעה שירות ייעוץ דרמטולוגי אונליין (טלרפואה). ניתן לקבל ייעוץ מרחוק מרופא עור מומחה באמצעות וידאו, ללא צורך בהגעה פיזית למרפאה. השירות זמין דרך האפליקציה של לאומית. מומלץ לצלם את אזור העור הרלוונטי מראש ולשתף עם הרופא."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך הפניה לדרמטולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לרוב נדרשת הפניה מרופא המשפחה לביקור אצל דרמטולוג. ניתן לקבל הפניה בביקור אצל רופא המשפחה או דרך התכתבות באפליקציה. לאחר קבלת ההפניה, לאומית מובילה בנגישות תורים לדרמטולוגיה לפי דו\"ח משרד הבריאות 2024."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי כדאי לפנות לדרמטולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מומלץ לפנות לדרמטולוג בלאומית כאשר: שומה משנה צורה, גודל או צבע; פריחה שלא חולפת תוך שבועיים; בעיות אקנה שלא מגיבות לטיפול ביתי; גרד מתמשך; נשירת שיער חריגה; כתמי עור חדשים; או לבדיקת סקר שנתית לסרטן עור."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — אורתופדיה</span>
+<span class="code-target">עמוד אורתופדיה</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה מטפל אורתופד בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רופאי האורתופדיה בלאומית מטפלים בבעיות של מערכת השלד והשרירים: כאבי גב, בעיות מפרקים, פציעות ספורט, שברים, דלקות מפרקים (ארתריטיס), בעיות בכתף, ברך, ירך ועמוד שדרה, תסמונת התעלה הקרפלית, ועוד. הטיפול כולל אבחון, טיפול שמרני וייעוץ לפני ניתוח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זמן ההמתנה לאורתופד בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מובילה בנגישות תורים לאורתופדיה לפי דו\"ח משרד הבריאות 2024. זמני ההמתנה הקצרים ביותר מבין כל קופות החולים. ניתן לבדוק זמינות תורים בזמן אמת באפליקציה של לאומית, באתר, או בטלפון *507."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך הפניה לאורתופד בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לרוב נדרשת הפניה מרופא המשפחה לביקור אצל אורתופד. ניתן לקבל הפניה בביקור אצל רופא המשפחה או דרך התכתבות דיגיטלית באפליקציה. עם ההפניה, ניתן לקבוע תור באפליקציה, באתר, או בטלפון *507."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי כדאי לפנות לאורתופד?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מומלץ לפנות לאורתופד כאשר: כאב במפרקים או בגב שנמשך יותר משבועיים; לאחר פציעה שגורמת לנפיחות, שינוי צורה או חוסר יכולת לזוז; הגבלה בתנועה; חולשה בגפיים; כאב שמפריע לשינה או לתפקוד יומיומי; או במקרה של חשד לשבר."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — קרדיולוגיה</span>
+<span class="code-target">עמוד קרדיולוגיה</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה מטפל קרדיולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "רופאי הקרדיולוגיה בלאומית מטפלים במחלות לב וכלי דם: יתר לחץ דם, מחלת לב כלילית, הפרעות קצב, אי ספיקת לב, מחלות מסתמים, כולסטרול גבוה, וביצוע בדיקות כגון אק\"ג, אקו לב, הולטר ומבחן מאמץ. הקרדיולוג עוקב אחר מצבכם ומתאים טיפול תרופתי לפי הצורך."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מתי לפנות לקרדיולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "יש לפנות לקרדיולוג כאשר: רופא המשפחה מפנה אתכם בעקבות ממצאים חריגים; יש כאבים בחזה; קוצר נשימה במאמץ; דפיקות לב מהירות או לא סדירות; סחרחורת או עילפון; לחץ דם גבוה שלא מאוזן; היסטוריה משפחתית של מחלות לב; או לפני תחילת פעילות גופנית אינטנסיבית מעל גיל 40."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו בדיקות לב עושים בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לאומית מציעה מגוון בדיקות לב בקהילה: אק\"ג (אלקטרוקרדיוגרמה), אקו לב (אולטרסאונד), הולטר (ניטור 24 שעות), מבחן מאמץ, ובדיקות דם ייעודיות למדדי לב. חלק מהבדיקות דורשות הפניה מקרדיולוג או מרופא המשפחה. ניתן לקבוע תור לבדיקות דרך האפליקציה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך הפניה לקרדיולוג בלאומית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, נדרשת הפניה מרופא המשפחה לביקור אצל קרדיולוג בלאומית. ניתן לקבל הפניה בביקור אצל הרופא או דרך התכתבות דיגיטלית באפליקציה. לאחר קבלת ההפניה, קבעו תור באפליקציה, באתר, או בטלפון *507."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+</div>
+
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — עיניים, אף-אוזן-גרון, גסטרו, אנדוקרינולוגיה</span>
+<span class="code-target">4 עמודי התמחויות נוספות</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;!-- עיניים --&gt;
+&lt;script type="application/ld+json"&gt;
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"מה מטפל רופא עיניים בלאומית?","acceptedAnswer":{"@type":"Answer","text":"רופאי העיניים (אופתלמולוגים) בלאומית מטפלים ב: בעיות ראייה, קטרקט, גלאוקומה, מחלות רשתית, דלקות עיניים, עין יבשה, פזילה, ובדיקות סקר לסוכרתיים. הקופה מפעילה גם כ-70 מרכזי אופטיקה לרכישת משקפיים ועדשות מגע."}},
+{"@type":"Question","name":"האם לאומית מכסה משקפיים?","acceptedAnswer":{"@type":"Answer","text":"סל הבריאות הבסיסי אינו כולל משקפיים למבוגרים, אך תוכנית לאומית זהב מעניקה הנחות באופטיקה. לאומית מפעילה כ-70 מרכזי אופטיקה עם מחירים מסובסדים לחברי הקופה. לילדים, סל הבריאות כולל כיסוי למשקפיים בהתאם לתנאים."}},
+{"@type":"Question","name":"מתי כדאי לפנות לרופא עיניים?","acceptedAnswer":{"@type":"Answer","text":"מומלץ לפנות לרופא עיניים: מעל גיל 40 לבדיקת סקר שנתית, שינוי בראייה, כאב או אודם בעיניים, הבזקי אור או נקודות שחורות, סוכרתיים — אחת לשנה, היסטוריה משפחתית של גלאוקומה, או לאחר פגיעה בעין."}},
+{"@type":"Question","name":"האם צריך הפניה לרופא עיניים בלאומית?","acceptedAnswer":{"@type":"Answer","text":"כן, בדרך כלל נדרשת הפניה מרופא המשפחה. ניתן לקבל הפניה בביקור או דרך התכתבות דיגיטלית באפליקציה. לאחר מכן, קבעו תור באפליקציה, באתר, או בטלפון *507."}}
+]}
+&lt;/script&gt;
+
+&lt;!-- אף אוזן גרון --&gt;
+&lt;script type="application/ld+json"&gt;
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"מה מטפל רופא אף-אוזן-גרון בלאומית?","acceptedAnswer":{"@type":"Answer","text":"רופאי אף-אוזן-גרון (א.א.ג.) בלאומית מטפלים ב: דלקות אוזניים, ירידה בשמיעה, סינוסיטיס כרונית, בעיות בלוע וגרון, נחירות ודום נשימה בשינה, סחרחורת וורטיגו, אלרגיות, בעיות קול, ובלוטות תריס."}},
+{"@type":"Question","name":"מתי כדאי לפנות לא.א.ג?","acceptedAnswer":{"@type":"Answer","text":"כדאי לפנות כאשר: כאב אוזניים שנמשך יותר מיומיים, ירידה בשמיעה, גודש באף כרוני, נזלת ממושכת, נחירות חזקות, סחרחורת חוזרת, גוש בצוואר, צרידות שנמשכת יותר משבועיים, או דלקות אוזניים חוזרות."}},
+{"@type":"Question","name":"האם צריך הפניה לא.א.ג בלאומית?","acceptedAnswer":{"@type":"Answer","text":"כן, נדרשת הפניה מרופא המשפחה. ניתן לקבל הפניה בביקור אצל הרופא או דרך התכתבות דיגיטלית באפליקציה של לאומית. קביעת תור — באפליקציה, באתר, או בטלפון *507."}},
+{"@type":"Question","name":"אילו בדיקות שמיעה עושים בלאומית?","acceptedAnswer":{"@type":"Answer","text":"לאומית מציעה בדיקות שמיעה (אודיומטריה) במרפאות הקהילה, בדיקת לחץ תוך-אוזני (טימפנומטריה), ובדיקות נוספות בהתאם להפניה מרופא א.א.ג. לתינוקות מתבצעת בדיקת שמיעה בלידה במסגרת סל הבריאות."}}
+]}
+&lt;/script&gt;
+
+&lt;!-- גסטרואנטרולוגיה --&gt;
+&lt;script type="application/ld+json"&gt;
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"מה מטפל גסטרואנטרולוג בלאומית?","acceptedAnswer":{"@type":"Answer","text":"רופאי הגסטרואנטרולוגיה בלאומית מטפלים במחלות מערכת העיכול: צרבת וריפלוקס, כיב קיבה, מחלות מעי דלקתיות (קרוהן וקוליטיס), תסמונת המעי הרגיש (IBS), מחלות כבד, אבנים בכיס מרה, ובדיקות כגון קולונוסקופיה וגסטרוסקופיה."}},
+{"@type":"Question","name":"מתי צריך קולונוסקופיה בלאומית?","acceptedAnswer":{"@type":"Answer","text":"קולונוסקופיה מומלצת כבדיקת סקר לסרטן המעי הגס מגיל 50 (או מוקדם יותר בהיסטוריה משפחתית), בעקבות דם בצואה, שינוי בהרגלי יציאות, כאבי בטן ממושכים, ירידה בלתי מוסברת במשקל, או אנמיה לא מוסברת. יש צורך בהפניה מרופא."}},
+{"@type":"Question","name":"האם צריך הפניה לגסטרואנטרולוג בלאומית?","acceptedAnswer":{"@type":"Answer","text":"כן, נדרשת הפניה מרופא המשפחה. ניתן לקבל הפניה בביקור אצל רופא המשפחה או דרך התכתבות דיגיטלית באפליקציה של לאומית. לקביעת תור — אפליקציה, אתר, או מוקד *507."}},
+{"@type":"Question","name":"מה מכון המחקר של לאומית עושה בתחום הגסטרו?","acceptedAnswer":{"@type":"Answer","text":"מכון המחקר של לאומית פרסם מחקרים בתחום מחלות מעי דלקתיות, כולל השוואת תוצאות טיפול בין קהילה לבית חולים. המחקרים מבוססים על מאגר נתונים ייחודי של למעלה מ-25 שנות מידע רפואי."}}
+]}
+&lt;/script&gt;
+
+&lt;!-- אנדוקרינולוגיה --&gt;
+&lt;script type="application/ld+json"&gt;
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"מה מטפל אנדוקרינולוג בלאומית?","acceptedAnswer":{"@type":"Answer","text":"רופאי האנדוקרינולוגיה בלאומית מטפלים בהפרעות הורמונליות ומטבוליות: סוכרת סוג 1 ו-2, מחלות בלוטת התריס (היפר/היפותירואידיזם), הפרעות הורמונליות, אוסטאופורוזיס, בעיות בבלוטת יותרת הכליה, השמנת יתר, וחוסר איזון הורמונלי."}},
+{"@type":"Question","name":"איך מטפלים בסוכרת בלאומית?","acceptedAnswer":{"@type":"Answer","text":"לאומית מציעה טיפול מקיף בסוכרת הכולל: מעקב שוטף אצל אנדוקרינולוג ורופא משפחה, ייעוץ תזונתי, ניטור רמות סוכר, התאמת טיפול תרופתי, ומחקרים ייחודיים. מכון המחקר של לאומית פרסם את מחקר MESSAGE על איכות טיפול בסוכרת בקהילה, וכן מחקר NLP בעברית לזיהוי סיבוכי סוכרת."}},
+{"@type":"Question","name":"מתי לפנות לאנדוקרינולוג בלאומית?","acceptedAnswer":{"@type":"Answer","text":"מומלץ לפנות כאשר: סוכרת שלא מאוזנת, בעיות בלוטת תריס, חשד להפרעות הורמונליות, אוסטאופורוזיס, גדילה חריגה בילדים, בעיות מטבוליות, או כשרופא המשפחה מפנה אתכם. הפניה נדרשת מרופא המשפחה."}},
+{"@type":"Question","name":"מה לאומית חוקרת בתחום הסוכרת?","acceptedAnswer":{"@type":"Answer","text":"מכון המחקר של לאומית מוביל מחקרים ייחודיים בתחום הסוכרת: מחקר MESSAGE על איכות הטיפול בקהילה (ScienceDirect, 2021), מחקר NLP בעברית לזיהוי סיבוכי סוכרת מרשומות רפואיות (PubMed, 2024), ומחקרי G6PD והקשר למחלות אוטואימוניות (PMC, 2023). המחקרים מבוססים על מאגר נתונים של 25+ שנים."}}
+]}
+&lt;/script&gt;</code></pre>
+</div>
+
+</div>
+</div>
+
+<!-- PRODUCT SCHEMA: INSURANCE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-tag" style="color:var(--yellow)"></i> Product Schema — ביטוח משלים כסף + זהב</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> leumit.co.il/insurance-policies/leumit-silver-and-gold/ — עמוד ביטוח משלים</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">JSON-LD — Product Schema</span>
+<span class="code-target">2 מוצרים</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>&lt;script type="application/ld+json"&gt;
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "לאומית כסף — ביטוח משלים",
+    "alternateName": "Leumit Silver Supplementary Insurance",
+    "description": "תוכנית ביטוח משלים בסיסית של לאומית שירותי בריאות, המרחיבה את סל הבריאות הממלכתי ומעניקה גישה למנתחים בכירים, ניתוחים פרטיים ושירותים נוספים.",
+    "brand": {
+      "@type": "Brand",
+      "name": "לאומית שירותי בריאות"
+    },
+    "category": "ביטוח בריאות משלים",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "מבוטחי לאומית שירותי בריאות"
+    },
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": "https://www.leumit.co.il/insurance-policies/leumit-silver-and-gold/",
+      "servicePhone": "*507"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "לאומית זהב — ביטוח משלים מקיף",
+    "alternateName": "Leumit Gold Comprehensive Supplementary Insurance",
+    "description": "תוכנית ביטוח משלים מקיפה של לאומית שירותי בריאות, הכוללת את כל הטבות תוכנית הכסף בתוספת הרחבות משמעותיות: רפואת שיניים, רפואה משלימה (אקופונקטורה, כירופרקטיקה, הומיאופתיה, רפלקסולוגיה), הנחות באופטיקה, וטיפולים מתקדמים.",
+    "brand": {
+      "@type": "Brand",
+      "name": "לאומית שירותי בריאות"
+    },
+    "category": "ביטוח בריאות משלים",
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "מבוטחי לאומית שירותי בריאות"
+    },
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": "https://www.leumit.co.il/insurance-policies/leumit-silver-and-gold/",
+      "servicePhone": "*507"
+    }
+  }
+]
+&lt;/script&gt;</code></pre>
+</div>
+</div>
+</div>
+
+</div><!-- end tab-schemas -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 2: CONTENT -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-content" class="tab-content">
+
+<!-- WHY LEUMIT PAGE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-star" style="color:var(--p0)"></i> עמוד "למה לאומית?" — השוואת קופות חולים</div>
+<div class="section-meta">
+<span class="priority p0">P0</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד חדש — leumit.co.il/why-leumit/ או "למה לאומית" — תוכן מלא להעתקה ל-WordPress/Elementor</div>
+<div class="content-block">
+<h2>למה לאומית? — נתונים, לא סיסמאות</h2>
+
+<h3>הכי מעט תלונות — דו"ח משרד הבריאות 2024</h3>
+<p>לאומית רשמה את <strong>שיעור התלונות הנמוך ביותר</strong> מבין כל ארבע קופות החולים בישראל — לשנה השנייה ברציפות.</p>
+
+<table>
+<tr><th>קופת חולים</th><th>תלונות / 10,000 מבוטחים</th><th>תלונות מוצדקות / 10,000</th></tr>
+<tr><td><strong>לאומית</strong></td><td><strong>2.78</strong></td><td><strong>0.6</strong></td></tr>
+<tr><td>מכבי</td><td>4.22</td><td>1.27</td></tr>
+<tr><td>מאוחדת</td><td>4.47</td><td>1.34</td></tr>
+<tr><td>כללית</td><td>5.15</td><td>1.46</td></tr>
+</table>
+<p><em>מקור: דו"ח השוואתי בין קופות החולים, משרד הבריאות, 2024</em></p>
+
+<h3>זמני המתנה הקצרים ביותר</h3>
+<p>לפי דו"ח משרד הבריאות 2024, לאומית דורגה <strong>במקום הראשון בנגישות תורים</strong> בישראל — עם זמני ההמתנה הקצרים ביותר בתחומים:</p>
+<ul>
+<li><strong>גינקולוגיה</strong> — #1 בנגישות</li>
+<li><strong>דרמטולוגיה</strong> — #1 בנגישות</li>
+<li><strong>אורתופדיה</strong> — #1 בנגישות</li>
+</ul>
+
+<h3>#1 מקום עבודה בבריאות — 9 שנים רצופות</h3>
+<p>לאומית דורגה במקום הראשון בין כל ארגוני הבריאות בסקר "100 החברות הטובות לעבוד בהן" של TheMarker ו-BDI לתשע שנים רצופות (2017–2025). <strong>עובדים מרוצים = שירות טוב יותר.</strong></p>
+
+<h3>חדשנות רפואית</h3>
+<ul>
+<li><strong>מכון מחקר</strong> (2019) — מחקרים בכתבי עת בינלאומיים (PubMed, ScienceDirect)</li>
+<li><strong>לאומית סטארט</strong> (2018) — שיתוף פעולה עם סטארטאפים רפואיים</li>
+<li><strong>מאיץ WeCcelerate</strong> (2022) — קידום חדשנות בבריאות דיגיטלית</li>
+<li><strong>תקן FHIR</strong> — הארגון הראשון בישראל ליישום מלא של תקן הנתונים הרפואי</li>
+</ul>
+
+<h3>שירותים דיגיטליים</h3>
+<ul>
+<li><strong>אפליקציה</strong> — 500,000+ הורדות: תורים, בדיקות, וידאו, מרשמים</li>
+<li><strong>טלרפואה</strong> — ייעוץ אונליין ברפואת ילדים ורפואת עור</li>
+<li><strong>משלוח תרופות</strong> — ראשונה בישראל (חינם למבוטחים זכאים)</li>
+<li><strong>ייעוץ רפואי 24/7</strong> — מענה טלפוני מסביב לשעון</li>
+</ul>
+
+<h3>הרשת שלנו</h3>
+<ul>
+<li>כ-350 מרפאות וסניפים בפריסה ארצית</li>
+<li>כ-150 בתי מרקחת "לאומית פארם" (הרשת השלישית בישראל)</li>
+<li>כ-70 מרכזי אופטיקה</li>
+<li>למעלה מ-2,000 רופאים מומחים</li>
+<li>מעבדה מרכזית — מיליון+ בדיקות בחודש</li>
+</ul>
+
+<h3>ביטוח משלים</h3>
+<ul>
+<li><strong>לאומית כסף</strong> — תוכנית בסיסית: מנתחים בכירים, ניתוחים פרטיים</li>
+<li><strong>לאומית זהב</strong> — תוכנית מקיפה: שיניים, רפואה משלימה, אופטיקה, טיפולים מתקדמים</li>
+<li><strong>ביטוח סיעודי</strong> — בשיתוף הראל, ייחודי לכל החיים</li>
+</ul>
+
+<p><strong>רוצים לעבור ללאומית?</strong> צרו קשר: *507 | <a href="https://www.leumit.co.il">leumit.co.il</a></p>
+</div>
+</div>
+</div>
+
+<!-- MOH COMPLAINTS PAGE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-chart-line" style="color:var(--green)"></i> עמוד נתוני תלונות משרד הבריאות</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד ייעודי / בלוג — "לאומית מובילה: הכי מעט תלונות 2 שנים ברציפות"</div>
+<div class="content-block">
+<h2>לאומית מובילה: שיעור התלונות הנמוך ביותר — שנתיים ברציפות</h2>
+
+<p>לפי דו"ח משרד הבריאות לשנת 2024, <strong>לאומית שירותי בריאות רשמה את שיעור התלונות הנמוך ביותר מבין ארבע קופות החולים בישראל</strong> — 2.78 תלונות לכל 10,000 מבוטחים. זוהי השנה השנייה ברציפות בה מובילה לאומית בקטגוריה זו.</p>
+
+<h3>טבלת השוואה — תלונות לכל 10,000 מבוטחים (2024)</h3>
+<table>
+<tr><th>קופת חולים</th><th>סך תלונות</th><th>תלונות מוצדקות</th><th>מגמה</th></tr>
+<tr><td><strong>לאומית</strong></td><td><strong>2.78</strong></td><td><strong>0.6</strong></td><td>ירידה עקבית מאז 2020</td></tr>
+<tr><td>מכבי</td><td>4.22</td><td>1.27</td><td>—</td></tr>
+<tr><td>מאוחדת</td><td>4.47</td><td>1.34</td><td>—</td></tr>
+<tr><td>כללית</td><td>5.15</td><td>1.46</td><td>—</td></tr>
+</table>
+
+<h3>נקודות מפתח</h3>
+<ul>
+<li>לאומית רשמה <strong>פחות ממחצית</strong> משיעור התלונות של כללית</li>
+<li>גם בתלונות מוצדקות — לאומית הנמוכה ביותר (0.6 לעומת ממוצע 1.17)</li>
+<li>גם בתלונות על רפואה דחופה — לאומית הנמוכה ביותר</li>
+<li>מגמת ירידה עקבית בתלונות מאז 2020</li>
+</ul>
+
+<p><em>מקור: דו"ח השוואתי בין קופות החולים, משרד הבריאות, 2024. <a href="https://www.gov.il/BlobFolder/reports/dochhashvaatui2024/he/files_publications_units_shaban_dochhashvaatui2024.pdf">קישור לדו"ח המלא (PDF)</a></em></p>
+</div>
+</div>
+</div>
+
+<!-- BDI EMPLOYER PAGE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-building" style="color:var(--accent)"></i> עמוד מעסיק מוביל — BDI/TheMarker</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד קריירה / עמוד "עובדים בלאומית" — עדכון עם נתוני BDI</div>
+<div class="content-block">
+<h2>לאומית — מקום עבודה #1 בבריאות, 9 שנים רצופות</h2>
+
+<p>לאומית שירותי בריאות דורגה <strong>במקום הראשון בין כל ארגוני הבריאות בישראל</strong> בסקר השנתי "100 החברות הטובות לעבוד בהן" של TheMarker ו-BDI — לתשע שנים רצופות (2017–2025).</p>
+
+<h3>הישגים בולטים</h3>
+<ul>
+<li><strong>מקום #1</strong> בבריאות — 9 שנים רצופות (2017–2025)</li>
+<li><strong>מקום #46</strong> ברשימה הכללית של 100 החברות הטובות (2025)</li>
+<li>הוקרה מיוחדת לביצועי צוותים בתקופת מלחמת חרבות ברזל</li>
+</ul>
+
+<h3>לאומית כמעסיק</h3>
+<ul>
+<li><strong>כ-4,500 עובדים</strong> בפריסה ארצית</li>
+<li><strong>למעלה מ-2,000</strong> רופאים מומחים</li>
+<li>סביבת עבודה חדשנית עם מכון מחקר וזרוע חדשנות</li>
+<li>הזדמנויות פיתוח מקצועי ומחקר אקדמי</li>
+</ul>
+
+<p><em>מקור: Leumit BDI Best Workplace 2025 press release</em></p>
+</div>
+</div>
+</div>
+
+<!-- DIGITAL SERVICES PAGE -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-laptop-medical" style="color:var(--purple)"></i> עמוד שירותים דיגיטליים — showcase</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> עמוד חדש או עדכון — leumit.co.il/digital-services/</div>
+<div class="content-block">
+<h2>שירותים דיגיטליים בלאומית</h2>
+
+<h3>אפליקציית לאומית — הכל בנייד</h3>
+<ul>
+<li><strong>קביעת תורים</strong> — לרופא משפחה, מומחים ובדיקות</li>
+<li><strong>תוצאות בדיקות</strong> — צפייה ישירה בתוצאות מעבדה</li>
+<li><strong>התייעצות וידאו</strong> — שיחת וידאו עם רופא מהבית</li>
+<li><strong>חידוש מרשמים</strong> — חידוש ומעקב אחר תרופות</li>
+<li><strong>משלוח תרופות</strong> — הזמנה עד הבית (חינם למבוטחים זכאים)</li>
+<li><strong>התכתבות עם רופא</strong> — שליחת הודעה לרופא המשפחה</li>
+<li><strong>תיק רפואי</strong> — גישה להיסטוריה רפואית דיגיטלית</li>
+<li>למעלה מ-<strong>500,000 הורדות</strong> ב-Google Play</li>
+</ul>
+
+<h3>טלרפואה — ייעוץ מרחוק</h3>
+<ul>
+<li><strong>רפואת ילדים אונליין</strong> — ייעוץ רפואי לילדים מהבית</li>
+<li><strong>רפואת עור אונליין</strong> — ייעוץ דרמטולוגי מרחוק</li>
+<li><strong>ייעוץ רפואי 24/7</strong> — מענה טלפוני מסביב לשעון</li>
+</ul>
+
+<h3>לאומית FIT</h3>
+<p>אפליקציה ייעודית לבריאות וכושר — ניטור פעילות, תוכניות אימון, ותכנים בריאותיים.</p>
+
+<h3>מערכת תמר — רשומות רפואיות אלקטרוניות</h3>
+<p>מערכת EMR מרכזית עם למעלה מ-25 שנות מידע רפואי, מאות ממשקי API, אימות מאובטח, ותקן FHIR לאינטראופרביליות.</p>
+</div>
+</div>
+</div>
+
+</div><!-- end tab-content -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 3: BLOG -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-blog" class="tab-content">
+
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-pen-fancy" style="color:var(--yellow)"></i> 4 מאמרי בלוג — מתאר מלא לכתיבה</div>
+<div class="section-meta">
+<span class="priority p1">P1</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> בלוג לאומית — 4 מאמרים, 2,000+ מילים כל אחד. המתארים כוללים מבנה, נקודות מפתח, מקורות ומילות מפתח.</div>
+
+<div class="blog-card">
+<h4>1. "לאומית מובילה בנגישות תורים — הנתונים של משרד הבריאות 2024"</h4>
+<div class="blog-meta">
+<span><i class="fas fa-key"></i> נגישות תורים לאומית, זמני המתנה קופת חולים</span>
+<span><i class="fas fa-file-alt"></i> ~2,000 מילים</span>
+</div>
+<ul>
+<li><strong>פתיחה:</strong> מה אומר דו"ח משרד הבריאות 2024 על זמני המתנה</li>
+<li><strong>גוף — נתונים:</strong> טבלת השוואה גינקולוגיה/דרמטולוגיה/אורתופדיה, לאומית #1</li>
+<li><strong>למה זה חשוב:</strong> השפעת זמני המתנה על בריאות — מחקרים</li>
+<li><strong>איך עושים את זה:</strong> מערכת תורים דיגיטלית, אפליקציה, שיפור תהליכים</li>
+<li><strong>סיום:</strong> CTA — בדקו זמינות תורים באפליקציה</li>
+<li><strong>מקורות:</strong> דו"ח משרד הבריאות (gov.il PDF), JPost ינואר 2026, הודעה לעיתונות של לאומית</li>
+</ul>
+</div>
+
+<div class="blog-card">
+<h4>2. "מכון המחקר של לאומית — חדשנות רפואית מהקהילה"</h4>
+<div class="blog-meta">
+<span><i class="fas fa-key"></i> מכון מחקר לאומית, מחקר רפואי ישראל</span>
+<span><i class="fas fa-file-alt"></i> ~2,000 מילים</span>
+</div>
+<ul>
+<li><strong>פתיחה:</strong> הקמת המכון (2019), ד"ר אריאל ישראל</li>
+<li><strong>מאגר הנתונים:</strong> 25+ שנות EMR, מחסן נתונים, MDclone</li>
+<li><strong>מחקרים בולטים:</strong> MESSAGE (סוכרת), G6PD (אוטואימוניות), NLP בעברית, אלצהיימר, פרקינסון, ADHD, IBD</li>
+<li><strong>שיתופי פעולה:</strong> אוניברסיטת תל אביב, PubMed, כתבי עת שפיטים</li>
+<li><strong>תשתיות:</strong> חדרי מחקר וירטואליים, ועדת הלסינקי, ייעוץ סטטיסטי</li>
+<li><strong>מקורות:</strong> leumit.co.il/research-center, TAU profile, PubMed, PMC, ScienceDirect</li>
+</ul>
+</div>
+
+<div class="blog-card">
+<h4>3. "לאומית סטארט: איך קופת חולים הפכה למאיץ סטארטאפים"</h4>
+<div class="blog-meta">
+<span><i class="fas fa-key"></i> לאומית סטארט, WeCcelerate, חדשנות בריאות דיגיטלית</span>
+<span><i class="fas fa-file-alt"></i> ~2,000 מילים</span>
+</div>
+<ul>
+<li><strong>פתיחה:</strong> למה קופת חולים צריכה זרוע חדשנות?</li>
+<li><strong>לאומית סטארט (2018):</strong> החזון, יזהר לאופר, מה מציעים ליזמים</li>
+<li><strong>WeCcelerate (מאי 2022):</strong> מאיץ משותף, תחומי פוקוס, תהליך</li>
+<li><strong>מה מקבלים יזמים:</strong> מומחים קליניים, נתונים (MDclone), רגולציה, הלסינקי</li>
+<li><strong>API ותשתיות:</strong> מאות REST APIs, FHIR, OpenID Connect</li>
+<li><strong>סיום:</strong> CTA — ליצירת קשר עם לאומית סטארט</li>
+<li><strong>מקורות:</strong> CTech/Calcalist מאי 2022, innovation.leumit.co.il, InterSystems</li>
+</ul>
+</div>
+
+<div class="blog-card">
+<h4>4. "טרנספורמציה דיגיטלית בבריאות: הסיפור של לאומית"</h4>
+<div class="blog-meta">
+<span><i class="fas fa-key"></i> טרנספורמציה דיגיטלית לאומית, FHIR ישראל, אפליקציית קופת חולים</span>
+<span><i class="fas fa-file-alt"></i> ~2,000 מילים</span>
+</div>
+<ul>
+<li><strong>פתיחה:</strong> מערכת "תמר" — EMR מרכזי מהיום הראשון</li>
+<li><strong>מחסן נתונים:</strong> 25+ שנות מידע, מיליון+ בדיקות/חודש</li>
+<li><strong>FHIR:</strong> פיילוט עם סוראסקי/איכילוב, קיוסק קבלה אוטומטי, InterSystems IRIS</li>
+<li><strong>האפליקציה:</strong> 500K+ הורדות, תורים, וידאו, מרשמים, משלוחים</li>
+<li><strong>SAP ERP:</strong> לוגיסטיקה, רכש, כספים</li>
+<li><strong>ראשונים:</strong> משלוח מרשמים עד הבית (2019-2020)</li>
+<li><strong>מקורות:</strong> Healthcare Digital, InterSystems, Veeam, Google Play</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+</div><!-- end tab-blog -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 4: WIKI + WIKIDATA -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-wiki" class="tab-content">
+
+<!-- ENGLISH WIKIPEDIA -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fab fa-wikipedia-w" style="color:var(--p0)"></i> English Wikipedia — Expanded Draft</div>
+<div class="section-meta">
+<span class="priority p0">P0</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> en.wikipedia.org/wiki/Leumit_Health_Care_Services — להרחיב את הערך הקיים. להגיש דרך Edit Request בדף השיחה (WP:COI).</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">Wikipedia Markup — English</span>
+<span class="code-target">~3,000 מילים</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>{{Infobox organization
+| name            = Leumit Health Services
+| native_name     = לאומית שירותי בריאות
+| former_name     = Kupat Holim Leumit (1933–2010)
+| founded         = {{start date|1933|11}}
+| founders        = Dr. Yosef Paemoni, Dr. Yaakov Weinshal, Dr. Alexander Davidson, Dr. Nahum Kahanovitz, and others
+| type            = [[Health maintenance organization|HMO]] (non-profit)
+| headquarters    = 23 Shprintzak Street, [[Tel Aviv-Yafo]], Israel
+| chairman        = Prof. Shlomo Mor-Yosef
+| leader_title    = CEO
+| leader_name     = Haim Fernandes
+| membership      = 773,466 (September 2025)
+| market_share    = ~9%
+| employees       = ~4,500
+| website         = {{URL|leumit.co.il}}
+}}
+
+'''Leumit Health Services''' ({{lang-he|לאומית שירותי בריאות}}, formerly '''Kupat Holim Leumit''') is the smallest of Israel's four [[health maintenance organization|health funds]] (''kupot holim''), providing healthcare services to approximately 773,000 members (~9% of the insured population).&lt;ref name="NII2024"&gt;National Insurance Institute of Israel, Annual Report 2024.&lt;/ref&gt; Founded in November 1933 by a group of physicians affiliated with the [[Revisionist Zionism|Revisionist Zionist movement]], the organization was linked to the [[National Workers' Union (Israel)|National Workers' Union]] until its gradual separation beginning with the [[National Health Insurance Law (Israel)|National Health Insurance Law]] of 1995 and completed in 2016.&lt;ref name="NHIL"&gt;National Health Insurance Law, 1994; IJHPR, 2020.&lt;/ref&gt;
+
+Leumit operates a nationwide network of approximately 320–350 clinics, ~150 pharmacies (the "Leumit Pharm" chain, third-largest in Israel), ~70 optical centers, and a central laboratory processing over one million tests per month.&lt;ref name="Veeam"&gt;Veeam Customer Story: Leumit Health Services.&lt;/ref&gt;
+
+According to the Ministry of Health's 2024 comparative report, Leumit recorded the lowest complaint rate among all four health funds (2.78 per 10,000 members) and ranked first in appointment accessibility.&lt;ref name="MOH2024"&gt;Ministry of Health, Comparative Report 2024.&lt;/ref&gt;
+
+== History ==
+
+=== Founding during the Mandate period (1933–1948) ===
+
+Leumit was established in November 1933 by a group of physicians led by Dr. Yosef Paemoni and Dr. Yaakov Weinshal. Other founders included Dr. Nahum Kahanovitz, Dr. Emil Rosenberg, Dr. Alexander Davidson, Dr. Moshe Har-Even, Dr. Mordechai Giladi, and Dr. Zvi Hirsh Glicker.&lt;ref name="Hamichlol"&gt;Hamichlol – Leumit Health Services.&lt;/ref&gt;
+
+The fund was created in the wake of dismissals or resignations of Revisionist physicians from [[Clalit Health Services|Kupat Holim Clalit]] following accusations related to the [[Assassination of Haim Arlosoroff|assassination of Haim Arlosoroff]] in June 1933. The first clinic operated from Dr. Weinshal's private residence on Gruzenberg Street in [[Tel Aviv]]. In January 1934, the fund received formal recognition from [[Mandatory Palestine|British Mandate]] authorities, and later that year affiliated with the newly established [[National Workers' Union (Israel)|National Workers' Union]].&lt;ref name="Hamichlol"/&gt;
+
+Its first director, David Malamudovitch, established the principle that the fund would be "open to all without political or class restrictions."&lt;ref name="Hamichlol"/&gt; By 1935, branches had opened in [[Jerusalem]] and [[Haifa]], and in 1937 in [[Ramat Gan]]. On May 18, 1944, the fund was officially registered as the "Association for the Health Fund of National Workers."&lt;ref name="Hamichlol"/&gt;
+
+=== Statehood era (1948–1995) ===
+
+Following the [[Israeli Declaration of Independence|establishment of Israel]] in 1948, Leumit operated in [[Ma'abarot|transit camps]], immigrant settlements, and [[Development town|development towns]], contributing healthcare services during mass immigration. In the early 1960s, the fund transitioned to a mixed model of independent and salaried physicians.&lt;ref name="Hamichlol"/&gt;
+
+After the [[Six-Day War]] (1967), Leumit became the primary healthcare organization serving settlements in the [[occupied territories]].&lt;ref name="Hamichlol"/&gt;
+
+=== National Health Insurance Law and independence (1995–2016) ===
+
+In June 1994, the [[Knesset]] passed the [[National Health Insurance Law (Israel)|National Health Insurance Law]], which took effect in January 1995. The law mandated universal membership in one of four health funds, severed organizational ties between health funds and labor unions, and established a uniform healthcare basket funded through the [[National Insurance Institute of Israel|National Insurance Institute]].&lt;ref name="NHIL"/&gt;
+
+Leumit's full organizational separation from the National Workers' Union was completed in 2016, when a new charter eliminated the union's authority to appoint directors.&lt;ref name="Hamichlol"/&gt;
+
+=== Rebranding ===
+
+On May 2, 2010, the fund changed its name from "Kupat Holim Leumit" to "Leumit Health Services" and updated its logo.&lt;ref name="Hamichlol"/&gt; In January 2026, Leumit launched a comprehensive visual rebrand, transitioning from its traditional blue-green color scheme to purple, with a new logo, font, clinic designs, and digital assets.&lt;ref name="JPost2026"&gt;Jerusalem Post, January 2026.&lt;/ref&gt;
+
+== Infrastructure and services ==
+
+=== Clinics and laboratories ===
+
+Leumit operates approximately 320–350 clinics and branches nationwide. Its central laboratory processes over one million tests per month.&lt;ref name="Veeam"/&gt;
+
+=== Service networks ===
+
+* '''"Leumit Pharm"''' – a chain of ~150 pharmacies, the third-largest pharmacy network in Israel&lt;ref name="Hamichlol"/&gt;
+* '''"Leumit Dent"''' – dental clinics (expanded since 2026)&lt;ref name="JPost2026"/&gt;
+* '''Optical centers''' – ~70 locations&lt;ref name="NBN"&gt;Nefesh B'Nefesh – Leumit Health Services.&lt;/ref&gt;
+* '''Complementary medicine''' – [[acupuncture]], [[chiropractic]], [[homeopathy]], [[reflexology]], and [[tai chi]]&lt;ref name="Hamichlol"/&gt;
+
+=== Hospital partnerships ===
+
+In 2024, Leumit acquired a stake in Medica, a private hospital network that purchased Raphael Hospital in Tel Aviv for NIS 550 million. Medica also includes Elisha Hospital in Haifa, Rosen Center in Afula, and the NARA clinic network.&lt;ref name="JPost2024"&gt;Jerusalem Post, 2024.&lt;/ref&gt; Leumit also participates in planning the Shimon Peres Hospital in [[Be'er Sheva]], a joint initiative with [[Meuhedet]] to be operated by [[Sheba Medical Center]].&lt;ref name="JPost2024"/&gt;
+
+== Innovation and technology ==
+
+=== Electronic medical records ===
+
+Leumit operates an EMR system called "Tamar," built on a single central database from inception, containing over 25 years of longitudinal medical data including diagnoses, prescriptions, lab results, referrals, and procedures.&lt;ref name="ResearchInstitute"&gt;Leumit Research Institute, leumit.co.il.&lt;/ref&gt;
+
+=== FHIR implementation ===
+
+Leumit is implementing the [[FHIR]] (Fast Healthcare Interoperability Resources) standard using InterSystems IRIS for Health. A pilot project with [[Tel Aviv Sourasky Medical Center|Sourasky Medical Center]] (Ichilov) deployed an automated eligibility determination system via hospital admission kiosks. Leumit aims to be the first organization in Israel to report to the Ministry of Health using HL7 FHIR.&lt;ref name="InterSystems"&gt;InterSystems Success Story: Leumit.&lt;/ref&gt;
+
+=== Leumit Start ===
+
+Established in 2018, "Leumit Start" is the fund's digital health and innovation arm, offering startups clinical expert access, anonymized clinical data via the [[MDclone]] platform, regulatory guidance including Helsinki Committee (IRB) support, and design partnership programs. In May 2022, Leumit Start launched the "Leumit WeCcelerate" accelerator for digital health innovation.&lt;ref name="CTech"&gt;CTech/Calcalist, May 2022.&lt;/ref&gt;
+
+== Research Institute ==
+
+Leumit's Research Institute was established in 2019 and is directed by Dr. Ariel Israel (Yehuda), MD, PhD, of [[Tel Aviv University]], who has published over 100 scientific articles.&lt;ref name="TAU"&gt;Dr. Ariel Israel, Tel Aviv University.&lt;/ref&gt; Research areas include epidemiology, telemedicine, AI/big data, clinical pharmacology, and personalized medicine.&lt;ref name="ResearchInstitute"/&gt;
+
+Notable publications based on Leumit's database include studies on diabetes care quality (MESSAGE program, ''ScienceDirect'', 2021), G6PD deficiency and autoimmune risk (''PMC'', 2023), and NLP analysis of Hebrew electronic medical records (''PubMed'', 2024).&lt;ref name="ScienceDirect"&gt;ScienceDirect, 2021.&lt;/ref&gt;&lt;ref name="PMC"&gt;PMC, 2023.&lt;/ref&gt;&lt;ref name="PubMed"&gt;PubMed, 2024.&lt;/ref&gt;
+
+== Recognition ==
+
+* '''Lowest complaint rate''': 2.78 per 10,000 members (2024), lowest among all four health funds for two consecutive years&lt;ref name="MOH2024"/&gt;
+* '''#1 appointment accessibility''': shortest wait times for gynecology, dermatology, and orthopedics (2024)&lt;ref name="MOH2024"/&gt;
+* '''Best workplace in healthcare''': ranked #1 by BDI/TheMarker for nine consecutive years (2017–2025), #46 overall&lt;ref name="BDI"&gt;Leumit BDI Best Workplace 2025.&lt;/ref&gt;
+
+== Challenges ==
+
+Leumit is the smallest of Israel's four health funds with ~9% market share, compared to Clalit (~52%), Maccabi (~25%), and Meuhedet (~14%).&lt;ref name="NII2024"/&gt; According to the [[Taub Center for Social Policy Studies in Israel|Taub Center]], the fund has consistently lost more members than it gained since 2006.&lt;ref name="Taub"&gt;Taub Center, December 2023.&lt;/ref&gt;
+
+== References ==
+{{reflist}}</code></pre>
+</div>
+</div>
+</div>
+
+<!-- WIKIDATA -->
+<div class="section">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-database" style="color:var(--accent)"></i> Wikidata — עדכון ישות Q6536264</div>
+<div class="section-meta">
+<span class="priority p2">P2</span>
+<span class="status ready"><i class="fas fa-check"></i> מוכן</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note"><i class="fas fa-info-circle"></i> <strong>יעד:</strong> wikidata.org/wiki/Q6536264 — להוסיף/לעדכן claims. כל ערך הוא property-value pair להזנה ידנית.</div>
+<div class="code-block">
+<div class="code-header">
+<span class="code-label">Wikidata Claims — Leumit Health Services (Q6536264)</span>
+<span class="code-target">18 claims</span>
+<button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> העתק</button>
+</div>
+<pre class="code"><code>WIKIDATA ENTITY: Q6536264 — Leumit Health Services
+
+=== LABELS (add/update) ===
+Label (he): לאומית שירותי בריאות
+Label (en): Leumit Health Services
+Description (he): קופת חולים ישראלית, הקטנה מבין ארבע קופות החולים
+Description (en): Israeli health maintenance organization, smallest of four health funds
+Also known as (he): קופת חולים לאומית
+Also known as (en): Kupat Holim Leumit, Leumit Health Care Services
+
+=== PROPERTIES TO ADD/UPDATE ===
+P31  (instance of)          → Q4287745 (health maintenance organization)
+P17  (country)              → Q801 (Israel)
+P131 (located in)           → Q33935 (Tel Aviv-Yafo)
+P571 (inception)            → November 1933
+P112 (founded by)           → [create items for: Dr. Yosef Paemoni, Dr. Yaakov Weinshal]
+P159 (headquarters)         → Q33935 (Tel Aviv-Yafo)
+                               qualifier: P6375 (street address) = "23 Shprintzak Street"
+P488 (chairperson)          → [create item: Shlomo Mor-Yosef]
+P169 (CEO)                  → [create item: Haim Fernandes]
+P1128 (employees)           → 4500 (qualifier: P585 point in time = 2025)
+P856  (official website)    → https://www.leumit.co.il
+P2002 (Twitter/X username)  → Leumit [verify]
+P1566 (GeoNames ID)         → [lookup]
+P7859 (WorldCat Identities) → [lookup]
+
+=== STATEMENTS ===
+P2124 (members)             → 773466 (qualifier: P585 = September 2025)
+P3362 (operating income)    → ~286 million USD (qualifier: P585 = 2022, source: Statista)
+P1454 (legal form)          → Q163740 (nonprofit organization)
+P101 (field of work)        → Q11190 (medicine)
+P452 (industry)             → Q202875 (healthcare industry)
+
+=== IDENTIFIERS ===
+P3417 (Quora topic ID)      → [lookup]
+P646  (Freebase ID)         → [lookup]
+P1566 (GeoNames ID)         → [lookup]
+
+=== SITELINKS TO ADD ===
+hewiki: לאומית שירותי בריאות
+enwiki: Leumit Health Care Services</code></pre>
+</div>
+</div>
+</div>
+
+</div><!-- end tab-wiki -->
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- TAB 5: DONE -->
+<!-- ═══════════════════════════════════════════ -->
+<div id="tab-done" class="tab-content">
+
+<div class="section" style="border-color:rgba(16,185,129,0.3)">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-check-circle" style="color:var(--green)"></i> ערך ויקיפדיה בעברית — שכתוב מלא</div>
+<div class="section-meta">
+<span class="priority p0">P0</span>
+<span class="status done"><i class="fas fa-check-double"></i> בוצע</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:var(--green)">
+<i class="fas fa-check-circle"></i> <strong>הושלם:</strong> <a href="https://report.n-c.digital/leumit-wikipedia-draft.html" style="color:var(--green)">report.n-c.digital/leumit-wikipedia-draft.html</a>
+<br>~4,200 מילים | 12 סעיפים | 32 הערות שוליים | 15 שדות infobox | עבר בדיקת error-detective
+</div>
+</div>
+</div>
+
+<div class="section" style="border-color:rgba(16,185,129,0.3)">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-check-circle" style="color:var(--green)"></i> Schema Markup — Organization, WebSite, MedicalOrganization</div>
+<div class="section-meta">
+<span class="priority p0">P0</span>
+<span class="status done"><i class="fas fa-check-double"></i> בוצע</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:var(--green)">
+<i class="fas fa-check-circle"></i> <strong>הושלם:</strong> Organization + WebSite + MedicalOrganization schemas הוטמעו באתר leumit.co.il
+</div>
+</div>
+</div>
+
+<div class="section" style="border-color:rgba(16,185,129,0.3)">
+<div class="section-header" onclick="toggleSection(this)">
+<div class="section-title"><i class="fas fa-check-circle" style="color:var(--green)"></i> ביקורת GEO תחרותית</div>
+<div class="section-meta">
+<span class="priority p0">P0</span>
+<span class="status done"><i class="fas fa-check-double"></i> בוצע</span>
+<i class="fas fa-chevron-down chevron"></i>
+</div>
+</div>
+<div class="section-body">
+<div class="impl-note" style="background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.2);color:var(--green)">
+<i class="fas fa-check-circle"></i> <strong>הושלם:</strong> <a href="https://report.n-c.digital/leumit-geo-audit.html" style="color:var(--green)">report.n-c.digital/leumit-geo-audit.html</a>
+<br>74 מילות מפתח | 4 פלטפורמות AI | 7 קטגוריות | ניתוח תחרותי מלא
+</div>
+</div>
+</div>
+
+</div><!-- end tab-done -->
+
+<!-- FOOTER -->
+<div class="footer">
+<p>הופק על ידי <a href="https://n-c.digital">NC Digital</a> | פברואר 2026 | ערכת יישום GEO — לאומית שירותי בריאות</p>
+<p style="margin-top:4px">78 שאלות FAQ | 14 בלוקים להעתקה | 8 התמחויות רפואיות | 4 מאמרי בלוג</p>
+</div>
+
+</div><!-- end container -->
+
+<script>
+function switchTab(id){
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+document.getElementById('tab-'+id).classList.add('active');
+event.currentTarget.classList.add('active');
+}
+
+function toggleSection(header){
+const body=header.nextElementSibling;
+const chevron=header.querySelector('.chevron');
+body.classList.toggle('open');
+if(chevron)chevron.classList.toggle('open');
+}
+
+function copyCode(btn){
+const pre=btn.closest('.code-block').querySelector('pre');
+const text=pre.textContent;
+navigator.clipboard.writeText(text).then(()=>{
+btn.innerHTML='<i class="fas fa-check"></i> הועתק!';
+btn.classList.add('copied');
+setTimeout(()=>{
+btn.innerHTML='<i class="fas fa-copy"></i> העתק';
+btn.classList.remove('copied');
+},2000);
+});
+}
+</script>
+</body>
+</html>
