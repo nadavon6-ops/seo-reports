@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניתוח מתחרים אורגני — מבדק אמינות | midot.co.il</title>
+    <style>
+        :root {
+            --primary: #1a1a2e;
+            --accent: #e94560;
+            --accent-light: #fef0f3;
+            --green: #00b894;
+            --green-light: #e8f8f5;
+            --blue: #0984e3;
+            --blue-light: #ebf5fb;
+            --orange: #f39c12;
+            --orange-light: #fef9e7;
+            --gray-50: #f8f9fa;
+            --gray-100: #f1f3f5;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-500: #868e96;
+            --gray-700: #495057;
+            --gray-900: #212529;
+            --radius: 12px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.7;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #16213e 100%);
+            color: #fff;
+            padding: 48px 0 40px;
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .hero .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 24px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .meta-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .meta-card .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            margin-bottom: 4px;
+        }
+
+        .meta-card .value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .meta-card .value a {
+            color: #74b9ff;
+            text-decoration: none;
+        }
+
+        /* Sections */
+        section {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 3px solid var(--accent);
+            display: inline-block;
+        }
+
+        /* Key Insight Box */
+        .insight-box {
+            background: linear-gradient(135deg, var(--accent-light), #fff);
+            border-right: 4px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        .insight-box .insight-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .insight-box p {
+            color: var(--gray-700);
+            font-size: 15px;
+        }
+
+        /* Competitor Table */
+        .competitor-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+        }
+
+        .competitor-table thead {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .competitor-table th {
+            padding: 14px 18px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .competitor-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 14px;
+            vertical-align: top;
+        }
+
+        .competitor-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .competitor-table tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .competitor-table a {
+            color: var(--blue);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .competitor-table a:hover {
+            text-decoration: underline;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .rank-badge.client {
+            background: var(--accent);
+        }
+
+        /* Feature Comparison */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-table thead {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .comparison-table th {
+            padding: 12px 14px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .comparison-table th:first-child {
+            text-align: right;
+        }
+
+        .comparison-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 13px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .comparison-table td:first-child {
+            text-align: right;
+            font-weight: 600;
+            background: var(--gray-50);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .check { color: var(--green); font-size: 18px; }
+        .cross { color: var(--accent); font-size: 18px; }
+
+        /* Recommendations */
+        .rec-card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .rec-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .rec-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 24px;
+        }
+
+        .rec-number {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .rec-number.quick { background: var(--green); }
+        .rec-number.strategic { background: var(--blue); }
+        .rec-number.advanced { background: var(--orange); }
+
+        .rec-content { flex: 1; }
+
+        .rec-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+
+        .rec-content .why {
+            font-size: 14px;
+            color: var(--gray-700);
+            margin-bottom: 10px;
+        }
+
+        .rec-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .rec-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .rec-tag.ref {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .rec-tag.ref a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        .rec-tag.ref a:hover {
+            text-decoration: underline;
+        }
+
+        .rec-tag.priority-quick {
+            background: var(--green-light);
+            color: #00876c;
+        }
+
+        .rec-tag.priority-strategic {
+            background: var(--blue-light);
+            color: #0667b3;
+        }
+
+        .rec-tag.priority-advanced {
+            background: var(--orange-light);
+            color: #c07d0e;
+        }
+
+        /* Priority Legend */
+        .legend {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--gray-700);
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.quick { background: var(--green); }
+        .legend-dot.strategic { background: var(--blue); }
+        .legend-dot.advanced { background: var(--orange); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--gray-500);
+            font-size: 13px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .footer strong {
+            color: var(--gray-700);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 22px; }
+            .meta-grid { grid-template-columns: 1fr; }
+            .competitor-table, .comparison-table { font-size: 12px; }
+            .competitor-table th, .competitor-table td,
+            .comparison-table th, .comparison-table td { padding: 10px 12px; }
+            .rec-header { padding: 16px; }
+            .rec-meta { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+    <div class="container">
+        <h1>ניתוח מתחרים אורגני — המלצות לשיפור דף IntegriTEST</h1>
+        <p class="subtitle">מבוסס על ניתוח תוצאות Google עבור מילת המפתח "מבדק אמינות"</p>
+        <div class="meta-grid">
+            <div class="meta-card">
+                <div class="label">דף יעד</div>
+                <div class="value"><a href="https://midot.co.il/product/integritest/" target="_blank">midot.co.il/product/integritest/</a></div>
+            </div>
+            <div class="meta-card">
+                <div class="label">שאילתת יעד</div>
+                <div class="value">"מבדק אמינות"</div>
+            </div>
+            <div class="meta-card">
+                <div class="label">מיקום נוכחי</div>
+                <div class="value">~#8 בתוצאות האורגניות</div>
+            </div>
+            <div class="meta-card">
+                <div class="label">תאריך ניתוח</div>
+                <div class="value">25 בפברואר 2026</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <!-- Key Insight -->
+    <section>
+        <div class="insight-box">
+            <div class="insight-title">ממצא מרכזי — חוסר התאמה בכוונת החיפוש</div>
+            <p>כל 3 המתחרים המובילים פונים <strong>למועמדים</strong> שרוצים לעבור את המבחן ("איך עוברים מבדק אמינות?"), בעוד הדף של מידות פונה <strong>למעסיקים</strong> שרוצים לרכוש את המוצר. גוגל מתגמל תוכן שפונה למועמדים עבור שאילתה זו. הפתרון: יצירת דף תוכן נפרד שפונה למועמדים, בנוסף לדף המוצר הקיים.</p>
+        </div>
+    </section>
+
+    <!-- Competitor Landscape -->
+    <section>
+        <h2 class="section-title">נוף מתחרים</h2>
+        <table class="competitor-table">
+            <thead>
+                <tr>
+                    <th>דירוג</th>
+                    <th>אתר</th>
+                    <th>סוג תוכן</th>
+                    <th>יתרון מרכזי</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="rank-badge">1</span></td>
+                    <td><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il</a></td>
+                    <td>מדריך + שאלות לדוגמא</td>
+                    <td>וידאו + VideoObject, שאלות תרגול, רשימת 40+ ארגונים</td>
+                </tr>
+                <tr>
+                    <td><span class="rank-badge">2</span></td>
+                    <td><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">pac.ac.il</a></td>
+                    <td>טיפים למועמדים</td>
+                    <td>סמכות אקדמית (.ac.il), שימוש נרחב במילה "מבדק"</td>
+                </tr>
+                <tr>
+                    <td><span class="rank-badge">3</span></td>
+                    <td><a href="https://www.colman.ac.il/blogs/my-work/reliability-test/" target="_blank">colman.ac.il</a></td>
+                    <td>מדריך שלם</td>
+                    <td>ציטוטי מומחה בשם, סמכות אקדמית, slug באנגלית</td>
+                </tr>
+                <tr>
+                    <td><span class="rank-badge">4</span></td>
+                    <td><a href="https://machon-nadav.co.il/%D7%9E%D7%91%D7%97%D7%9F-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%9B%D7%9C-%D7%9E%D7%94-%D7%A9%D7%97%D7%A9%D7%95%D7%91-%D7%9C%D7%93%D7%A2%D7%AA/" target="_blank">machon-nadav.co.il</a></td>
+                    <td>סקירה כללית</td>
+                    <td>תוכן אינפורמטיבי ממכון מיון</td>
+                </tr>
+                <tr>
+                    <td><span class="rank-badge client">8</span></td>
+                    <td><a href="https://midot.co.il/product/integritest/" target="_blank">midot.co.il (אנחנו)</a></td>
+                    <td>דף מוצר</td>
+                    <td>FAQPage schema (5 שאלות), עומק תוכן (~3,200 מילים), 30+ שנות ניסיון</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Feature Comparison -->
+    <section>
+        <h2 class="section-title">השוואת תכונות — מידות מול מתחרים</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>תכונה</th>
+                    <th>מכון נועם (#1)</th>
+                    <th>פרס (#2)</th>
+                    <th>קולמן (#3)</th>
+                    <th>מידות (#8)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>וידאו מוטמע</td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>VideoObject Schema</td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>FAQPage Schema</td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="check">&#10003;</span> (5 שאלות)</td>
+                </tr>
+                <tr>
+                    <td>שאלות לדוגמא</td>
+                    <td><span class="check">&#10003;</span> (3 שאלות)</td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>מומחה בשם + תואר</td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>רשימת ארגונים/לקוחות</td>
+                    <td><span class="check">&#10003;</span> (40+)</td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td>ציון ענפים</td>
+                    <td>לוגואים בינ"ל בלבד</td>
+                </tr>
+                <tr>
+                    <td>תוכן למועמדים</td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="check">&#10003;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>שימוש במילה "מבדק"</td>
+                    <td>מעט</td>
+                    <td><span class="check">&#10003;</span> נרחב</td>
+                    <td>מעט</td>
+                    <td>פעם אחת בלבד</td>
+                </tr>
+                <tr>
+                    <td>היררכיית H-tags נקייה</td>
+                    <td><span class="check">&#10003;</span> (5 H2)</td>
+                    <td><span class="check">&#10003;</span> (7 H2)</td>
+                    <td><span class="check">&#10003;</span> (4 H2)</td>
+                    <td><span class="cross">&#10007;</span> (27 H2)</td>
+                </tr>
+                <tr>
+                    <td>המלצות לקוחות אמיתיות</td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>Product / AggregateRating Schema</td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                    <td><span class="cross">&#10007;</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Recommendations -->
+    <section>
+        <h2 class="section-title">המלצות לפעולה</h2>
+
+        <div class="legend">
+            <div class="legend-item"><span class="legend-dot quick"></span> ביצוע מהיר</div>
+            <div class="legend-item"><span class="legend-dot strategic"></span> שינוי אסטרטגי</div>
+            <div class="legend-item"><span class="legend-dot advanced"></span> פיתוח מתקדם</div>
+        </div>
+
+        <!-- Rec 1 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number strategic">1</span>
+                <div class="rec-content">
+                    <h3>יצירת דף תוכן נפרד למועמדים</h3>
+                    <p class="why">כל 3 המתחרים המובילים פונים למועמדים — גוגל מתגמל תוכן שפונה למי שעומד לעבור את המבחן, לא למעסיקים שרוצים לקנות אותו.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-strategic">שינוי אסטרטגי</span>
+                        <span class="rec-tag ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: מכון נועם</a></span>
+                        <span class="rec-tag ref"><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">דוגמא: פרס</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 2 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number quick">2</span>
+                <div class="rec-content">
+                    <h3>הוספת המילה "מבדק" לכל הדף</h3>
+                    <p class="why">השאילתה היא "מבדק אמינות" אך הדף משתמש כמעט אך ורק ב"מבחן" — המילה "מבדק" מופיעה פעם אחת בלבד; פרס (#2) משתמשת בה בצורה נרחבת.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-quick">ביצוע מהיר</span>
+                        <span class="rec-tag ref"><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">דוגמא: pac.ac.il</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 3 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number quick">3</span>
+                <div class="rec-content">
+                    <h3>תיקון היררכיית H-tags — צמצום מ-27 ל-6 כותרות H2</h3>
+                    <p class="why">27 כותרות H2 מדללות את אות מילות המפתח; כל המתחרים משתמשים ב-4 עד 7 כותרות H2 נקיות.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-quick">ביצוע מהיר</span>
+                        <span class="rec-tag ref">כל 3 המתחרים (4-7 H2)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 4 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number strategic">4</span>
+                <div class="rec-content">
+                    <h3>הוספת סרטון הסבר + VideoObject Schema</h3>
+                    <p class="why">רק מכון נועם (#1) מציע וידאו — זהו מבדל משמעותי שמגביר מעורבות ומאפשר תוצאת חיפוש עשירה.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-strategic">שינוי אסטרטגי</span>
+                        <span class="rec-tag ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 5 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number strategic">5</span>
+                <div class="rec-content">
+                    <h3>הוספת שאלות לדוגמא מתוך המבדק</h3>
+                    <p class="why">מכון נועם (#1) מציג 3 שאלות תרגול עם הסברים — זה הגורם המרכזי לדירוג הגבוה; מועמדים מחפשים דוגמאות.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-strategic">שינוי אסטרטגי</span>
+                        <span class="rec-tag ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 6 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number quick">6</span>
+                <div class="rec-content">
+                    <h3>הרחבת שאלות נפוצות מ-5 ל-10+ שאלות</h3>
+                    <p class="why">למידות כבר יש FAQPage Schema — אף מתחרה לא מציע את זה; הכפלת מספר השאלות מרחיבה את היתרון הקיים.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-quick">ביצוע מהיר</span>
+                        <span class="rec-tag ref">יתרון קיים של מידות — אף מתחרה לא מיישם FAQPage Schema</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 7 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number quick">7</span>
+                <div class="rec-content">
+                    <h3>הצגת מומחה בשם מלא + תואר</h3>
+                    <p class="why">אות E-E-A-T — מכון נועם מציג את המייסד עם תואר וניסיון צבאי, קולמן מציגה מנהלת קריירה; מידות לא מציגה אף מומחה בשם.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-quick">ביצוע מהיר</span>
+                        <span class="rec-tag ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: מכון נועם — מייסד</a></span>
+                        <span class="rec-tag ref"><a href="https://www.colman.ac.il/blogs/my-work/reliability-test/" target="_blank">דוגמא: קולמן — מנהלת קריירה</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 8 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number quick">8</span>
+                <div class="rec-content">
+                    <h3>הוספת לוגואים ושמות של לקוחות ישראליים</h3>
+                    <p class="why">מכון נועם מפרט 40+ שמות ארגונים — הוכחה חברתית מקומית חזקה יותר מלוגואים בינלאומיים שאינם מוכרים בישראל.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-quick">ביצוע מהיר</span>
+                        <span class="rec-tag ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il — 40+ ארגונים</a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 9 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number advanced">9</span>
+                <div class="rec-content">
+                    <h3>הוספת Product Schema + AggregateRating</h3>
+                    <p class="why">אף מתחרה לא מיישם סכימות אלו — יתרון ראשון לנוע (first-mover advantage) שמאפשר כוכבי דירוג בתוצאות החיפוש.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-advanced">פיתוח מתקדם</span>
+                        <span class="rec-tag ref">אין דוגמא — אף מתחרה לא מיישם</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rec 10 -->
+        <div class="rec-card">
+            <div class="rec-header">
+                <span class="rec-number advanced">10</span>
+                <div class="rec-content">
+                    <h3>הוספת המלצות לקוחות אמיתיות (מנהלי HR)</h3>
+                    <p class="why">אף מתחרה ב-SERP כולו לא מציג המלצות לקוחות אמיתיות — הזדמנות לבידול משמעותי שמחזק אמינות ומגביר המרה.</p>
+                    <div class="rec-meta">
+                        <span class="rec-tag priority-advanced">פיתוח מתקדם</span>
+                        <span class="rec-tag ref">פער ב-SERP כולו — אף אתר לא מציע המלצות</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>הופק על ידי <strong>NC Digital</strong> | ניתוח מתחרים אורגני עבור midot.co.il | פברואר 2026</p>
+    </div>
+</footer>
+
+</body>
+</html>
