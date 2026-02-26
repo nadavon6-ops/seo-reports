@@ -3,1007 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ניתוח מתחרים אורגני — מבדק אמינות | midot.co.il</title>
+    <title>ניתוח מתחרים — מבדק אמינות | midot.co.il</title>
     <style>
-        :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
-            --accent: #e11d48;
-            --accent-light: #fff1f2;
-            --green: #059669;
-            --green-light: #ecfdf5;
-            --blue: #2563eb;
-            --blue-light: #eff6ff;
-            --orange: #d97706;
-            --orange-light: #fffbeb;
-            --purple: #7c3aed;
-            --purple-light: #f5f3ff;
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-            --radius: 12px;
-            --radius-sm: 8px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.06);
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; direction: rtl; }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-900);
-            line-height: 1.75;
-            direction: rtl;
-            -webkit-font-smoothing: antialiased;
-        }
+        header { background: #0f172a; color: #fff; padding: 40px 0 32px; }
+        header h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+        header p { font-size: 14px; opacity: 0.6; }
+        .meta { display: flex; gap: 32px; margin-top: 20px; font-size: 13px; }
+        .meta span { opacity: 0.5; }
+        .meta strong { opacity: 1; }
 
-        .container { max-width: 1140px; margin: 0 auto; padding: 0 28px; }
+        section { padding: 36px 0 0; }
+        h2 { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 16px; }
 
-        /* Hero */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, #1e3a5f 50%, #0f172a 100%);
-            color: #fff;
-            padding: 56px 0 48px;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(37,99,235,0.1) 0%, transparent 50%);
-        }
-        .hero .container { position: relative; z-index: 1; }
-        .hero-badge {
-            display: inline-block;
-            background: rgba(37,99,235,0.2);
-            border: 1px solid rgba(37,99,235,0.3);
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #93c5fd;
-            margin-bottom: 16px;
-        }
-        .hero h1 { font-size: 30px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; }
-        .hero .subtitle { font-size: 16px; opacity: 0.7; margin-bottom: 28px; max-width: 700px; }
+        .alert { background: #fff; border-right: 4px solid #e11d48; border-radius: 8px; padding: 18px 22px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .alert p { font-size: 14px; color: #475569; }
+        .alert strong { color: #1e293b; }
 
-        .meta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
-        }
-        .meta-card {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-sm);
-            padding: 16px 20px;
-        }
-        .meta-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.5; margin-bottom: 4px; }
-        .meta-card .value { font-size: 15px; font-weight: 600; }
-        .meta-card .value a { color: #93c5fd; text-decoration: none; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; }
+        th { background: #f1f5f9; padding: 10px 16px; text-align: right; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .y { color: #059669; font-weight: 700; }
+        .n { color: #cbd5e1; }
 
-        /* Section */
-        section { padding: 44px 0 0; }
-        .section-header { margin-bottom: 24px; }
-        .section-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-        .section-desc { font-size: 14px; color: var(--gray-500); }
+        .rec { background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 10px; padding: 16px 20px; border-right: 4px solid transparent; }
+        .rec.q { border-right-color: #059669; }
+        .rec.s { border-right-color: #2563eb; }
+        .rec.d { border-right-color: #7c3aed; }
+        .rec h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .rec .why { font-size: 13px; color: #64748b; }
+        .rec .ref { font-size: 12px; color: #2563eb; margin-top: 6px; }
 
-        /* Insight Box */
-        .insight-box {
-            background: #fff;
-            border-right: 4px solid var(--accent);
-            border-radius: var(--radius);
-            padding: 24px 28px;
-            margin-bottom: 12px;
-            box-shadow: var(--shadow);
-        }
-        .insight-box .tag {
-            display: inline-block;
-            background: var(--accent-light);
-            color: var(--accent);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-        .insight-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
-        .insight-box p { font-size: 14px; color: var(--gray-600); line-height: 1.7; }
-        .insight-box strong { color: var(--gray-900); }
+        .legend { display: flex; gap: 20px; margin-bottom: 18px; font-size: 12px; color: #64748b; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 6px; vertical-align: middle; }
+        .dot.q { background: #059669; } .dot.s { background: #2563eb; } .dot.d { background: #7c3aed; }
 
-        /* Cards */
-        .card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
+        footer { text-align: center; padding: 32px 0; color: #94a3b8; font-size: 12px; border-top: 1px solid #e2e8f0; margin-top: 40px; }
 
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; }
-        .card table th {
-            background: var(--gray-50);
-            padding: 12px 16px;
-            text-align: right;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--gray-200);
-        }
-        .card table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--gray-100);
-            font-size: 14px;
-            vertical-align: top;
-        }
-        .card table tr:last-child td { border-bottom: none; }
-        .card table tr:hover td { background: var(--gray-50); }
-        .card table a { color: var(--blue); text-decoration: none; }
-        .card table a:hover { text-decoration: underline; }
-
-        .rank { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 6px; font-size: 12px; font-weight: 800; }
-        .rank-1 { background: #fef3c7; color: #92400e; }
-        .rank-2 { background: #e2e8f0; color: #475569; }
-        .rank-3 { background: #fed7aa; color: #9a3412; }
-        .rank-4 { background: var(--gray-100); color: var(--gray-600); }
-        .rank-us { background: var(--accent-light); color: var(--accent); }
-
-        .check { color: var(--green); font-weight: 700; }
-        .cross { color: var(--gray-300); }
-        .partial { color: var(--orange); font-weight: 600; }
-
-        /* Comparison table */
-        .comp-table th:not(:first-child) { text-align: center; }
-        .comp-table td:not(:first-child) { text-align: center; }
-        .comp-table td:first-child { font-weight: 600; color: var(--gray-700); }
-        .comp-table .midot-col { background: var(--accent-light) !important; }
-
-        /* Keyword Cluster */
-        .kw-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 14px;
-            margin-bottom: 16px;
-        }
-        .kw-card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 20px 22px;
-        }
-        .kw-card .kw-query { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 4px; direction: rtl; }
-        .kw-card .kw-pos {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .kw-pos.good { background: var(--green-light); color: var(--green); }
-        .kw-pos.medium { background: var(--orange-light); color: var(--orange); }
-        .kw-pos.bad { background: var(--accent-light); color: var(--accent); }
-        .kw-pos.great { background: var(--blue-light); color: var(--blue); }
-        .kw-card .kw-insight { font-size: 13px; color: var(--gray-600); }
-
-        /* Recommendations */
-        .rec-group-title {
-            font-size: 15px;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            display: inline-block;
-            margin-bottom: 16px;
-        }
-        .rec-group-title.quick { background: var(--green-light); color: var(--green); }
-        .rec-group-title.strategic { background: var(--blue-light); color: var(--blue); }
-        .rec-group-title.dominate { background: var(--purple-light); color: var(--purple); }
-
-        .rec-card {
-            background: #fff;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 14px;
-            border-right: 4px solid transparent;
-            transition: all 0.15s;
-        }
-        .rec-card:hover { box-shadow: var(--shadow-lg); }
-        .rec-card.quick-border { border-right-color: var(--green); }
-        .rec-card.strategic-border { border-right-color: var(--blue); }
-        .rec-card.dominate-border { border-right-color: var(--purple); }
-
-        .rec-inner { padding: 20px 24px; }
-        .rec-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; }
-        .rec-num {
-            flex-shrink: 0;
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 14px;
-            color: #fff;
-        }
-        .rec-num.q { background: var(--green); }
-        .rec-num.s { background: var(--blue); }
-        .rec-num.d { background: var(--purple); }
-
-        .rec-title { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
-        .rec-why { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
-
-        .rec-details {
-            background: var(--gray-50);
-            border-radius: var(--radius-sm);
-            padding: 14px 18px;
-            margin-top: 12px;
-        }
-        .rec-details h4 { font-size: 12px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .rec-details ul { list-style: none; padding: 0; }
-        .rec-details li { font-size: 13px; color: var(--gray-700); padding: 3px 0; padding-right: 16px; position: relative; }
-        .rec-details li::before { content: ''; position: absolute; right: 0; top: 11px; width: 6px; height: 6px; border-radius: 50%; background: var(--gray-300); }
-
-        .rec-ref {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 10px;
-            padding: 4px 10px;
-            background: var(--blue-light);
-            border-radius: 6px;
-            font-size: 12px;
-            color: var(--blue);
-        }
-        .rec-ref a { color: var(--blue); text-decoration: none; }
-        .rec-ref a:hover { text-decoration: underline; }
-
-        /* H-tag structure */
-        .htag-structure {
-            background: var(--gray-900);
-            color: #e2e8f0;
-            border-radius: var(--radius-sm);
-            padding: 20px 24px;
-            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 13px;
-            line-height: 2;
-            overflow-x: auto;
-            direction: ltr;
-            text-align: left;
-        }
-        .htag-structure .h1 { color: #f472b6; font-weight: 700; }
-        .htag-structure .h2 { color: #60a5fa; margin-right: 24px; }
-        .htag-structure .h3 { color: #34d399; margin-right: 48px; }
-        .htag-structure .comment { color: var(--gray-500); font-style: italic; }
-
-        /* FAQ suggestion list */
-        .faq-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 10px;
-        }
-        .faq-item {
-            background: var(--gray-50);
-            border-radius: var(--radius-sm);
-            padding: 12px 16px;
-            font-size: 14px;
-            color: var(--gray-700);
-            border-right: 3px solid var(--blue);
-        }
-        .faq-item .faq-badge {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 1px 6px;
-            border-radius: 3px;
-            margin-bottom: 4px;
-        }
-        .faq-item .faq-badge.existing { background: var(--green-light); color: var(--green); }
-        .faq-item .faq-badge.new { background: var(--blue-light); color: var(--blue); }
-        .faq-item .faq-badge.paa { background: var(--purple-light); color: var(--purple); }
-
-        /* Direct competitors */
-        .threat-high { color: var(--accent); font-weight: 700; }
-        .threat-med { color: var(--orange); font-weight: 700; }
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 36px 0;
-            color: var(--gray-400);
-            font-size: 13px;
-            border-top: 1px solid var(--gray-200);
-            margin-top: 48px;
-        }
-        .footer strong { color: var(--gray-600); }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 22px; }
-            .meta-grid { grid-template-columns: 1fr 1fr; }
-            .kw-grid { grid-template-columns: 1fr; }
-            .faq-grid { grid-template-columns: 1fr; }
-            .card table { font-size: 12px; }
-            .card table th, .card table td { padding: 10px 12px; }
-            .rec-inner { padding: 16px 18px; }
-            .htag-structure { font-size: 11px; }
-            .container { padding: 0 16px; }
+        @media (max-width: 640px) {
+            header h1 { font-size: 20px; }
+            .meta { flex-direction: column; gap: 8px; }
+            td, th { padding: 10px 12px; font-size: 13px; }
         }
     </style>
 </head>
 <body>
 
-<header class="hero">
-    <div class="container">
-        <span class="hero-badge">NC DIGITAL | COMPETITIVE ANALYSIS</span>
-        <h1>איך להפוך את midot.co.il למספר 1 עבור "מבדק אמינות"</h1>
-        <p class="subtitle">ניתוח 13 מתחרים אורגניים + 4 מתחרים ישירים (LogiPass, Psiphas, IntegrityMeter, HR Systems) | 6 שאילתות | המלצות ברמת יישום</p>
-        <div class="meta-grid">
-            <div class="meta-card">
-                <div class="label">דף יעד</div>
-                <div class="value"><a href="https://midot.co.il/product/integritest/" target="_blank">midot.co.il/product/integritest/</a></div>
-            </div>
-            <div class="meta-card">
-                <div class="label">מיקום נוכחי</div>
-                <div class="value">~#8 (מבדק אמינות)</div>
-            </div>
-            <div class="meta-card">
-                <div class="label">מתחרים שנותחו</div>
-                <div class="value">17 אתרים / 6 שאילתות</div>
-            </div>
-            <div class="meta-card">
-                <div class="label">תאריך</div>
-                <div class="value">26 בפברואר 2026</div>
-            </div>
+<header>
+    <div class="wrap">
+        <h1>ניתוח מתחרים — midot.co.il/product/integritest/</h1>
+        <p>שאילתה: "מבדק אמינות" | מיקום נוכחי: ~#8</p>
+        <div class="meta">
+            <div><span>מתחרים שנותחו: </span><strong>13 אתרים</strong></div>
+            <div><span>תאריך: </span><strong>26.02.2026</strong></div>
+            <div><span>הופק ע"י: </span><strong>NC Digital</strong></div>
         </div>
     </div>
 </header>
 
-<main class="container">
+<main class="wrap">
 
-    <!-- ========== INSIGHTS ========== -->
     <section>
-        <div class="insight-box" style="margin-top: 8px;">
-            <span class="tag">ממצא מרכזי #1</span>
-            <h3>חוסר התאמה בכוונת חיפוש — מידות פונה למעסיקים, גוגל מתגמל תוכן למועמדים</h3>
-            <p>כל 3 התוצאות המובילות הן מדריכים <strong>"איך לעבור מבדק אמינות"</strong> שפונים למועמדים. הדף של מידות פונה למעסיקים. גוגל קובע: ~65% מהתוצאות ב-SERP הן למועמדים, ~15% למעסיקים. מידות מתחרה על 15% מה-SERP בלבד.</p>
-        </div>
-        <div class="insight-box">
-            <span class="tag">ממצא מרכזי #2</span>
-            <h3>המילה "מבדק" כמעט לא מופיעה בדף — למרות שזו בדיוק השאילתה</h3>
-            <p>הדף משתמש ב<strong>"מבחן אמינות"</strong> לאורך כולו. המילה <strong>"מבדק"</strong> מופיעה <strong>פעם אחת בלבד</strong> (בכותרת H2 יחידה). המתחרה pac.ac.il (#2) משתמשת ב"מבדק" באופן נרחב לאורך כל הדף.</p>
-        </div>
-        <div class="insight-box">
-            <span class="tag">ממצא מרכזי #3</span>
-            <h3>מידות בלתי נראית ל"מבחן יושרה" — למרות שזה הסלוגן שלה</h3>
-            <p>הסלוגן של מידות הוא <strong>"יושרה כסטנדרט"</strong>, אך עבור "מבחן יושרה" מידות מדורגת ~#10. מי שמוביל? <strong>LogiPass</strong> (2 תוצאות ב-Top 5), <strong>Psiphas</strong>, <strong>IntegrityMeter</strong>, <strong>HR Systems</strong>. אלו מתחרים ישירים שלא נראים בשאילתת "מבדק אמינות" כלל.</p>
-        </div>
-        <div class="insight-box">
-            <span class="tag">ממצא מרכזי #4</span>
-            <h3>לדף אין H1 כלל + יש שגיאת כתיב ב-Title Tag</h3>
-            <p>אימות טכני חשף שתי בעיות קריטיות: <strong>(1)</strong> לדף אין תגית H1 — מה שנראה ככותרת ראשית ("IntegriTEST") הוא למעשה H2. <strong>(2)</strong> ה-Title Tag מכיל שגיאת כתיב: "ממחושב" במקום "ממוחשב" — השגיאה מופיעה ב-4 מקומות (title, og:title, schema, alt text) אבל לא בתוכן הדף עצמו.</p>
+        <div class="alert">
+            <p><strong>הבעיה המרכזית:</strong> כל 3 התוצאות המובילות פונות <strong>למועמדים</strong> ("איך לעבור מבדק אמינות?"). הדף של מידות פונה <strong>למעסיקים</strong>. גוגל מתגמל תוכן למועמדים עבור שאילתה זו.</p>
         </div>
     </section>
 
-    <!-- ========== KEYWORD CLUSTER ========== -->
     <section>
-        <div class="section-header">
-            <h2 class="section-title">נראות מידות לאורך אשכול מילות המפתח</h2>
-            <p class="section-desc">5 שאילתות שמכסות את כל כוונות החיפוש — ומראות היכן מידות חזקה והיכן חלשה</p>
-        </div>
-        <div class="kw-grid">
-            <div class="kw-card">
-                <div class="kw-query">"מבדק אמינות"</div>
-                <span class="kw-pos medium">מיקום ~#8</span>
-                <div class="kw-insight">מדריכים למועמדים שולטים. מכון נועם #1 עם וידאו + שאלות לדוגמא.</div>
-            </div>
-            <div class="kw-card">
-                <div class="kw-query">"מבחן אמינות לעבודה"</div>
-                <span class="kw-pos medium">מיקום ~#6</span>
-                <div class="kw-insight">מוסדות אקדמיים (#1-#3). מידות המוצר היחיד ב-Top 10.</div>
-            </div>
-            <div class="kw-card">
-                <div class="kw-query">"מבדק אמינות שאלות"</div>
-                <span class="kw-pos medium">מיקום ~#6</span>
-                <div class="kw-insight">כוונה: שאלות לדוגמא. מידות לא מציעה שאלות — פער קריטי.</div>
-            </div>
-            <div class="kw-card">
-                <div class="kw-query">"מבחן יושרה"</div>
-                <span class="kw-pos bad">מיקום ~#10</span>
-                <div class="kw-insight">LogiPass שולט (2 תוצאות). מתחרים ישירים: Psiphas, IntegrityMeter, HR Systems.</div>
-            </div>
-            <div class="kw-card">
-                <div class="kw-query">"מבדק אמינות לעובדים"</div>
-                <span class="kw-pos good">מיקום ~#3</span>
-                <div class="kw-insight">המיקום הטוב ביותר. כוונה ממוקדת מעסיקים — מתאים לדף המוצר.</div>
-            </div>
-            <div class="kw-card">
-                <div class="kw-query">"IntegriTEST מידות"</div>
-                <span class="kw-pos great">מיקום #1</span>
-                <div class="kw-insight">שליטה מלאה במונח הממותג. בלבול עם מוצר Merck IntegriTEST באנגלית.</div>
-            </div>
-        </div>
+        <h2>מה למתחרים יש שלמידות אין</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>תכונה</th>
+                    <th>מכון נועם (#1)</th>
+                    <th>פרס (#2)</th>
+                    <th>קולמן (#3)</th>
+                    <th>מידות (#8)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>תגית H1 עברית</td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="n">&#10007;</span> אין H1 כלל</td>
+                </tr>
+                <tr>
+                    <td>המילה "מבדק" בדף</td>
+                    <td>מעט</td>
+                    <td><span class="y">&#10003;</span> נרחב</td>
+                    <td>מעט</td>
+                    <td><span class="n">&#10007;</span> פעם אחת</td>
+                </tr>
+                <tr>
+                    <td>וידאו + VideoObject Schema</td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>שאלות לדוגמא</td>
+                    <td><span class="y">&#10003;</span> 3 שאלות</td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>מומחה בשם + תואר</td>
+                    <td><span class="y">&#10003;</span> M.A. פסיכולוגיה</td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="y">&#10003;</span> מנהלת קריירה</td>
+                    <td><span class="n">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>שמות ארגונים ישראליים</td>
+                    <td><span class="y">&#10003;</span> 40+ (צה"ל, מגדל, כללית...)</td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td>ציון ענפים</td>
+                    <td><span class="n">&#10007;</span> לוגואים בינ"ל בלבד</td>
+                </tr>
+                <tr>
+                    <td>תוכן למועמדים</td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="y">&#10003;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                </tr>
+                <tr>
+                    <td>FAQPage Schema</td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="n">&#10007;</span></td>
+                    <td><span class="y">&#10003;</span> 5 שאלות</td>
+                </tr>
+            </tbody>
+        </table>
     </section>
 
-    <!-- ========== CONTENT COMPETITORS ========== -->
     <section>
-        <div class="section-header">
-            <h2 class="section-title">מתחרים בתוכן — מי מדורג מעל מידות ולמה</h2>
-        </div>
-        <div class="card">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width:40px">מיקום</th>
-                        <th>אתר</th>
-                        <th>מה שיש להם שאין למידות</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="rank rank-1">1</span></td>
-                        <td><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il</a></td>
-                        <td>
-                            <strong>3 שאלות לדוגמא עם הסברים מפורטים</strong> | סרטון YouTube + VideoObject Schema | רשימת 40+ ארגונים (מגדל, כללית, צה"ל, אלביט, IKEA...) | מייסד בשם: דוד משולם, M.A. פסיכולוגיה, טייס קרב לשעבר | מבנה נקי: 5 כותרות H2 בלבד
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank rank-2">2</span></td>
-                        <td><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">pac.ac.il (פרס פלוס)</a></td>
-                        <td>
-                            <strong>שימוש נרחב במילה "מבדק"</strong> (לא רק "מבחן") | סמכות דומיין .ac.il | H2 מנוסחים כטיפים פעולתיים ("היו עקביים", "שימו לב לניסוחים") | Article Schema עם תאריך עדכני (דצמבר 2025)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank rank-3">3</span></td>
-                        <td><a href="https://www.colman.ac.il/blogs/my-work/reliability-test/" target="_blank">colman.ac.il (המכללה למינהל)</a></td>
-                        <td>
-                            <strong>ציטוטי מומחה בשם</strong> (דקלה בר-אילן, מנהלת קריירה) | סמכות דומיין .ac.il | כותרת H1: "המדריך השלם" | slug באנגלית (/reliability-test/) | H2 בטון שיחתי ("אז מה באמת המבחן בודק?")
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><span class="rank rank-us">8</span></td>
-                        <td><a href="https://midot.co.il/product/integritest/" target="_blank">midot.co.il (אנחנו)</a></td>
-                        <td>
-                            <span style="color:var(--green); font-weight:700;">יתרונות קיימים:</span> FAQPage Schema (5 שאלות) — אף מתחרה לא מיישם | 3,200+ מילים | 92% שביעות רצון | 40+ שנות מו"פ | מפרט מפורט (96-194 שאלות, ~20 דקות)
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- ========== DIRECT COMPETITORS ========== -->
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">מתחרים ישירים — ספקי מבחנים שמדורגים ל"מבחן יושרה"</h2>
-            <p class="section-desc">מתחרים אלו לא נראים ב"מבדק אמינות" אבל שולטים ב"מבחן יושרה" — שאילתה שמידות כמעט לא מדורגת בה</p>
-        </div>
-        <div class="card">
-            <table>
-                <thead>
-                    <tr>
-                        <th>מתחרה</th>
-                        <th>אתר</th>
-                        <th>מיקום ב"מבחן יושרה"</th>
-                        <th>איום</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>LogiPass</strong></td>
-                        <td><a href="https://logipass.net" target="_blank">logipass.net</a></td>
-                        <td>#2 + #3 (שתי תוצאות!)</td>
-                        <td><span class="threat-high">גבוה</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Psiphas</strong></td>
-                        <td><a href="https://www.psiphas.co.il" target="_blank">psiphas.co.il</a></td>
-                        <td>#4</td>
-                        <td><span class="threat-med">בינוני</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>IntegrityMeter</strong></td>
-                        <td><a href="https://www.integritymeter.co.il" target="_blank">integritymeter.co.il</a></td>
-                        <td>#5</td>
-                        <td><span class="threat-high">גבוה</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>HR Systems</strong></td>
-                        <td><a href="https://www.hrsystems.co.il" target="_blank">hrsystems.co.il</a></td>
-                        <td>#7</td>
-                        <td><span class="threat-med">בינוני</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מידות</strong></td>
-                        <td>midot.co.il</td>
-                        <td><strong>~#10</strong></td>
-                        <td style="color:var(--accent);">נחות</td>
-                    </tr>
-                </tbody>
-            </table>
+        <h2>המלצות</h2>
+        <div class="legend">
+            <div><span class="dot q"></span>ביצוע מהיר</div>
+            <div><span class="dot s"></span>אסטרטגי</div>
+            <div><span class="dot d"></span>בידול — אף מתחרה לא עושה</div>
         </div>
 
-        <!-- Direct competitor deep dive -->
-        <div class="card" style="margin-top: 14px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 120px;">מתחרה</th>
-                        <th>יתרון שלהם שיש לנטרל</th>
-                        <th>חולשה שלהם שיש לנצל</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>LogiPass</strong></td>
-                        <td>ISO 9001 + ISO 27032 | 2,134 לקוחות עסקיים | 565K+ נבדקים | עוזר AI "Logi" | צוות 17 אנשים כולל Ph.D. | 6 לוגואים (בזק, שופרסל, HOT) | מודל תמחור שקוף</td>
-                        <td>דף מוצר דק (~1,000 מילים) | אין FAQPage Schema | אין וידאו | אין המלצות לקוחות אמיתיות | אין שאלות לדוגמא</td>
-                    </tr>
-                    <tr>
-                        <td><strong>IntegrityMeter</strong></td>
-                        <td>בדיקות תקופתיות לעובדים קיימים (לא רק גיוס) | מניעת אובדן | שילוב פוליגרף | בדיקות רקע</td>
-                        <td><strong>אפס Schema</strong> (אתר Wix) | אין לוגואים | אין המלצות | תוכן דליל מאוד | אין בלוג | אין וידאו | SEO טכני חלש</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Psiphas</strong></td>
-                        <td>33 שנה (מ-1993) | מייסדים Ph.D. + M.A. | שימוש בצה"ל (psiphas-run.digital.idf.il) | מבדק אדפטיבי | 4 שפות (עברית, ערבית, אנגלית, רוסית)</td>
-                        <td><strong>אפס Schema</strong> (אתר Wix) | אין וידאו | אין המלצות | אין בלוג | אתר מיושן | אין תמחור שקוף | אין self-serve</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- ========== COMPARISON TABLE ========== -->
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">השוואת תכונות — מידות מול כולם</h2>
-        </div>
-        <div class="card" style="overflow-x: auto;">
-            <table class="comp-table">
-                <thead>
-                    <tr>
-                        <th style="text-align:right">תכונה</th>
-                        <th>מכון נועם<br><small>(#1)</small></th>
-                        <th>פרס<br><small>(#2)</small></th>
-                        <th>קולמן<br><small>(#3)</small></th>
-                        <th class="midot-col">מידות<br><small>(#8)</small></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>H1 עברי עם מילת מפתח</td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span><br><small>אין H1 כלל! (IntegriTEST הוא H2)</small></td>
-                    </tr>
-                    <tr>
-                        <td>שימוש במילה "מבדק"</td>
-                        <td><span class="partial">מעט</span></td>
-                        <td><span class="check">&#10003; נרחב</span></td>
-                        <td><span class="partial">מעט</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span><br><small>פעם אחת</small></td>
-                    </tr>
-                    <tr>
-                        <td>מבנה H-tags נקי</td>
-                        <td><span class="check">5 H2</span></td>
-                        <td><span class="check">7 H2</span></td>
-                        <td><span class="check">4 H2</span></td>
-                        <td class="midot-col"><span class="partial">9 H2 + 19 H3</span><br><small>שאלות FAQ כ-H3 (טוב), אבל אין H1</small></td>
-                    </tr>
-                    <tr>
-                        <td>וידאו + VideoObject</td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>FAQPage Schema</td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td class="midot-col"><span class="check">&#10003; 5 שאלות</span></td>
-                    </tr>
-                    <tr>
-                        <td>שאלות לדוגמא</td>
-                        <td><span class="check">3 שאלות</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>מומחה בשם + תואר</td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>רשימת ארגונים ישראליים</td>
-                        <td><span class="check">40+</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="partial">ענפים</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span><br><small>לוגואים בינ"ל בלבד</small></td>
-                    </tr>
-                    <tr>
-                        <td>תוכן למועמדים</td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>המלצות לקוחות אמיתיות</td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>Product/AggregateRating Schema</td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td><span class="cross">&#10007;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span></td>
-                    </tr>
-                    <tr>
-                        <td>Title Tag ללא שגיאות</td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td><span class="check">&#10003;</span></td>
-                        <td class="midot-col"><span class="cross">&#10007;</span><br><small>שגיאת כתיב: "ממחושב"</small></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- ========== RECOMMENDATIONS ========== -->
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">המלצות ליישום — 12 פעולות ב-3 רמות</h2>
+        <div class="rec q">
+            <h3>1. תיקון שגיאת כתיב ב-Title Tag</h3>
+            <div class="why">"ממחושב" במקום "ממוחשב" — מופיע ב-title, og:title, schema, alt text.</div>
         </div>
 
-        <!-- QUICK WINS -->
-        <div class="rec-group-title quick">ביצוע מהיר — ניתן ליישם היום</div>
-
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">1</span>
-                    <div>
-                        <div class="rec-title">תיקון שגיאת כתיב ב-Title Tag (מופיעה ב-4 מקומות!)</div>
-                        <div class="rec-why">ה-Title הנוכחי: "מבחן אמינות <strong>ממחושב</strong>" — האותיות ח ו-ו מוחלפות. מופיע ב-4 מקומות: title tag, og:title, Yoast/JSON-LD schema, ו-alt text של תמונה. תוכן הדף עצמו משתמש באיות הנכון ("ממוחשב") ב-22 מופעים — השגיאה מבודדת לשכבת ה-meta בלבד. כנראה נכתב פעם אחת בשדה Yoast ולא תוקן מאז.</div>
-                    </div>
-                </div>
-            </div>
+        <div class="rec q">
+            <h3>2. הוספת H1 — לדף אין H1 כלל</h3>
+            <div class="why">מה שנראה ככותרת ראשית ("IntegriTEST") הוא H2. המלצה: "מבדק אמינות ממוחשב IntegriTEST"</div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">2</span>
-                    <div>
-                        <div class="rec-title">הוספת H1 — לדף אין תגית H1 כלל!</div>
-                        <div class="rec-why">הדף חסר H1 לחלוטין. "IntegriTEST" שנראה ככותרת ראשית הוא למעשה H2. זוהי בעיה קריטית — כל 3 המתחרים המובילים משתמשים ב-H1 עברי עם מילת המפתח. חובה להוסיף H1 עם "מבדק אמינות".</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>H1 מומלץ</h4>
-                    <ul>
-                        <li><strong>נוכחי:</strong> IntegriTEST</li>
-                        <li><strong>מומלץ:</strong> מבדק אמינות ממוחשב IntegriTEST — הכלי המוביל בעולם להערכת יושרה</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="rec q">
+            <h3>3. הוספת המילה "מבדק" לאורך הדף (6-8 פעמים)</h3>
+            <div class="why">השאילתה היא "מבדק אמינות" אבל הדף משתמש ב"מבחן" בלבד. "מבדק" מופיעה פעם אחת.</div>
+            <div class="ref"><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">pac.ac.il (#2) — משתמשת ב"מבדק" נרחב</a></div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">3</span>
-                    <div>
-                        <div class="rec-title">הוספת המילה "מבדק" לאורך כל הדף (6-8 הופעות לפחות)</div>
-                        <div class="rec-why">השאילתה היא "מבדק אמינות" אך הדף משתמש ב"מבחן" 20+ פעמים ו"מבדק" פעם אחת. pac.ac.il (#2) משתמשת ב"מבדק" בכל כותרת. יש להחליף חלק מה"מבחן" ל"מבדק" לכיסוי טבעי של שתי הווריאציות.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>מיקומים מומלצים להחלפה</h4>
-                    <ul>
-                        <li>H1: "מבדק אמינות ממוחשב" (במקום "מבחן")</li>
-                        <li>Meta description: להוסיף "מבדק" בתחילת התיאור</li>
-                        <li>H2 #9: "מהו מבדק אמינות ממוחשב IntegriTEST" (כבר קיים "מבחן")</li>
-                        <li>H2 #10: "מהי המטרה של מבדק אמינות"</li>
-                        <li>פסקת פתיחה: 1-2 הופעות של "מבדק"</li>
-                        <li>FAQ: בשאלה #1 ו-#4</li>
-                        <li>Alt text של תמונות: "מבדק אמינות ממוחשב IntegriTEST"</li>
-                    </ul>
-                </div>
-                <span class="rec-ref"><a href="https://www.pac.ac.il/peresplus/%D7%94%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%9E%D7%91%D7%93%D7%A7-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA/" target="_blank">דוגמא: pac.ac.il — שימוש נרחב ב"מבדק"</a></span>
-            </div>
+        <div class="rec q">
+            <h3>4. הרחבת FAQ מ-5 ל-10+ שאלות</h3>
+            <div class="why">למידות יש FAQPage Schema — אף מתחרה לא מיישם. להוסיף: מה ההבדל מפוליגרף? מה שואלים? האם מחייב משפטית? כמה עולה?</div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">4</span>
-                    <div>
-                        <div class="rec-title">ארגון מחדש של מבנה H-tags — הוספת H1, שיפור 9 כותרות H2</div>
-                        <div class="rec-why">לדף יש 9 H2 ו-19 H3 אבל אין H1 כלל. בנוסף, H2 הראשון ("IntegriTEST") חוזר על שם המוצר במקום לשמש ככותרת תוכן. ה-H2 צריכים להיות ממוקדים בשאילתת "מבדק אמינות". שאלות FAQ כבר ב-H3 (נכון), אבל חסר H1 כשכבה עליונה.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>מבנה H-tags מומלץ</h4>
-                    <div class="htag-structure">
-<span class="h1">&lt;H1&gt; מבדק אמינות ממוחשב IntegriTEST — הכלי המוביל בעולם להערכת יושרה</span> <span class="comment">// חסר! חובה להוסיף</span>
-  <span class="h2">&lt;H2&gt; מהו מבדק אמינות ממוחשב ומה הוא בודק?</span>
-  <span class="h2">&lt;H2&gt; כיצד עובד מבדק אמינות IntegriTEST?</span>
-    <span class="h3">&lt;H3&gt; מבחנים מותאמים אישית</span>
-    <span class="h3">&lt;H3&gt; דוחות אינטראקטיביים</span>
-    <span class="h3">&lt;H3&gt; תיקוף מדעי ודיוק</span>
-  <span class="h2">&lt;H2&gt; יתרונות מבדק אמינות של מכון מידות</span>
-  <span class="h2">&lt;H2&gt; מתי יש צורך לעבור מבדק אמינות?</span>
-  <span class="h2">&lt;H2&gt; תהליך קבלת התוצאות</span>
-  <span class="h2">&lt;H2&gt; שאלות ותשובות על מבדק אמינות IntegriTEST</span>
-    <span class="h3">&lt;H3&gt; שאלה 1...</span>
-    <span class="h3">&lt;H3&gt; שאלה 2...</span>
-    <span class="comment">// כל שאלות FAQ כ-H3 תחת H2 ההורה</span>
-                    </div>
-                </div>
-            </div>
+        <div class="rec q">
+            <h3>5. הצגת מומחה מידות בשם + תואר + תמונה</h3>
+            <div class="why">מכון נועם מציג מייסד עם M.A. פסיכולוגיה. קולמן מציגה מנהלת קריירה. מידות — אף אחד.</div>
+            <div class="ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il (#1) — דוד משולם, M.A. פסיכולוגיה</a></div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">5</span>
-                    <div>
-                        <div class="rec-title">הרחבת FAQ מ-5 ל-12 שאלות + עדכון FAQPage Schema</div>
-                        <div class="rec-why">למידות כבר יש FAQPage Schema — שום מתחרה לא מיישם את זה. הכפלת מספר השאלות מרחיבה את היתרון ומכסה שאילתות PAA (People Also Ask).</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>5 שאלות קיימות + 7 שאלות חדשות מומלצות</h4>
-                    <div class="faq-grid">
-                        <div class="faq-item"><span class="faq-badge existing">קיים</span><br>איך נראה מבחן אמינות ממוחשב?</div>
-                        <div class="faq-item"><span class="faq-badge existing">קיים</span><br>אילו סוגי שאלות כולל המבחן?</div>
-                        <div class="faq-item"><span class="faq-badge existing">קיים</span><br>האם נדרשת הכנה למבחן?</div>
-                        <div class="faq-item"><span class="faq-badge existing">קיים</span><br>כמה זמן אורך מבדק אמינות ממוחשב?</div>
-                        <div class="faq-item"><span class="faq-badge existing">קיים</span><br>האם אפשר להיכשל במבדק אמינות ממוחשב?</div>
-                        <div class="faq-item"><span class="faq-badge paa">PAA</span><br>מה ההבדל בין מבדק אמינות לפוליגרף?</div>
-                        <div class="faq-item"><span class="faq-badge paa">PAA</span><br>מה שואלים במבדק אמינות?</div>
-                        <div class="faq-item"><span class="faq-badge new">חדש</span><br>האם תוצאות מבדק אמינות מחייבות מבחינה משפטית?</div>
-                        <div class="faq-item"><span class="faq-badge new">חדש</span><br>כיצד מבדק אמינות שומר על פרטיות הנבדק?</div>
-                        <div class="faq-item"><span class="faq-badge new">חדש</span><br>מה אחוז הדיוק של מבדק IntegriTEST?</div>
-                        <div class="faq-item"><span class="faq-badge new">חדש</span><br>האם אפשר לערער על תוצאות מבדק אמינות?</div>
-                        <div class="faq-item"><span class="faq-badge new">חדש</span><br>כמה עולה מבדק אמינות למעסיק?</div>
-                    </div>
-                </div>
-            </div>
+        <div class="rec q">
+            <h3>6. החלפת לוגואים בינלאומיים בשמות ארגונים ישראליים</h3>
+            <div class="why">Brinks ו-Danone לא מוכרים בישראל. מכון נועם מפרט: צה"ל, מגדל, כללית, אלביט, IKEA, סופר-פארם.</div>
+            <div class="ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il (#1) — 40+ ארגונים</a></div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">6</span>
-                    <div>
-                        <div class="rec-title">הצגת מומחה מידות בשם מלא + תואר + תמונה</div>
-                        <div class="rec-why">מכון נועם מציג: "דוד משולם, M.A. פסיכולוגיה, אוניברסיטת ת"א, טייס קרב לשעבר". קולמן מציגה: "דקלה בר-אילן, מנהלת מרכז קריירה". מידות לא מציגה אף מומחה — פער E-E-A-T קריטי.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>מה להוסיף</h4>
-                    <ul>
-                        <li>שם מלא של מנהל המחקר / מפתח IntegriTEST</li>
-                        <li>תואר אקדמי (Ph.D./M.A. בפסיכולוגיה ארגונית)</li>
-                        <li>שנות ניסיון ותחום מומחיות</li>
-                        <li>תמונה מקצועית (ראש)</li>
-                        <li>ציטוט קצר על המתודולוגיה</li>
-                        <li>אופציונלי: Person Schema מקושר</li>
-                    </ul>
-                </div>
-                <span class="rec-ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: מכון נועם — מייסד דוד משולם</a></span>
-            </div>
+        <div class="rec s">
+            <h3>7. הוספת סרטון הסבר (60-90 שנ') + VideoObject Schema</h3>
+            <div class="why">רק מכון נועם (#1) מציע וידאו בכל ה-SERP. מידות כמפתחת המבדק יכולה ליצור סרטון סמכותי שאף מתחרה לא ישווה לו.</div>
+            <div class="ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il (#1) — וידאו YouTube + VideoObject</a></div>
         </div>
 
-        <div class="rec-card quick-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num q">7</span>
-                    <div>
-                        <div class="rec-title">החלפת לוגואים בינלאומיים בשמות ארגונים ישראליים</div>
-                        <div class="rec-why">הדף מציג Brinks, Danone, Megacable — שמות שלא מוכרים לקהל הישראלי. מכון נועם מפרט 40+ ארגונים ישראליים: מגדל, כללית, צה"ל, אלביט, סופר-פארם, IKEA, תנובה. ההוכחה החברתית המקומית חזקה פי 10.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>ארגונים שמכון נועם מציג (מידות יכולה להציג דומים)</h4>
-                    <ul>
-                        <li><strong>פיננסים:</strong> מגדל, הראל, הפניקס, כלל, ויזה כ"אל, ישראכרט</li>
-                        <li><strong>ביטחון/ממשלה:</strong> צה"ל, משטרת ישראל, שב"ס, רכבת ישראל, רשות שדות התעופה</li>
-                        <li><strong>בריאות:</strong> כללית, מכבי, אסותא, הדסה, סורוקה, מד"א</li>
-                        <li><strong>טכנולוגיה:</strong> אלביט, רפאל, אינטל</li>
-                        <li><strong>קמעונאות:</strong> IKEA, סופר-פארם, אלקטרה, תנובה</li>
-                    </ul>
-                </div>
-                <span class="rec-ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il — 40+ ארגונים</a></span>
-            </div>
+        <div class="rec s">
+            <h3>8. הוספת 3 שאלות לדוגמא עם הסברים</h3>
+            <div class="why">מכון נועם מציג 3 שאלות תרגול — זה הגורם המרכזי לדירוג #1. אין צורך לחשוף שאלות אמיתיות, מספיק דוגמאות גנריות.</div>
+            <div class="ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">machon-noam.co.il (#1) — 3 שאלות עם פירוט</a></div>
         </div>
 
-        <!-- STRATEGIC -->
-        <div style="margin-top: 32px;"></div>
-        <div class="rec-group-title strategic">שינויים אסטרטגיים — תוך 2-4 שבועות</div>
-
-        <div class="rec-card strategic-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num s">8</span>
-                    <div>
-                        <div class="rec-title">יצירת סרטון הסבר (90 שניות) + VideoObject Schema</div>
-                        <div class="rec-why">רק מכון נועם (#1) מציע וידאו בכל ה-SERP. לוידאו של מכון נועם אין מתחרה — לכל שאר האתרים אין. וידאו מקצועי של מפתח המבדק יהיה בעל סמכות שאין לאף אתר אחר.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>תוכן מומלץ לסרטון</h4>
-                    <ul>
-                        <li>0-15 שנ': "מה זה מבדק אמינות ולמה הוא חשוב?" (מומחה מידות מדבר למצלמה)</li>
-                        <li>15-40 שנ': "איך המבדק עובד?" — מסך של הממשק (screen recording)</li>
-                        <li>40-60 שנ': "מה בודקים?" — 3-4 תחומי מדידה עם אנימציות</li>
-                        <li>60-75 שנ': "מה מיוחד ב-IntegriTEST?" — 40+ שנות מו"פ, 30+ מדינות</li>
-                        <li>75-90 שנ': CTA — "בקשו גרסת דמו"</li>
-                    </ul>
-                </div>
-                <span class="rec-ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il — וידאו + VideoObject</a></span>
-            </div>
+        <div class="rec s">
+            <h3>9. יצירת דף תוכן נפרד למועמדים: "מבדק אמינות — המדריך השלם"</h3>
+            <div class="why">65% מתוצאות ה-SERP פונות למועמדים. מידות כמפתחת המבדק יכולה לכתוב את המדריך הסמכותי ביותר בשוק.</div>
         </div>
 
-        <div class="rec-card strategic-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num s">9</span>
-                    <div>
-                        <div class="rec-title">הוספת סקשן "דוגמאות לשאלות מבדק אמינות" — 3 שאלות עם הסברים</div>
-                        <div class="rec-why">מכון נועם (#1) מציג 3 שאלות לדוגמא עם הסברים — זה הגורם המרכזי לדירוג שלו. השאילתה "מבדק אמינות שאלות" היא שאילתה נפרדת שמידות לא מדורגת בה טוב. אין צורך לחשוף שאלות אמיתיות — מספיק דוגמאות גנריות שמדגימות את הפורמט.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>הדוגמאות שמכון נועם מציג (לצורך הבנת הפורמט)</h4>
-                    <ul>
-                        <li><strong>שאלה A (מסכים/לא מסכים):</strong> "רוב בני האדם פועלים בהתאם לחוקים ולנהלים" — בודקת עמדות כלפי אמינות</li>
-                        <li><strong>שאלה B (נכון/לא נכון):</strong> "כדי לממש את הזכויות הבסיסיות במדינה שלנו, אין ברירה אלא להפעיל כוח" — בודקת יושרה</li>
-                        <li><strong>שאלה C (כן/לא):</strong> "האם לפעמים מתחשק לך לקלל?" — בודקת רושם חברתי (social desirability)</li>
-                        <li><strong>מידות יכולה להציג:</strong> דוגמאות מופשטות שמדגימות את סוגי השאלות בלי לחשוף את המבחן עצמו</li>
-                    </ul>
-                </div>
-                <span class="rec-ref"><a href="https://www.machon-noam.co.il/%D7%9E%D7%91%D7%97%D7%A0%D7%99-%D7%90%D7%9E%D7%99%D7%A0%D7%95%D7%AA-%D7%93%D7%95%D7%92%D7%9E%D7%90%D7%95%D7%AA" target="_blank">דוגמא: machon-noam.co.il — 3 שאלות עם הסברים</a></span>
-            </div>
+        <div class="rec d">
+            <h3>10. Product Schema + AggregateRating</h3>
+            <div class="why">אף מתחרה לא מיישם — כוכבי דירוג בתוצאות החיפוש. 92% שביעות רצון = דירוג 4.6/5.</div>
         </div>
 
-        <div class="rec-card strategic-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num s">10</span>
-                    <div>
-                        <div class="rec-title">יצירת דף תוכן נפרד למועמדים: "מבדק אמינות — המדריך השלם"</div>
-                        <div class="rec-why">65% מתוצאות ה-SERP פונות למועמדים. אם מידות — מפתחת המבדק עצמו — תכתוב מדריך למועמדים, יש לה סמכות שאף מכון הכנה לא יכול לגעת בה. זה לא מתחרה בדף המוצר — זה מגלה קהל חדש.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>מבנה מומלץ לדף החדש</h4>
-                    <ul>
-                        <li><strong>URL מומלץ:</strong> midot.co.il/blog/integrity-test-guide/</li>
-                        <li><strong>H1:</strong> מבדק אמינות — המדריך השלם מבית מפתחי המבדק</li>
-                        <li><strong>סקשנים:</strong> מהו מבדק אמינות? | סוגי השאלות | איך להתכונן | דוגמאות | FAQ | וידאו</li>
-                        <li><strong>CTA:</strong> קישור פנימי לדף המוצר למעסיקים</li>
-                        <li><strong>אורך יעד:</strong> 2,500+ מילים</li>
-                        <li><strong>Schema:</strong> Article + FAQPage + VideoObject (אם מוטמע וידאו)</li>
-                        <li><strong>USP:</strong> "מהמפתחים עצמם" — סמכות שלאף מתחרה אין</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- DOMINATE -->
-        <div style="margin-top: 32px;"></div>
-        <div class="rec-group-title dominate">שליטה — פעולות שאף מתחרה לא עושה</div>
-
-        <div class="rec-card dominate-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num d">11</span>
-                    <div>
-                        <div class="rec-title">הוספת Product Schema + AggregateRating — יתרון ראשון לנוע</div>
-                        <div class="rec-why">אף מתחרה — לא בתוכן ולא בספקים ישירים — לא מיישם Product Schema עם דירוג. זה מאפשר כוכבי דירוג בתוצאות החיפוש שיגדילו CTR משמעותית.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>נתונים להטמעה</h4>
-                    <ul>
-                        <li>92% שביעות רצון = דירוג 4.6/5.0</li>
-                        <li>מספר דירוגים: על בסיס מספר נבדקים שמילאו משוב</li>
-                        <li>קטגוריה: SoftwareApplication או Product</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="rec-card dominate-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num d">12</span>
-                    <div>
-                        <div class="rec-title">הוספת 3-5 המלצות לקוחות אמיתיות (מנהלי HR ישראליים)</div>
-                        <div class="rec-why">אף אתר ב-SERP כולו — לא מכון נועם, לא פרס, לא קולמן, ולא LogiPass — מציג המלצות לקוחות אמיתיות. מידות יכולה להיות הראשונה והיחידה. המלצה מ"ראש גיוס בבנק X" עם שם ותמונה = אמינות מוחלטת.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>פורמט מומלץ</h4>
-                    <ul>
-                        <li>ציטוט של 2-3 משפטים</li>
-                        <li>שם מלא + תפקיד + חברה</li>
-                        <li>תמונה מקצועית (אם מותר)</li>
-                        <li>Review Schema מקושר</li>
-                        <li>מינימום 3 המלצות ממגזרים שונים (בנקאות, קמעונאות, טכנולוגיה)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="rec-card dominate-border">
-            <div class="rec-inner">
-                <div class="rec-top">
-                    <span class="rec-num d">13</span>
-                    <div>
-                        <div class="rec-title">יצירת דף "מבחן יושרה" — לכבוש את השאילתה שבה LogiPass שולט</div>
-                        <div class="rec-why">מידות מדורגת ~#10 ל"מבחן יושרה" למרות שהסלוגן שלה הוא "יושרה כסטנדרט". LogiPass מחזיק 2 תוצאות ב-Top 5. Psiphas ו-IntegrityMeter חולקים את שאר המקומות. IntegrityMeter ו-Psiphas בנויים על Wix עם אפס Schema — הם פגיעים ביותר. דף ייעודי עם "מבחן יושרה" כ-H1, תוכן עשיר, ו-Schema מלא ימקם את מידות כמובילה.</div>
-                    </div>
-                </div>
-                <div class="rec-details">
-                    <h4>אסטרטגיה לנטרול LogiPass</h4>
-                    <ul>
-                        <li><strong>LogiPass מציג:</strong> ISO 9001 + ISO 27032, 2,134 לקוחות, 565K נבדקים — מידות צריכה לפרסם נתונים מקבילים</li>
-                        <li><strong>LogiPass מציג:</strong> ד"ר מירב חמי, פסיכולוגית תעסוקתית — מידות צריכה להציג את המומחים שלה</li>
-                        <li><strong>LogiPass חסר:</strong> FAQPage Schema, וידאו, שאלות לדוגמא — מידות כבר מתכננת את אלה</li>
-                        <li><strong>Psiphas חזק ב:</strong> קשר צה"ל, 33 שנה, מבדק אדפטיבי — אם IntegriTEST אדפטיבי, להדגיש; אם לא, לשקול פיתוח</li>
-                        <li><strong>IntegrityMeter חזק ב:</strong> בדיקות תקופתיות + מניעת אובדן — להוסיף messaging על monitoring מתמשך</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="rec d">
+            <h3>11. המלצות לקוחות אמיתיות (מנהלי HR ישראליים)</h3>
+            <div class="why">אף אתר ב-SERP כולו לא מציג המלצות אמיתיות. ציטוט מ"ראש גיוס בבנק X" = בידול מוחלט.</div>
         </div>
 
     </section>
 
 </main>
 
-<footer class="footer">
-    <div class="container">
-        <p>הופק על ידי <strong>NC Digital</strong> | ניתוח מתחרים אורגני עבור midot.co.il | פברואר 2026</p>
-    </div>
-</footer>
+<footer>NC Digital | ניתוח מתחרים אורגני עבור midot.co.il | פברואר 2026</footer>
 
 </body>
 </html>
