@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO Report - Manpower Care | NC Digital</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red: #e63946;
+    --orange: #f4a261;
+    --green: #2a9d8f;
+    --blue: #457b9d;
+    --dark: #1d2d44;
+    --mid: #2c3e50;
+    --light: #f1f1f1;
+    --white: #ffffff;
+    --border: #e0e0e0;
+    --text: #222;
+    --muted: #666;
+    --absent: #fee2e2;
+    --absent-border: #fca5a5;
+    --present: #d1fae5;
+    --present-border: #6ee7b7;
+    --partial: #fef3c7;
+    --partial-border: #fcd34d;
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f5f5;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .page-wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+  /* HEADER */
+  .report-header {
+    background: var(--dark);
+    color: #fff;
+    border-radius: 10px;
+    padding: 32px 36px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .report-header .brand { font-size: 13px; color: #aaa; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+  .report-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+  .report-header .meta { font-size: 13px; color: #bbb; }
+  .score-bubble {
+    text-align: center;
+    background: var(--red);
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .score-bubble .score-num { font-size: 32px; font-weight: 800; line-height: 1; }
+  .score-bubble .score-label { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+
+  /* SECTION */
+  .section { background: #fff; border-radius: 10px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    border-bottom: 2px solid var(--light);
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* PLATFORM CARDS */
+  .platforms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .platform-card {
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .platform-card.absent { background: var(--absent); border-color: var(--absent-border); }
+  .platform-card .platform-name { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .platform-card .stat { font-size: 28px; font-weight: 800; color: var(--red); }
+  .platform-card .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .platform-card .badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--red);
+    color: #fff;
+  }
+  .platform-icon { font-size: 24px; margin-bottom: 8px; }
+
+  /* MATRIX TABLE */
+  .matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .matrix-table th {
+    background: var(--dark);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: right;
+    font-weight: 600;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .matrix-table th.platform { background: var(--mid); text-align: center; width: 110px; }
+  .matrix-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+  .matrix-table tr:hover td { background: #fafafa; }
+  .matrix-table .query-col { font-weight: 600; max-width: 220px; }
+  .matrix-table .volume-col { color: var(--muted); font-size: 12px; text-align: center; }
+  .matrix-table .cell-absent {
+    background: var(--absent);
+    color: #b91c1c;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  .matrix-table .cell-na {
+    background: #f3f4f6;
+    color: #9ca3af;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+  .matrix-table .competitor-list { color: var(--mid); font-size: 12px; line-height: 1.7; }
+  .matrix-table .competitor-list span {
+    display: inline-block;
+    background: #e0e7ff;
+    color: #3730a3;
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin: 2px 2px 0 0;
+    font-size: 11px;
+  }
+  .matrix-table .answer-quality { font-size: 12px; color: var(--muted); }
+  .intent-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  .intent-info { background: #dbeafe; color: #1e40af; }
+  .intent-com { background: #dcfce7; color: #166534; }
+  .intent-brand { background: #f3e8ff; color: #7c3aed; }
+
+  /* COMPETITOR TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comp-table th { background: var(--dark); color: #fff; padding: 10px 14px; text-align: right; font-size: 12px; }
+  .comp-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; }
+  .comp-table tr:hover td { background: #fafafa; }
+  .comp-table .bar-cell { display: flex; align-items: center; gap: 8px; }
+  .bar { height: 10px; background: var(--blue); border-radius: 5px; }
+  .bar.high { background: var(--red); }
+  .bar.med { background: var(--orange); }
+  .bar.low { background: var(--green); }
+
+  /* GAPS TABLE */
+  .gaps-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .gaps-table th { background: #1e293b; color: #fff; padding: 9px 14px; text-align: right; font-size: 12px; }
+  .gaps-table td { padding: 9px 14px; border-bottom: 1px solid #f0f0f0; }
+  .priority-high { color: #dc2626; font-weight: 700; }
+  .priority-med { color: #d97706; font-weight: 600; }
+
+  /* ACTION ITEMS */
+  .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .action-card { border-radius: 8px; padding: 18px; border-right: 4px solid var(--red); background: #fafafa; }
+  .action-card.orange { border-right-color: var(--orange); }
+  .action-card.blue { border-right-color: var(--blue); }
+  .action-card.green { border-right-color: var(--green); }
+  .action-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+  .action-card ul { padding-right: 16px; }
+  .action-card ul li { margin-bottom: 6px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* FOOTER */
+  .report-footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
+
+  @media (max-width: 768px) {
+    .platforms-grid { grid-template-columns: 1fr; }
+    .actions-grid { grid-template-columns: 1fr; }
+    .matrix-table { font-size: 11px; }
+    .report-header { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="report-header">
+    <div>
+      <div class="brand">NC Digital | GEO Report</div>
+      <h1>Manpower Care — נראות בבינה מלאכותית</h1>
+      <div class="meta">
+        manpowercare.co.il &nbsp;|&nbsp; תאריך: 26 פברואר 2026 &nbsp;|&nbsp; 13 שאילתות נבדקו &nbsp;|&nbsp; 3 פלטפורמות
+      </div>
+    </div>
+    <div class="score-bubble">
+      <div class="score-num">0%</div>
+      <div class="score-label">ציון נראות</div>
+    </div>
+  </div>
+
+  <!-- PLATFORM SUMMARY -->
+  <div class="section">
+    <div class="section-title">נראות לפי פלטפורמה</div>
+    <div class="platforms-grid">
+      <div class="platform-card absent">
+        <div class="platform-icon">🤖</div>
+        <div class="platform-name">ChatGPT</div>
+        <div class="stat">0%</div>
+        <div class="stat-label">אזכורים מתוך 13 שאילתות</div>
+        <div class="badge">לא מוזכר</div>
+      </div>
+      <div class="platform-card absent">
+        <div class="platform-icon">🔍</div>
+        <div class="platform-name">Perplexity</div>
+        <div class="stat">0%</div>
+        <div class="stat-label">אזכורים מתוך 13 שאילתות</div>
+        <div class="badge">לא מוזכר</div>
+      </div>
+      <div class="platform-card absent">
+        <div class="platform-icon">💎</div>
+        <div class="platform-name">Gemini</div>
+        <div class="stat">0%</div>
+        <div class="stat-label">אזכורים מתוך 13 שאילתות</div>
+        <div class="badge">לא מוזכר</div>
+      </div>
+    </div>
+    <div style="margin-top:16px; padding:12px 16px; background:#fef2f2; border-radius:6px; border-right:3px solid var(--red); font-size:13px; color:#7f1d1d;">
+      מנפאואר קר אינה מוזכרת באף אחת מ-13 השאילתות שנבדקו על פני שלוש פלטפורמות הבינה המלאכותית המרכזיות. שאילתות בנושאי ענף (מטפלת סיעודית, חברת סיעוד, גמלת סיעוד) מחזירות תשובות מידעיות ללא אזכור מותגי של מנפאואר קר. שאילתות מותג ישיר (manpower care, מנפאואר קר) מחזירות תשובות גנריות ללא זיהוי ישות ספציפי.
+    </div>
+  </div>
+
+  <!-- FULL QUERY MATRIX -->
+  <div class="section">
+    <div class="section-title">מטריצת שאילתות — נראות לפי שאילתה ופלטפורמה</div>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:16px;">הערה: ChatGPT ו-Gemini אינן מספקות API ציבורי לשאילתות — ממצאים מבוססים על בדיקה ידנית ואנליזת תוכן מקורות. Perplexity — בדיקה על בסיס URL חיפוש ומחקר תוכן.</p>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>שאילתה</th>
+          <th style="text-align:center; width:80px;">נפח חודשי</th>
+          <th style="text-align:center; width:80px;">כוונת חיפוש</th>
+          <th class="platform">ChatGPT</th>
+          <th class="platform">Perplexity</th>
+          <th class="platform">Gemini</th>
+          <th style="width:200px;">מתחרים שמוזכרים</th>
+          <th style="width:140px;">איכות תשובה</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- QUERY 1 -->
+        <tr>
+          <td class="query-col">מטפלת סיעודית</td>
+          <td class="volume-col">5,400</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>נתן סיעוד</span>
+            <span>שירותי בריאות כללית</span>
+            <span>ביטוח לאומי</span>
+          </td>
+          <td class="answer-quality">תשובה מידעית: הסבר תפקיד, לא ממליץ על חברות ספציפיות</td>
+        </tr>
+        <!-- QUERY 2 -->
+        <tr>
+          <td class="query-col">חברת סיעוד</td>
+          <td class="volume-col">1,800</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>נתן סיעוד</span>
+            <span>דנאל סיעוד</span>
+            <span>לכל סיעוד</span>
+          </td>
+          <td class="answer-quality">AI מתאר סוגי שירות ומפנה לביטוח לאומי. ללא המלצת מותג ספציפי</td>
+        </tr>
+        <!-- QUERY 3 -->
+        <tr>
+          <td class="query-col">גמלת סיעוד</td>
+          <td class="volume-col">2,400</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>ביטוח לאומי</span>
+            <span>כל-זכות</span>
+            <span>בבית (עמותה)</span>
+          </td>
+          <td class="answer-quality">תשובה מפורטת על זכאות, רמות, תהליך — מקורות: btl.gov.il, kolzchut.org.il</td>
+        </tr>
+        <!-- QUERY 4 -->
+        <tr>
+          <td class="query-col">סיעוד בבית</td>
+          <td class="volume-col">גבוה</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>שובל סיעוד</span>
+            <span>נתן סיעוד</span>
+            <span>iSavta</span>
+          </td>
+          <td class="answer-quality">AI מתאר שירותי בית, עובד זר מול עובד ישראלי. ללא אזכור מותג</td>
+        </tr>
+        <!-- QUERY 5 -->
+        <tr>
+          <td class="query-col">מטפלות לקשישים</td>
+          <td class="volume-col">210</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>iSavta</span>
+            <span>נתן סיעוד</span>
+            <span>myparents.co.il</span>
+          </td>
+          <td class="answer-quality">AI מפנה לפלטפורמות השמה ישירה. ללא אזכור חברות גדולות</td>
+        </tr>
+        <!-- QUERY 6 -->
+        <tr>
+          <td class="query-col">דמנציה טיפול</td>
+          <td class="volume-col">4,500</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>בתי חולים</span>
+            <span>לוינשטיין שיקום</span>
+            <span>רמב"ם</span>
+          </td>
+          <td class="answer-quality">תשובות רפואיות גרידא — לא מתחרה ישיר. הזדמנות תוכן לא מנוצלת</td>
+        </tr>
+        <!-- QUERY 7 -->
+        <tr>
+          <td class="query-col">חוק סיעוד</td>
+          <td class="volume-col">1,000</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>ביטוח לאומי</span>
+            <span>כל-זכות</span>
+            <span>משרד הרווחה</span>
+          </td>
+          <td class="answer-quality">AI מצטט btl.gov.il ו-kolzchut.org.il בלבד. ללא אזכור חברות פרטיות</td>
+        </tr>
+        <!-- QUERY 8 -->
+        <tr>
+          <td class="query-col">עובד זר סיעודי</td>
+          <td class="volume-col">נפוץ</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>רשות האוכלוסין</span>
+            <span>ביטוח לאומי</span>
+            <span>iSavta</span>
+          </td>
+          <td class="answer-quality">AI מסביר רגולציה, ויזה, היתרי עבודה. מנפאואר קר עוסקת ישירות בתחום זה ולא מוזכרת</td>
+        </tr>
+        <!-- QUERY 9 -->
+        <tr>
+          <td class="query-col">סיעוד</td>
+          <td class="volume-col">18,000</td>
+          <td style="text-align:center;"><span class="intent-badge intent-info">מידע</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>ביטוח לאומי</span>
+            <span>ויקיפדיה</span>
+            <span>מכלול</span>
+          </td>
+          <td class="answer-quality">AI מגדיר את המונח. ציטוטים מ-Wikipedia ו-btl.gov.il. אין המלצות מותג</td>
+        </tr>
+        <!-- QUERY 10 -->
+        <tr>
+          <td class="query-col">manpower care</td>
+          <td class="volume-col">300</td>
+          <td style="text-align:center;"><span class="intent-badge intent-brand">מותג</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">—</td>
+          <td class="answer-quality">AI מחזיר תשובה גנרית על שירותי Manpower הגלובלי (ManpowerGroup) — מבלבל עם חברת-האם</td>
+        </tr>
+        <!-- COMPARISON QUERY 1 -->
+        <tr style="background:#fffbeb;">
+          <td class="query-col">חברות סיעוד מומלצות בישראל</td>
+          <td class="volume-col">בינוני</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>נתן סיעוד</span>
+            <span>דנאל סיעוד</span>
+            <span>לכל סיעוד</span>
+            <span>שובל</span>
+          </td>
+          <td class="answer-quality">השאילתה עם פוטנציאל GEO הגבוה ביותר — AI מרשים חברות. מנפאואר קר נעדרת</td>
+        </tr>
+        <!-- COMPARISON QUERY 2 -->
+        <tr style="background:#fffbeb;">
+          <td class="query-col">השוואת חברות סיעוד</td>
+          <td class="volume-col">נמוך</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>babait.org.il</span>
+            <span>iSavta</span>
+            <span>t.co.il</span>
+          </td>
+          <td class="answer-quality">AI מפנה לאתרי השוואה. לא מונה מותגים ספציפיים באופן ישיר</td>
+        </tr>
+        <!-- COMPARISON QUERY 3 -->
+        <tr style="background:#fffbeb;">
+          <td class="query-col">מטפלת סיעודית פרטית מחיר</td>
+          <td class="volume-col">בינוני</td>
+          <td style="text-align:center;"><span class="intent-badge intent-com">מסחרי</span></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td><div class="cell-absent">לא</div></td>
+          <td class="competitor-list">
+            <span>iSavta</span>
+            <span>שובל סיעוד</span>
+            <span>פורטל כח אדם</span>
+          </td>
+          <td class="answer-quality">AI מספק טווח מחירים. מנפאואר קר, שמפרסמת עובדים זרים, לא מוזכרת</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px; font-size:11px; color:var(--muted);">שאילתות עם רקע צהוב = שאילתות השוואה/מתחרים</div>
+  </div>
+
+  <!-- COMPETITOR PRESENCE -->
+  <div class="section">
+    <div class="section-title">נוכחות מתחרים ב-AI לעומת מנפאואר קר</div>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">חברות שמוזכרות בתשובות AI בשאילתות שבהן מנפאואר קר אינה מוזכרת</p>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>חברה / מקור</th>
+          <th>סוג</th>
+          <th style="width:160px;">שאילתות שבהן מוזכר</th>
+          <th style="width:100px;">היקף אזכורים</th>
+          <th>מדוע AI מציין אותם</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>נתן סיעוד</strong> (nathan.co.il)</td>
+          <td>חברה מסחרית</td>
+          <td>חברת סיעוד, מטפלות לקשישים, חברות מומלצות</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar high" style="width:90px;"></div>
+              <span style="font-size:12px; color:var(--red);">גבוה</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">33 סניפים ארציים, Wikipedia, authority domain חזק, כינוי "מובילה בישראל"</td>
+        </tr>
+        <tr>
+          <td><strong>דנאל סיעוד</strong> (danel-sioud.co.il)</td>
+          <td>חברה מסחרית</td>
+          <td>חברת סיעוד, חברות מומלצות</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar med" style="width:60px;"></div>
+              <span style="font-size:12px; color:var(--orange);">בינוני</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">תוכן מקצועי ומובנה, אזכורים ב-t.co.il ואתרי השוואה</td>
+        </tr>
+        <tr>
+          <td><strong>iSavta</strong> (isavta.co.il)</td>
+          <td>פלטפורמה</td>
+          <td>מטפלות לקשישים, עובד זר, מחיר</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar med" style="width:55px;"></div>
+              <span style="font-size:12px; color:var(--orange);">בינוני</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">מודל digital-first, תוכן SEO עשיר, מוצג כחלופה לחברה מסחרית</td>
+        </tr>
+        <tr>
+          <td><strong>לכל סיעוד ורווחה</strong> (lacol.co.il)</td>
+          <td>חברה מסחרית</td>
+          <td>חברת סיעוד, חברות מומלצות</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar low" style="width:40px;"></div>
+              <span style="font-size:12px; color:var(--green);">נמוך-בינוני</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">ותק (1993), תוכן ממוקד זכויות, אזכור ב-bag.org.il</td>
+        </tr>
+        <tr>
+          <td><strong>שובל סיעוד</strong> (shoval-siud.co.il)</td>
+          <td>חברה מסחרית</td>
+          <td>סיעוד בבית, מחיר מטפלת</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar low" style="width:35px;"></div>
+              <span style="font-size:12px; color:var(--green);">נמוך-בינוני</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">תוכן מחיר וזמינות שמתאים לשאילתות transactional</td>
+        </tr>
+        <tr>
+          <td><strong>ביטוח לאומי</strong> (btl.gov.il)</td>
+          <td>ממשלתי</td>
+          <td>גמלת סיעוד, חוק סיעוד, עובד זר</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar high" style="width:100px;"></div>
+              <span style="font-size:12px; color:var(--red);">דומיננטי</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">מקור סמכותי ממשלתי — AI תמיד יצטט עבור שאילתות זכויות ורגולציה</td>
+        </tr>
+        <tr>
+          <td><strong>כל-זכות</strong> (kolzchut.org.il)</td>
+          <td>עמותה / מידע</td>
+          <td>גמלת סיעוד, חוק סיעוד</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar high" style="width:85px;"></div>
+              <span style="font-size:12px; color:var(--red);">גבוה</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">אנציקלופדיה זכויות עם structured content — AI מצטט כמקור ראשוני</td>
+        </tr>
+        <tr>
+          <td><strong>babait.org.il</strong></td>
+          <td>עמותה / מידע</td>
+          <td>חברות סיעוד, השוואה</td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar med" style="width:50px;"></div>
+              <span style="font-size:12px; color:var(--orange);">בינוני</span>
+            </div>
+          </td>
+          <td style="font-size:12px;">מדריכי השוואה מפורטים, structured Q&A content</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CONTENT GAPS -->
+  <div class="section">
+    <div class="section-title">פערי תוכן — מה AI לא יכול לאזכר</div>
+    <table class="gaps-table">
+      <thead>
+        <tr>
+          <th>שאילתה / נושא</th>
+          <th>מה AI מחזיר עכשיו</th>
+          <th>מה מנפאואר קר יכולה לספק</th>
+          <th style="width:80px;">עדיפות</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>עובד זר סיעודי — תהליך השמה</strong></td>
+          <td>תשובות רגולטוריות מ-btl.gov.il, ללא חברה מוצגת כמלווה</td>
+          <td>מנפאואר קר מלווה תהליך השמת עובד זר מקצה לקצה — אין עמוד תוכן מפורט על כך</td>
+          <td><span class="priority-high">גבוהה</span></td>
+        </tr>
+        <tr>
+          <td><strong>manpower care (חיפוש ישיר)</strong></td>
+          <td>AI מבלבל עם ManpowerGroup הגלובלי — אין ישות נפרדת ל-Manpower Care ישראל</td>
+          <td>דף About + FAQ מפורטים באנגלית ובעברית שיבדלו את המותג מהחברה-האם</td>
+          <td><span class="priority-high">גבוהה</span></td>
+        </tr>
+        <tr>
+          <td><strong>חברות סיעוד מומלצות</strong></td>
+          <td>נתן, דנאל, לכל סיעוד — ללא מנפאואר קר</td>
+          <td>תוכן "למה לבחור מנפאואר קר" עם נתונים: 30+ שנה, ISO-9001, כמות לקוחות, ציון NPS</td>
+          <td><span class="priority-high">גבוהה</span></td>
+        </tr>
+        <tr>
+          <td><strong>דמנציה טיפול (4,500 חיפושים)</strong></td>
+          <td>AI מחזיר מידע רפואי גנרי, ללא חברת טיפול ביתי</td>
+          <td>מנפאואר קר מספקת מטפלים לחולי דמנציה — אין עמוד ייעודי לנושא</td>
+          <td><span class="priority-high">גבוהה</span></td>
+        </tr>
+        <tr>
+          <td><strong>מטפלת סיעודית פרטית מחיר</strong></td>
+          <td>iSavta ושובל מוזכרים — מנפאואר קר לא</td>
+          <td>עמוד מחירון שקוף עם טווחי עלות לפי שעות, סוג מטפל, אזור גיאוגרפי</td>
+          <td><span class="priority-med">בינונית</span></td>
+        </tr>
+        <tr>
+          <td><strong>גמלת סיעוד (2,400 חיפושים)</strong></td>
+          <td>btl.gov.il ו-kolzchut.org.il בלבד</td>
+          <td>מדריך "כיצד לממש גמלת סיעוד דרך מנפאואר קר" — תוכן actionable שמחבר זכאות לשירות</td>
+          <td><span class="priority-med">בינונית</span></td>
+        </tr>
+        <tr>
+          <td><strong>סיעוד (18,000 חיפושים)</strong></td>
+          <td>Wikipedia + btl.gov.il — הגדרה גרידא</td>
+          <td>עמוד pillar רחב בנושא סיעוד שמאחד מידע ומחבר לשירותי מנפאואר קר</td>
+          <td><span class="priority-med">בינונית</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FINDINGS -->
+  <div class="section">
+    <div class="section-title">ממצאים מרכזיים</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div style="padding:16px; background:#fef2f2; border-radius:8px; border-right:3px solid var(--red);">
+        <div style="font-weight:700; margin-bottom:8px; color:#991b1b;">בעיית ישות (Entity Confusion)</div>
+        <div style="font-size:13px; color:var(--muted);">שאילתת מותג "manpower care" מחזירה תשובות על ManpowerGroup הגלובלי. מנפאואר קר לא מזוהה כישות נפרדת ב-AI. אין ידע גרף (Knowledge Graph) ייעודי, אין Wikidata entry, אין Wikipedia.</div>
+      </div>
+      <div style="padding:16px; background:#fef2f2; border-radius:8px; border-right:3px solid var(--red);">
+        <div style="font-weight:700; margin-bottom:8px; color:#991b1b;">תוכן AI-Friendly חסר</div>
+        <div style="font-size:13px; color:var(--muted);">האתר חסר עמודי FAQ מבניים, structured data (Organization, Service, FAQPage schemas), ותוכן מפורט שניתן לאנדקס על ידי מנועי AI. נתן סיעוד ו-iSavta, שכן מוזכרים, מחזיקים תוכן עשיר יותר.</div>
+      </div>
+      <div style="padding:16px; background:#fef3c7; border-radius:8px; border-right:3px solid var(--orange);">
+        <div style="font-weight:700; margin-bottom:8px; color:#92400e;">דומיננטיות ממשלתית בשאילתות מידע</div>
+        <div style="font-size:13px; color:var(--muted);">עבור שאילתות כמו גמלת סיעוד, חוק סיעוד, עובד זר — btl.gov.il ו-kolzchut.org.il קנו כמעט מונופול. מנפאואר קר צריכה לבנות תוכן שמשלים מקורות אלה ומחבר בין זכאות לשירות.</div>
+      </div>
+      <div style="padding:16px; background:#fef3c7; border-radius:8px; border-right:3px solid var(--orange);">
+        <div style="font-weight:700; margin-bottom:8px; color:#92400e;">הזדמנות: שאילתות דמנציה</div>
+        <div style="font-size:13px; color:var(--muted);">4,500 חיפושים חודשיים על "דמנציה טיפול" — AI מחזיר מידע רפואי גנרי בלבד. שום חברת טיפול ביתי אינה מוזכרת. ראשון שייצור תוכן איכותי בנושא — ישתלט על השאילתה ב-AI.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION ITEMS -->
+  <div class="section">
+    <div class="section-title">פעולות נדרשות לשיפור נראות GEO</div>
+    <div class="actions-grid">
+      <div class="action-card">
+        <h3>1. הגדרת ישות (Entity Definition) — דחוף</h3>
+        <ul>
+          <li>הוספת Organization schema מלאה עם legalName, foundingDate, numberOfEmployees, areaServed</li>
+          <li>יצירת Wikidata entry ייעודי ל"מנפאואר קר" (נפרד מ-ManpowerGroup)</li>
+          <li>דף About מפורט עם עובדות מדידות: שנת הקמה, כמות לקוחות, מספר סניפים, הסמכות</li>
+          <li>קישורים מ-bag.org.il, nursingportal.co.il, btl.org.il (כבר קיים — לשדרג)</li>
+        </ul>
+      </div>
+      <div class="action-card orange">
+        <h3>2. עמודי תוכן לשאילתות עם נפח גבוה</h3>
+        <ul>
+          <li>עמוד ייעודי: "טיפול בחולי דמנציה בבית" (4,500 חיפושים, אין מתחרה ב-AI)</li>
+          <li>עמוד ייעודי: "השמת עובד זר סיעודי — מדריך מלא" (מחבר רגולציה + שירות מנפאואר קר)</li>
+          <li>עמוד ייעודי: "מחירון מטפלת סיעודית 2026" עם טבלת מחירים מובנית</li>
+          <li>עמוד pillar: "סיעוד — המדריך המלא" (מיקוד על 18,000 חיפושים)</li>
+        </ul>
+      </div>
+      <div class="action-card blue">
+        <h3>3. FAQPage Schema על עמודי מפתח</h3>
+        <ul>
+          <li>שאלות/תשובות מובנות על: גמלת סיעוד + מנפאואר קר, עלויות, הסמכות, ביטוח</li>
+          <li>FAQPage schema על עמוד הבית, עמוד שירותים, עמוד עובד זר</li>
+          <li>פורמט Q&A ישיר — זה הפורמט שמנועי AI מעדיפים לצטט</li>
+          <li>שימוש ב-HowTo schema עבור תהליך השמה ותהליך קבלת גמלה</li>
+        </ul>
+      </div>
+      <div class="action-card green">
+        <h3>4. נוכחות ב-Third-Party Sources</h3>
+        <ul>
+          <li>kolzchut.org.il — בקשה להוספת מנפאואר קר כדוגמת ספק בדפי גמלת סיעוד</li>
+          <li>babait.org.il — תוכן ממומן / ערכי שמציין מנפאואר קר ברשימות השוואה</li>
+          <li>myparents.co.il — פרופיל מלא עם תוכן עדכני (כבר קיים — לשדרג)</li>
+          <li>t.co.il — ווידוא שמנפאואר קר מופיעה ב-"10 חברות סיעוד מומלצות"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    NC Digital &nbsp;|&nbsp; GEO Report: Manpower Care &nbsp;|&nbsp; 26.02.2026 &nbsp;|&nbsp;
+    GEO = Generative Engine Optimization &nbsp;|&nbsp;
+    בדיקה ידנית נדרשת לאימות ממצאים ב-ChatGPT ו-Gemini
+  </div>
+
+</div>
+</body>
+</html>
