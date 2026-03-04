@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manpower Care | דוח סטטוס GEO — ממוקד תחרות</title>
+    <title>Manpower Care | דוח סטטוס GEO — נראות בחיפוש AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,6 +22,9 @@
             --text-muted: #94a3b8;
             --gold: #fbbf24;
             --bronze: #d97706;
+            --chatgpt: #10a37f;
+            --gemini: #4285f4;
+            --aio: #8b5cf6;
         }
         body {
             font-family: 'Heebo', 'Segoe UI', sans-serif;
@@ -81,6 +84,9 @@
         }
         .hero-stat .number { font-size: 2.5em; font-weight: 800; line-height: 1; margin-bottom: 6px; }
         .hero-stat .label { font-size: 0.8em; color: var(--text-muted); font-weight: 500; }
+        .hero-stat .change { font-size: 0.75em; font-weight: 600; margin-top: 4px; }
+        .change-up { color: var(--success); }
+        .change-down { color: var(--danger); }
 
         /* SECTIONS */
         .section { max-width: 1300px; margin: 0 auto; padding: 60px 20px; }
@@ -124,14 +130,13 @@
         .badge-info { background: rgba(8,145,178,0.15); color: #22d3ee; }
         .badge-muted { background: rgba(148,163,184,0.15); color: #94a3b8; }
         .badge-gold { background: rgba(251,191,36,0.2); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+        .badge-purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .badge-chatgpt { background: rgba(16,163,127,0.15); color: #10a37f; }
+        .badge-gemini { background: rgba(66,133,244,0.15); color: #4285f4; }
 
-        /* POSITION CELL STYLES */
-        .pos-1 { color: #fbbf24; font-weight: 800; }
-        .pos-top3 { color: #34d399; font-weight: 700; }
-        .pos-top10 { color: #22d3ee; font-weight: 600; }
-        .pos-top20 { color: #f59e0b; }
-        .pos-out { color: #64748b; }
-        .pos-none { color: #ef4444; font-weight: 600; }
+        /* TYPE BADGES */
+        .type-mention { background: rgba(139,92,246,0.15); color: #a78bfa; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; font-weight: 600; display: inline-block; margin-left: 4px; }
+        .type-link { background: rgba(16,185,129,0.15); color: #34d399; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; font-weight: 600; display: inline-block; margin-left: 4px; }
 
         /* PLATFORM CARDS */
         .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
@@ -140,35 +145,58 @@
             border-radius: 14px; padding: 22px; text-align: center;
         }
         .platform-card .platform-name { font-size: 1.15em; font-weight: 700; margin-bottom: 6px; }
-        .platform-card .platform-score { font-size: 3em; font-weight: 900; color: var(--danger); line-height: 1; margin-bottom: 6px; }
+        .platform-card .platform-score { font-size: 3em; font-weight: 900; line-height: 1; margin-bottom: 6px; }
         .platform-card .platform-label { font-size: 0.82em; color: var(--text-muted); }
-        .platform-card.chatgpt { border-top: 3px solid #10a37f; }
-        .platform-card.perplexity { border-top: 3px solid #20b8cd; }
-        .platform-card.gemini { border-top: 3px solid #4285f4; }
+        .platform-card .platform-detail { font-size: 0.78em; color: var(--text-muted); margin-top: 8px; }
+        .platform-card.aio { border-top: 3px solid var(--aio); }
+        .platform-card.chatgpt { border-top: 3px solid var(--chatgpt); }
+        .platform-card.gemini { border-top: 3px solid var(--gemini); }
 
-        /* ALERT */
-        .alert-box {
-            background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
-            border-radius: 12px; padding: 18px 22px; margin-bottom: 24px;
-            display: flex; gap: 12px; align-items: flex-start;
+        /* METRIC CARDS GRID */
+        .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .metric-card {
+            background: var(--dark-card); border: 1px solid var(--dark-border);
+            border-radius: 14px; padding: 20px; text-align: center;
         }
-        .alert-icon { font-size: 1.4em; min-width: 28px; }
-        .alert-text { font-size: 0.9em; }
-        .alert-text strong { color: #f87171; }
+        .metric-card .metric-value { font-size: 2.4em; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .metric-card .metric-label { font-size: 0.82em; color: var(--text-muted); margin-bottom: 4px; }
+        .metric-card .metric-change { font-size: 0.78em; font-weight: 600; }
+
+        /* PROMPT CARDS */
+        .prompt-card {
+            background: var(--dark-card); border: 1px solid var(--dark-border);
+            border-radius: 14px; padding: 20px; margin-bottom: 14px;
+        }
+        .prompt-card .prompt-query {
+            font-size: 1.05em; font-weight: 700; color: #fff; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .prompt-card .prompt-snippet {
+            font-size: 0.85em; color: var(--text-muted); line-height: 1.6;
+            padding: 12px; background: rgba(15,23,42,0.5); border-radius: 8px;
+            border-right: 3px solid var(--dark-border);
+        }
+        .prompt-card .prompt-url {
+            font-size: 0.78em; color: var(--primary-light); margin-top: 8px;
+            word-break: break-all; direction: ltr; text-align: left;
+        }
 
         /* INSIGHT BOXES */
         .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .insight-box { border-radius: 14px; padding: 24px; }
         .insight-strength { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
         .insight-weakness { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+        .insight-opportunity { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); }
         .insight-box h3 { font-size: 1.05em; font-weight: 700; margin-bottom: 12px; }
         .insight-strength h3 { color: var(--success); }
         .insight-weakness h3 { color: var(--danger); }
+        .insight-opportunity h3 { color: #a78bfa; }
         .insight-box ul { list-style: none; padding: 0; }
         .insight-box li { padding: 5px 0; padding-right: 16px; position: relative; font-size: 0.9em; }
         .insight-box li::before { content: ''; position: absolute; right: 0; top: 13px; width: 5px; height: 5px; border-radius: 50%; }
         .insight-strength li::before { background: var(--success); }
         .insight-weakness li::before { background: var(--danger); }
+        .insight-opportunity li::before { background: #a78bfa; }
 
         /* NEXT STEPS */
         .next-step {
@@ -184,6 +212,25 @@
         }
         .step-content h4 { font-size: 0.98em; font-weight: 700; color: #fff; margin-bottom: 4px; }
         .step-content p { font-size: 0.85em; color: var(--text-muted); }
+        .step-content .step-kw { font-size: 0.8em; color: var(--primary-light); margin-top: 4px; }
+
+        /* GA4 BOX */
+        .ga4-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 24px; }
+        .ga4-card {
+            background: var(--dark-card); border: 1px solid var(--dark-border);
+            border-radius: 12px; padding: 18px; text-align: center;
+        }
+        .ga4-card .ga4-value { font-size: 2em; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .ga4-card .ga4-label { font-size: 0.78em; color: var(--text-muted); margin-bottom: 4px; }
+        .ga4-card .ga4-change { font-size: 0.75em; font-weight: 600; }
+
+        /* SOURCE NOTE */
+        .source-note {
+            background: rgba(30,41,59,0.5); border: 1px solid var(--dark-border);
+            border-radius: 10px; padding: 14px 18px; margin-top: 16px;
+            font-size: 0.8em; color: var(--text-muted);
+        }
+        .source-note strong { color: var(--primary-light); }
 
         /* CATEGORY HEADER ROW */
         .cat-row td {
@@ -192,14 +239,6 @@
             font-size: 0.82em !important; padding: 8px 14px !important;
             border-bottom: 1px solid var(--dark-border) !important;
         }
-
-        /* METHODOLOGY */
-        .methodology {
-            background: rgba(30,41,59,0.5); border: 1px solid var(--dark-border);
-            border-radius: 12px; padding: 22px; margin-top: 20px;
-        }
-        .methodology h4 { font-size: 0.9em; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; }
-        .methodology p, .methodology li { font-size: 0.8em; color: var(--text-muted); }
 
         /* FOOTER */
         .footer {
@@ -213,11 +252,15 @@
         @media (max-width: 900px) {
             .hero-stats { grid-template-columns: repeat(3, 1fr); }
             .platform-grid { grid-template-columns: 1fr; }
+            .metric-grid { grid-template-columns: repeat(2, 1fr); }
             .insight-grid { grid-template-columns: 1fr; }
+            .ga4-grid { grid-template-columns: repeat(3, 1fr); }
             .hero-logo { font-size: 2.2em; }
         }
         @media (max-width: 600px) {
             .hero-stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .metric-grid { grid-template-columns: 1fr 1fr; }
+            .ga4-grid { grid-template-columns: 1fr 1fr; }
             .nav-container { gap: 12px; font-size: 0.82em; }
             .section { padding: 36px 14px; }
         }
@@ -228,9 +271,11 @@
 <!-- NAV -->
 <nav class="nav">
     <div class="nav-container">
-        <a href="#footprint">היכן אנחנו</a>
-        <a href="#geo">נראות AI</a>
-        <a href="#competitors">מיקומים לעומת מתחרים</a>
+        <a href="#overview">סקירה כללית</a>
+        <a href="#aio">AI Overview</a>
+        <a href="#chatgpt">ChatGPT</a>
+        <a href="#gemini">Gemini</a>
+        <a href="#traffic">תנועה מ-AI</a>
         <a href="#insights">תובנות</a>
         <a href="#next">צעדים הבאים</a>
     </div>
@@ -240,633 +285,165 @@
 <section class="hero">
     <div class="hero-badge">דוח סטטוס GEO | פברואר 2026</div>
     <div class="hero-logo">Manpower Care</div>
-    <h1>דוח סטטוס GEO — ממוקד תחרות</h1>
+    <h1>נראות בחיפוש AI — היכן האתר מופיע</h1>
     <div class="hero-stats">
         <div class="hero-stat">
-            <div class="number" style="color:var(--primary-light);">18</div>
-            <div class="label">שאילתות במעקב</div>
+            <div class="number" style="color:var(--aio);">7</div>
+            <div class="label">אזכורים ב-AI Overview</div>
+            <div class="change change-up">&#8593; 4 מהחודש הקודם</div>
         </div>
         <div class="hero-stat">
-            <div class="number" style="color:var(--success);">14</div>
-            <div class="label">מדורגות בגוגל</div>
+            <div class="number" style="color:var(--chatgpt);">3</div>
+            <div class="label">שאילתות ב-ChatGPT</div>
         </div>
         <div class="hero-stat">
-            <div class="number" style="color:var(--danger);">4</div>
-            <div class="label">לא מדורגות כלל</div>
+            <div class="number" style="color:var(--gemini);">16</div>
+            <div class="label">שאילתות ב-Gemini</div>
         </div>
         <div class="hero-stat">
-            <div class="number" style="color:var(--warning);">450</div>
-            <div class="label">קליקים/חודש</div>
+            <div class="number" style="color:var(--success);">36</div>
+            <div class="label">משתמשים מ-ChatGPT</div>
+            <div class="change change-up">&#8593; 620%</div>
         </div>
         <div class="hero-stat">
-            <div class="number" style="color:var(--danger);">0%</div>
-            <div class="label">נראות ב-AI</div>
+            <div class="number" style="color:var(--primary-light);">3</div>
+            <div class="label">פלטפורמות AI פעילות</div>
         </div>
     </div>
 </section>
 
 <!-- ============================================================ -->
-<!-- SECTION 1: CURRENT INDEXING FOOTPRINT                        -->
+<!-- SECTION 1: AI OVERVIEW SUMMARY                               -->
 <!-- ============================================================ -->
-<section class="section" id="footprint">
+<section class="section" id="overview">
     <div class="section-header">
-        <h2>היכן אנחנו נמצאים — כל השאילתות</h2>
-        <p class="subtitle">18 שאילתות במעקב SE Ranking + GSC · מיקומים, נפח ותנועה נוכחית</p>
+        <h2>סקירה כללית — AI Overview</h2>
+        <p class="subtitle">נתוני SE Ranking AI Search · פברואר 2026 · manpowercare.co.il</p>
+    </div>
+
+    <div class="metric-grid">
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--aio);">7</div>
+            <div class="metric-label">אזכורים (Mentions)</div>
+            <div class="metric-change change-up">&#8593; 4 מהחודש הקודם</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--success);">9</div>
+            <div class="metric-label">נוכחות קישורים (Link Presence)</div>
+            <div class="metric-change change-up">&#8593; 4 מהחודש הקודם</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--warning);">6.1</div>
+            <div class="metric-label">מיקום ממוצע</div>
+            <div class="metric-change change-down">&#8593; 1.1 (ירידה)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-value" style="color:var(--primary-light);">4</div>
+            <div class="metric-label">תנועת AIO</div>
+            <div class="metric-change change-up">&#8593; 3 מהחודש הקודם</div>
+        </div>
+    </div>
+
+    <div class="source-note">
+        <strong>מקור:</strong> SE Ranking AI Search — פברואר 2026 · דומיין: manpowercare.co.il · שיעור שיתוף: 87.5%
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 2: AI OVERVIEW KEYWORDS                              -->
+<!-- ============================================================ -->
+<section class="section" id="aio">
+    <div class="section-header">
+        <h2>AI Overview — מילות מפתח</h2>
+        <p class="subtitle">8 שאילתות בהן manpowercare.co.il מופיע בתוצאות AI Overview של גוגל</p>
     </div>
 
     <div class="card">
-        <div class="card-title">מפת אינדוקס מלאה — Manpower Care</div>
+        <div class="card-title">שאילתות עם נוכחות ב-AI Overview</div>
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
                         <th>שאילתה</th>
-                        <th>סוג</th>
-                        <th>נפח חודשי</th>
-                        <th>מיקום בגוגל</th>
-                        <th>קליקים/חודש</th>
-                        <th>CTR</th>
-                        <th>נראות AI</th>
+                        <th>נפח חיפוש</th>
+                        <th>סוג נוכחות</th>
+                        <th>רלוונטיות לתחום</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- BRAND -->
-                    <tr class="cat-row"><td colspan="7">שאילתות מותג</td></tr>
                     <tr>
-                        <td><strong>מנפאואר קר</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
+                        <td><strong>חברת סיעוד מומלצת</strong></td>
                         <td>320</td>
-                        <td><span class="pos-1">1</span></td>
-                        <td>96</td>
-                        <td>30%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
                     </tr>
                     <tr>
-                        <td><strong>מנפאואר סיעוד</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
+                        <td><strong>נתיב 2 נכי צה״ל</strong></td>
+                        <td>90</td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>בלבול ושכחה</strong></td>
                         <td>50</td>
-                        <td><span class="pos-1">1</span></td>
-                        <td>15</td>
-                        <td>30%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-info">תוכן מקצועי</span></td>
                     </tr>
                     <tr>
-                        <td><strong>מנפאואר ירושלים</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
-                        <td>80</td>
-                        <td><span class="pos-1">1</span></td>
-                        <td>24</td>
-                        <td>30%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מנפאואר נתניה</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
-                        <td>70</td>
-                        <td><span class="pos-1">1</span></td>
-                        <td>21</td>
-                        <td>30%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מנפאואר חדרה</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
+                        <td><strong>מטפלת 24/7</strong></td>
                         <td>40</td>
-                        <td><span class="pos-1">1</span></td>
-                        <td>12</td>
-                        <td>30%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
                     </tr>
                     <tr>
-                        <td><strong>manpower care</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
-                        <td>300</td>
-                        <td><span class="pos-top3">3</span></td>
-                        <td>36</td>
-                        <td>12%</td>
-                        <td><span class="badge badge-warning">בלבול*</span></td>
+                        <td><strong>מטפלת 7 24</strong></td>
+                        <td>40</td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
                     </tr>
                     <tr>
-                        <td><strong>manpowercare</strong></td>
-                        <td><span class="badge badge-info">מותג</span></td>
-                        <td>25</td>
-                        <td><span class="pos-top3">2</span></td>
-                        <td>4</td>
-                        <td>18%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-
-                    <!-- SERVICE/TRANSACTIONAL -->
-                    <tr class="cat-row"><td colspan="7">שאילתות שירות (טרנזקציוניות)</td></tr>
-                    <tr>
-                        <td><strong>מטפלת סיעודית</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>5,400</td>
-                        <td><span class="pos-top10">7</span></td>
-                        <td>162</td>
-                        <td>3%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
+                        <td><strong>פרילנסרים בישראל</strong></td>
+                        <td>40</td>
+                        <td><span class="type-mention">Mention</span></td>
+                        <td><span class="badge badge-warning">שוליים</span></td>
                     </tr>
                     <tr>
-                        <td><strong>מטפלת</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>660</td>
-                        <td><span class="pos-top10">10</span></td>
-                        <td>13</td>
-                        <td>2%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
+                        <td dir="ltr" style="text-align:left;">фирмы по уходу за пожилыми в израиле</td>
+                        <td>20</td>
+                        <td><span class="type-link">Link</span></td>
+                        <td><span class="badge badge-info">רוסית — קהל יעד</span></td>
                     </tr>
                     <tr>
-                        <td><strong>חברת סיעוד</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>1,800</td>
-                        <td><span class="pos-top10">8</span></td>
-                        <td>45</td>
-                        <td>2.5%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מטפלות סיעודיות</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>1,200</td>
-                        <td><span class="pos-top20">13</span></td>
-                        <td>12</td>
-                        <td>1%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>חברות סיעוד</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>720</td>
-                        <td><span class="pos-top20">12</span></td>
-                        <td>8</td>
-                        <td>1.2%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מטפלות לקשישים פרטי</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>210</td>
-                        <td><span class="pos-top20">18</span></td>
-                        <td>1</td>
-                        <td>0.5%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>אישור העסקת עובד זר</strong></td>
-                        <td><span class="badge badge-warning">שירות</span></td>
-                        <td>140</td>
-                        <td><span class="pos-top20">15</span></td>
-                        <td>1</td>
-                        <td>0.8%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-
-                    <!-- GROWTH / NOT RANKING -->
-                    <tr class="cat-row"><td colspan="7">שאילתות מידע — לא מדורגות כלל</td></tr>
-                    <tr>
-                        <td><strong>סיעוד</strong></td>
-                        <td><span class="badge badge-muted">מידע</span></td>
-                        <td>18,000</td>
-                        <td><span class="pos-none">---</span></td>
-                        <td>0</td>
-                        <td>0%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>דמנציה</strong></td>
-                        <td><span class="badge badge-muted">מידע</span></td>
-                        <td>4,500</td>
-                        <td><span class="pos-none">---</span></td>
-                        <td>0</td>
-                        <td>0%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>גמלת סיעוד</strong></td>
-                        <td><span class="badge badge-muted">מידע</span></td>
-                        <td>2,400</td>
-                        <td><span class="pos-none">---</span></td>
-                        <td>0</td>
-                        <td>0%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>חוק סיעוד</strong></td>
-                        <td><span class="badge badge-muted">מידע</span></td>
-                        <td>1,000</td>
-                        <td><span class="pos-none">---</span></td>
-                        <td>0</td>
-                        <td>0%</td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p style="font-size: 0.78em; color: var(--text-muted); margin-top: 10px;">
-            * בלבול ישות: Gemini מחזיר מידע על ManpowerGroup הגלובלי — לא על חברת הסיעוד הישראלית. מקור נתונים: SE Ranking (פרויקט 8020055) + GSC.
-        </p>
-    </div>
-
-    <!-- Summary Row -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
-        <div class="card" style="text-align:center; padding:20px;">
-            <div style="font-size: 2em; font-weight: 800; color: var(--success);">7</div>
-            <div style="font-size: 0.82em; color: var(--text-muted);">מותג — מיקום 1-3</div>
-        </div>
-        <div class="card" style="text-align:center; padding:20px;">
-            <div style="font-size: 2em; font-weight: 800; color: var(--primary-light);">3</div>
-            <div style="font-size: 0.82em; color: var(--text-muted);">שירות — עמוד 1 (7-10)</div>
-        </div>
-        <div class="card" style="text-align:center; padding:20px;">
-            <div style="font-size: 2em; font-weight: 800; color: var(--warning);">4</div>
-            <div style="font-size: 0.82em; color: var(--text-muted);">שירות — עמוד 2+ (12-18)</div>
-        </div>
-        <div class="card" style="text-align:center; padding:20px;">
-            <div style="font-size: 2em; font-weight: 800; color: var(--danger);">4</div>
-            <div style="font-size: 0.82em; color: var(--text-muted);">מידע — לא מדורגות</div>
-        </div>
-    </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- SECTION 2: GEO (AI) VISIBILITY — CONCISE                    -->
-<!-- ============================================================ -->
-<section class="section" id="geo">
-    <div class="section-header">
-        <h2>נראות GEO בפלטפורמות AI</h2>
-        <p class="subtitle">בדיקת 7 שאילתות מפתח ב-ChatGPT, Perplexity ו-Gemini — פברואר 2026</p>
-    </div>
-
-    <div class="platform-grid">
-        <div class="platform-card chatgpt">
-            <div class="platform-name">ChatGPT</div>
-            <div class="platform-score">0%</div>
-            <div class="platform-label">אפס אזכורים מתוך 7 שאילתות</div>
-        </div>
-        <div class="platform-card perplexity">
-            <div class="platform-name">Perplexity</div>
-            <div class="platform-score">0%</div>
-            <div class="platform-label">אפס אזכורים מתוך 7 שאילתות</div>
-        </div>
-        <div class="platform-card gemini">
-            <div class="platform-name">Gemini</div>
-            <div class="platform-score">0%</div>
-            <div class="platform-label">אפס · בלבול ישות עם ManpowerGroup</div>
-        </div>
-    </div>
-
-    <div class="alert-box">
-        <div class="alert-icon">&#9888;</div>
-        <div class="alert-text">
-            <strong>שורש הבעיה:</strong> ל-Manpower Care אין ישות Wikidata עצמאית, אין דף ויקיפדיה, ואין FAQPage Schema. מנועי AI לא מזהים את החברה כישות נפרדת מ-ManpowerGroup הגלובלי. המתחרים שכן מופיעים ב-AI (נתן, מטב, דנאל) בנו שכבת Entity שחסרה כאן.
-        </div>
-    </div>
-
-    <!-- Who DOES appear for these queries -->
-    <div class="card">
-        <div class="card-title">מי כן מופיע בתשובות AI — לפי שאילתה</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>שאילתה</th>
-                        <th>ChatGPT מציג</th>
-                        <th>Perplexity מציג</th>
-                        <th>Gemini מציג</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>מטפלת סיעודית</strong></td>
-                        <td>נתן, כללית, ביטוח לאומי</td>
-                        <td>נתן, דנאל, מטב</td>
-                        <td>כללית, ביטוח לאומי</td>
-                    </tr>
-                    <tr>
-                        <td><strong>חברת סיעוד</strong></td>
-                        <td>נתן, דנאל, לכל סיעוד</td>
-                        <td>דנאל, נתן, תגבור</td>
-                        <td>נתן, דנאל</td>
-                    </tr>
-                    <tr>
-                        <td><strong>גמלת סיעוד</strong></td>
-                        <td>btl.gov.il, כל זכות</td>
-                        <td>כל זכות, ביטוח לאומי, בבית</td>
-                        <td>ביטוח לאומי, כל זכות</td>
-                    </tr>
-                    <tr>
-                        <td><strong>סיעוד בבית</strong></td>
-                        <td>שובל, נתן, iSavta</td>
-                        <td>בבית, נתן</td>
-                        <td>ביטוח לאומי</td>
-                    </tr>
-                    <tr>
-                        <td><strong>דמנציה</strong></td>
-                        <td>מידע רפואי כללי בלבד</td>
-                        <td>מידע רפואי כללי בלבד</td>
-                        <td>כללית, מידע רפואי</td>
-                    </tr>
-                    <tr>
-                        <td><strong>חברות סיעוד מומלצות</strong></td>
-                        <td>נתן, דנאל, שובל, לכל</td>
-                        <td>נתן, דנאל, תגבור, עמל</td>
-                        <td>נתן, דנאל</td>
-                    </tr>
-                    <tr>
-                        <td><strong>manpower care</strong></td>
-                        <td>אין תוצאה רלוונטית</td>
-                        <td>אין תוצאה רלוונטית</td>
-                        <td>ManpowerGroup גלובלי (בלבול)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p style="font-size: 0.78em; color: var(--text-muted); margin-top: 10px;">
-            הנתונים מבוססים על סריקה ידנית של פלטפורמות AI. תוצאות משתנות לפי זמן, מיקום והקשר.
-        </p>
-    </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- SECTION 3: COMPETITIVE POSITION MATRIX — THE MAIN EVENT      -->
-<!-- ============================================================ -->
-<section class="section" id="competitors">
-    <div class="section-header">
-        <h2>מיקומים לעומת מתחרים — שאילתה מול שאילתה</h2>
-        <p class="subtitle">מיקום בגוגל של Manpower Care לעומת כל מתחרה מוביל — נתונים חיים</p>
-    </div>
-
-    <!-- THE DENSE MATRIX -->
-    <div class="card">
-        <div class="card-title">מטריצת מיקומים — Manpower Care לעומת 7 מתחרים</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="min-width:140px;">שאילתה</th>
-                        <th>נפח</th>
-                        <th style="background:rgba(239,68,68,0.12); color:#f87171;">MC</th>
-                        <th>נתן</th>
-                        <th>דנאל</th>
-                        <th>עמל</th>
-                        <th>מטב</th>
-                        <th>תגבור</th>
-                        <th>א.ש.</th>
-                        <th>בבית</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="cat-row"><td colspan="10">שאילתות שירות — תחרות ישירה</td></tr>
-                    <tr>
-                        <td><strong>מטפלת סיעודית</strong></td>
-                        <td>5,400</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top10"><strong>7</strong></span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">4</span></td>
-                        <td><span class="pos-1">1</span></td>
-                        <td><span class="pos-top10">7</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>חברת סיעוד</strong></td>
-                        <td>1,800</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top10"><strong>8</strong></span></td>
-                        <td><span class="pos-top3">3</span></td>
-                        <td><span class="pos-top3">2</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">5</span></td>
-                        <td><span class="pos-top10">4</span></td>
-                        <td><span class="pos-top10">6</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>חברות סיעוד</strong></td>
-                        <td>720</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top20"><strong>12</strong></span></td>
-                        <td><span class="pos-1">1</span></td>
-                        <td><span class="pos-top10">7</span></td>
-                        <td><span class="pos-top10">10</span></td>
-                        <td><span class="pos-top10">5</span></td>
-                        <td><span class="pos-top10">8</span></td>
-                        <td><span class="pos-top10">6</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>מטפלות סיעודיות</strong></td>
-                        <td>1,200</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top20"><strong>13</strong></span></td>
-                        <td colspan="7" style="text-align:center; color:var(--text-muted); font-size:0.82em;">לא נבדק SERP למתחרים — נדרשת סריקה נפרדת</td>
-                    </tr>
-                    <tr>
-                        <td><strong>מטפלת</strong></td>
-                        <td>660</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top10"><strong>10</strong></span></td>
-                        <td colspan="7" style="text-align:center; color:var(--text-muted); font-size:0.82em;">לא נבדק SERP למתחרים — נדרשת סריקה נפרדת</td>
-                    </tr>
-                    <tr>
-                        <td><strong>מטפלות לקשישים פרטי</strong></td>
-                        <td>210</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top20"><strong>18</strong></span></td>
-                        <td><span class="pos-top10">8</span></td>
-                        <td><span class="pos-top10">6</span></td>
-                        <td><span class="pos-top10">5</span></td>
-                        <td><span class="pos-top3">3</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>אישור העסקת עובד זר</strong></td>
-                        <td>140</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-top20"><strong>15</strong></span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">8</span></td>
-                        <td><span class="pos-top10">6</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">5</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-
-                    <tr class="cat-row"><td colspan="10">שאילתות מידע — Manpower Care לא מדורגת</td></tr>
-                    <tr>
-                        <td><strong>סיעוד</strong></td>
-                        <td>18,000</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-none"><strong>---</strong></span></td>
-                        <td colspan="7" style="text-align:center; color:var(--text-muted); font-size:0.82em;">לא נבדק SERP למתחרים — שאילתת ראש רחבה, תוצאות שונות מאוד</td>
-                    </tr>
-                    <tr>
-                        <td><strong>דמנציה</strong></td>
-                        <td>4,500</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-none"><strong>---</strong></span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">5</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>גמלת סיעוד</strong></td>
-                        <td>2,400</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-none"><strong>---</strong></span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-top10">4</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-out">—</span></td>
-                        <td><span class="pos-1">1</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>חוק סיעוד</strong></td>
-                        <td>1,000</td>
-                        <td style="background:rgba(239,68,68,0.06);"><span class="pos-none"><strong>---</strong></span></td>
-                        <td colspan="7" style="text-align:center; color:var(--text-muted); font-size:0.82em;">לא נבדק SERP למתחרים — נשלט ע"י btl.gov.il וכל זכות</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p style="font-size: 0.78em; color: var(--text-muted); margin-top: 10px;">
-            מיקומים מבוססים על סריקת SERP חיה + נתוני SE Ranking. "—" = לא מדורג בעמוד 1-2. MC = Manpower Care.
-        </p>
-    </div>
-
-    <!-- Competitor Scorecard -->
-    <div class="card" style="margin-top: 10px;">
-        <div class="card-title">סיכום מתחרים — כמה שאילתות כל חברה מכסה</div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>חברה</th>
-                        <th>שאילתות בעמוד 1 (מתוך 7 שנבדקו)</th>
-                        <th>שאילתות Top 3</th>
-                        <th>FAQPage Schema</th>
-                        <th>דפי ערים</th>
-                        <th>נראות AI</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>מטב (Matav)</strong></td>
-                        <td><span class="badge badge-success">4</span></td>
-                        <td><span class="badge badge-gold">2</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-success">50+</span></td>
-                        <td><span class="badge badge-muted">נמוך</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>עמל ומעבר (Amal)</strong></td>
-                        <td><span class="badge badge-success">6</span></td>
-                        <td><span class="badge badge-muted">0</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-muted">נמוך</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>נתן סיעוד (Nathan)</strong></td>
-                        <td><span class="badge badge-info">3</span></td>
-                        <td><span class="badge badge-gold">2</span></td>
-                        <td><span class="badge badge-success">12 שאלות</span></td>
-                        <td><span class="badge badge-success">33</span></td>
-                        <td><span class="badge badge-success">גבוה</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>דנאל סיעוד (Danel)</strong></td>
-                        <td><span class="badge badge-success">4</span></td>
-                        <td><span class="badge badge-gold">1</span></td>
-                        <td><span class="badge badge-success">11 שאלות</span></td>
-                        <td><span class="badge badge-success">38</span></td>
-                        <td><span class="badge badge-warning">בינוני</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>תגבור סיעוד (Tigbur)</strong></td>
-                        <td><span class="badge badge-success">4</span></td>
-                        <td><span class="badge badge-muted">0</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-warning">מעט</span></td>
-                        <td><span class="badge badge-muted">נמוך</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>א.ש. סיעוד (A.S.)</strong></td>
-                        <td><span class="badge badge-info">2</span></td>
-                        <td><span class="badge badge-muted">0</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-success">36</span></td>
-                        <td><span class="badge badge-danger">אין</span></td>
-                    </tr>
-                    <tr>
-                        <td><strong>בבית (Babait)</strong></td>
-                        <td><span class="badge badge-info">1</span></td>
-                        <td><span class="badge badge-gold">1</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-success">24-27</span></td>
-                        <td><span class="badge badge-muted">נמוך</span></td>
-                    </tr>
-                    <tr style="background: rgba(239,68,68,0.06);">
-                        <td><strong style="color:var(--danger);">Manpower Care</strong></td>
-                        <td><span class="badge badge-warning">2</span></td>
-                        <td><span class="badge badge-muted">0</span></td>
-                        <td><span class="badge badge-danger">לא</span></td>
-                        <td><span class="badge badge-danger">רשימה בסיסית</span></td>
-                        <td><span class="badge badge-danger">0%</span></td>
+                        <td><strong>מנפאואר פרופשיונל טלפון</strong></td>
+                        <td>10</td>
+                        <td><span class="type-mention">Mention</span> <span class="type-link">Link</span></td>
+                        <td><span class="badge badge-muted">מותג אחר</span></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-</section>
 
-<hr class="section-divider">
-
-<!-- ============================================================ -->
-<!-- SECTION 4: INSIGHTS — BRIEF                                  -->
-<!-- ============================================================ -->
-<section class="section" id="insights">
-    <div class="section-header">
-        <h2>תובנות מיצוב</h2>
-        <p class="subtitle">היכן אנחנו מובילים והיכן מתחרים מנצחים</p>
-    </div>
-
-    <div class="insight-grid">
+    <div class="insight-grid" style="margin-top:20px;">
         <div class="insight-box insight-strength">
-            <h3>היכן Manpower Care מובילה</h3>
+            <h3>חזקות ב-AI Overview</h3>
             <ul>
-                <li><strong>מותג:</strong> מיקום #1 בכל שאילתות "מנפאואר" + ערים</li>
-                <li><strong>"מטפלת סיעודית" (5,400/חודש):</strong> עמוד 1 (מיקום 7) — השאילתה הכי גדולה שבה אנחנו מדורגים</li>
-                <li><strong>"חברת סיעוד" (1,800/חודש):</strong> עמוד 1 (מיקום 8)</li>
-                <li><strong>רב-לשוניות:</strong> אתר ב-4 שפות (עברית, ערבית, רוסית, אנגלית) — יתרון נדיר</li>
-                <li><strong>מחשבון זכאות:</strong> כלי אינטראקטיבי שרוב המתחרים חסרים</li>
-                <li><strong>תשתית Schema:</strong> Organization + BreadcrumbList קיימים</li>
+                <li><strong>5 מתוך 8</strong> שאילתות כוללות גם אזכור וגם קישור — נוכחות חזקה</li>
+                <li>&laquo;חברת סיעוד מומלצת&raquo; (320 חיפושים) — שאילתת ליבה עם Mention + Link</li>
+                <li>&laquo;מטפלת 24/7&raquo; — שני וריאנטים של אותה שאילתה מייצרים כפל נוכחות</li>
+                <li>נוכחות גם ברוסית — חשיפה לקהל מהגרים</li>
             </ul>
         </div>
         <div class="insight-box insight-weakness">
-            <h3>היכן מתחרים מנצחים אותנו</h3>
+            <h3>חולשות ב-AI Overview</h3>
             <ul>
-                <li><strong>מטב:</strong> מיקום 1-3 ב-2 שאילתות (#1 "מטפלת סיעודית", #3 "מטפלות לקשישים פרטי"), 50+ דפי ערים ייעודיים</li>
-                <li><strong>עמל ומעבר:</strong> מדורגת ב-6 מתוך 7 שאילתות שנבדקו, כולל שאילתות מידע (דמנציה מיקום 5, גמלת סיעוד מיקום 4)</li>
-                <li><strong>נתן:</strong> FAQPage Schema עם 12 שאלות → Rich Results בגוגל, #1 על "חברות סיעוד"</li>
-                <li><strong>דנאל:</strong> 38 סניפים, FAQPage עם 11 שאלות, מיקום #2 על "חברת סיעוד"</li>
-                <li><strong>בבית:</strong> מיקום #1 על "גמלת סיעוד" — תוכן מידעי חזק</li>
-                <li><strong>נראות AI:</strong> נתן ודנאל מופיעים בכל 3 הפלטפורמות (ChatGPT, Perplexity, Gemini) — אנחנו לא מופיעים באף אחת</li>
+                <li>שאילתות ליבה חסרות: &laquo;מטפלת סיעודית&raquo; (5,400 חיפושים) — לא מופיע ב-AIO</li>
+                <li>&laquo;חברת סיעוד&raquo; (1,800 חיפושים) — לא מופיע ב-AIO</li>
+                <li>&laquo;סיעוד&raquo; (18,000 חיפושים) — לא מופיע ב-AIO</li>
+                <li>מיקום ממוצע 6.1 — ירידה של 1.1 מהחודש הקודם</li>
             </ul>
-        </div>
-    </div>
-
-    <!-- Key gap callout -->
-    <div class="alert-box" style="margin-top: 20px; background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25);">
-        <div class="alert-icon">&#9888;</div>
-        <div class="alert-text">
-            <strong style="color: var(--warning);">הפער הגדול ביותר:</strong> 25,900 חיפושים/חודש בשאילתות מידע (סיעוד, דמנציה, גמלת סיעוד, חוק סיעוד) — ול-Manpower Care אין שום דירוג. עמל ומעבר מדורגת בשתיים מהן (דמנציה, גמלת סיעוד), בבית #1 על "גמלת סיעוד". אלה גם השאילתות שמנועי AI שולפים מהן תשובות.
         </div>
     </div>
 </section>
@@ -874,65 +451,419 @@
 <hr class="section-divider">
 
 <!-- ============================================================ -->
-<!-- SECTION 5: NEXT STEPS — BRIEF, NOT A STRATEGY DOC            -->
+<!-- SECTION 3: CHATGPT                                           -->
+<!-- ============================================================ -->
+<section class="section" id="chatgpt">
+    <div class="section-header">
+        <h2>ChatGPT — שאילתות בהן האתר מוזכר</h2>
+        <p class="subtitle">3 שאילתות בהן ChatGPT מזכיר את manpowercare.co.il · נתוני SE Ranking AI Search</p>
+    </div>
+
+    <!-- Prompt 1 -->
+    <div class="prompt-card" style="border-right: 3px solid var(--chatgpt);">
+        <div class="prompt-query">
+            <span class="type-mention">Mention</span>
+            <span>שירותי סיעוד לקשישים</span>
+        </div>
+        <div class="prompt-snippet">
+            ChatGPT מזכיר את Manpower Care בהקשר של שירותי סיעוד לקשישים — מי מספק אותם, ואיך ניתן לקבלם במימון או בהכוונה מתאימה. סיעוד וטיפול סיעודי +1
+        </div>
+    </div>
+
+    <!-- Prompt 2 -->
+    <div class="prompt-card" style="border-right: 3px solid var(--chatgpt);">
+        <div class="prompt-query">
+            <span class="type-mention">Mention</span>
+            <span class="type-link">Link</span>
+            <span>נתיב 2 נכי צה״ל</span>
+        </div>
+        <div class="prompt-snippet">
+            ChatGPT מקשר ישירות לעמוד הטיפול בנכי צה״ל של Manpower Care. מופיעים גם קישורים ל-taasuka.gov.il ו-kolzchut.org.il.
+        </div>
+        <div class="prompt-url">https://manpowercare.co.il/טיפול-בנכי-צהל/</div>
+    </div>
+
+    <!-- Prompt 3 -->
+    <div class="prompt-card" style="border-right: 3px solid var(--chatgpt);">
+        <div class="prompt-query">
+            <span class="type-mention">Mention</span>
+            <span dir="ltr">home health care services</span>
+        </div>
+        <div class="prompt-snippet">
+            Manpower Care מוזכרת כדוגמה לחברה המספקת שירותי טיפול בבית בישראל, במדריך על שירותי טיפול בריאות ביתי.
+        </div>
+    </div>
+
+    <div class="source-note" style="margin-top:16px;">
+        <strong>תובנה:</strong> &laquo;נתיב 2 נכי צה״ל&raquo; הוא השאילתה היחידה ב-ChatGPT שכוללת קישור ישיר לאתר — עמוד ייעודי לטיפול בנכי צה"ל מייצר ציטוט עם כתובת URL.
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 4: GEMINI                                            -->
+<!-- ============================================================ -->
+<section class="section" id="gemini">
+    <div class="section-header">
+        <h2>Gemini — שאילתות בהן האתר מוזכר</h2>
+        <p class="subtitle">16 שאילתות סה״כ בהן Gemini מזכיר את Manpower Care · 4 מוצגות כאן</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">שאילתות נצפות ב-Gemini (מתוך 16)</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>שאילתה</th>
+                        <th>סוג נוכחות</th>
+                        <th>רלוונטיות לתחום</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>רשימת חברות סיעוד ביטוח לאומי</strong></td>
+                        <td><span class="type-mention">Mention</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>רשימת חברות סיעוד</strong></td>
+                        <td><span class="type-mention">Mention</span></td>
+                        <td><span class="badge badge-success">ליבת העסק</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>תועמלן רפואי דרושים</strong></td>
+                        <td><span class="type-mention">Mention</span></td>
+                        <td><span class="badge badge-info">גיוס עובדים</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>משרת סטודנט ביוטכנולוגיה</strong></td>
+                        <td><span class="type-mention">Mention</span></td>
+                        <td><span class="badge badge-warning">שוליים</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="source-note">
+        <strong>הערה:</strong> Gemini מציג 16 שאילתות סה"כ — 12 נוספות לא מוצגות בממשק SE Ranking בתצוגה הנוכחית. הנתונים כאן מבוססים על מה שנצפה בממשק. מרבית השאילתות הן מסוג Mention בלבד (ללא קישור ישיר).
+    </div>
+
+    <div class="insight-grid" style="margin-top:20px;">
+        <div class="insight-box insight-strength">
+            <h3>חזקות ב-Gemini</h3>
+            <ul>
+                <li><strong>16 שאילתות</strong> — הפלטפורמה עם הנוכחות הרחבה ביותר</li>
+                <li>&laquo;רשימת חברות סיעוד&raquo; ו&laquo;רשימת חברות סיעוד ביטוח לאומי&raquo; — שאילתות ליבה רלוונטיות מאוד</li>
+                <li>נוכחות גם בשאילתות גיוס — תומך במיתוג מעסיק</li>
+            </ul>
+        </div>
+        <div class="insight-box insight-weakness">
+            <h3>חולשות ב-Gemini</h3>
+            <ul>
+                <li>כל 4 השאילתות הנצפות הן Mention בלבד — ללא Link</li>
+                <li>&laquo;משרת סטודנט ביוטכנולוגיה&raquo; — שאילתה שולית, לא קשורה לסיעוד</li>
+                <li>12 שאילתות נוספות אינן נצפות — לא ניתן להעריך את הרלוונטיות שלהן</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 5: GA4 AI TRAFFIC                                    -->
+<!-- ============================================================ -->
+<section class="section" id="traffic">
+    <div class="section-header">
+        <h2>תנועה מ-AI — נתוני GA4</h2>
+        <p class="subtitle">תנועה מ-ChatGPT לאתר manpowercare.co.il · ינואר–פברואר 2026</p>
+    </div>
+
+    <div class="ga4-grid">
+        <div class="ga4-card">
+            <div class="ga4-value" style="color:var(--chatgpt);">36</div>
+            <div class="ga4-label">משתמשים מ-ChatGPT</div>
+            <div class="ga4-change change-up">&#8593; 620%</div>
+        </div>
+        <div class="ga4-card">
+            <div class="ga4-value" style="color:var(--chatgpt);">35</div>
+            <div class="ga4-label">משתמשים חדשים</div>
+            <div class="ga4-change change-up">&#8593; 600%</div>
+        </div>
+        <div class="ga4-card">
+            <div class="ga4-value" style="color:var(--chatgpt);">46</div>
+            <div class="ga4-label">סשנים</div>
+            <div class="ga4-change change-up">&#8593; 820%</div>
+        </div>
+        <div class="ga4-card">
+            <div class="ga4-value" style="color:var(--text-muted);">0.72</div>
+            <div class="ga4-label">מעורבות למשתמש</div>
+            <div class="ga4-change change-down">&#8595; 27.8%</div>
+        </div>
+        <div class="ga4-card">
+            <div class="ga4-value" style="color:var(--success);">0:55</div>
+            <div class="ga4-label">זמן מעורבות ממוצע</div>
+            <div class="ga4-change change-up">&#8593; 61.8%</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">ניתוח תנועת ChatGPT</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>מדד</th>
+                        <th>ערך נוכחי</th>
+                        <th>שינוי</th>
+                        <th>משמעות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>סה״כ משתמשים</td>
+                        <td><strong style="color:var(--chatgpt);">36</strong></td>
+                        <td><span class="badge badge-success">+620%</span></td>
+                        <td>גידול משמעותי — מ-5 ל-36 משתמשים</td>
+                    </tr>
+                    <tr>
+                        <td>משתמשים חדשים</td>
+                        <td><strong>35</strong></td>
+                        <td><span class="badge badge-success">+600%</span></td>
+                        <td>97% משתמשים חדשים — חשיפה לקהל שלא הכיר את האתר</td>
+                    </tr>
+                    <tr>
+                        <td>סשנים</td>
+                        <td><strong>46</strong></td>
+                        <td><span class="badge badge-success">+820%</span></td>
+                        <td>1.28 סשנים למשתמש — יש חזרה</td>
+                    </tr>
+                    <tr>
+                        <td>מעורבות למשתמש פעיל</td>
+                        <td><strong>0.72</strong></td>
+                        <td><span class="badge badge-danger">-27.8%</span></td>
+                        <td>המעורבות ירדה — ייתכן שהתוכן לא ממוקד מספיק לשאילתות AI</td>
+                    </tr>
+                    <tr>
+                        <td>זמן מעורבות</td>
+                        <td><strong>55 שניות</strong></td>
+                        <td><span class="badge badge-success">+61.8%</span></td>
+                        <td>עלייה בזמן שהייה — המשתמשים קוראים את התוכן</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="source-note">
+        <strong>מקור:</strong> GA4 · Manpower Care · תקופה: 1 בינואר 2026 – 23 בפברואר 2026 · מקור: ChatGPT (מזוהה כ-referral)
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 6: CROSS-PLATFORM SUMMARY                            -->
+<!-- ============================================================ -->
+<section class="section" id="insights">
+    <div class="section-header">
+        <h2>סיכום חוצה פלטפורמות</h2>
+        <p class="subtitle">השוואה בין AI Overview, ChatGPT ו-Gemini — היכן Manpower Care מופיעה</p>
+    </div>
+
+    <div class="platform-grid">
+        <div class="platform-card aio">
+            <div class="platform-name">AI Overview</div>
+            <div class="platform-score" style="color:var(--aio);">8</div>
+            <div class="platform-label">שאילתות עם נוכחות</div>
+            <div class="platform-detail">7 אזכורים · 9 קישורים · מיקום ממוצע 6.1</div>
+        </div>
+        <div class="platform-card chatgpt">
+            <div class="platform-name">ChatGPT</div>
+            <div class="platform-score" style="color:var(--chatgpt);">3</div>
+            <div class="platform-label">שאילתות עם נוכחות</div>
+            <div class="platform-detail">קישור ישיר 1 · 36 משתמשים מ-GA4</div>
+        </div>
+        <div class="platform-card gemini">
+            <div class="platform-name">Gemini</div>
+            <div class="platform-score" style="color:var(--gemini);">16</div>
+            <div class="platform-label">שאילתות עם נוכחות</div>
+            <div class="platform-detail">Mention בלבד · 4 שאילתות נצפות</div>
+        </div>
+    </div>
+
+    <!-- Cross-platform query mapping -->
+    <div class="card">
+        <div class="card-title">מיפוי שאילתות — באילו פלטפורמות כל שאילתה מופיעה</div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>שאילתה</th>
+                        <th>AI Overview</th>
+                        <th>ChatGPT</th>
+                        <th>Gemini</th>
+                        <th>סוג נוכחות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="cat-row"><td colspan="5">שאילתות ליבה — סיעוד</td></tr>
+                    <tr>
+                        <td><strong>חברת סיעוד מומלצת</strong></td>
+                        <td><span class="badge badge-success">Mention + Link</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>AIO בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>רשימת חברות סיעוד</strong></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-gemini">Mention</span></td>
+                        <td>Gemini בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>רשימת חברות סיעוד ביטוח לאומי</strong></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-gemini">Mention</span></td>
+                        <td>Gemini בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>שירותי סיעוד לקשישים</strong></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-chatgpt">Mention</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>ChatGPT בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>מטפלת 24/7</strong></td>
+                        <td><span class="badge badge-success">Mention + Link</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>AIO בלבד</td>
+                    </tr>
+                    <tr>
+                        <td><strong>בלבול ושכחה</strong></td>
+                        <td><span class="badge badge-success">Mention + Link</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>AIO בלבד</td>
+                    </tr>
+                    <tr class="cat-row"><td colspan="5">שאילתות נתיב 2 / נכי צה״ל</td></tr>
+                    <tr>
+                        <td><strong>נתיב 2 נכי צה״ל</strong></td>
+                        <td><span class="badge badge-success">Mention + Link</span></td>
+                        <td><span class="badge badge-chatgpt">Mention + Link</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-gold">AIO + ChatGPT</span></td>
+                    </tr>
+                    <tr class="cat-row"><td colspan="5">שאילתות גיוס ותעסוקה</td></tr>
+                    <tr>
+                        <td><strong>תועמלן רפואי דרושים</strong></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-gemini">Mention</span></td>
+                        <td>Gemini בלבד</td>
+                    </tr>
+                    <tr class="cat-row"><td colspan="5">שאילתות באנגלית / רוסית</td></tr>
+                    <tr>
+                        <td dir="ltr" style="text-align:left;"><strong>home health care services</strong></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-chatgpt">Mention</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>ChatGPT בלבד</td>
+                    </tr>
+                    <tr>
+                        <td dir="ltr" style="text-align:left;">фирмы по уходу за пожилыми в израиле</td>
+                        <td><span class="badge badge-purple">Link</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td><span class="badge badge-muted">—</span></td>
+                        <td>AIO בלבד</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Key Insight -->
+    <div class="insight-grid" style="margin-top:24px;">
+        <div class="insight-box insight-strength" style="grid-column: 1 / -1;">
+            <h3>תובנת מפתח</h3>
+            <ul>
+                <li><strong>&laquo;נתיב 2 נכי צה״ל&raquo;</strong> — השאילתה היחידה שמופיעה ב-2 פלטפורמות (AIO + ChatGPT) עם קישור ישיר. העמוד הייעודי manpowercare.co.il/טיפול-בנכי-צהל/ מייצר ציטוט — מודל לשכפול לעמודים אחרים.</li>
+                <li><strong>Gemini</strong> היא הפלטפורמה הכי פעילה (16 שאילתות) אבל בלי קישורים — נדרש חיזוק E-E-A-T כדי לקבל Link.</li>
+                <li><strong>שאילתות ליבה חסרות:</strong> &laquo;מטפלת סיעודית&raquo; (5,400 חיפושים), &laquo;חברת סיעוד&raquo; (1,800), &laquo;סיעוד&raquo; (18,000) — לא מופיעות באף פלטפורמת AI.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ============================================================ -->
+<!-- SECTION 7: RECOMMENDATIONS                                   -->
 <!-- ============================================================ -->
 <section class="section" id="next">
     <div class="section-header">
-        <h2>צעדים הבאים</h2>
-        <p class="subtitle">4 פעולות קריטיות לשינוי המצב</p>
+        <h2>צעדים הבאים — שיפור נראות GEO</h2>
+        <p class="subtitle">המלצות ספציפיות על סמך הנתונים</p>
     </div>
 
     <div class="next-step">
         <div class="step-num">1</div>
         <div class="step-content">
-            <h4>יצירת ישות Wikidata + טיוטת ויקיפדיה</h4>
-            <p>בלי זה, מנועי AI לא מזהים את Manpower Care כישות נפרדת מ-ManpowerGroup. זה שורש בעיית ה-0%.</p>
+            <h4>לשכפל את מודל ההצלחה של עמוד נכי צה״ל</h4>
+            <p>העמוד /טיפול-בנכי-צהל/ מקבל ציטוט עם קישור ב-ChatGPT וב-AI Overview. ליצור עמודים ייעודיים באותו פורמט עבור שאילתות ליבה שחסרות: &laquo;מטפלת סיעודית&raquo;, &laquo;חברת סיעוד&raquo;, &laquo;גמלת סיעוד&raquo;.</p>
+            <div class="step-kw">שאילתות יעד: מטפלת סיעודית (5,400), חברת סיעוד (1,800), גמלת סיעוד (2,400)</div>
         </div>
     </div>
+
     <div class="next-step">
         <div class="step-num">2</div>
         <div class="step-content">
-            <h4>הטמעת FAQPage Schema — לפחות 10 שאלות</h4>
-            <p>נתן (12 שאלות) ודנאל (11 שאלות) מקבלים Rich Results. ל-Manpower Care אין FAQPage כלל. שבוע עבודה.</p>
+            <h4>לחזק את הנוכחות ב-&laquo;חברת סיעוד מומלצת&raquo;</h4>
+            <p>השאילתה כבר מקבלת Mention + Link ב-AI Overview (320 חיפושים/חודש). לעדכן את התוכן עם נתונים מספריים, ציטוטים, ו-schema markup כדי לשפר מיקום ולהיכנס גם ל-ChatGPT ו-Gemini.</p>
+            <div class="step-kw">פלטפורמה נוכחית: AI Overview · יעד: ChatGPT + Gemini</div>
         </div>
     </div>
+
     <div class="next-step">
         <div class="step-num">3</div>
         <div class="step-content">
-            <h4>תוכן מידעי ל-4 שאילתות שלא מדורגות</h4>
-            <p>דפים ייעודיים ל: "סיעוד — מדריך מקיף" (18,000/חודש), "דמנציה — מדריך מלא" (4,500), "גמלת סיעוד 2026" (2,400), "חוק סיעוד" (1,000). סה"כ 25,900 חיפושים/חודש שאנחנו לא מכסים.</p>
+            <h4>לייצר תוכן מקצועי סביב &laquo;בלבול ושכחה&raquo; ודמנציה</h4>
+            <p>&laquo;בלבול ושכחה&raquo; כבר מקבל Mention + Link ב-AIO (50 חיפושים). להרחיב את המדריך הקיים ולהוסיף תוכן על &laquo;דמנציה&raquo; (4,500 חיפושים) — שאילתה אינפורמטיבית עם פוטנציאל גבוה ל-AI.</p>
+            <div class="step-kw">שאילתות יעד: דמנציה (4,500), בלבול ושכחה (50), חוק סיעוד (1,000)</div>
         </div>
     </div>
+
     <div class="next-step">
         <div class="step-num">4</div>
         <div class="step-content">
-            <h4>שדרוג פרופיל בפורטלים חיצוניים</h4>
-            <p>myparents.co.il (קיים — לשדרג), babait.org.il, t.co.il, azarim.org.il. Perplexity שולף מפורטלים אלה.</p>
+            <h4>לשפר מעורבות של משתמשי ChatGPT</h4>
+            <p>מעורבות למשתמש פעיל ירדה ב-27.8% למרות עלייה בתנועה. לבדוק את עמודי הנחיתה שמקבלים תנועה מ-ChatGPT ולוודא שהם עונים על השאילתה ישירות, עם CTA ברור.</p>
+            <div class="step-kw">מדד יעד: מעורבות &gt; 1.0 (כרגע 0.72)</div>
         </div>
     </div>
-</section>
 
-<!-- METHODOLOGY -->
-<section class="section" style="padding-top: 20px;">
-    <div class="methodology">
-        <h4>מתודולוגיה ומקורות</h4>
-        <p>
-            <strong>מיקומים ונפח חיפוש:</strong> SE Ranking (פרויקט 8020055) + GSC (sc-domain:manpowercare.co.il). נפחי חיפוש הם <strong>אומדני כלי מחקר</strong>, לא נתוני גוגל מוחלטים.<br>
-            <strong>נראות AI:</strong> סריקה ידנית של 7 שאילתות ב-ChatGPT, Perplexity, Gemini — פברואר 2026. תוצאות AI משתנות לפי זמן, מיקום והקשר.<br>
-            <strong>מיקומי מתחרים:</strong> סריקת SERP חיה + נתוני SE Ranking. "—" = לא מדורג בעמוד 1-2.<br>
-            <strong>Schema:</strong> אומת ישירות מקוד המקור של אתרי המתחרים.<br>
-            <strong>הבחנה:</strong> הדוח מפריד בין חברות סיעוד (מתחרים ישירים) לבין גופים מוסדיים (קופות חולים, עמותות, אתרי ממשלה) שאינם מתחרים ישירים אך שולטים בתשובות AI ובשאילתות מידע.
-        </p>
+    <div class="next-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+            <h4>להמיר Mentions ל-Links ב-Gemini</h4>
+            <p>Gemini מזכירה את Manpower Care ב-16 שאילתות — אבל רק כ-Mention ללא קישור. להוסיף structured data (Organization, LocalBusiness) ולחזק E-E-A-T עם ביקורות, תעודות והסמכות.</p>
+            <div class="step-kw">יעד: להפוך Mention → Link ב-2 שאילתות ליבה לפחות</div>
+        </div>
     </div>
 </section>
 
 <!-- FOOTER -->
 <footer class="footer">
     <div class="footer-brand">NC Digital</div>
-    <div class="footer-sub">דוח סטטוס GEO — Manpower Care — פברואר 2026</div>
-    <div class="footer-sub" style="margin-top: 4px; font-size: 0.75em; color: #475569;">
-        manpowercare.co.il | ניתוח נראות GEO | ממוקד תחרות
-    </div>
+    <div class="footer-sub">דוח סטטוס GEO · Manpower Care · פברואר 2026</div>
+    <div class="footer-sub" style="margin-top:6px;">מקורות: SE Ranking AI Search · GA4 · נתונים נכונים לפברואר 2026</div>
 </footer>
 
 </body>
