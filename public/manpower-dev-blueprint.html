@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manpower Israel — Schema Mapping & Implementation Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-hover: #253449;
+  --border: #334155;
+  --cyan: #0891b2;
+  --cyan-light: #22d3ee;
+  --green: #10b981;
+  --red: #ef4444;
+  --orange: #f59e0b;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-bright: #f8fafc;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Heebo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  padding: 0;
+}
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+/* Header */
+.header {
+  background: linear-gradient(135deg, #0c4a6e 0%, #164e63 50%, #134e4a 100%);
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 3px solid var(--cyan);
+  margin-bottom: 30px;
+}
+.header h1 {
+  font-size: 2.2em;
+  font-weight: 800;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+.header .subtitle {
+  font-size: 1.1em;
+  color: var(--cyan-light);
+  font-weight: 400;
+}
+.header .meta {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+.header .meta span {
+  background: rgba(8,145,178,0.2);
+  border: 1px solid rgba(8,145,178,0.4);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  color: var(--cyan-light);
+}
+/* Section */
+.section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.section-header {
+  background: linear-gradient(90deg, rgba(8,145,178,0.15), transparent);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.section-header:hover { background: rgba(8,145,178,0.2); }
+.section-num {
+  background: var(--cyan);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: var(--text-bright);
+  flex: 1;
+}
+.section-header .toggle {
+  color: var(--cyan-light);
+  font-size: 1.4em;
+  transition: transform 0.3s;
+}
+.section.collapsed .section-body { display: none; }
+.section.collapsed .toggle { transform: rotate(-90deg); }
+.section-body { padding: 20px 24px; }
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.88em;
+}
+th {
+  background: rgba(8,145,178,0.15);
+  color: var(--cyan-light);
+  font-weight: 600;
+  text-align: right;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--cyan);
+  white-space: nowrap;
+}
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tr:hover td { background: rgba(255,255,255,0.03); }
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+}
+.badge-red { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+.badge-green { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+.badge-orange { background: rgba(245,158,11,0.2); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+.badge-cyan { background: rgba(8,145,178,0.2); color: var(--cyan-light); border: 1px solid rgba(8,145,178,0.3); }
+.badge-purple { background: rgba(168,85,247,0.2); color: #c4b5fd; border: 1px solid rgba(168,85,247,0.3); }
+.badge-gray { background: rgba(148,163,184,0.15); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.2); }
+/* Code blocks */
+pre {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+  font-size: 0.82em;
+  line-height: 1.5;
+  direction: ltr;
+  text-align: left;
+  margin: 12px 0;
+  position: relative;
+}
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: #e6edf3;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(8,145,178,0.3);
+  border: 1px solid var(--cyan);
+  color: var(--cyan-light);
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-family: 'Heebo', sans-serif;
+}
+.copy-btn:hover { background: rgba(8,145,178,0.5); }
+/* Sub-headers */
+h3 {
+  color: var(--cyan-light);
+  font-size: 1.1em;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+h4 {
+  color: var(--text-bright);
+  font-size: 1em;
+  font-weight: 600;
+  margin: 14px 0 8px;
+}
+/* Paste block */
+.paste-block {
+  background: #1a1a2e;
+  border: 2px dashed var(--cyan);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 12px 0;
+}
+.paste-block .label {
+  color: var(--cyan-light);
+  font-weight: 700;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+/* Checklist */
+.checklist { list-style: none; padding: 0; }
+.checklist li {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.checklist li::before {
+  content: '☐';
+  color: var(--cyan-light);
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+/* Summary cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.summary-card {
+  background: rgba(8,145,178,0.1);
+  border: 1px solid rgba(8,145,178,0.3);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.summary-card .num {
+  font-size: 2.2em;
+  font-weight: 800;
+  color: var(--cyan-light);
+}
+.summary-card .label {
+  font-size: 0.85em;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+/* Notes */
+.note {
+  background: rgba(245,158,11,0.1);
+  border-right: 3px solid var(--orange);
+  padding: 10px 16px;
+  border-radius: 0 6px 6px 0;
+  margin: 10px 0;
+  font-size: 0.9em;
+  color: #fcd34d;
+}
+.note-red {
+  background: rgba(239,68,68,0.1);
+  border-right-color: var(--red);
+  color: #fca5a5;
+}
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-dim);
+  font-size: 0.85em;
+  border-top: 1px solid var(--border);
+  margin-top: 30px;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 10px; }
+  .header h1 { font-size: 1.5em; }
+  .section-body { padding: 14px; }
+  table { font-size: 0.78em; }
+  th, td { padding: 6px 8px; }
+  pre { font-size: 0.75em; padding: 10px; }
+  .summary-cards { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Manpower Israel — Schema Blueprint</h1>
+  <div class="subtitle">מפת יישום סכמות מלאה מבוססת סריקה חיה | מוכן להעברה לצוות פיתוח</div>
+  <div class="meta">
+    <span>תאריך: 2026-03-05</span>
+    <span>פלטפורמה: Next.js (SSR)</span>
+    <span>אתר: manpower.co.il</span>
+    <span>NC Digital</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- Summary Cards -->
+<div class="summary-cards">
+  <div class="summary-card">
+    <div class="num">400+</div>
+    <div class="label">עמודי משרות ללא JobPosting</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">16</div>
+    <div class="label">עמודי שירות ללא Service</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">27+</div>
+    <div class="label">משימות כוללות (A+B)</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">0</div>
+    <div class="label">datePosted / validThrough בנתונים</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">~20%</div>
+    <div class="label">משרות עם שכר (בתיאור בלבד)</div>
+  </div>
+</div>
+
+<!-- SECTION 1: Consolidated Task Table -->
+<div class="section" id="s1">
+  <div class="section-header" onclick="toggleSection('s1')">
+    <div class="section-num">1</div>
+    <h2>טבלת משימות מאוחדת</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <h3>עדיפות A — צוות פיתוח (Oasis)</h3>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>#</th><th>משימה</th><th>דוח</th><th>עמודים</th><th>סטטוס Oasis</th><th>הנחיות ליישום</th></tr>
+      <tr><td>1</td><td>הוספת canonical tags לכל האתר</td><td>A-1</td><td>כולם</td><td><span class="badge badge-green">בוצע</span></td><td dir="ltr">Set <code>NEXT_PUBLIC_SITE_URL=https://www.manpower.co.il</code> in <code>.env.production</code></td></tr>
+      <tr><td>2</td><td><strong>JobPosting schema לכל עמודי המשרות</strong></td><td>A-2</td><td>400+</td><td><span class="badge badge-red">ממתין</span></td><td>ראו סעיף 6 — מיפוי שדות מלא + Region→City + Employment Type</td></tr>
+      <tr><td>3</td><td>301 redirect: LIFE-SIENCE → life-science</td><td>A-3</td><td>1</td><td><span class="badge badge-red">ממתין</span></td><td dir="ltr"><code>next.config.js</code> redirects array, <code>permanent: true</code></td></tr>
+      <tr><td>4</td><td>301 redirect: /jobs → /search</td><td>A-11</td><td>1</td><td><span class="badge badge-red">ממתין</span></td><td dir="ltr"><code>{ source: '/jobs', destination: '/search', permanent: true }</code></td></tr>
+      <tr><td>5</td><td>תיקון 5 קישורים שבורים (301)</td><td>A-10</td><td>5</td><td><span class="badge badge-red">ממתין</span></td><td>ראו טבלת הפניות בסעיף 8</td></tr>
+      <tr><td>6</td><td>FAQPage schema ל-6 עמודי שירות</td><td>A-5</td><td>6</td><td><span class="badge badge-orange">במחלוקת</span></td><td>נמצאו כפילויות ב-/employers/employers — גוגל מתעלם משניהם. להסיר כפילות.</td></tr>
+      <tr><td>7</td><td>FAQPage schema לעמוד FAQ</td><td>A-6</td><td>1</td><td><span class="badge badge-orange">במחלוקת</span></td><td>הסכמה קיימת אך לא נקראת נכון. דורש בדיקה.</td></tr>
+      <tr><td>8</td><td>תיקון H1 כפולים</td><td>A-7</td><td>3</td><td><span class="badge badge-red">ממתין</span></td><td>on-site (2x), finance (2 שונים), refer-friend (2x זהים)</td></tr>
+      <tr><td>9</td><td>שדרוג Organization → EmploymentAgency</td><td>A-8</td><td>1</td><td><span class="badge badge-red">ממתין</span></td><td>Homepage &lt;Head&gt; — הוספת @id, foundingDate, numberOfEmployees</td></tr>
+      <tr><td>10</td><td>תיקון WebSite schema (הסרת SearchAction)</td><td>A-9</td><td>1</td><td><span class="badge badge-cyan">אושר לביצוע</span></td><td>הסרת potentialAction. הוספת @id, inLanguage, publisher.</td></tr>
+      <tr><td>11</td><td>Meta descriptions דינמיים למשרות</td><td>A-4</td><td>400+</td><td><span class="badge badge-green">מפרט מוכן</span></td><td dir="ltr">report.n-c.digital/manpower-meta-desc-spec.html</td></tr>
+      <tr><td>12</td><td><strong>Service schema לעמודי שירות</strong></td><td>B-1</td><td>16</td><td><span class="badge badge-red">ממתין</span></td><td>ראו סעיף 7 — מיפוי per-slug config</td></tr>
+      <tr><td>13</td><td>Article/BlogPosting schema</td><td>B-3</td><td>~62</td><td><span class="badge badge-red">ממתין</span></td><td>סריקה אוטומטית + יישום אחיד</td></tr>
+    </table>
+    </div>
+
+    <h3>עדיפות A — צוות SEO (NC Digital)</h3>
+    <table>
+      <tr><th>#</th><th>משימה</th><th>דוח</th><th>עמודים</th><th>סטטוס</th></tr>
+      <tr><td>14</td><td>הוספת 7 meta descriptions (עמודים סטטיים)</td><td>A-4</td><td>7</td><td><span class="badge badge-cyan">טקסט מוכן</span></td></tr>
+      <tr><td>15</td><td>אופטימיזציית 4 title tags</td><td>B-10</td><td>4</td><td><span class="badge badge-cyan">טקסט מוכן</span></td></tr>
+      <tr><td>16</td><td>הוספת 15+ קישורים פנימיים</td><td>B-11</td><td>Cross-site</td><td><span class="badge badge-orange">בתהליך</span></td></tr>
+      <tr><td>17</td><td>כתיבת מאמר: 10 חברות כוח אדם מובילות 2026</td><td>B-6</td><td>חדש</td><td><span class="badge badge-red">נדרש בריף</span></td></tr>
+    </table>
+
+    <h3>עדיפות A — לקוח (עדי / מנפאואר)</h3>
+    <table>
+      <tr><th>#</th><th>משימה</th><th>דוח</th><th>סטטוס</th></tr>
+      <tr><td>18</td><td>יצירת עמוד FAQ עצמאי (36+ שאלות)</td><td>B-5</td><td><span class="badge badge-red">ממתין לכתיבה</span></td></tr>
+      <tr><td>19</td><td>יצירת עמוד אודות מנפאואר (2,000+ מילים)</td><td>B-4</td><td><span class="badge badge-red">ממתין לכתיבה</span></td></tr>
+      <tr><td>20</td><td>תוכן FAQ לעמודי bchirim, experts, finance, life-science</td><td>B-2</td><td><span class="badge badge-red">ממתין לכתיבה</span></td></tr>
+    </table>
+
+    <h3>עדיפות B + C</h3>
+    <table>
+      <tr><th>משימה</th><th>בעלות</th><th>עדיפות</th></tr>
+      <tr><td>ביקורת alt text לתמונות</td><td>SEO</td><td><span class="badge badge-gray">B</span></td></tr>
+      <tr><td>עמודי מחברים (E-E-A-T)</td><td>כולם</td><td><span class="badge badge-gray">B</span></td></tr>
+      <tr><td>עדכון פרופילים בספריות (t.co.il, d.co.il)</td><td>לקוח</td><td><span class="badge badge-gray">B</span></td></tr>
+      <tr><td>3 מאמרי בלוג חדשים</td><td>SEO</td><td><span class="badge badge-gray">B</span></td></tr>
+      <tr><td>ערך ויקיפדיה בעברית</td><td>SEO</td><td><span class="badge badge-gray">B</span></td></tr>
+      <tr><td>אימות canonical tags | דפי נחיתה לערים | דפי מקצועות | דף TBO | בניית קישורים | Guest Posts | XML Sitemap | המלצות | תעודות | יח"צ | Local SEO (30 סניפים) | VideoObject</td><td>מגוון</td><td><span class="badge badge-gray">C</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 2: URL Pattern Map -->
+<div class="section" id="s2">
+  <div class="section-header" onclick="toggleSection('s2')">
+    <div class="section-num">2</div>
+    <h2>מפת דפוסי URL</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>סוג עמוד</th><th>דפוס (Regex)</th><th>כמות</th><th>דוגמאות</th><th>הערות</th></tr>
+      <tr><td><strong>עמוד משרה</strong></td><td dir="ltr"><code>/job/\d+(-2)?</code></td><td>400+</td><td dir="ltr">/job/237689, /job/237690, /job/237691, /job/237700, /job/237702, /job/237672, /job/237698, /job/237699, /job/237673, /job/237661, /job/237627-2</td><td>סיומת -2 למשרות שפורסמו מחדש. ללא pagination.</td></tr>
+      <tr><td><strong>חיפוש משרות</strong></td><td dir="ltr"><code>/search(\?.*)?</code></td><td>1 + פרמטרים</td><td dir="ltr">/search, /search?JOBEXPERTISE=4142, /search?JOBAREA=4114, /search?JOBSCOPE=8309</td><td>חיפוש מבוסס פילטרים, לא free-text. <strong>אין schema בעמודי רשימה!</strong></td></tr>
+      <tr><td><strong>פתרונות למעסיקים</strong></td><td dir="ltr"><code>/employers-solutions/[a-z-]+</code></td><td>14</td><td dir="ltr">/employers-solutions/perm, /flexibility, /on-site, /bchirim, /experts, /payroll, /c-level-candidates, /manufacture, /logistics, /service-center, /cleanrooms, /technology-industry, /service-plans, /employers-solutions</td><td>עמודי תוכן סטטיים</td></tr>
+      <tr><td><strong>Hub למעסיקים</strong></td><td dir="ltr"><code>/employers/[a-z-]+</code></td><td>4</td><td dir="ltr">/employers/employers, /employers/foreign-workers, /employers/tbo, /employers/flexibility</td><td>עמודי נחיתה</td></tr>
+      <tr><td><strong>התמחויות</strong></td><td dir="ltr"><code>/specializations/[a-z-]+</code></td><td>2</td><td dir="ltr">/specializations/finance, /specializations/life-science</td><td>LIFE-SIENCE = URL שבור (ראו redirect)</td></tr>
+      <tr><td><strong>מאמרים</strong></td><td dir="ltr"><code>/article/[^/]+</code></td><td>150+</td><td dir="ltr">/article/שילוב-בין-עבודה-ללימודים, /article/הכנה-לראיונות</td><td>Slugs בעברית. 5 שבורים (404).</td></tr>
+      <tr><td><strong>כלים</strong></td><td dir="ltr"><code>/salary-calculator, /salary-tables, /resume-generator</code></td><td>3</td><td>—</td><td>עמודי utility</td></tr>
+      <tr><td><strong>עמודים סטטיים</strong></td><td>מגוון</td><td>10+</td><td dir="ltr">/about-us/about-us, /contact-us/contact-us, /frequently-asked-questions/faq, /insight-lobby, /my/login</td><td>—</td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: Job Page Extraction -->
+<div class="section" id="s3">
+  <div class="section-header" onclick="toggleSection('s3')">
+    <div class="section-num">3</div>
+    <h2>טבלת חילוץ עמודי משרות (15 עמודים)</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <div class="note note-red">
+      <strong>ממצא קריטי:</strong> datePosted ו-validThrough לא קיימים בשום מקום במודל הנתונים. שכר אינו שדה מובנה — מופיע inline בתיאור ב-~20% מהמשרות בלבד.
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>URL</th><th>תפקיד</th><th>מיקום</th><th>סוג משרה</th><th>שכר</th><th>קוד</th><th>קטגוריה</th><th>ניסיון</th><th>datePosted</th></tr>
+      <tr><td dir="ltr">/job/237689</td><td>נציג/ת ייבוא (11K)</td><td>גוש דן</td><td>משרה מלאה</td><td>11,000 ₪/חודש</td><td>237689</td><td>ייבוא/יצוא</td><td>ללא ניסיון</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237690</td><td>אנליסט/ית FP&A</td><td>השרון, חיפה</td><td>משרה מלאה</td><td>—</td><td>237690</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237691</td><td>מפעיל/ת מכונה</td><td>חיפה והצפון</td><td>משמרות</td><td>—</td><td>237691</td><td>ייצור ותעשייה</td><td>ללא ניסיון</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237700</td><td>חשב/ת שכר</td><td>גוש דן, השפלה, ירושלים</td><td>משרה מלאה</td><td>מוזכר</td><td>237700</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237702</td><td>אחראי/ת טרקלינים</td><td>צפון ת"א</td><td>משרה מלאה</td><td>50-55 ₪/שעה</td><td>237702</td><td>משרות כלליות</td><td>ללא ניסיון</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237672</td><td>רכז/ת אדמיניסטרציה</td><td>הרצליה (השרון)</td><td>משרה מלאה</td><td>—</td><td>237672</td><td>אדמיניסטרציה</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237698</td><td>כלכלנ/ית PMO</td><td>מודיעין (גוש דן)</td><td>משרה מלאה</td><td>—</td><td>237698</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237699</td><td>מנהל/ת חשבונות</td><td>מודיעין (גוש דן)</td><td>משרה מלאה</td><td>—</td><td>237699</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237697</td><td>Administration Officer</td><td>השרון</td><td>זמנית + מלאה</td><td>—</td><td>237697</td><td>אדמיניסטרציה</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237668</td><td>Sales & Customer Service</td><td>חדרה (השרון)</td><td>משרה מלאה</td><td>—</td><td>237668</td><td>שירות ומכירות</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237673</td><td>מנהל/ת אחזקה</td><td>גוש דן</td><td>משרה מלאה</td><td>"מצוין" + רכב</td><td>237673</td><td>אחזקה, הנדסה</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237661</td><td>מנהל/ת מח' שכר</td><td>גוש דן, השרון</td><td>משרה מלאה</td><td>—</td><td>237661</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/204233</td><td>ראש צוות שירות ומכירות</td><td>הדרום, גוש דן, השרון</td><td>משרה מלאה</td><td>—</td><td>204233</td><td>שירות ומכירות</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237386</td><td>עובד/ת ריקון פסולת</td><td>קרית גת (השפלה)</td><td>משרה מלאה</td><td>35 ₪/שעה</td><td>237386</td><td>משרות כלליות</td><td>ללא ניסיון</td><td><span class="badge badge-red">חסר</span></td></tr>
+      <tr><td dir="ltr">/job/237676</td><td>מהנ"ח לחברת בנייה</td><td>השרון</td><td>משרה מלאה</td><td>—</td><td>237676</td><td>פיננסים</td><td>נדרש</td><td><span class="badge badge-red">חסר</span></td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: Field Location & Parsing -->
+<div class="section" id="s4">
+  <div class="section-header" onclick="toggleSection('s4')">
+    <div class="section-num">4</div>
+    <h2>טבלת מיקום שדות ו-Parsing</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <p>כל שדה ממופה לנתיב ה-JSON שלו בתוך <code dir="ltr">__NEXT_DATA__</code>:</p>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>שדה</th><th dir="ltr">JSON Path</th><th>סוג</th><th>דוגמה</th><th>טרנספורמציה</th></tr>
+      <tr><td>כותרת</td><td dir="ltr"><code>pageProps.job.title</code></td><td>string</td><td>"11K דרוש/ה נציג/ת ייבוא..."</td><td>הסרת prefix שכר (regex: <code dir="ltr">/^\d+K\s*/</code>)</td></tr>
+      <tr><td>מזהה DB</td><td dir="ltr"><code>pageProps.job.databaseId</code></td><td>int</td><td>32273</td><td>אינו קוד המשרה — ID פנימי של WP</td></tr>
+      <tr><td>קוד משרה</td><td dir="ltr"><code>pageProps.job.jobFields.jobcode</code></td><td>string</td><td>"237689"</td><td>שימוש כ-<code>identifier.value</code></td></tr>
+      <tr><td>תיאור (HTML)</td><td dir="ltr"><code>pageProps.job.jobFields.jobdescription</code></td><td>HTML string</td><td>&lt;article&gt;...&lt;/article&gt;</td><td>הסרת wrapper של &lt;article&gt;</td></tr>
+      <tr><td>דרישות</td><td dir="ltr"><code>pageProps.job.jobFields.jobrequirements</code></td><td>string/null</td><td>null (לרוב ריק)</td><td>שרשור לתיאור אם קיים</td></tr>
+      <tr><td>כישורים</td><td dir="ltr"><code>pageProps.job.jobFields.jobskills</code></td><td>string/null</td><td>null (לרוב ריק)</td><td>שרשור לתיאור אם קיים</td></tr>
+      <tr><td>מיקומים</td><td dir="ltr"><code>pageProps.job.jobAreas.nodes[].name</code></td><td>array of {name}</td><td>[{"name": "גוש דן"}]</td><td>מיפוי אזור → עיר (טבלה בסעיף 6)</td></tr>
+      <tr><td>סוג משרה</td><td dir="ltr"><code>pageProps.job.jobScopes.nodes[].name</code></td><td>array of {name, jobCategoryCode}</td><td>[{"name": "משרה מלאה", "jobCategoryFields": {"jobCategoryCode": "1"}}]</td><td>מיפוי עברית → Google enum</td></tr>
+      <tr><td>מקצועות</td><td dir="ltr"><code>pageProps.job.jobProfessions.nodes[]</code></td><td>array of {name, parentDatabaseId}</td><td>[{"name": "ייבוא/יצוא ושילוח", "parentDatabaseId": null}]</td><td>parent = industry, child = occupationalCategory</td></tr>
+      <tr><td>ניסיון</td><td dir="ltr"><code>pageProps.job.jobExperiences.nodes[].name</code></td><td>array of {name}</td><td>[{"name": "ללא ניסיון"}]</td><td>שימוש כ-experienceRequirements</td></tr>
+      <tr><td>סטטוס פרסום</td><td dir="ltr"><code>pageProps.job.jobStatuses.nodes[].name</code></td><td>array of {name}</td><td>[{"name": "published"}]</td><td>רנדור schema רק אם = "published"</td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: Data Availability Audit -->
+<div class="section" id="s5">
+  <div class="section-header" onclick="toggleSection('s5')">
+    <div class="section-num">5</div>
+    <h2>ביקורת זמינות נתונים — JobPosting</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>שדה Schema</th><th>נדרש ע"י Google?</th><th>סטטוס</th><th>מקור</th><th>הערות</th></tr>
+      <tr><td>title</td><td><span class="badge badge-red">כן</span></td><td><span class="badge badge-green">קיים</span></td><td>job.title</td><td>הסרת prefix שכר</td></tr>
+      <tr><td>description</td><td><span class="badge badge-red">כן</span></td><td><span class="badge badge-green">קיים</span></td><td>jobFields.jobdescription</td><td>HTML, שרשור requirements+skills</td></tr>
+      <tr><td>datePosted</td><td><span class="badge badge-red">כן</span></td><td><span class="badge badge-red">חסר לחלוטין</span></td><td>לא במודל הנתונים</td><td><strong>Workaround:</strong> WP publish date / sitemap lastmod / תאריך נוכחי</td></tr>
+      <tr><td>validThrough</td><td><span class="badge badge-orange">מומלץ</span></td><td><span class="badge badge-red">חסר לחלוטין</span></td><td>לא במודל הנתונים</td><td>datePosted + 60 יום</td></tr>
+      <tr><td>hiringOrganization</td><td><span class="badge badge-red">כן</span></td><td><span class="badge badge-green">Hardcode</span></td><td>סטטי</td><td>Manpower Israel</td></tr>
+      <tr><td>jobLocation</td><td><span class="badge badge-red">כן</span></td><td><span class="badge badge-orange">דורש parsing</span></td><td>jobAreas.nodes[].name</td><td>רק אזור — מיפוי לעיר נציגה</td></tr>
+      <tr><td>employmentType</td><td><span class="badge badge-orange">מומלץ</span></td><td><span class="badge badge-orange">דורש parsing</span></td><td>jobScopes.nodes[].name</td><td>מיפוי עברית → enum אנגלי</td></tr>
+      <tr><td>identifier</td><td><span class="badge badge-orange">מומלץ</span></td><td><span class="badge badge-green">קיים</span></td><td>jobFields.jobcode</td><td>—</td></tr>
+      <tr><td>baseSalary</td><td><span class="badge badge-orange">מומלץ</span></td><td><span class="badge badge-orange">~20% (לא מובנה)</span></td><td>inline בתיאור</td><td>Regex לא אמין. מומלץ להשמיט.</td></tr>
+      <tr><td>directApply</td><td><span class="badge badge-orange">מומלץ</span></td><td><span class="badge badge-green">Hardcode true</span></td><td>כפתור הגשה בכל עמוד</td><td>—</td></tr>
+      <tr><td>industry</td><td><span class="badge badge-gray">אופציונלי</span></td><td><span class="badge badge-green">קיים</span></td><td>jobProfessions[0].name (parent)</td><td>—</td></tr>
+      <tr><td>experienceRequirements</td><td><span class="badge badge-gray">אופציונלי</span></td><td><span class="badge badge-green">קיים</span></td><td>jobExperiences[0].name</td><td>—</td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: JobPosting Schema Mapping -->
+<div class="section" id="s6">
+  <div class="section-header" onclick="toggleSection('s6')">
+    <div class="section-num">6</div>
+    <h2>מיפוי JobPosting Schema</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <h3>טבלת מיפוי אזור → עיר (Region-to-City)</h3>
+    <table>
+      <tr><th>אזור באתר</th><th dir="ltr">addressLocality</th><th dir="ltr">addressRegion</th></tr>
+      <tr><td>גוש דן</td><td dir="ltr">Tel Aviv</td><td dir="ltr">Center District</td></tr>
+      <tr><td>השרון</td><td dir="ltr">Netanya</td><td dir="ltr">Sharon District</td></tr>
+      <tr><td>חיפה והצפון</td><td dir="ltr">Haifa</td><td dir="ltr">Northern District</td></tr>
+      <tr><td>הדרום</td><td dir="ltr">Be'er Sheva</td><td dir="ltr">Southern District</td></tr>
+      <tr><td>השפלה</td><td dir="ltr">Rehovot</td><td dir="ltr">Central District</td></tr>
+      <tr><td>ירושלים והסביבה</td><td dir="ltr">Jerusalem</td><td dir="ltr">Jerusalem District</td></tr>
+    </table>
+
+    <h3>טבלת מיפוי סוג משרה (Employment Type)</h3>
+    <table>
+      <tr><th>ערך באתר (עברית)</th><th dir="ltr">jobCategoryCode</th><th dir="ltr">Google employmentType</th></tr>
+      <tr><td>משרה מלאה</td><td>1</td><td dir="ltr">FULL_TIME</td></tr>
+      <tr><td>משרה חלקית</td><td>2</td><td dir="ltr">PART_TIME</td></tr>
+      <tr><td>משרה זמנית</td><td>3</td><td dir="ltr">TEMPORARY</td></tr>
+      <tr><td>משרת סטודנט</td><td>4</td><td dir="ltr">INTERN</td></tr>
+      <tr><td>משמרות</td><td>5</td><td dir="ltr">OTHER</td></tr>
+      <tr><td>עבודה מעודפת</td><td>6</td><td dir="ltr">OTHER</td></tr>
+    </table>
+    <div class="note">
+      <strong>זיהוי היברידי/עבודה מהבית:</strong> אם jobdescription מכיל "עבודה מהבית" או "היברידי" → הוסף "TELECOMMUTE" למערך employmentType.
+    </div>
+
+    <h3>טבלת מיפוי מלאה</h3>
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th dir="ltr">Schema Property</th><th>מקור נתונים</th><th>אופן חילוץ</th><th>טרנספורמציה</th><th>Fallback</th><th>נדרש?</th></tr>
+      <tr><td dir="ltr">title</td><td>job.title</td><td>ישיר</td><td dir="ltr">strip /^\d+K\s*/</td><td>job.seo.title minus " - Manpower"</td><td><span class="badge badge-red">כן</span></td></tr>
+      <tr><td dir="ltr">description</td><td>jobFields.jobdescription</td><td>ישיר</td><td>הסרת &lt;article&gt; + שרשור requirements</td><td>job.seo.metaDesc</td><td><span class="badge badge-red">כן</span></td></tr>
+      <tr><td dir="ltr">datePosted</td><td><strong>לא זמין</strong></td><td>—</td><td>—</td><td>WP date / sitemap lastmod / today</td><td><span class="badge badge-red">כן</span></td></tr>
+      <tr><td dir="ltr">validThrough</td><td><strong>לא זמין</strong></td><td>חישוב</td><td>datePosted + 60 יום</td><td>השמט</td><td><span class="badge badge-orange">מומלץ</span></td></tr>
+      <tr><td dir="ltr">identifier</td><td>jobFields.jobcode</td><td>עטיפת PropertyValue</td><td>{name: "Manpower Israel", value: code}</td><td>databaseId כ-string</td><td><span class="badge badge-orange">מומלץ</span></td></tr>
+      <tr><td dir="ltr">hiringOrganization</td><td>Hardcode</td><td>אובייקט סטטי</td><td>—</td><td>—</td><td><span class="badge badge-red">כן</span></td></tr>
+      <tr><td dir="ltr">jobLocation</td><td>jobAreas.nodes[].name</td><td>מיפוי per region</td><td>Region→City table</td><td>{addressCountry: "IL"}</td><td><span class="badge badge-red">כן</span></td></tr>
+      <tr><td dir="ltr">employmentType</td><td>jobScopes.nodes[].name</td><td>מיפוי per scope</td><td>Hebrew→enum + TELECOMMUTE detection</td><td>"FULL_TIME"</td><td><span class="badge badge-orange">מומלץ</span></td></tr>
+      <tr><td dir="ltr">directApply</td><td>Hardcode</td><td>true</td><td>—</td><td>—</td><td><span class="badge badge-orange">מומלץ</span></td></tr>
+      <tr><td dir="ltr">industry</td><td>jobProfessions[0].name (parent)</td><td>where parentDatabaseId === null</td><td>—</td><td>השמט</td><td><span class="badge badge-gray">אופציונלי</span></td></tr>
+      <tr><td dir="ltr">occupationalCategory</td><td>jobProfessions[].name (child)</td><td>where parentDatabaseId !== null</td><td>—</td><td>השמט</td><td><span class="badge badge-gray">אופציונלי</span></td></tr>
+      <tr><td dir="ltr">experienceRequirements</td><td>jobExperiences[0].name</td><td>ישיר</td><td>—</td><td>השמט</td><td><span class="badge badge-gray">אופציונלי</span></td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7: Service Schema Mapping -->
+<div class="section" id="s7">
+  <div class="section-header" onclick="toggleSection('s7')">
+    <div class="section-num">7</div>
+    <h2>מיפוי Service Schema — 16 עמודים</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <div style="overflow-x:auto">
+    <table>
+      <tr><th>URL</th><th>שם השירות</th><th dir="ltr">serviceType</th><th>FAQ קיים?</th><th>FAQ Schema?</th></tr>
+      <tr><td dir="ltr">/employers-solutions/perm</td><td>שירותי השמה קבועה</td><td dir="ltr">Permanent Placement</td><td><span class="badge badge-green">כן (4)</span></td><td><span class="badge badge-green">כן</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/flexibility</td><td>העסקה גמישה</td><td dir="ltr">Flexible Employment</td><td><span class="badge badge-green">כן (4)</span></td><td><span class="badge badge-green">כן</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/employers-solutions</td><td>גיוס JUST IN TIME</td><td dir="ltr">Short-term Recruitment</td><td><span class="badge badge-orange">לבדוק</span></td><td><span class="badge badge-orange">לבדוק</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/bchirim</td><td>השמת בכירים</td><td dir="ltr">Executive Recruitment</td><td><span class="badge badge-red">כותרת בלבד</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/on-site</td><td>שירותי OnSite</td><td dir="ltr">On-site Team Management</td><td><span class="badge badge-red">כותרת בלבד</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/experts</td><td>השאלת מומחים</td><td dir="ltr">Expert Staffing</td><td><span class="badge badge-red">כותרת בלבד</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/payroll</td><td>שירותי פיירול</td><td dir="ltr">Payroll Services</td><td><span class="badge badge-green">כן (4)</span></td><td><span class="badge badge-green">כן</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/c-level-candidates</td><td>השמת C-Level</td><td dir="ltr">C-Level Executive</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/manufacture</td><td>ניהול קווי ייצור</td><td dir="ltr">Manufacturing Management</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/logistics</td><td>ניהול לוגיסטיקה</td><td dir="ltr">Logistics Outsourcing</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/service-center</td><td>מוקדים טלפוניים</td><td dir="ltr">Call Center Outsourcing</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/cleanrooms</td><td>חדרים נקיים</td><td dir="ltr">Clean Room Maintenance</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/technology-industry</td><td>תעשייה טכנולוגית</td><td dir="ltr">Technology Industry</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/employers-solutions/service-plans</td><td>שירות פנים-ארגוני</td><td dir="ltr">Internal Service Ops</td><td><span class="badge badge-red">לא</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/specializations/finance</td><td>גיוס בפיננסים</td><td dir="ltr">Finance Recruitment</td><td><span class="badge badge-red">כותרת בלבד</span></td><td><span class="badge badge-red">לא</span></td></tr>
+      <tr><td dir="ltr">/specializations/life-science</td><td>גיוס במדעי החיים</td><td dir="ltr">Life Sciences Recruitment</td><td><span class="badge badge-red">כותרת בלבד</span></td><td><span class="badge badge-red">לא</span></td></tr>
+    </table>
+    </div>
+    <div class="note">
+      <strong>יישום:</strong> עמודי שירות אינם מכילים נתונים דינמיים ב-__NEXT_DATA__ (רק seo + slug). השימוש ב-Service schema דורש config סטטי per-slug בקובץ <code dir="ltr">lib/serviceSchemaConfig.ts</code>.
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: Rows 4 & 14 -->
+<div class="section" id="s8">
+  <div class="section-header" onclick="toggleSection('s8')">
+    <div class="section-num">8</div>
+    <h2>השלמת שורות 4 ו-14 — טקסט להדבקה בטבלה הפנימית</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <h3>שורה 4 — JobPosting Schema</h3>
+    <div class="paste-block">
+      <div class="label">טקסט להדבקה בטבלת התגובות הפנימית:</div>
+      <p><strong>מיפוי שדות JobPosting — מלא ומוכן ליישום</strong></p>
+      <p>מקור נתונים: <code dir="ltr">__NEXT_DATA__ → pageProps.job</code></p>
+      <p><strong>שדות זמינים בעמוד:</strong><br>
+      • title → job.title (הסרת prefix שכר אם מתחיל בספרות + K)<br>
+      • description → jobFields.jobdescription (HTML, הסרת wrapper של article) + jobrequirements + jobskills<br>
+      • identifier → jobFields.jobcode (למשל "237689")<br>
+      • jobLocation → jobAreas.nodes[].name — מיפוי אזור לעיר:<br>
+      &nbsp;&nbsp;גוש דן → Tel Aviv | השרון → Netanya | חיפה והצפון → Haifa | הדרום → Be'er Sheva | השפלה → Rehovot | ירושלים → Jerusalem<br>
+      • employmentType → jobScopes.nodes[].name מומר ל-enum:<br>
+      &nbsp;&nbsp;משרה מלאה → FULL_TIME | חלקית → PART_TIME | זמנית → TEMPORARY | סטודנט → INTERN | משמרות → OTHER<br>
+      • industry → jobProfessions.nodes[0].name (קטגוריית אב)<br>
+      • experienceRequirements → jobExperiences.nodes[0].name<br>
+      • directApply → hardcode true</p>
+      <p><strong>שדות חסרים (דרוש workaround):</strong><br>
+      • datePosted → WP publish date / sitemap lastmod / תאריך נוכחי בפורמט ISO<br>
+      • validThrough → datePosted + 60 יום<br>
+      • baseSalary → לא שדה מובנה, מופיע inline ב-~20% מהתיאורים. מומלץ להשמיט.</p>
+      <p><strong>תנאי רנדור:</strong> רק אם jobStatuses.nodes[0].name === "published"<br>
+      <strong>מיקום הזרקה:</strong> &lt;Head&gt; בתבנית עמוד משרה בלבד. <strong>לא</strong> בעמודי /search (רשימות).</p>
+    </div>
+
+    <h3>שורה 14 — Service Schema</h3>
+    <div class="paste-block">
+      <div class="label">טקסט להדבקה בטבלת התגובות הפנימית:</div>
+      <p><strong>Service Schema — מיפוי מלא ל-16 עמודי שירות</strong></p>
+      <p>עמודי שירות אינם מכילים נתונים דינמיים ב-__NEXT_DATA__ (רק seo + slug + template).</p>
+      <p><strong>גישת יישום:</strong> קובץ config סטטי <code dir="ltr">lib/serviceSchemaConfig.ts</code> עם ערכים per-slug:</p>
+      <p>• @type → "Service" (hardcode)<br>
+      • name → config per slug (למשל "שירותי השמה קבועה" עבור perm)<br>
+      • serviceType → config per slug (למשל "Permanent Placement")<br>
+      • description → pageProps.seo.metaDesc או ערך בconfig<br>
+      • provider → {"@id": "https://www.manpower.co.il/#organization"}<br>
+      • areaServed → {"@type": "Country", "name": "Israel"}<br>
+      • url → canonical URL של העמוד</p>
+      <p><strong>16 עמודים ליישום:</strong> perm, flexibility, employers-solutions, bchirim, on-site, experts, payroll, c-level-candidates, manufacture, logistics, service-center, cleanrooms, technology-industry, service-plans, finance, life-science</p>
+    </div>
+
+    <h3>טבלת הפניות 301 (לשורה 5 — קישורים שבורים)</h3>
+    <table>
+      <tr><th>מ-URL</th><th>ל-URL</th></tr>
+      <tr><td dir="ltr">/article/לימודי-קידום-אורגני</td><td dir="ltr">/article/שילוב-בין-עבודה-ללימודים-מה-חשוב-לדעת-ע</td></tr>
+      <tr><td dir="ltr">/article/SEO-קורס</td><td dir="ltr">/article/שילוב-בין-עבודה-ללימודים-מה-חשוב-לדעת-ע</td></tr>
+      <tr><td dir="ltr">/article/להיות-מנהל-טוב-יותר</td><td dir="ltr">/article/הכנה-לראיונות-מה-מחפשים-המנהלים-בעובד</td></tr>
+      <tr><td dir="ltr">/article/קידום-אתרים-מקצועי</td><td dir="ltr">/article/שילוב-בין-עבודה-ללימודים-מה-חשוב-לדעת-ע</td></tr>
+      <tr><td dir="ltr">/article/ניהול-זמן-אפקטיבי</td><td dir="ltr">/article/איך-לנצל-עד-תום-את-זמן-הנסיעה-לעבודה</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- SECTION 9: JSON-LD Examples -->
+<div class="section" id="s9">
+  <div class="section-header" onclick="toggleSection('s9')">
+    <div class="section-num">9</div>
+    <h2>JSON-LD מוכן להעתקה</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <h3>A. JobPosting — נתונים אמיתיים ממשרה 237689</h3>
+    <pre id="jp-code"><button class="copy-btn" onclick="copyCode('jp-code')">העתק</button><code>{
+  "@context": "https://schema.org/",
+  "@type": "JobPosting",
+  "title": "נציג/ת ייבוא לחברת בינלאומית באור יהודה",
+  "description": "&lt;p&gt;דרוש/ה נציג/ת ייבוא לחברה בינלאומית באור יהודה - ללא ניסיון&lt;/p&gt;&lt;p&gt;משרה במשמרות – 5 משמרות בשבוע (כולל סופי שבוע, נדרשת גמישות)&lt;br/&gt;תנאים מעולים + שכר מתגמל + ללא ניסיון קודם&lt;/p&gt;&lt;p&gt;התפקיד כולל ניהול תפעול שוטף של משלוחים דחופים בזמן אמת, עבודה צמודה מול סוכנים, חברות תעופה וצוותים מסחריים בארץ ובעולם.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;דרישות:&lt;/strong&gt;&lt;br/&gt;ללא ניסיון&lt;br/&gt;אנגלית ברמה טובה מאוד - חובה&lt;/p&gt;",
+  "identifier": {
+    "@type": "PropertyValue",
+    "name": "Manpower Israel",
+    "value": "237689"
+  },
+  "datePosted": "2026-03-05",
+  "validThrough": "2026-05-04T23:59:59+03:00",
+  "employmentType": "FULL_TIME",
+  "directApply": true,
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": "Manpower Israel",
+    "alternateName": "מנפאואר ישראל",
+    "sameAs": "https://www.manpower.co.il/",
+    "logo": "https://manpowercontent.manpower.co.il/wp-content/uploads/2023/05/footer-manpower-logo.svg_.png"
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Tel Aviv",
+      "addressRegion": "Center District",
+      "addressCountry": "IL"
+    }
+  },
+  "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": "ILS",
+    "value": {
+      "@type": "QuantitativeValue",
+      "value": 11000,
+      "unitText": "MONTH"
+    }
+  },
+  "industry": "ייבוא/יצוא ושילוח",
+  "occupationalCategory": "מתאם/ת ייבוא/ייצוא",
+  "experienceRequirements": "ללא ניסיון"
+}</code></pre>
+
+    <h3>B. Service — נתונים אמיתיים מ-/employers-solutions/perm</h3>
+    <pre id="sv-code"><button class="copy-btn" onclick="copyCode('sv-code')">העתק</button><code>{
+  "@context": "https://schema.org/",
+  "@type": "Service",
+  "name": "שירותי השמה קבועה",
+  "serviceType": "Permanent Placement",
+  "description": "שירותי השמה קבועה של מנפאואר ישראל - גיוס והשמת עובדים קבועים לארגונים בכל התעשיות, עם מאגר מועמדים של אלפי אנשי מקצוע.",
+  "url": "https://www.manpower.co.il/employers-solutions/perm",
+  "provider": {
+    "@id": "https://www.manpower.co.il/#organization"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "audience": {
+    "@type": "Audience",
+    "audienceType": "Employers"
+  }
+}</code></pre>
+  </div>
+</div>
+
+<!-- SECTION 10: Template Pseudocode -->
+<div class="section" id="s10">
+  <div class="section-header" onclick="toggleSection('s10')">
+    <div class="section-num">10</div>
+    <h2>תבניות Next.js מוכנות ליישום</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <h3>A. קומפוננטת JobPosting</h3>
+    <pre id="jp-tmpl"><button class="copy-btn" onclick="copyCode('jp-tmpl')">העתק</button><code>// components/JobPostingSchema.tsx
+import Head from 'next/head';
+
+const REGION_TO_CITY: Record&lt;string, {locality: string; region: string}&gt; = {
+  'גוש דן': { locality: 'Tel Aviv', region: 'Center District' },
+  'השרון': { locality: 'Netanya', region: 'Sharon District' },
+  'חיפה והצפון': { locality: 'Haifa', region: 'Northern District' },
+  'הדרום': { locality: "Be'er Sheva", region: 'Southern District' },
+  'השפלה': { locality: 'Rehovot', region: 'Central District' },
+  'ירושלים והסביבה': { locality: 'Jerusalem', region: 'Jerusalem District' },
+};
+
+const SCOPE_TO_TYPE: Record&lt;string, string&gt; = {
+  'משרה מלאה': 'FULL_TIME',
+  'משרה חלקית': 'PART_TIME',
+  'משרה זמנית': 'TEMPORARY',
+  'משרת סטודנט': 'INTERN',
+  'משמרות': 'OTHER',
+  'עבודה מעודפת': 'OTHER',
+};
+
+export default function JobPostingSchema({ job, datePosted }: { job: any; datePosted: string }) {
+  if (job.jobStatuses?.nodes?.[0]?.name !== 'published') return null;
+
+  const cleanTitle = job.title.replace(/^\d+K\s*/, '');
+
+  let description = (job.jobFields.jobdescription || '')
+    .replace(/&lt;article[^&gt;]*&gt;/g, '').replace(/&lt;\/article&gt;/g, '');
+  if (job.jobFields.jobrequirements) description += job.jobFields.jobrequirements;
+  if (job.jobFields.jobskills) description += `&lt;p&gt;${job.jobFields.jobskills}&lt;/p&gt;`;
+
+  const locations = (job.jobAreas?.nodes || []).map((area: any) =&gt; {
+    const mapped = REGION_TO_CITY[area.name] || { locality: area.name, region: area.name };
+    return {
+      '@type': 'Place',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: mapped.locality,
+        addressRegion: mapped.region,
+        addressCountry: 'IL',
+      },
+    };
+  });
+
+  const employmentTypes = (job.jobScopes?.nodes || [])
+    .map((s: any) =&gt; SCOPE_TO_TYPE[s.name] || 'OTHER');
+  const descLower = (job.jobFields.jobdescription || '');
+  if (descLower.includes('עבודה מהבית') || descLower.includes('היברידי')) {
+    employmentTypes.push('TELECOMMUTE');
+  }
+
+  const parentProf = job.jobProfessions?.nodes?.find((p: any) =&gt; p.parentDatabaseId === null);
+  const childProf = job.jobProfessions?.nodes?.find((p: any) =&gt; p.parentDatabaseId !== null);
+
+  const validDate = new Date(datePosted);
+  validDate.setDate(validDate.getDate() + 60);
+  const validThrough = validDate.toISOString().split('T')[0] + 'T23:59:59+03:00';
+
+  const schema: any = {
+    '@context': 'https://schema.org/',
+    '@type': 'JobPosting',
+    title: cleanTitle,
+    description,
+    identifier: { '@type': 'PropertyValue', name: 'Manpower Israel', value: job.jobFields.jobcode },
+    datePosted,
+    validThrough,
+    employmentType: employmentTypes.length === 1 ? employmentTypes[0] : employmentTypes,
+    directApply: true,
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: 'Manpower Israel',
+      alternateName: 'מנפאואר ישראל',
+      sameAs: 'https://www.manpower.co.il/',
+      logo: 'https://manpowercontent.manpower.co.il/wp-content/uploads/2023/05/footer-manpower-logo.svg_.png',
+    },
+    jobLocation: locations.length === 1 ? locations[0] : locations,
+  };
+
+  if (parentProf) schema.industry = parentProf.name;
+  if (childProf) schema.occupationalCategory = childProf.name;
+  if (job.jobExperiences?.nodes?.[0]) schema.experienceRequirements = job.jobExperiences.nodes[0].name;
+
+  return (
+    &lt;Head&gt;
+      &lt;script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /&gt;
+    &lt;/Head&gt;
+  );
+}</code></pre>
+
+    <h3>B. קומפוננטת Service Schema</h3>
+    <pre id="sv-tmpl"><button class="copy-btn" onclick="copyCode('sv-tmpl')">העתק</button><code>// components/ServiceSchema.tsx
+import Head from 'next/head';
+
+const SERVICE_CONFIG: Record&lt;string, { name: string; serviceType: string; description: string }&gt; = {
+  'perm': { name: 'שירותי השמה קבועה', serviceType: 'Permanent Placement', description: 'גיוס והשמת עובדים קבועים לארגונים' },
+  'flexibility': { name: 'העסקה גמישה', serviceType: 'Flexible Employment', description: 'פתרונות העסקה גמישה למעסיקים' },
+  'bchirim': { name: 'השמת בכירים', serviceType: 'Executive Recruitment', description: 'גיוס והשמת מנהלים בכירים' },
+  'on-site': { name: 'שירותי OnSite', serviceType: 'On-site Team Management', description: 'ניהול צוותי כוח אדם באתר הלקוח' },
+  'experts': { name: 'השאלת מומחים', serviceType: 'Expert Staffing', description: 'השאלת מומחים ואנשי מקצוע בכירים' },
+  'payroll': { name: 'שירותי פיירול', serviceType: 'Payroll Services', description: 'ניהול שכר ותנאים סוציאליים' },
+  'c-level-candidates': { name: 'השמת C-Level', serviceType: 'C-Level Executive Placement', description: 'איתור והשמת מנהלים ברמת C-Level' },
+  'manufacture': { name: 'ניהול קווי ייצור', serviceType: 'Manufacturing Management', description: 'ניהול ותפעול קווי ייצור' },
+  'logistics': { name: 'ניהול לוגיסטיקה', serviceType: 'Logistics Outsourcing', description: 'מיקור חוץ של שירותי לוגיסטיקה' },
+  'service-center': { name: 'מוקדים טלפוניים', serviceType: 'Call Center Outsourcing', description: 'הקמה וניהול מוקדי שירות' },
+  'cleanrooms': { name: 'חדרים נקיים', serviceType: 'Clean Room Maintenance', description: 'שירותי ניקיון וניהול חדרים נקיים' },
+  'technology-industry': { name: 'תעשייה טכנולוגית', serviceType: 'Technology Industry', description: 'ניהול כוח אדם בתעשיית הטכנולוגיה' },
+  'service-plans': { name: 'שירות פנים-ארגוני', serviceType: 'Internal Service Operations', description: 'ניהול שירותים פנים-ארגוניים' },
+  'employers-solutions': { name: 'גיוס JUST IN TIME', serviceType: 'Short-term Recruitment', description: 'גיוס מהיר לתקופות קצרות' },
+  'finance': { name: 'גיוס בפיננסים', serviceType: 'Finance Recruitment', description: 'גיוס בתחום הפיננסים, בנקאות ושוק ההון' },
+  'life-science': { name: 'גיוס במדעי החיים', serviceType: 'Life Sciences Recruitment', description: 'גיוס בתחום פארמה וביוטק' },
+};
+
+export default function ServiceSchema({ slug }: { slug: string }) {
+  const config = SERVICE_CONFIG[slug];
+  if (!config) return null;
+
+  const basePath = ['finance','life-science'].includes(slug) ? 'specializations' : 'employers-solutions';
+  const schema = {
+    '@context': 'https://schema.org/',
+    '@type': 'Service',
+    name: config.name,
+    serviceType: config.serviceType,
+    description: config.description,
+    url: `https://www.manpower.co.il/${basePath}/${slug}`,
+    provider: { '@id': 'https://www.manpower.co.il/#organization' },
+    areaServed: { '@type': 'Country', name: 'Israel' },
+    audience: { '@type': 'Audience', audienceType: 'Employers' },
+  };
+
+  return (
+    &lt;Head&gt;
+      &lt;script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /&gt;
+    &lt;/Head&gt;
+  );
+}</code></pre>
+  </div>
+</div>
+
+<!-- SECTION 11: QA Checklist -->
+<div class="section" id="s11">
+  <div class="section-header" onclick="toggleSection('s11')">
+    <div class="section-num">11</div>
+    <h2>רשימת בדיקות QA</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <ul class="checklist">
+      <li><strong dir="ltr">Rich Results Test</strong> — אימות בכלי של גוגל: <span dir="ltr">search.google.com/test/rich-results</span></li>
+      <li><strong dir="ltr">Schema.org Validator</strong> — בדיקת תקינות ב: <span dir="ltr">validator.schema.org</span></li>
+      <li><strong>בדיקת 10 עמודים ספציפיים:</strong><br>
+        <span dir="ltr">/job/237689</span> (עם שכר) |
+        <span dir="ltr">/job/237690</span> (multi-location) |
+        <span dir="ltr">/job/237691</span> (משמרות/OTHER) |
+        <span dir="ltr">/job/237700</span> (3 מיקומים) |
+        <span dir="ltr">/job/204233</span> (3 מיקומים) |
+        <span dir="ltr">/employers-solutions/perm</span> (Service) |
+        <span dir="ltr">/employers-solutions/bchirim</span> (Service) |
+        <span dir="ltr">/specializations/finance</span> (Service) |
+        <span dir="ltr">/employers-solutions/on-site</span> (בדיקת H1 כפול) |
+        <span dir="ltr">/employers/employers</span> (בדיקת FAQ כפול)
+      </li>
+      <li><strong>בדיקת canonical</strong> — כל עמוד עם schema חייב canonical תואם</li>
+      <li><strong>אין schema בעמודי רשימה</strong> — /search, /search?JOBAREA=..., /insight-lobby ללא JobPosting/Service</li>
+      <li><strong>אין סכמות כפולות</strong> — אין שני script tags עם אותו @type באותו עמוד</li>
+      <li><strong>שער "published only"</strong> — משרות draft/unpublished לא מרנדרות JobPosting</li>
+      <li><strong>employmentType כמערך</strong> — משרות עם מספר סוגים (FULL_TIME + TELECOMMUTE) מרנדרות כמערך</li>
+      <li><strong>multi-location</strong> — משרות עם 2+ אזורים מרנדרות מספר jobLocation</li>
+      <li><strong>תווים בעברית</strong> — אין בעיות encoding ב-JSON-LD</li>
+      <li><strong>פורמט datePosted</strong> — ISO 8601 (YYYY-MM-DD). לא משתנה בכל טעינה (SSR cache, לא client-side)</li>
+      <li><strong>ניטור GSC</strong> — לאחר deployment, בדיקת Search Console → Enhancements → Job posting תוך 48 שעות</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Meta Description Status -->
+<div class="section" id="s-meta">
+  <div class="section-header" onclick="toggleSection('s-meta')">
+    <div class="section-num">✓</div>
+    <h2>מפרט Meta Descriptions</h2>
+    <span class="toggle">▼</span>
+  </div>
+  <div class="section-body">
+    <p><span class="badge badge-green">הושלם</span> — המפרט מוכן ומפורסם:</p>
+    <p dir="ltr" style="color:var(--cyan-light)"><a href="https://report.n-c.digital/manpower-meta-desc-spec.html" style="color:var(--cyan-light)">https://report.n-c.digital/manpower-meta-desc-spec.html</a></p>
+    <p>לא נדרשת פעולה נוספת. הפנייה בלבד.</p>
+  </div>
+</div>
+
+</div><!-- container -->
+
+<div class="footer">
+  <p>Manpower Israel Schema Implementation Blueprint | NC Digital | 2026-03-05</p>
+  <p>כל ה-URLs בדוח הם URLs אמיתיים שנסרקו חיה מ-manpower.co.il</p>
+  <p>מיפויי שדות אומתו מול מבנה __NEXT_DATA__</p>
+</div>
+
+<script>
+function toggleSection(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+function copyCode(id) {
+  const el = document.getElementById(id);
+  const code = el.querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    btn.textContent = 'הועתק!';
+    setTimeout(() => btn.textContent = 'העתק', 2000);
+  });
+}
+</script>
+</body>
+</html>
