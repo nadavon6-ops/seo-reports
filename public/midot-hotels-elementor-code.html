@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>מידות — בתי מלון ואירוח | קוד Elementor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f5f5f5;
+            color: #102235;
+            direction: rtl;
+        }
+
+        /* ── Top Instructions Bar ── */
+        .top-bar {
+            background: #102236;
+            color: #fff;
+            padding: 20px 40px;
+            text-align: center;
+        }
+        .top-bar h1 {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .top-bar p {
+            font-size: 14px;
+            color: #a0c4c8;
+            font-weight: 400;
+        }
+
+        /* ── Tab Switcher ── */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: #fff;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tab-btn {
+            padding: 14px 40px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #767676;
+            border-bottom: 3px solid transparent;
+            transition: .2s;
+        }
+        .tab-btn.active {
+            color: #72b7bd;
+            border-bottom-color: #72b7bd;
+        }
+        .tab-btn:hover { color: #72b7bd; }
+
+        /* ── Panels ── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Preview panel */
+        .preview-panel {
+            background: #fff;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+
+        /* Code panel */
+        .code-panel {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        .code-header span {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .copy-btn {
+            background: #72b7bd;
+            color: #fff;
+            border: none;
+            padding: 8px 24px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: .2s;
+        }
+        .copy-btn:hover { background: #5a9ea3; }
+        .copy-btn.copied { background: #22c55e; }
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* Instructions panel */
+        .instructions-panel {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .instruction-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 28px 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 6px rgba(0,0,0,.05);
+        }
+        .instruction-card h3 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #72b7bd;
+            margin-bottom: 10px;
+        }
+        .instruction-card p, .instruction-card li {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+        .instruction-card ol {
+            padding-right: 20px;
+        }
+        .instruction-card li { margin-bottom: 8px; }
+        .instruction-card code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+            direction: ltr;
+            unicode-bidi: embed;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #102236;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 3px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 6px;
+        }
+
+        /* ── Footer ── */
+        .page-footer {
+            text-align: center;
+            padding: 24px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* ── Embedded preview styles (scoped) ── */
+        .midot-hotels * { box-sizing: border-box; margin: 0; padding: 0; }
+        .midot-hotels {
+            font-family: 'Heebo', sans-serif;
+            color: #102235;
+            direction: rtl;
+            line-height: 1.7;
+            font-size: 16px;
+            max-width: 1110px;
+            margin: 0 auto;
+        }
+        .midot-hotels .mh-hero { padding: 40px 0 20px; }
+        .midot-hotels .mh-hero h1 { font-size: 2.6em; font-weight: 700; color: #102235; line-height: 1.3; margin-bottom: 16px; }
+        .midot-hotels .mh-subtitle { font-size: 1.5em; font-weight: 400; color: #72b7bd; line-height: 1.5; margin-bottom: 0; }
+        .midot-hotels .mh-body { padding: 20px 0 10px; }
+        .midot-hotels .mh-body p { font-size: 16px; line-height: 1.8; margin-bottom: 18px; color: #102235; }
+        .midot-hotels .mh-callout { background: #f0fafb; border-right: 4px solid #72b7bd; padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .midot-hotels .mh-callout p { margin: 0; font-size: 16px; line-height: 1.8; color: #102235; }
+        .midot-hotels .mh-warning { border-top: 2px dashed #ba2025; border-bottom: 2px dashed #ba2025; padding: 20px 0; margin: 30px 0; text-align: center; }
+        .midot-hotels .mh-warning p { color: #767676; font-size: 16px; font-weight: 500; margin: 0; }
+        .midot-hotels .mh-transition { padding: 10px 0 40px; }
+        .midot-hotels .mh-transition p { font-size: 16px; line-height: 1.8; color: #102235; }
+        .midot-hotels .mh-solutions { padding: 40px 0 50px; }
+        .midot-hotels .mh-solutions h2 { font-size: 1.8em; font-weight: 700; color: #102235; margin-bottom: 36px; text-align: center; }
+        .midot-hotels .mh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .midot-hotels .mh-card { padding: 24px; border: 1px solid #e8e8e8; border-radius: 6px; background: #fff; }
+        .midot-hotels .mh-card h4 { font-size: 1.15em; font-weight: 700; color: #72b7bd; margin-bottom: 10px; }
+        .midot-hotels .mh-card p { font-size: 15px; line-height: 1.7; color: #102235; margin: 0; }
+        .midot-hotels .mh-cta { text-align: center; padding: 50px 0; }
+        .midot-hotels .mh-cta a { display: inline-block; background: #b82027; color: #fff; text-decoration: none; padding: 14px 48px; font-size: 18px; font-weight: 700; border-radius: 4px; }
+        @media (max-width: 767px) {
+            .midot-hotels .mh-hero h1 { font-size: 1.7em; }
+            .midot-hotels .mh-subtitle { font-size: 1.15em; }
+            .midot-hotels .mh-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+    <h1>מידות — עמוד בתי מלון ואירוח</h1>
+    <p>קוד מוכן להטמעה ב-Elementor HTML Widget | NC Digital</p>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('preview')">תצוגה מקדימה</button>
+    <button class="tab-btn" onclick="switchTab('code')">קוד להעתקה</button>
+    <button class="tab-btn" onclick="switchTab('instructions')">הוראות הטמעה</button>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL 1: PREVIEW                      -->
+<!-- ══════════════════════════════════════ -->
+<div id="panel-preview" class="panel active">
+    <div class="preview-panel">
+        <div class="midot-hotels">
+            <div class="mh-hero">
+                <h1>גיוס בטוח וחכם בבתי מלון: בדיקות אמינות וכלי מיון מתקדמים</h1>
+                <p class="mh-subtitle">כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים לתפקידים בענף המלונאות</p>
+            </div>
+            <div class="mh-body">
+                <p>ענף המלונאות בישראל מתאפיין במחזורי גיוס גבוהים, עבודה במשמרות ולוחות זמנים משתנים, לצד צורך מתמיד באיוש מהיר של תפקידים תפעוליים וניהוליים. בתי מלון פועלים בסביבה רוויית ממשקים – אורחים, צוותים, ספקים ומערכות – כאשר כל עובד ועובדת משפיעים באופן ישיר על חוויית האורח, הבטיחות והתפעול השוטף.</p>
+                <p>לצד האתגר התפעולי, נדרשת שמירה מתמדת על מוניטין הרשת והמוניטין של כל מלון בנפרד, בסביבה שבה אירועים חריגים עלולים לקבל חשיפה מיידית. תפקידים רבים בענף כוללים גישה לרכוש, לחדרי אורחים, למידע רגיש ולמערכות פנימיות, ולכן טעויות גיוס עלולות להפוך במהירות לבעיה תדמיתית.</p>
+                <p>במציאות זו, מיון המבוסס רק על קורות חיים וראיונות אינו מספק מענה מספק לרמת הסיכון הנדרשת. מידות מבינה את המורכבות הייחודית של גיוס כוח אדם לבתי מלון, ומספקת כלים מבוססי נתונים המסייעים בקבלת החלטות מושכלת כבר בשלבי הגיוס.</p>
+            </div>
+            <div class="mh-callout">
+                <p>בענף בתי המלון, תהליכי הגיוס נדרשים לאזן בין צורך באיוש מהיר לבין אחריות גבוהה לניהול סיכונים. סביבת עבודה דינמית, תחלופת עובדים ותפקידים ברמות רגישות שונות מחייבים מיון מעמיק מעבר לראיונות וקורות חיים. מיון מבוסס נתונים מוסיף שכבת אבחון משלימה, התומכת בקבלת החלטות מקצועיות ושומרת על יציבות תפעולית.</p>
+            </div>
+            <div class="mh-warning">
+                <p>מיון לא מדויק בבתי מלון עלול להפוך במהירות מאתגר תפעולי לאירוע תדמיתי.</p>
+            </div>
+            <div class="mh-transition">
+                <p>למידות ניסיון עשיר בעבודה עם רשתות בתי מלון, והכלים והמבחנים פותחו והותאמו במיוחד לאתגרים הייחודיים של ענף האירוח.</p>
+            </div>
+            <div class="mh-solutions">
+                <h2>הפתרונות של מידות לענף בתי המלון והאירוח</h2>
+                <div class="mh-grid">
+                    <div class="mh-card">
+                        <h4>מבחני אמינות</h4>
+                        <p>מבדקים מבוססי נתונים המסייעים להעריך רמת אמינות, יושרה ודפוסי התנהלות, עבור תפקידים תפעוליים וניהוליים בבתי מלון ובארגוני אירוח.</p>
+                    </div>
+                    <div class="mh-card">
+                        <h4>בדיקות רקע</h4>
+                        <p>איסוף וניתוח מידע רלוונטי בהתאם לדרישות התפקיד והרגולציה, לצורך צמצום סיכונים ושיפור איכות תהליכי הגיוס.</p>
+                    </div>
+                    <div class="mh-card">
+                        <h4>בדיקות מעמיקות לבעלי תפקידים רגישים</h4>
+                        <p>מבדקים ייעודיים לתפקידים הכוללים גישה לרכוש, מידע, אורחים או מערכות פנימיות, במטרה לתמוך בהחלטות גיוס וניהול מושכלות.</p>
+                    </div>
+                    <div class="mh-card">
+                        <h4>התאמת המבדקים לנורמות הקיימות בארגון</h4>
+                        <p>התאמה של כלי האבחון לאופי הארגון, לתרבות הארגונית ולמאפיינים הייחודיים של כל רשת או מלון, תוך שמירה על אחידות וסטנדרט מקצועי.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mh-cta">
+                <a href="https://midot.co.il/contact/">צרו קשר</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL 2: CODE                         -->
+<!-- ══════════════════════════════════════ -->
+<div id="panel-code" class="panel">
+    <div class="code-panel">
+        <div class="code-header">
+            <span>Elementor HTML Widget — העתק והדבק</span>
+            <button class="copy-btn" id="copyBtn" onclick="copyCode()">העתק קוד</button>
+        </div>
+        <div class="code-block" id="codeBlock"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PANEL 3: INSTRUCTIONS                 -->
+<!-- ══════════════════════════════════════ -->
+<div id="panel-instructions" class="panel">
+    <div class="instructions-panel">
+        <div class="instruction-card">
+            <h3>שלב 1 — יצירת עמוד חדש</h3>
+            <ol>
+                <li>ב-WordPress → עמודים → הוסף חדש</li>
+                <li>שם העמוד: <strong>בתי מלון ואירוח</strong></li>
+                <li>Slug: <code>בתי-מלון-ואירוח</code></li>
+                <li>תבנית עמוד: <strong>Elementor Full Width</strong> (או התבנית של עמודי הענפים הקיימים)</li>
+                <li>עמוד אב: <strong>ענפים ותעשיות</strong></li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 2 — הוספת הקוד ב-Elementor</h3>
+            <ol>
+                <li>לחצו <strong>ערוך עם Elementor</strong></li>
+                <li>גררו וידג'ט <strong>HTML</strong> לאזור התוכן</li>
+                <li>עברו ללשונית <strong>קוד להעתקה</strong> בדף הזה</li>
+                <li>לחצו <strong>העתק קוד</strong></li>
+                <li>הדביקו את כל הקוד בתוך וידג'ט ה-HTML</li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 3 — הגדרות SEO</h3>
+            <ol>
+                <li>ב-Yoast / Rank Math הגדירו:
+                    <br><strong>Meta Title:</strong> <code>בתי מלון ואירוח - מידות | בדיקות אמינות ומיון עובדים למלונות</code>
+                    <br><strong>Meta Description:</strong> <code>כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים בבתי מלון. מבחני מיון מותאמים לענף המלונאות, בדיקות רקע ופתרונות לגיוס בטוח וחכם בארגוני אירוח.</code>
+                </li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 4 — הוספה לתפריט</h3>
+            <ol>
+                <li>ב-WordPress → תפריטים</li>
+                <li>הוסיפו את העמוד <strong>בתי מלון ואירוח</strong> כפריט תת-תפריט תחת <strong>ענפים ותעשיות</strong></li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 5 — פרסום ובדיקה</h3>
+            <ol>
+                <li>פרסמו את העמוד</li>
+                <li>בדקו תצוגה בדסקטופ ובמובייל</li>
+                <li>וודאו שה-H1 מופיע נכון (כלי → בדוק אלמנט → חפשו <code>&lt;h1&gt;</code>)</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="page-footer">
+    NC Digital — מידות — קוד Elementor לעמוד בתי מלון ואירוח
+</div>
+
+<script>
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// The Elementor code to copy
+const elementorCode = `<!-- מידות — בתי מלון ואירוח — Elementor HTML Widget -->
+<style>
+.midot-hotels * { box-sizing: border-box; margin: 0; padding: 0; }
+.midot-hotels {
+    font-family: 'Heebo', sans-serif;
+    color: #102235;
+    direction: rtl;
+    line-height: 1.7;
+    font-size: 16px;
+    max-width: 1110px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero */
+.midot-hotels .mh-hero { padding: 40px 0 20px; }
+.midot-hotels .mh-hero h1 {
+    font-size: 2.6em;
+    font-weight: 700;
+    color: #102235;
+    line-height: 1.3;
+    margin-bottom: 16px;
+}
+.midot-hotels .mh-subtitle {
+    font-size: 1.5em;
+    font-weight: 400;
+    color: #72b7bd;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* Body text */
+.midot-hotels .mh-body { padding: 20px 0 10px; }
+.midot-hotels .mh-body p {
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 18px;
+    color: #102235;
+}
+
+/* Callout box (teal) */
+.midot-hotels .mh-callout {
+    background: #f0fafb;
+    border-right: 4px solid #72b7bd;
+    padding: 24px 28px;
+    margin: 30px 0;
+    border-radius: 2px;
+}
+.midot-hotels .mh-callout p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #102235;
+}
+
+/* Warning (red dashed) */
+.midot-hotels .mh-warning {
+    border-top: 2px dashed #ba2025;
+    border-bottom: 2px dashed #ba2025;
+    padding: 20px 0;
+    margin: 30px 0;
+    text-align: center;
+}
+.midot-hotels .mh-warning p {
+    color: #767676;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+/* Transition */
+.midot-hotels .mh-transition { padding: 10px 0 40px; }
+.midot-hotels .mh-transition p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #102235;
+}
+
+/* Solutions */
+.midot-hotels .mh-solutions { padding: 40px 0 50px; }
+.midot-hotels .mh-solutions h2 {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #102235;
+    margin-bottom: 36px;
+    text-align: center;
+}
+.midot-hotels .mh-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+.midot-hotels .mh-card {
+    padding: 24px;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    background: #fff;
+}
+.midot-hotels .mh-card h4 {
+    font-size: 1.15em;
+    font-weight: 700;
+    color: #72b7bd;
+    margin-bottom: 10px;
+}
+.midot-hotels .mh-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #102235;
+    margin: 0;
+}
+
+/* CTA */
+.midot-hotels .mh-cta {
+    text-align: center;
+    padding: 50px 0;
+}
+.midot-hotels .mh-cta a {
+    display: inline-block;
+    background: #b82027;
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 48px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 4px;
+    transition: background .2s;
+}
+.midot-hotels .mh-cta a:hover { background: #9a1a20; }
+
+/* Responsive */
+@media (max-width: 767px) {
+    .midot-hotels .mh-hero h1 { font-size: 1.7em; }
+    .midot-hotels .mh-subtitle { font-size: 1.15em; }
+    .midot-hotels .mh-grid { grid-template-columns: 1fr; gap: 20px; }
+    .midot-hotels .mh-callout { padding: 18px 20px; }
+}
+</style>
+
+<div class="midot-hotels">
+
+    <!-- H1 + Subtitle -->
+    <div class="mh-hero">
+        <h1>גיוס בטוח וחכם בבתי מלון: בדיקות אמינות וכלי מיון מתקדמים</h1>
+        <p class="mh-subtitle">כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים לתפקידים בענף המלונאות</p>
+    </div>
+
+    <!-- Body Text (3 paragraphs) -->
+    <div class="mh-body">
+        <p>ענף המלונאות בישראל מתאפיין במחזורי גיוס גבוהים, עבודה במשמרות ולוחות זמנים משתנים, לצד צורך מתמיד באיוש מהיר של תפקידים תפעוליים וניהוליים. בתי מלון פועלים בסביבה רוויית ממשקים – אורחים, צוותים, ספקים ומערכות – כאשר כל עובד ועובדת משפיעים באופן ישיר על חוויית האורח, הבטיחות והתפעול השוטף.</p>
+
+        <p>לצד האתגר התפעולי, נדרשת שמירה מתמדת על מוניטין הרשת והמוניטין של כל מלון בנפרד, בסביבה שבה אירועים חריגים עלולים לקבל חשיפה מיידית. תפקידים רבים בענף כוללים גישה לרכוש, לחדרי אורחים, למידע רגיש ולמערכות פנימיות, ולכן טעויות גיוס עלולות להפוך במהירות לבעיה תדמיתית.</p>
+
+        <p>במציאות זו, מיון המבוסס רק על קורות חיים וראיונות אינו מספק מענה מספק לרמת הסיכון הנדרשת. מידות מבינה את המורכבות הייחודית של גיוס כוח אדם לבתי מלון, ומספקת כלים מבוססי נתונים המסייעים בקבלת החלטות מושכלת כבר בשלבי הגיוס.</p>
+    </div>
+
+    <!-- Callout Box (teal border) -->
+    <div class="mh-callout">
+        <p>בענף בתי המלון, תהליכי הגיוס נדרשים לאזן בין צורך באיוש מהיר לבין אחריות גבוהה לניהול סיכונים. סביבת עבודה דינמית, תחלופת עובדים ותפקידים ברמות רגישות שונות מחייבים מיון מעמיק מעבר לראיונות וקורות חיים. מיון מבוסס נתונים מוסיף שכבת אבחון משלימה, התומכת בקבלת החלטות מקצועיות ושומרת על יציבות תפעולית.</p>
+    </div>
+
+    <!-- Warning (red dashed) -->
+    <div class="mh-warning">
+        <p>מיון לא מדויק בבתי מלון עלול להפוך במהירות מאתגר תפעולי לאירוע תדמיתי.</p>
+    </div>
+
+    <!-- Transition Text -->
+    <div class="mh-transition">
+        <p>למידות ניסיון עשיר בעבודה עם רשתות בתי מלון, והכלים והמבחנים פותחו והותאמו במיוחד לאתגרים הייחודיים של ענף האירוח.</p>
+    </div>
+
+    <!-- Solutions H2 + 4 Cards -->
+    <div class="mh-solutions">
+        <h2>הפתרונות של מידות לענף בתי המלון והאירוח</h2>
+        <div class="mh-grid">
+            <div class="mh-card">
+                <h4>מבחני אמינות</h4>
+                <p>מבדקים מבוססי נתונים המסייעים להעריך רמת אמינות, יושרה ודפוסי התנהלות, עבור תפקידים תפעוליים וניהוליים בבתי מלון ובארגוני אירוח.</p>
+            </div>
+            <div class="mh-card">
+                <h4>בדיקות רקע</h4>
+                <p>איסוף וניתוח מידע רלוונטי בהתאם לדרישות התפקיד והרגולציה, לצורך צמצום סיכונים ושיפור איכות תהליכי הגיוס.</p>
+            </div>
+            <div class="mh-card">
+                <h4>בדיקות מעמיקות לבעלי תפקידים רגישים</h4>
+                <p>מבדקים ייעודיים לתפקידים הכוללים גישה לרכוש, מידע, אורחים או מערכות פנימיות, במטרה לתמוך בהחלטות גיוס וניהול מושכלות.</p>
+            </div>
+            <div class="mh-card">
+                <h4>התאמת המבדקים לנורמות הקיימות בארגון</h4>
+                <p>התאמה של כלי האבחון לאופי הארגון, לתרבות הארגונית ולמאפיינים הייחודיים של כל רשת או מלון, תוך שמירה על אחידות וסטנדרט מקצועי.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Button -->
+    <div class="mh-cta">
+        <a href="/contact/">צרו קשר</a>
+    </div>
+
+</div>`;
+
+// Populate code block with escaped HTML
+document.getElementById('codeBlock').textContent = elementorCode;
+
+// Copy function
+function copyCode() {
+    navigator.clipboard.writeText(elementorCode).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'העתק קוד';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+</script>
+
+</body>
+</html>
