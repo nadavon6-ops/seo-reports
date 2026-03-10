@@ -1,0 +1,547 @@
+<!--
+  Accordion Component - Course Structure
+  הסטודיו של איילת - קורסי הכשרת מדריכי פילאטיס
+
+  WordPress Implementation:
+  - Paste into Elementor HTML widget or Gutenberg Custom HTML block
+  - No external dependencies required
+  - Mobile responsive, RTL Hebrew
+-->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap');
+
+  .qilates-accordion-wrapper {
+    direction: rtl;
+    font-family: 'Heebo', 'Assistant', Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .qilates-accordion-wrapper *,
+  .qilates-accordion-wrapper *::before,
+  .qilates-accordion-wrapper *::after {
+    box-sizing: border-box;
+  }
+
+  .qilates-section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d2d2d;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .qilates-section-subtitle {
+    font-size: 16px;
+    color: #777;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .qilates-course-label {
+    font-size: 20px;
+    font-weight: 700;
+    color: #4a6741;
+    margin: 32px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #a8c686;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qilates-course-section:first-of-type .qilates-course-label {
+    margin-top: 0;
+  }
+
+  .qilates-course-label .badge {
+    display: inline-block;
+    background: #4a6741;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .qilates-prerequisite {
+    background: #fef9e7;
+    border: 1px solid #f0d878;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #5a4a00;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qilates-prerequisite strong {
+    color: #3d3200;
+  }
+
+  .qilates-accordion-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .qilates-accordion-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .qilates-accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #fafafa;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+    border: none;
+    width: 100%;
+    text-align: right;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    gap: 12px;
+  }
+
+  .qilates-accordion-header:hover {
+    background: #f0f4ec;
+  }
+
+  .qilates-accordion-header:focus {
+    outline: 2px solid #4a6741;
+    outline-offset: -2px;
+  }
+
+  .qilates-accordion-item.active .qilates-accordion-header {
+    background: #f0f4ec;
+    color: #4a6741;
+  }
+
+  .qilates-accordion-header .icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+
+  .qilates-accordion-header .icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #666;
+    transition: stroke 0.2s ease;
+  }
+
+  .qilates-accordion-item.active .qilates-accordion-header .icon {
+    transform: rotate(180deg);
+  }
+
+  .qilates-accordion-item.active .qilates-accordion-header .icon svg {
+    stroke: #4a6741;
+  }
+
+  .qilates-accordion-header .header-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .qilates-accordion-header .meta {
+    font-size: 13px;
+    font-weight: 400;
+    color: #999;
+    white-space: nowrap;
+  }
+
+  .qilates-accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+
+  .qilates-accordion-body-inner {
+    padding: 0 20px 20px;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .qilates-accordion-body-inner ul {
+    margin: 8px 0 0 0;
+    padding: 0 20px 0 0;
+    list-style: none;
+  }
+
+  .qilates-accordion-body-inner ul li {
+    position: relative;
+    padding: 4px 16px 4px 0;
+  }
+
+  .qilates-accordion-body-inner ul li::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 13px;
+    width: 6px;
+    height: 6px;
+    background: #a8c686;
+    border-radius: 50%;
+  }
+
+  .qilates-accordion-body-inner p {
+    margin: 0 0 8px;
+  }
+
+  .qilates-accordion-body-inner strong {
+    color: #333;
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .qilates-accordion-wrapper {
+      padding: 12px;
+    }
+
+    .qilates-section-title {
+      font-size: 22px;
+    }
+
+    .qilates-accordion-header {
+      padding: 14px 16px;
+      font-size: 15px;
+    }
+
+    .qilates-accordion-header .meta {
+      display: none;
+    }
+
+    .qilates-accordion-body-inner {
+      padding: 0 16px 16px;
+      font-size: 14px;
+    }
+
+    .qilates-course-label {
+      font-size: 18px;
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<div class="qilates-accordion-wrapper">
+
+  <div class="qilates-section-title">מה לומדים בקורס?</div>
+  <div class="qilates-section-subtitle">מבנה הקורסים המלא - הכשרת מדריכי פילאטיס</div>
+
+  <!-- ========== MAT COURSE ========== -->
+  <div class="qilates-course-section">
+
+    <div class="qilates-course-label">
+      קורס מדריכי מזרן
+      <span class="badge">145 שעות | 26 מפגשים</span>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          עקרונות הפילאטיס ורפרטואר תרגילי מזרן
+          <span class="meta">17 מפגשים</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>17 מפגשים של 4.5 שעות אקדמיות</strong></p>
+          <ul>
+            <li>עקרונות שיטת הפילאטיס ואבני היסוד</li>
+            <li>עקרונות ההדרכה ודידקטיקה</li>
+            <li>רפרטואר תרגילי מזרן מלא</li>
+            <li>חלוקה לרמות קושי שונות - בסיסי, בינוני ומתקדם</li>
+            <li>הכנת מערכי שיעור לקבוצות ולאימון אישי</li>
+            <li>תרגול הוראה עם משוב אישי לאורך הקורס</li>
+            <li>כלים לעבודה עם אוכלוסיות מגוונות ובעלות צרכים מיוחדים</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          אנטומיה של התנועה
+          <span class="meta">4 מפגשים</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>4 מפגשים של 4.5 שעות אקדמיות</strong></p>
+          <ul>
+            <li>אנטומיה של מערכת התנועה</li>
+            <li>יציבה נכונה ועקרונות היישור</li>
+            <li>הבנת מבנה הגוף ותפקוד השרירים</li>
+            <li>התאמת תרגילים על בסיס הבנה אנטומית</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          פתולוגיות - ליקויי יציבה, פציעות ומצבים רפואיים
+          <span class="meta">4 מפגשים</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>4 מפגשים בהנחיית פיזיותרפיסטים בכירים</strong></p>
+          <ul>
+            <li>זיהוי ליקויי יציבה נפוצים</li>
+            <li>פציעות שכיחות ודרכי ההתמודדות</li>
+            <li>מחלות נפוצות והשפעתן על התנועה</li>
+            <li>התאמות לתקופת הריון</li>
+            <li>שימוש במודיפיקציות לאוכלוסיות מיוחדות</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          קורס עזרה ראשונה
+          <span class="meta">מפגש אחד</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>מפגש של 4.5 שעות אקדמיות</strong></p>
+          <ul>
+            <li>הכשרה מלאה בעזרה ראשונה</li>
+            <li>טיפול במצבי חירום בסביבת הסטודיו</li>
+            <li>בטיחות בעת אימון</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          הדרכה מעשית, צפייה והתנסות
+          <span class="meta">30 שעות</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>30 שעות בסטודיו של איילת</strong></p>
+          <ul>
+            <li>העברת שיעורים עצמאית וקבלת משוב מקצועי</li>
+            <li>צפייה בשיעורים והכרת סגנונות הדרכה</li>
+            <li>התנסות מעשית עם מתאמנים אמיתיים</li>
+            <li>רכישת מיומנויות הדרכה ודידקטיקה</li>
+            <li>הסטודיו פתוח לתרגול בכל יום 07:00-22:00</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          בחינות ותעודה
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <ul>
+            <li>בחנים לאורך הקורס ומבחן סיום עיוני ומעשי</li>
+            <li>ספרות מקצועית כולל ספר Pilates on Mat</li>
+            <li>תעודת הסמכה למדריך/ת פילאטיס מטעם הסטודיו של איילת</li>
+            <li>אפשרות לתעודה בינלאומית מטעם Ellie Herman Studios</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== EQUIPMENT COURSE ========== -->
+  <div class="qilates-course-section">
+
+    <div class="qilates-course-label">
+      קורס פילאטיס מכשירים
+      <span class="badge">440 שעות | כ-6 חודשים</span>
+    </div>
+
+    <div class="qilates-prerequisite">
+      <strong>דרישת קדם:</strong> תעודת סיום קורס מדריכי מזרן (ניתן גם ממוסד אחר)
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          רפרטואר תרגילי מכשירים
+          <span class="meta">27 מפגשים</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>27 מפגשים של 3.5 שעות אקדמיות</strong></p>
+          <ul>
+            <li>לימוד תרגילים על Reformer</li>
+            <li>לימוד תרגילים על Cadillac</li>
+            <li>לימוד תרגילים על Wunda Chair</li>
+            <li>לימוד תרגילים על Springboard</li>
+            <li>חלוקה לרמות קושי שונות - בסיסי עד מתקדם</li>
+            <li>הכנת מערכי שיעור ללקוחות פרטיים וקבוצות</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          עבודה עם פציעות ואוכלוסיות מיוחדות
+          <span class="meta">נלמד במסגרת 27 המפגשים</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>דגש מיוחד על מצבים ייחודיים ונפוצים</strong></p>
+          <ul>
+            <li>פריצות דיסק - זיהוי, התאמות ושיקום</li>
+            <li>עקמת (סקוליוזיס) - תוכניות אימון ייעודיות</li>
+            <li>בעיות מפרקים ושיקום ברכיים</li>
+            <li>טרשת נפוצה - התאמות ומודיפיקציות</li>
+            <li>הריון - עבודה בטוחה לאורך ההריון</li>
+            <li>שימוש במודיפיקציות ואדפטציות של הרפרטואר</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          שעות צפייה
+          <span class="meta">100 שעות</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>100 שעות צפייה בסטודיו</strong></p>
+          <ul>
+            <li>נוכחות בשיעורים עם מדריכים מנוסים</li>
+            <li>צפייה בתרגילים השונים על כל המכשירים</li>
+            <li>למידה מאופן ההדרכה וההתאמות האישיות</li>
+            <li>הכרת סגנונות הוראה מגוונים</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          התמחות והתנסות מעשית
+          <span class="meta">200 שעות</span>
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <p><strong>200 שעות התמחות בסטודיו של איילת</strong></p>
+          <ul>
+            <li>העברת שיעורים עצמאית על כל המכשירים</li>
+            <li>עבודה עם לקוחות אמיתיים תחת ליווי מקצועי</li>
+            <li>קבלת משוב מהמדריכים הוותיקים</li>
+            <li>תרגול חופשי בסטודיו - פתוח 07:00-22:00 כל יום</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="qilates-accordion-item">
+      <button class="qilates-accordion-header" aria-expanded="false">
+        <span class="header-text">
+          בחינות ותעודה
+        </span>
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+      </button>
+      <div class="qilates-accordion-body">
+        <div class="qilates-accordion-body-inner">
+          <ul>
+            <li>מבחן סיום עיוני ומעשי</li>
+            <li>ספרות מקצועית: Reformer, Cadillac, Wunda Chair, Springboard</li>
+            <li>תעודת הסמכה למדריך/ת פילאטיס מכשירים מטעם הסטודיו של איילת</li>
+            <li>אפשרות לתעודה בינלאומית מטעם Ellie Herman Studios</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var sections = document.querySelectorAll('.qilates-course-section');
+
+  sections.forEach(function(section) {
+    var items = section.querySelectorAll('.qilates-accordion-item');
+
+    items.forEach(function(item) {
+      var header = item.querySelector('.qilates-accordion-header');
+      var body = item.querySelector('.qilates-accordion-body');
+
+      header.addEventListener('click', function() {
+        var isOpen = item.classList.contains('active');
+
+        // Close all items in the same course section only
+        items.forEach(function(sibling) {
+          if (sibling !== item) {
+            sibling.classList.remove('active');
+            sibling.querySelector('.qilates-accordion-header').setAttribute('aria-expanded', 'false');
+            sibling.querySelector('.qilates-accordion-body').style.maxHeight = null;
+          }
+        });
+
+        // Toggle current item
+        if (isOpen) {
+          item.classList.remove('active');
+          header.setAttribute('aria-expanded', 'false');
+          body.style.maxHeight = null;
+        } else {
+          item.classList.add('active');
+          header.setAttribute('aria-expanded', 'true');
+          body.style.maxHeight = body.scrollHeight + 'px';
+        }
+      });
+    });
+  });
+})();
+</script>
