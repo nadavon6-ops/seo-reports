@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>IntegriTEST - מידות | מבחן אמינות ממוחשב לגיוס</title>
+    <meta name="description" content="IntegriTEST — מבחן אמינות ממוחשב של מידות להערכת יושר ואמינות מועמדים לפני גיוס. מהיר, מדויק ונוח. בעברית, ערבית, רוסית ואמהרית. השאירו פרטים לייעוץ ללא עלות.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- FAQPage Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "אין לנו תקציב כרגע למבחני אמינות",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ניתן להתחיל עם בדיקות נקודתיות לפי צורך, ללא התחייבות לחבילה שנתית. אתם משלמים רק על מה שאתם צריכים, מתי שאתם צריכים."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "לא בטוחים שמבחן אמינות מתאים לארגון שלנו",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "קבעו שיחת ייעוץ קצרה ללא עלות. נבין את הצרכים שלכם ונבדוק יחד אם ואיך IntegriTEST יכול לעזור — בלי לחץ ובלי התחייבות."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "לא רוצים עוד כלי מסובך בתהליך הגיוס",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "IntegriTEST הוא כלי דיגיטלי פשוט ונוח לשימוש. המועמד מקבל קישור, ממלא את המבחן, ואתם מקבלים דוח מפורט — בלי התקנות, בלי הדרכות ובלי סיבוכים."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            font-weight: 400;
+            color: #102235;
+            background: #fff;
+            direction: rtl;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* ── Draft Banner ── */
+        .draft-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10000;
+            background: #fff3cd;
+            color: #856404;
+            text-align: center;
+            padding: 8px 40px;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 1px solid #ffc107;
+        }
+        .draft-banner .close-btn {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #856404;
+            line-height: 1;
+        }
+        body.banner-visible .navbar { top: 37px; }
+        body.banner-hidden .draft-banner { display: none; }
+        body.banner-hidden .navbar { top: 0; }
+
+        /* ── Navbar ── */
+        .navbar {
+            position: fixed;
+            top: 37px;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            background: #102236;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+        }
+        .navbar-logo img {
+            height: 42px;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            list-style: none;
+        }
+        .navbar-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 400;
+            transition: color .2s;
+        }
+        .navbar-links a:hover { color: #72b7bd; }
+        .navbar-links .sep {
+            color: rgba(255,255,255,.3);
+            font-size: 13px;
+        }
+
+        /* Sub-navbar */
+        .sub-navbar {
+            position: fixed;
+            top: 107px;
+            left: 0;
+            right: 0;
+            z-index: 9998;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 40px;
+            height: 44px;
+            gap: 10px;
+        }
+        body.banner-hidden .sub-navbar { top: 70px; }
+        .sub-navbar a {
+            color: #102235;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .sub-navbar a:hover { color: #72b7bd; }
+        .sub-navbar .breadcrumb-sep { color: #999; font-size: 12px; margin: 0 2px; }
+        .sub-navbar .current { color: #72b7bd; font-weight: 500; }
+
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .hamburger span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            transition: .3s;
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1110px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ── Hero (Landing Page — Split Layout) ── */
+        .hero-lp {
+            background: #102236;
+            padding-top: 190px;
+            padding-bottom: 60px;
+        }
+        body.banner-hidden .hero-lp { padding-top: 150px; }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 55% 45%;
+            gap: 40px;
+            align-items: start;
+        }
+        .hero-text h1 {
+            font-size: 2.4em;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.35;
+            margin-bottom: 18px;
+        }
+        .hero-text .subtitle {
+            font-size: 1.15em;
+            font-weight: 400;
+            color: #72b7bd;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        .tagline-badge {
+            display: inline-block;
+            border: 2px solid #72b7bd;
+            color: #72b7bd;
+            padding: 8px 28px;
+            border-radius: 30px;
+            font-size: 1.05em;
+            font-weight: 500;
+            letter-spacing: .5px;
+        }
+
+        /* ── Form Card ── */
+        .form-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 32px 28px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.25);
+        }
+        .form-card h2 {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: #102235;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-field {
+            margin-bottom: 14px;
+        }
+        .form-field label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #102235;
+            margin-bottom: 5px;
+        }
+        .form-field input[type="text"],
+        .form-field input[type="email"],
+        .form-field input[type="tel"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d0d0d0;
+            border-radius: 5px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 15px;
+            color: #102235;
+            background: #fafafa;
+            transition: border-color .2s;
+        }
+        .form-field input:focus {
+            outline: none;
+            border-color: #72b7bd;
+            background: #fff;
+        }
+        .form-consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 16px 0 20px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        .form-consent input[type="checkbox"] {
+            margin-top: 4px;
+            flex-shrink: 0;
+        }
+        .form-submit-btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: #b82027;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .form-submit-btn:hover { background: #9a1a20; }
+        .form-note {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-top: 12px;
+        }
+
+        /* ── Product Description ── */
+        .product-desc {
+            padding: 50px 0 40px;
+        }
+        .product-desc .inner {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .product-desc p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            color: #102235;
+        }
+        .callout-box {
+            background: #f0fafb;
+            border-right: 4px solid #72b7bd;
+            padding: 24px 28px;
+            margin: 30px 0 0;
+            border-radius: 2px;
+        }
+        .callout-box p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #102235;
+        }
+
+        /* ── Benefits Grid ── */
+        .benefits {
+            padding: 50px 0;
+            background: #fff;
+        }
+        .benefits h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #102235;
+            margin-bottom: 36px;
+            text-align: center;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 24px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            background: #fff;
+            transition: box-shadow .2s;
+        }
+        .benefit-item:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,.07);
+        }
+        .benefit-icon {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: #f0fafb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+        .benefit-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+        .benefit-item h4 {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #72b7bd;
+            margin-bottom: 6px;
+        }
+        .benefit-item p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #102235;
+            margin: 0;
+        }
+
+        /* ── Objection / FAQ Section ── */
+        .faq-section {
+            padding: 50px 0;
+            background: #f5f5f5;
+        }
+        .faq-section h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #102235;
+            margin-bottom: 36px;
+            text-align: center;
+        }
+        .faq-cards {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .faq-card {
+            padding: 24px 28px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            background: #fff;
+            transition: box-shadow .2s;
+        }
+        .faq-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,.07);
+        }
+        .faq-card h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #b82027;
+            margin-bottom: 10px;
+        }
+        .faq-card p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #102235;
+            margin: 0;
+        }
+
+        /* ── Final CTA ── */
+        .final-cta {
+            background: #102236;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .final-cta h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+        .final-cta p {
+            font-size: 1.05em;
+            color: rgba(255,255,255,.75);
+            margin-bottom: 28px;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: #b82027;
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 48px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 4px;
+            transition: background .2s;
+            cursor: pointer;
+            border: none;
+            font-family: 'Heebo', sans-serif;
+        }
+        .cta-btn:hover { background: #9a1a20; }
+
+        /* ── Footer ── */
+        footer {
+            background: #f7f7f7;
+            border-top: 1px solid #e0e0e0;
+            padding: 30px 0;
+            text-align: center;
+        }
+        footer .footer-logo img {
+            height: 36px;
+            margin-bottom: 14px;
+        }
+        footer .footer-links {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 14px;
+        }
+        footer .footer-links a {
+            color: #767676;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        footer .footer-links a:hover { color: #72b7bd; }
+        footer .copyright {
+            color: #999;
+            font-size: 13px;
+        }
+
+        /* ── Mobile Nav Overlay ── */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #102236;
+            z-index: 99999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+        .mobile-nav.active { display: flex; }
+        .mobile-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .mobile-nav .close-mobile {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        /* ── Sticky Mobile CTA ── */
+        .sticky-mobile-cta {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 9990;
+            background: #102236;
+            padding: 10px 16px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 -2px 12px rgba(0,0,0,.2);
+        }
+        .sticky-mobile-cta .sticky-btn {
+            flex: 1;
+            padding: 12px;
+            background: #b82027;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+        .sticky-mobile-cta .sticky-phone {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: #72b7bd;
+            border-radius: 50%;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .sticky-mobile-cta .sticky-phone svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1199px) {
+            .hero-text h1 { font-size: 2em; }
+            .hero-grid { gap: 30px; }
+        }
+
+        @media (max-width: 767px) {
+            .navbar { padding: 0 16px; height: 60px; }
+            .navbar-links { display: none; }
+            .hamburger { display: flex; }
+            .sub-navbar { display: none; }
+
+            body.banner-visible .navbar { top: 37px; }
+            .hero-lp { padding-top: 120px; padding-bottom: 40px; }
+            body.banner-hidden .hero-lp { padding-top: 90px; }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .hero-text h1 { font-size: 1.6em; }
+            .hero-text .subtitle { font-size: 1em; }
+
+            .benefits-grid { grid-template-columns: 1fr; gap: 16px; }
+
+            .callout-box { padding: 18px 20px; }
+
+            .final-cta { padding: 40px 0; }
+            .final-cta h2 { font-size: 1.4em; }
+
+            .sticky-mobile-cta.visible { display: flex; }
+
+            /* Add bottom padding for sticky bar */
+            footer { padding-bottom: 80px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 { font-size: 1.4em; }
+            .form-card { padding: 24px 18px; }
+            .tagline-badge { font-size: .95em; padding: 6px 20px; }
+        }
+    </style>
+</head>
+<body class="banner-visible">
+
+<!-- Draft Banner -->
+<div class="draft-banner" id="draftBanner">
+    טיוטה לעיון — NC Digital
+    <button class="close-btn" onclick="document.getElementById('draftBanner').style.display='none'; document.body.classList.remove('banner-visible'); document.body.classList.add('banner-hidden');">&times;</button>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="https://midot.co.il" class="navbar-logo">
+        <img src="https://midot.co.il/wp-content/uploads/2020/06/midot-logo-white.png" alt="מידות">
+    </a>
+    <ul class="navbar-links">
+        <li><a href="https://midot.co.il/products/" style="color:#72b7bd;">מוצרים ושירותים</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/industries/">ענפים ותעשיות</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/about/">אודות החברה</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/customers/">לקוחות</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/knowledge-center/">מרכז הידע</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/contact/">צרו קשר</a></li>
+        <li><span class="sep">|</span></li>
+        <li><a href="https://midot.co.il/search/">חיפוש</a></li>
+    </ul>
+    <button class="hamburger" id="hamburgerBtn" onclick="document.getElementById('mobileNav').classList.add('active');">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- Sub-navbar (breadcrumb) -->
+<div class="sub-navbar">
+    <a href="https://midot.co.il/">דף הבית</a>
+    <span class="breadcrumb-sep">«</span>
+    <a href="https://midot.co.il/products/">מוצרים ושירותים</a>
+    <span class="breadcrumb-sep">«</span>
+    <span class="current">IntegriTEST</span>
+</div>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+    <button class="close-mobile" onclick="document.getElementById('mobileNav').classList.remove('active');">&times;</button>
+    <a href="https://midot.co.il/products/">מוצרים ושירותים</a>
+    <a href="https://midot.co.il/industries/">ענפים ותעשיות</a>
+    <a href="https://midot.co.il/about/">אודות החברה</a>
+    <a href="https://midot.co.il/customers/">לקוחות</a>
+    <a href="https://midot.co.il/knowledge-center/">מרכז הידע</a>
+    <a href="https://midot.co.il/contact/">צרו קשר</a>
+</div>
+
+<!-- ===== SECTION 2: Hero — Split Layout ===== -->
+<section class="hero-lp" id="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <!-- Left: Headline -->
+            <div class="hero-text">
+                <h1>רוצה כלי שיעזור לך לבחור נכון את הגיוס הבא?</h1>
+                <p class="subtitle">IntegriTEST הוא מבחן אמינות ממוחשב של חברת מידות, שנועד לספק לך תמונה מהימנה על מידת היושר והאמינות של מועמדים — עוד לפני שלב הגיוס.</p>
+                <span class="tagline-badge">מהיר. מדויק. נוח.</span>
+            </div>
+
+            <!-- Right: Form Card -->
+            <div class="form-card" id="heroFormCard">
+                <!-- ===== FORM PLACEHOLDER ===== -->
+                <!-- Replace this <form> block with:
+                     Option A: [contact-form-7 id="XXX"] shortcode
+                     Option B: Elementor form widget
+                     Option C: Keep HTML form, add action URL to endpoint -->
+                <h2>רוצה כלי איכותי לגיוס הבא שלי</h2>
+                <form class="contact-form" id="hero-form">
+                    <div class="form-field">
+                        <label for="fullName">שם מלא</label>
+                        <input type="text" id="fullName" name="fullName" placeholder="שם פרטי ומשפחה" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="phone">טלפון נייד</label>
+                        <input type="tel" id="phone" name="phone" placeholder="050-0000000" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="email">דוא״ל</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="orgName">שם הארגון</label>
+                        <input type="text" id="orgName" name="orgName" placeholder="שם החברה או הארגון">
+                    </div>
+                    <div class="form-consent">
+                        <input type="checkbox" id="consent" name="consent" required>
+                        <label for="consent">אני מסכים/ה לקבל פנייה מנציג מידות בנוגע לשירותי החברה</label>
+                    </div>
+                    <button type="submit" class="form-submit-btn">שלחו לי פרטים</button>
+                </form>
+                <!-- ===== END FORM PLACEHOLDER ===== -->
+                <p class="form-note">ייעוץ ללא עלות · ללא התחייבות</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SECTION 3: Product Description ===== -->
+<section class="product-desc">
+    <div class="container">
+        <div class="inner">
+            <p>IntegriTEST הוא מבחן אמינות ממוחשב, שפותח על ידי חברת מידות ומבוסס על שנים של מחקר ופיתוח בתחום אבחון אמינות. המבחן מיועד לזהות דפוסים שעלולים להעיד על נטייה לגניבה, הפרת נהלים, דליפת מידע, שוחד ועוד — עוד בשלב המיון, לפני הגיוס בפועל.</p>
+            <div class="callout-box">
+                <p>IntegriTEST משמש אלפי ארגונים בישראל ובעולם — מהמגזר הציבורי והביטחוני ועד מגזרי העסקים, הקמעונאות והאירוח. הכלי מספק שכבת מידע משלימה שמסייעת לקבל החלטות גיוס מושכלות ומבוססות נתונים.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SECTION 4: Benefits Grid ===== -->
+<section class="benefits">
+    <div class="container">
+        <h2>למה IntegriTEST?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>חיסכון בזמן ובטעויות גיוס</h4>
+                    <p>סינון מועמדים בשלב מוקדם חוסך זמן, משאבים ועלויות של גיוס שגוי וצמצום תחלופת עובדים.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>ממשק נוח ודוחות מפורטים</h4>
+                    <p>ממשק משתמש ידידותי, אבחון מהיר ודוחות ברורים שמאפשרים קבלת החלטות מהירה ומבוססת.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>תוקף מדעי מוכח</h4>
+                    <p>המבחן מבוסס על מחקר מדעי ומשמש אלפי ארגונים — עם תוצאות מדידות ושיפור מוכח באיכות הגיוס.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>מבחנים במגוון שפות</h4>
+                    <p>המבחן זמין בעברית, ערבית, רוסית, אמהרית ושפות נוספות — מותאם לכוח אדם מגוון.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>מתאים לתפקידים רגישים</h4>
+                    <p>מותאם במיוחד לתפקידים הכוללים גישה לרכוש, מידע, כספים או מערכות פנימיות.</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#72b7bd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <h4>שימוש נרחב בארגונים מובילים</h4>
+                    <p>בשימוש במגזר הציבורי, הביטחוני, הפיננסי, הקמעונאות והאירוח — מוכח בשטח.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SECTION 5: Objection Handling / FAQ ===== -->
+<section class="faq-section">
+    <div class="container">
+        <h2>אולי חשבתם ש...</h2>
+        <div class="faq-cards">
+            <div class="faq-card">
+                <h4>״אין תקציב כרגע״</h4>
+                <p>ניתן להתחיל עם בדיקות נקודתיות לפי צורך, ללא התחייבות לחבילה שנתית. אתם משלמים רק על מה שאתם צריכים, מתי שאתם צריכים.</p>
+            </div>
+            <div class="faq-card">
+                <h4>״לא בטוחים שמתאים לנו״</h4>
+                <p>קבעו שיחת ייעוץ קצרה ללא עלות. נבין את הצרכים שלכם ונבדוק יחד אם ואיך IntegriTEST יכול לעזור — בלי לחץ ובלי התחייבות.</p>
+            </div>
+            <div class="faq-card">
+                <h4>״לא רוצים עוד כלי מסובך״</h4>
+                <p>IntegriTEST הוא כלי דיגיטלי פשוט ונוח לשימוש. המועמד מקבל קישור, ממלא את המבחן, ואתם מקבלים דוח מפורט — בלי התקנות, בלי הדרכות ובלי סיבוכים.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SECTION 6: Final CTA ===== -->
+<section class="final-cta">
+    <div class="container">
+        <h2>מוכנים לשדרג את הגיוס?</h2>
+        <p>השאירו פרטים ונחזור אליכם תוך יום עסקים אחד</p>
+        <a href="#hero-form" class="cta-btn" id="scrollToFormBtn">רוצה לשמוע עוד &larr;</a>
+    </div>
+</section>
+
+<!-- ===== SECTION 7: Footer ===== -->
+<footer>
+    <div class="container">
+        <div class="footer-logo">
+            <img src="https://midot.co.il/wp-content/uploads/2020/06/midot-logo.png" alt="מידות">
+        </div>
+        <ul class="footer-links">
+            <li><a href="https://midot.co.il/products/">מוצרים ושירותים</a></li>
+            <li><a href="https://midot.co.il/industries/">ענפים ותעשיות</a></li>
+            <li><a href="https://midot.co.il/about/">אודות החברה</a></li>
+            <li><a href="https://midot.co.il/customers/">לקוחות</a></li>
+            <li><a href="https://midot.co.il/contact/">צרו קשר</a></li>
+        </ul>
+        <p class="copyright">© 2026 מידות – Ensuring Personal Integrity. כל הזכויות שמורות.</p>
+    </div>
+</footer>
+
+<!-- ===== Sticky Mobile CTA Bar ===== -->
+<div class="sticky-mobile-cta" id="stickyCta">
+    <a href="#hero-form" class="sticky-btn" id="stickyScrollBtn">השאירו פרטים</a>
+    <a href="tel:+97236449944" class="sticky-phone" aria-label="חייגו למידות">
+        <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1.003 1.003 0 011.01-.24c1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.07 21 3 13.93 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.1.31.03.66-.25 1.02l-2.2 2.2z"/></svg>
+    </a>
+</div>
+
+<script>
+// Smooth scroll for CTA buttons
+document.getElementById('scrollToFormBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('heroFormCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+document.getElementById('stickyScrollBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('heroFormCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+// Sticky mobile CTA — show after scrolling past hero form
+if (window.innerWidth <= 767) {
+    var formCard = document.getElementById('heroFormCard');
+    var stickyCta = document.getElementById('stickyCta');
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                stickyCta.classList.remove('visible');
+            } else {
+                stickyCta.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    observer.observe(formCard);
+}
+</script>
+
+</body>
+</html>
