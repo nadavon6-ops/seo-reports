@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>תוכנית אופטימיזציה — צווארון כחול | Manpower Israel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #0a2647;
+            --accent: #2C74B3;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --light: #f0f4f8;
+            --white: #fff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--light); color: var(--text); line-height: 1.6; }
+        .header { background: var(--primary); color: white; padding: 30px; }
+        .header-inner { max-width: 1100px; margin: 0 auto; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .header p { opacity: 0.8; font-size: 0.9rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 25px; }
+
+        .section-title { background: var(--primary); color: white; padding: 16px 22px; border-radius: 12px 12px 0 0; font-size: 1.25rem; margin-top: 35px; }
+        .section-desc { background: white; padding: 14px 22px; border-bottom: 3px solid var(--accent); margin-bottom: 20px; font-size: 0.88rem; color: var(--muted); border-radius: 0 0 12px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+
+        .status-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 0.88rem; }
+        .status-table th { background: var(--primary); color: white; padding: 10px 12px; text-align: right; }
+        .status-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); background: white; }
+        .up { color: var(--success); font-weight: 600; }
+        .down { color: var(--danger); font-weight: 600; }
+        .zero { color: var(--danger); font-weight: 700; }
+
+        .cat-card { background: white; border-radius: 12px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .cat-head { padding: 14px 22px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .cat-head h2 { font-size: 1.1rem; }
+        .cat-head .stats { font-size: 0.82rem; opacity: 0.9; }
+        .c1 .cat-head { background: #4a044e; }
+        .c2 .cat-head { background: #065f46; }
+        .c3 .cat-head { background: #b45309; }
+        .c4 .cat-head { background: #1e40af; }
+        .c5 .cat-head { background: #155e75; }
+        .c6 .cat-head { background: #1e3a5f; }
+        .c7 .cat-head { background: #991b1b; }
+        .c8 .cat-head { background: #7c2d12; }
+        .c9 .cat-head { background: #581c87; }
+
+        .cat-body { padding: 18px 22px; }
+        .cat-body h3 { font-size: 0.92rem; color: var(--primary); margin: 14px 0 8px; font-weight: 700; }
+        .cat-body h3:first-child { margin-top: 0; }
+
+        .action-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+        .action-box h4 { font-size: 0.88rem; color: var(--accent); margin-bottom: 6px; }
+        .action-list { list-style: none; padding: 0; }
+        .action-list li { padding: 3px 0; font-size: 0.84rem; padding-right: 18px; position: relative; }
+        .action-list li::before { content: '\2192'; position: absolute; right: 0; color: var(--accent); }
+
+        .impact-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-top: 8px; font-size: 0.84rem; }
+        .impact-box strong { color: var(--success); }
+
+        .timeline-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 0.84rem; color: #1e40af; }
+
+        .blog-card { background: #fefce8; border: 1px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+        .blog-card h4 { font-size: 0.88rem; color: #92400e; margin-bottom: 4px; }
+        .blog-card p { font-size: 0.84rem; margin: 2px 0; }
+        .blog-card .kw { color: var(--accent); font-weight: 600; font-size: 0.82rem; }
+
+        .job-example { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 10px; }
+        .job-example h4 { font-size: 0.88rem; color: var(--primary); margin-bottom: 4px; }
+        .job-example p { font-size: 0.84rem; margin: 2px 0; }
+        .job-example .label { font-weight: 600; color: var(--accent); }
+
+        .rules-box { background: white; border-radius: 12px; padding: 22px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+        .rules-box h3 { font-size: 0.95rem; color: var(--primary); margin: 16px 0 8px; border-bottom: 2px solid var(--border); padding-bottom: 5px; }
+        .rules-box h3:first-child { margin-top: 0; }
+        .rules-box p, .rules-box li { font-size: 0.86rem; }
+        .rules-box ul { padding-right: 20px; margin: 5px 0; }
+        .rules-box li { margin-bottom: 3px; }
+        .rules-box code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; direction: ltr; display: inline-block; }
+        .rules-box pre { background: #1e293b; color: #e2e8f0; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.78rem; direction: ltr; text-align: left; margin: 8px 0; line-height: 1.5; }
+
+        .note { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+        .footer { background: var(--primary); color: white; padding: 20px; text-align: center; margin-top: 30px; }
+        .footer p { font-size: 0.8rem; opacity: 0.7; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .cat-head { flex-direction: column; gap: 5px; }
+            .rules-box pre { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-inner">
+        <h1>תוכנית אופטימיזציה — צווארון כחול V2</h1>
+        <p>manpower.co.il | שלבים הבאים: מפת דרכים + מאמרים + אופטימיזציית משרות | מרץ 2026 | NC Digital</p>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== SECTION 1: ROADMAP ==================== -->
+<div class="section-title">חלק 1: מפת דרכים — סדר עדיפויות לפי ביצועים</div>
+<div class="section-desc">הקטגוריות מסודרות לפי קליקים בפועל (GSC). מתחילים מהחזק ביותר — מנהלה (224 קליקים) — ויורדים.</div>
+
+<!-- Priority Table -->
+<table class="status-table">
+    <thead><tr><th>#</th><th>קטגוריה</th><th>קליקים</th><th>שינוי</th><th>סטטוס</th></tr></thead>
+    <tbody>
+        <tr><td>1</td><td><strong>מנהלה / מזכירות</strong></td><td>224</td><td class="down">-16%</td><td>הביצועים הטובים ביותר — לטפל ראשון</td></tr>
+        <tr><td>2</td><td><strong>טכנאים</strong></td><td>39</td><td class="up">+86%</td><td>צמיחה חזקה, עונתיות מרץ-יוני</td></tr>
+        <tr><td>3</td><td><strong>חשמלאים</strong></td><td>34</td><td class="down">-53%</td><td>#1 לשכר, חסר "דרוש"</td></tr>
+        <tr><td>4</td><td><strong>עובדי ייצור</strong></td><td>25</td><td class="up">+39%</td><td>עולה, ~#8 ב-SERP</td></tr>
+        <tr><td>5</td><td><strong>נציגי מכירות</strong></td><td>8</td><td class="up">+5</td><td>#1 לשכר</td></tr>
+        <tr><td>6</td><td><strong>מוקדנים</strong></td><td>8</td><td class="up">+6</td><td>#3 לשכר, פופולרי בסטודנטים</td></tr>
+        <tr><td>7</td><td><strong>נהגים</strong></td><td>4</td><td>חדש</td><td>לא ב-top 10</td></tr>
+        <tr><td>8</td><td><strong>אינסטלטורים</strong></td><td class="zero">0</td><td>—</td><td class="zero">לא קיים</td></tr>
+        <tr><td>9</td><td><strong>צמ"ה / ציוד כבד</strong></td><td class="zero">0</td><td>—</td><td class="zero">לא קיים, עונתיות אפריל-אוקטובר</td></tr>
+    </tbody>
+</table>
+
+<!-- Cat 1: Admin -->
+<div class="cat-card c1">
+    <div class="cat-head"><h2>1. מנהלה / מזכירות</h2><span class="stats">224 קליקים | -16% | עדיפות עליונה</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>שדרוג title ו-H1 של דף הקטגוריה הקיים <code>/search?JOBEXPERTISE=4142</code> ל: <strong>"דרושים מנהלה ומזכירות — משרות אדמיניסטרציה | מנפאוור"</strong></li>
+                <li>Meta description: "מחפש/ת עבודה במנהלה? מנפאוור מגייסת מזכירות, פקידות קבלה ועובדי אדמיניסטרציה. צפה במשרות פתוחות ←"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף נחיתה <code>/jobs/admin/</code> עם 300+ מילים, FAQ, רשימת משרות דינמית</li>
+                <li>לינק ממאמר שכר מנהלה (מדורג #1) אל דף המשרות החדש</li>
+                <li>דף נוסף: <code>/jobs/admin/no-experience/</code> לטרגט "פקידה ללא ניסיון"</li>
+                <li>הוספת FAQ Schema: "כמה מרוויחה מזכירה?" / "האם יש משרות ללא ניסיון?"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> שאילתה "דרושים אדמיניסטרציה" = 1,081 חשיפות, CTR נוכחי 1.4%. שדרוג title צפוי להעלות CTR ל-3%+ = ~32 קליקים במקום 15 לשאילתה זו בלבד. דף ייעודי עם תוכן צפוי לשפר עמדה מ-7 ל-4-5.</div>
+        <div class="timeline-box">יישום: 1-2 שבועות | תוצאות ראשונות: 3-4 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 2: Technicians -->
+<div class="cat-card c2">
+    <div class="cat-head"><h2>2. טכנאים (מיזוג, מעליות, HVAC)</h2><span class="stats">39 קליקים | +86% | צמיחה</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/technicians/</code> עם תוכן ייחודי, H1: <strong>"דרושים טכנאים — מיזוג אוויר, מעליות ואחזקה | מנפאוור"</strong></li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>תת-דפים לכל התמחות: /technicians/ac/ , /technicians/elevators/</li>
+                <li>לינק ממאמר שכר טכנאים (מניע את הצמיחה הנוכחית)</li>
+                <li>FAQ Schema: "כמה מרוויח טכנאי מיזוג אוויר?" / "האם יש ביקוש לטכנאי מעליות?"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> קטגוריה בצמיחה של 86%. דף ייעודי עם תוכן יכול לתפוס שאילתות חדשות. עונתיות מרץ-יוני = חלון זמן אידיאלי עכשיו. צפי: 80-120 קליקים/חודש בשיא העונה.</div>
+        <div class="timeline-box">יישום: 2-3 שבועות | תוצאות: 4-6 שבועות (עונתיות תאיץ)</div>
+    </div>
+</div>
+
+<!-- Cat 3: Electricians -->
+<div class="cat-card c3">
+    <div class="cat-head"><h2>3. חשמלאים</h2><span class="stats">34 קליקים | -53% | #1 לשכר</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/electricians/</code> + <strong>לינק ישיר ממאמר שכר שכבר מדורג #1</strong> (272 חשיפות ל"חשמלאי מוסמך שכר")</li>
+                <li>H1: "דרושים חשמלאים — משרות חשמל ואלקטרוניקה | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>H2: חשמלאי מוסמך | חשמלאי בניין ותעשייה | עוזר חשמלאי</li>
+                <li>FAQ: "מה ההבדל בין חשמלאי מעשי למוסמך?" / "כמה מרוויח חשמלאי?"</li>
+                <li>טרגוט שאילתות "דרוש" — כרגע מדורג רק לשכר, לא למשרות</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> מאמר שכר כבר #1 = תנועה מובטחת לדף משרות דרך לינק פנימי. הירידה של 53% נובעת מהיעדר דפי "דרוש". דף חדש יתפוס שאילתות שהאתר כלל לא מדורג בהן.</div>
+        <div class="timeline-box">יישום: 1-2 שבועות | תוצאות: 4-6 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 4: Production -->
+<div class="cat-card c4">
+    <div class="cat-head"><h2>4. עובדי ייצור</h2><span class="stats">25 קליקים | +39% | ~#8 ב-SERP</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/production-workers/</code> עם 300+ מילים, H1: <strong>"דרושים עובדי ייצור — משרות ייצור ותעשייה | מנפאוור"</strong></li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>H2: משרות פס ייצור ואריזה | עבודה במפעל ללא ניסיון | עובדי ייצור משמרות</li>
+                <li>FAQ: "האם צריך ניסיון?" / "אילו משמרות קיימות?" / "כמה מרוויח עובד ייצור?"</li>
+                <li>לינק ממאמר שכר ייצור אל דף המשרות</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> כבר ~#8 ב-SERP בלי דף ייעודי. דף עם תוכן צפוי לשפר ל-#4-5. מתחרים (ORS) מוכיחים שחברת השמה יכולה להיכנס לעמוד 1.</div>
+        <div class="timeline-box">יישום: 2-3 שבועות | תוצאות: 4-8 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 5: Sales -->
+<div class="cat-card c5">
+    <div class="cat-head"><h2>5. נציגי מכירות</h2><span class="stats">8 קליקים | +5 | #1 לשכר</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/sales/</code> + לינק ממאמר שכר מכירות (#1)</li>
+                <li>H1: "דרושים נציגי מכירות — שטח וטלפון | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>H2: סוכן מכירות שטח | מכירות טלפוניות | עבודה במכירות ללא ניסיון</li>
+                <li>לינקים: "שכר איש מכירות" ← מאמר (#1) | "משרות מכירות" ← קטגוריה</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> 331 משרות סוכן מכירות שטח ב-Drushim = ביקוש גבוה. מאמר שכר #1 = מקור תנועה מיידי לדף חדש.</div>
+        <div class="timeline-box">יישום: 1-2 שבועות | תוצאות: 4-6 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 6: Call Center -->
+<div class="cat-card c6">
+    <div class="cat-head"><h2>6. מוקדנים / נציגי שירות</h2><span class="stats">8 קליקים | +6 | #3 לשכר</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/call-center/</code> + תת-דף <code>/jobs/call-center/students/</code></li>
+                <li>H1: "דרושים מוקדנים ונציגי שירות | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>H2: נציג/ת שירות | טלמרקטינג | עבודה במוקד סטודנטים | עבודה מהבית</li>
+                <li>לינק ממאמר שכר (#3) + נחיתה "עבודה במוקד מהבית"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> פופולרי בקרב סטודנטים. שיאי חיפוש ספטמבר + פברואר (תחילת סמסטרים). דף סטודנטים ייעודי = בידול מול AllJobs/Drushim.</div>
+        <div class="timeline-box">יישום: 2-3 שבועות | תוצאות: 4-8 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 7: Drivers -->
+<div class="cat-card c7">
+    <div class="cat-head"><h2>7. נהגים (מלגזה, משאית, רכב כבד)</h2><span class="stats">4 קליקים | חדש</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/drivers/</code> + תת-דפים <code>/forklift/</code> ו-<code>/truck/</code></li>
+                <li>H1: "דרושים נהגים — משאית, מלגזה ורכב כבד | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>מאמר שכר: "כמה מרוויח נהג משאית / מלגזן ב-2026?"</li>
+                <li>FAQ: "מה ההבדל בין רישיון C ל-C+E?" / "כמה מרוויח מלגזן?"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> 108+ משרות מלגזן ב-Drushim. CBC Group (מעסיק ישיר) מדורגת #5 לנהג משאית — מוכיח שמנפאוור יכולה להיכנס. צפי: 30-50 קליקים/חודש תוך 3 חודשים.</div>
+        <div class="timeline-box">יישום: 3-4 שבועות | תוצאות: 6-10 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 8: Plumbers -->
+<div class="cat-card c8">
+    <div class="cat-head"><h2>8. אינסטלטורים / שרברבים</h2><span class="stats">0 קליקים | חדש לגמרי</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/plumbers/</code> מאפס — אין שום נוכחות כרגע</li>
+                <li>H1: "דרושים אינסטלטורים ושרברבים | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>מאמר: "כמה מרוויח אינסטלטור ב-2026? סקירת שכר מלאה"</li>
+                <li>FAQ: "מה ההבדל בין שרברב לאינסטלטור?" / "האם צריך הסמכה?"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> יצירה מאפס — תוצאות יקחו זמן. "שרברב" = עממי, "אינסטלטור" = מקצועי — לטרגט שניהם. צפי: 10-20 קליקים/חודש תוך 4-6 חודשים.</div>
+        <div class="timeline-box">יישום: 3-4 שבועות | תוצאות: 8-12 שבועות</div>
+    </div>
+</div>
+
+<!-- Cat 9: Heavy Equipment -->
+<div class="cat-card c9">
+    <div class="cat-head"><h2>9. צמ"ה / ציוד כבד</h2><span class="stats">0 קליקים | חדש לגמרי</span></div>
+    <div class="cat-body">
+        <h3>פעולה ראשונה</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>יצירת דף <code>/jobs/heavy-equipment/</code> + מאמר על קורסים ורישיון</li>
+                <li>H1: "דרושים מפעילי צמ"ה וציוד כבד | מנפאוור"</li>
+            </ul>
+        </div>
+        <h3>פעולות המשך</h3>
+        <div class="action-box">
+            <ul class="action-list">
+                <li>מאמר: "איך מוציאים רישיון צמ"ה? המדריך המלא 2026"</li>
+                <li>FAQ: "כמה מרוויח מפעיל צמ"ה?" / "מה כולל קורס צמ"ה?"</li>
+            </ul>
+        </div>
+        <div class="impact-box"><strong>השפעה צפויה:</strong> עונתיות אפריל-אוקטובר. אם הדף יהיה מוכן עד אפריל 2026, יתפוס את שיא העונה. צמ"ה = המונח הישראלי (לא "ציוד כבד"). צפי: 10-20 קליקים/חודש בעונה.</div>
+        <div class="timeline-box">יישום: 3-4 שבועות | אידיאלי: לפני אפריל 2026 | תוצאות: 8-12 שבועות</div>
+    </div>
+</div>
+
+<!-- ==================== SECTION 2: BLOG IDEAS ==================== -->
+<div class="section-title">חלק 2: רעיונות למאמרים — 2 לכל קטגוריה (18 סה"כ)</div>
+<div class="section-desc">כל מאמר מטרגט מילות מפתח מהמחקר, מחזק לינקים פנימיים לדפי קטגוריה, ומשמש כברייף לאישור.</div>
+
+<!-- Blog: Admin -->
+<div class="cat-card c1">
+    <div class="cat-head"><h2>1. מנהלה / מזכירות</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: איך להתקבל לעבודה משרדית ללא ניסיון — המדריך המלא 2026</h4>
+            <p class="kw">מילות מפתח: פקידה ללא ניסיון, עבודה משרדית ללא ניסיון, דרושים אדמיניסטרציה</p>
+            <p><strong>תקציר:</strong> מדריך מעשי למחפשי עבודה ראשונה בתחום המשרדי. איך לבנות קורות חיים בלי ניסיון, אילו כישורים מחפשים מעסיקים, ואיפה למצוא משרות entry-level.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/admin/ ← דף משרות | /jobs/admin/no-experience/ ← נחיתה ללא ניסיון</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: מזכירה רפואית — מה כולל התפקיד ולמי הוא מתאים?</h4>
+            <p class="kw">מילות מפתח: מזכירה רפואית דרושה, מזכירה רפואית, פקידת קבלה</p>
+            <p><strong>תקציר:</strong> סקירה של תפקיד מזכירה רפואית: דרישות, שכר, סביבת עבודה (קליניקה, בית חולים, קופת חולים), ואפשרויות קידום. כולל עדויות מהשטח.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/admin/ ← משרות מנהלה | מאמר שכר מנהלה (קיים, #1)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Technicians -->
+<div class="cat-card c2">
+    <div class="cat-head"><h2>2. טכנאים</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: קורס מיזוג אוויר — כל מה שצריך לדעת לפני שנרשמים</h4>
+            <p class="kw">מילות מפתח: קורס מיזוג אוויר, טכנאי מיזוג אוויר, מתקין מזגנים</p>
+            <p><strong>תקציר:</strong> מדריך מקיף לקורסי מיזוג אוויר בישראל: עלות, משך, היכן ללמוד, ומה שוק העבודה מציע לבוגרים. כולל השוואה בין מסלולים.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/technicians/ ← משרות טכנאים | /jobs/technicians/ac/ ← מיזוג</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: טכנאי מעליות — מקצוע בביקוש גבוה ושכר מפתיע</h4>
+            <p class="kw">מילות מפתח: טכנאי מעליות דרוש, טכנאי מעליות שכר, טכנאי אחזקה</p>
+            <p><strong>תקציר:</strong> למה הביקוש לטכנאי מעליות עולה, כמה מרוויחים, ואיך נכנסים לתחום. 27 משרות פתוחות ב-Drushim — מנפאוור מגייסת עכשיו.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/technicians/ ← משרות טכנאים | /jobs/technicians/elevators/</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Electricians -->
+<div class="cat-card c3">
+    <div class="cat-head"><h2>3. חשמלאים</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: חשמלאי מעשי מול מוסמך — מה ההבדל ומה עדיף?</h4>
+            <p class="kw">מילות מפתח: חשמלאי מוסמך, חשמלאי מעשי, טכנאי חשמל</p>
+            <p><strong>תקציר:</strong> השוואה מקיפה בין שני סוגי ההסמכה: דרישות, משך לימודים, שכר, וסוגי עבודה. מיועד למי שמתלבט באיזה מסלול לבחור.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/electricians/ ← משרות חשמלאים | מאמר שכר חשמלאים (קיים, #1)</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: עוזר חשמלאי — איך מתחילים קריירה בחשמל בלי ניסיון</h4>
+            <p class="kw">מילות מפתח: עוזר חשמלאי דרוש, חשמלאי בניין, חשמלאי אחזקה</p>
+            <p><strong>תקציר:</strong> מדריך לכניסה לתחום החשמל דרך תפקיד עוזר: מה עושים, כמה מרוויחים, ואיך מתקדמים לחשמלאי מוסמך. נתיב קריירה מלא.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/electricians/ ← משרות חשמלאים</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Production -->
+<div class="cat-card c4">
+    <div class="cat-head"><h2>4. עובדי ייצור</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: עבודה במפעל ללא ניסיון — המדריך למחפשי עבודה 2026</h4>
+            <p class="kw">מילות מפתח: עבודה במפעל ללא ניסיון, עובד ייצור, פס ייצור</p>
+            <p><strong>תקציר:</strong> מה באמת עושים בעבודת מפעל, אילו סוגי מפעלים מגייסים ללא ניסיון, ומה אפשרויות הקידום. כולל טיפים להתקבל.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/production-workers/ ← משרות ייצור</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: עבודה במשמרות — יתרונות, חסרונות וכמה מרוויחים</h4>
+            <p class="kw">מילות מפתח: עובד ייצור משמרות, עובדי ייצור משמרת לילה, מפעיל מכונות</p>
+            <p><strong>תקציר:</strong> מדריך לעבודת משמרות בישראל: תוספות שכר, זכויות עובד, ואיך להתנהל עם שעות לא שגרתיות. מתאים לייצור, מחסנים ומפעלים.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/production-workers/ ← משרות ייצור | מאמר שכר ייצור</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Sales -->
+<div class="cat-card c5">
+    <div class="cat-head"><h2>5. נציגי מכירות</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: איך להצליח במכירות שטח — טיפים ממנהלי גיוס</h4>
+            <p class="kw">מילות מפתח: סוכן מכירות שטח דרוש, מכירות שטח, איש מכירות דרוש</p>
+            <p><strong>תקציר:</strong> מה מעסיקים מחפשים בסוכן מכירות שטח, אילו כישורים קריטיים, ואיך לבנות קורות חיים שמכניסים לראיון. כולל טיפים מגייסים של מנפאוור.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/sales/ ← משרות מכירות | מאמר שכר מכירות (#1)</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: עבודה במכירות ללא ניסיון — מאיפה מתחילים?</h4>
+            <p class="kw">מילות מפתח: עבודה במכירות ללא ניסיון, נציג מכירות דרוש, מכירות טלפוניות</p>
+            <p><strong>תקציר:</strong> מדריך למי שרוצה להיכנס לתחום המכירות בלי רקע. ההבדל בין מכירות שטח לטלפוניות, שכר התחלתי, ואיפה הכי קל להתחיל.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/sales/ ← משרות מכירות</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Call Center -->
+<div class="cat-card c6">
+    <div class="cat-head"><h2>6. מוקדנים</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: עבודה במוקד לסטודנטים — המדריך המלא 2026</h4>
+            <p class="kw">מילות מפתח: עבודה במוקד סטודנטים, עבודה במוקד טלפוני, מוקדן/ית דרוש/ה</p>
+            <p><strong>תקציר:</strong> למה עבודת מוקד היא הבחירה הפופולרית בקרב סטודנטים, אילו משמרות מתאימות, ואיך למצוא עבודה שלא פוגעת בלימודים.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/call-center/ ← משרות מוקד | /jobs/call-center/students/</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: עבודה במוקד מהבית — מה הדרישות ואיך מתחילים</h4>
+            <p class="kw">מילות מפתח: עבודה במוקד מהבית, נציג שירות לקוחות דרוש, שימור לקוחות</p>
+            <p><strong>תקציר:</strong> סקירת אפשרויות עבודה מרחוק במוקדי שירות: דרישות טכניות, שכר, ואילו חברות מגייסות לעבודה מהבית. מנפאוור מציעה משרות מרחוק.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/call-center/ ← משרות מוקד</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Drivers -->
+<div class="cat-card c7">
+    <div class="cat-head"><h2>7. נהגים</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: רישיון מלגזה — כמה עולה, כמה זמן לוקח ואיפה ללמוד</h4>
+            <p class="kw">מילות מפתח: רישיון מלגזה, מלגזן דרוש, נהג מלגזה דרוש</p>
+            <p><strong>תקציר:</strong> מדריך מלא להוצאת רישיון מלגזה: עלות, משך, מכוני הדרכה מומלצים, ומה שוק העבודה מציע אחרי. 108+ משרות פתוחות.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/drivers/ ← משרות נהגים | /jobs/drivers/forklift/</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: נהג משאית ב-2026 — רישיונות, שכר ושוק עבודה</h4>
+            <p class="kw">מילות מפתח: נהג משאית דרוש, נהג רכב כבד דרוש, נהג C1, רישיון C+E</p>
+            <p><strong>תקציר:</strong> סקירת שוק נהגי המשאיות בישראל: סוגי רישיונות (C, C1, C+E), טווחי שכר, ומגמות ביקוש. כולל השוואה בין נהיגת חלוקה לנהיגה כבדה.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/drivers/ ← משרות נהגים | /jobs/drivers/truck/</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Plumbers -->
+<div class="cat-card c8">
+    <div class="cat-head"><h2>8. אינסטלטורים</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: כמה מרוויח אינסטלטור בישראל ב-2026? סקירת שכר מלאה</h4>
+            <p class="kw">מילות מפתח: אינסטלטור דרוש, שרברב דרוש, עבודות אינסטלציה</p>
+            <p><strong>תקציר:</strong> סקירת שכר אינסטלטורים לפי ניסיון, התמחות ואזור. השוואה בין שכיר לעצמאי, ומה ההבדל בין אינסטלטור לשרברב.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/plumbers/ ← משרות אינסטלטורים</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: איך להיכנס לתחום האינסטלציה — מדריך למתחילים</h4>
+            <p class="kw">מילות מפתח: אינסטלטור ללא ניסיון, אינסטלטור אחזקה, אינסטלטור שיפוצים</p>
+            <p><strong>תקציר:</strong> מסלולי כניסה לתחום: שוליאות, קורסים מקצועיים, הסמכות נדרשות. מה ההבדל בין אינסטלציה ביתית, תעשייתית ושיפוצים.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/plumbers/ ← משרות אינסטלטורים</p>
+        </div>
+    </div>
+</div>
+
+<!-- Blog: Heavy Equipment -->
+<div class="cat-card c9">
+    <div class="cat-head"><h2>9. צמ"ה / ציוד כבד</h2><span class="stats">2 מאמרים</span></div>
+    <div class="cat-body">
+        <div class="blog-card">
+            <h4>מאמר 1: איך מוציאים רישיון צמ"ה? המדריך המלא 2026</h4>
+            <p class="kw">מילות מפתח: קורס צמ"ה, רישיון מכונה ניידת, מפעיל צמ"ה דרוש</p>
+            <p><strong>תקציר:</strong> מדריך שלב-אחר-שלב להוצאת רישיון צמ"ה: סוגי הרישיונות, עלויות, מכונים מוכרים, ומה אפשר לעשות אחרי. כולל טבלת השוואה.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/heavy-equipment/ ← משרות צמ"ה</p>
+        </div>
+        <div class="blog-card">
+            <h4>מאמר 2: מפעיל באגר, מנוף או שופל — מה ההבדלים וכמה מרוויחים?</h4>
+            <p class="kw">מילות מפתח: מפעיל באגר, מפעיל מנוף, מפעיל שופל, מפעיל צמ"ה שכר</p>
+            <p><strong>תקציר:</strong> השוואה בין סוגי ציוד כבד: באגר, מנוף, שופל, טרקטור. שכר לפי התמחות, ביקוש עונתי, ואיפה הכסף הגדול.</p>
+            <p><strong>לינקים פנימיים:</strong> /jobs/heavy-equipment/ ← משרות צמ"ה</p>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SECTION 3: JOB POSTING SEO ==================== -->
+<div class="section-title">חלק 3: אופטימיזציית משרות — כללים + 27 דוגמאות</div>
+<div class="section-desc">כל משרה באתר היא דף נוסף שיכול לדרג ב-Google. כללים אוניברסליים + 3 דוגמאות לכל קטגוריה.</div>
+
+<!-- Universal Rules -->
+<div class="rules-box">
+    <h3>כללי SEO אוניברסליים לכל משרה</h3>
+
+    <h3>1. נוסחת Title Tag</h3>
+    <p><code>[תפקיד] דרוש/ה — [עיר] | מנפאוור</code></p>
+    <p>דוגמה: <code>מזכירה רפואית דרושה — תל אביב | מנפאוור</code></p>
+    <p class="note">עד 60 תווים. תפקיד + "דרוש/ה" + מיקום + מותג.</p>
+
+    <h3>2. תבנית Meta Description</h3>
+    <p><code>מנפאוור מגייסת [תפקיד] ב[עיר]. [תנאי מפתח: משרה מלאה/חלקית, ללא ניסיון, שכר תחרותי]. הגש/י מועמדות ←</code></p>
+    <p class="note">עד 155 תווים. CTA ברור בסוף.</p>
+
+    <h3>3. H1</h3>
+    <p><code>[תפקיד] דרוש/ה — [עיר] | משרה [מלאה/חלקית]</code></p>
+    <p class="note">H1 ייחודי לכל משרה. לעולם לא "Search Results - Manpower".</p>
+
+    <h3>4. JobPosting Schema (JSON-LD)</h3>
+<pre>{
+  "@context": "https://schema.org/",
+  "@type": "JobPosting",
+  "title": "[תפקיד] דרוש/ה",
+  "description": "[תיאור המשרה - 150+ מילים]",
+  "datePosted": "2026-03-10",
+  "validThrough": "2026-04-10",
+  "employmentType": "FULL_TIME",
+  "hiringOrganization": {
+    "@type": "Organization",
+    "name": "מנפאוור ישראל",
+    "sameAs": "https://www.manpower.co.il",
+    "logo": "https://www.manpower.co.il/logo.png"
+  },
+  "jobLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "[עיר]",
+      "addressCountry": "IL"
+    }
+  },
+  "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": "ILS",
+    "value": {
+      "@type": "QuantitativeValue",
+      "minValue": [MIN],
+      "maxValue": [MAX],
+      "unitText": "MONTH"
+    }
+  }
+}</pre>
+
+    <h3>5. תוכן מינימלי לכל משרה</h3>
+    <ul>
+        <li><strong>150+ מילים</strong> בתיאור (לא רק bullet points)</li>
+        <li><strong>מבנה:</strong> תיאור התפקיד → דרישות → תנאים → יתרונות</li>
+        <li><strong>FAQ:</strong> 2 שאלות בתחתית כל משרה (עם FAQPage Schema)</li>
+    </ul>
+
+    <h3>6. לינקים פנימיים מכל משרה</h3>
+    <ul>
+        <li>לינק לדף קטגוריה: "ראו עוד משרות [קטגוריה] ←"</li>
+        <li>לינק למאמר רלוונטי: "קראו: כמה מרוויח [תפקיד]?"</li>
+        <li>לינק למשרות קרובות: "משרות דומות ב[עיר אחרת]"</li>
+    </ul>
+
+    <h3>7. מבנה URL מומלץ</h3>
+    <p><code>/jobs/[category]/[job-title]-[city]/</code></p>
+    <p>דוגמה: <code>/jobs/admin/secretary-tel-aviv/</code></p>
+    <p class="note">אנגלית, קצר, slug ברור. לעולם לא פרמטרים של query string.</p>
+
+    <h3>8. מובייל</h3>
+    <ul>
+        <li>כפתור "הגש מועמדות" sticky בתחתית המסך</li>
+        <li>פרטי משרה (מיקום, שכר, היקף) ב-cards מעל הקפל</li>
+        <li>טעינה מהירה — בלי תמונות כבדות בדפי משרה</li>
+    </ul>
+</div>
+
+<!-- Job Examples: Admin -->
+<div class="cat-card c1">
+    <div class="cat-head"><h2>1. מנהלה / מזכירות — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: מזכירה רפואית — תל אביב</h4>
+            <p><span class="label">Title:</span> מזכירה רפואית דרושה — תל אביב | מנפאוור</p>
+            <p><span class="label">H1:</span> מזכירה רפואית דרושה — תל אביב | משרה מלאה</p>
+            <p><span class="label">מילים לשלב:</span> מזכירה רפואית, קליניקה, בית חולים, ניהול תורים, ללא ניסיון, קופת חולים</p>
+            <p><span class="label">FAQ:</span> כמה מרוויחה מזכירה רפואית? (8,000-12,000 ₪/חודש בהתאם לניסיון) | מה ההשכלה הנדרשת? (תעודת בגרות, קורס מזכירות רפואית — יתרון)</p>
+            <p><span class="label">לינקים:</span> /jobs/admin/ ← "עוד משרות מנהלה" | מאמר "מזכירה רפואית — מה כולל התפקיד"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: פקידת קבלה — פתח תקווה</h4>
+            <p><span class="label">Title:</span> פקידת קבלה דרושה — פתח תקווה | מנפאוור</p>
+            <p><span class="label">H1:</span> פקידת קבלה דרושה — פתח תקווה | משרה מלאה</p>
+            <p><span class="label">מילים לשלב:</span> פקידת קבלה, שירות לקוחות, מענה טלפוני, back office, עבודה משרדית</p>
+            <p><span class="label">FAQ:</span> האם צריך ניסיון קודם? (לא, אנו מכשירים במקום העבודה) | מהן שעות העבודה? (א'-ה' 08:00-17:00)</p>
+            <p><span class="label">לינקים:</span> /jobs/admin/ | מאמר "עבודה משרדית ללא ניסיון"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: עובד/ת מנהלה — ירושלים</h4>
+            <p><span class="label">Title:</span> עובד/ת מנהלה דרוש/ה — ירושלים | מנפאוור</p>
+            <p><span class="label">H1:</span> עובד/ת מנהלה דרוש/ה — ירושלים | משרה מלאה</p>
+            <p><span class="label">מילים לשלב:</span> אדמיניסטרציה, ניהול משרד, תיוק, Excel, מנהלת משרד, עוזרת אישית</p>
+            <p><span class="label">FAQ:</span> מה כולל תפקיד עובד/ת מנהלה? (ניהול יומן, תיאום פגישות, טיפול בדואר ותיוק) | מה השכר ההתחלתי? (7,500-9,000 ₪/חודש)</p>
+            <p><span class="label">לינקים:</span> /jobs/admin/ | /jobs/admin/no-experience/</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Technicians -->
+<div class="cat-card c2">
+    <div class="cat-head"><h2>2. טכנאים — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: טכנאי מיזוג אוויר — חיפה</h4>
+            <p><span class="label">Title:</span> טכנאי מיזוג אוויר דרוש — חיפה | מנפאוור</p>
+            <p><span class="label">H1:</span> טכנאי מיזוג אוויר דרוש — חיפה</p>
+            <p><span class="label">מילים לשלב:</span> מתקין מזגנים, טכנאי מיזוג וקירור, תחזוקת מזגנים, VRF, מערכות מרכזיות</p>
+            <p><span class="label">FAQ:</span> האם צריך תעודת הסמכה? (כן, נדרש רישיון טכנאי קירור) | האם יש עבודה גם בחורף? (כן, תחזוקה וחימום כל השנה)</p>
+            <p><span class="label">לינקים:</span> /jobs/technicians/ | מאמר "קורס מיזוג אוויר"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: טכנאי מעליות — תל אביב</h4>
+            <p><span class="label">Title:</span> טכנאי מעליות דרוש — תל אביב | מנפאוור</p>
+            <p><span class="label">H1:</span> טכנאי מעליות דרוש — תל אביב</p>
+            <p><span class="label">מילים לשלב:</span> תחזוקת מעליות, התקנת מעליות, אלקטרומכניקה, בדיקות תקופתיות, שבת-חירום</p>
+            <p><span class="label">FAQ:</span> כמה מרוויח טכנאי מעליות? (12,000-18,000 ₪/חודש) | האם יש עבודה בשבתות? (כוננויות חירום במשמרות)</p>
+            <p><span class="label">לינקים:</span> /jobs/technicians/ | מאמר "טכנאי מעליות — מקצוע בביקוש"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: טכנאי אחזקה — באר שבע</h4>
+            <p><span class="label">Title:</span> טכנאי אחזקה דרוש — באר שבע | מנפאוור</p>
+            <p><span class="label">H1:</span> טכנאי אחזקה דרוש — באר שבע</p>
+            <p><span class="label">מילים לשלב:</span> אחזקת מבנים, חשמל בסיסי, אינסטלציה, תיקון תקלות, ציוד מכני</p>
+            <p><span class="label">FAQ:</span> מה כולל תפקיד אחזקה? (טיפול בתשתיות, תיקון תקלות חשמל ואינסטלציה) | האם צריך ניסיון? (1-2 שנות ניסיון — יתרון)</p>
+            <p><span class="label">לינקים:</span> /jobs/technicians/ | מאמר שכר טכנאים</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Electricians -->
+<div class="cat-card c3">
+    <div class="cat-head"><h2>3. חשמלאים — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: חשמלאי מוסמך — ראשון לציון</h4>
+            <p><span class="label">Title:</span> חשמלאי מוסמך דרוש — ראשון לציון | מנפאוור</p>
+            <p><span class="label">H1:</span> חשמלאי מוסמך דרוש — ראשון לציון</p>
+            <p><span class="label">מילים לשלב:</span> חשמלאי מוסמך, חשמל תעשייתי, לוחות חשמל, פיקוח חשמל, רישיון חשמלאי</p>
+            <p><span class="label">FAQ:</span> מה נדרש מבחינת הסמכה? (רישיון חשמלאי מוסמך ממשרד העבודה) | כמה מרוויח חשמלאי מוסמך? (14,000-20,000 ₪/חודש)</p>
+            <p><span class="label">לינקים:</span> /jobs/electricians/ | מאמר שכר חשמלאים (#1) | מאמר "מעשי מול מוסמך"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: חשמלאי בניין — נתניה</h4>
+            <p><span class="label">Title:</span> חשמלאי בניין דרוש — נתניה | מנפאוור</p>
+            <p><span class="label">H1:</span> חשמלאי בניין דרוש — נתניה</p>
+            <p><span class="label">מילים לשלב:</span> חשמלאי בניין, התקנת חשמל, בתי מגורים, פרויקטי בנייה, תשתיות</p>
+            <p><span class="label">FAQ:</span> מה ההבדל בין חשמלאי בניין לתעשייה? (בניין = מגורים ומסחר, תעשייה = מפעלים ומערכות) | האם העבודה בחוץ? (חלקית — באתרי בנייה)</p>
+            <p><span class="label">לינקים:</span> /jobs/electricians/ | מאמר "עוזר חשמלאי — איך מתחילים"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: עוזר חשמלאי — חולון</h4>
+            <p><span class="label">Title:</span> עוזר חשמלאי דרוש — חולון | מנפאוור</p>
+            <p><span class="label">H1:</span> עוזר חשמלאי דרוש — חולון | ללא ניסיון</p>
+            <p><span class="label">מילים לשלב:</span> עוזר חשמלאי, ללא ניסיון, הכשרה במקום, כלי עבודה, ליווי חשמלאי בכיר</p>
+            <p><span class="label">FAQ:</span> האם צריך ניסיון? (לא, מספקים הכשרה מלאה) | מה הדרך להתקדם? (התקדמות לחשמלאי מעשי תוך 1-2 שנים)</p>
+            <p><span class="label">לינקים:</span> /jobs/electricians/ | מאמר "עוזר חשמלאי — איך מתחילים"</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Production -->
+<div class="cat-card c4">
+    <div class="cat-head"><h2>4. עובדי ייצור — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: עובד ייצור משמרות — חולון</h4>
+            <p><span class="label">Title:</span> עובד ייצור דרוש — חולון | משמרות | מנפאוור</p>
+            <p><span class="label">H1:</span> עובד ייצור דרוש — חולון | עבודה במשמרות</p>
+            <p><span class="label">מילים לשלב:</span> עובד ייצור, פס ייצור, משמרות, משמרת לילה, מפעל, ללא ניסיון</p>
+            <p><span class="label">FAQ:</span> מהן המשמרות? (בוקר 06:00-14:00, ערב 14:00-22:00, לילה 22:00-06:00) | כמה מרוויחים? (שכר בסיס + תוספת משמרות 25-50%)</p>
+            <p><span class="label">לינקים:</span> /jobs/production-workers/ | מאמר "עבודה במשמרות — יתרונות וחסרונות"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: מפעיל מכונות — אשדוד</h4>
+            <p><span class="label">Title:</span> מפעיל מכונות דרוש — אשדוד | מנפאוור</p>
+            <p><span class="label">H1:</span> מפעיל מכונות דרוש — אשדוד | משרה מלאה</p>
+            <p><span class="label">מילים לשלב:</span> מפעיל מכונות, CNC, מכונות ייצור, תעשייה, בקרת איכות, מפעל</p>
+            <p><span class="label">FAQ:</span> האם צריך ניסיון עם מכונות? (הכשרה במקום, ניסיון — יתרון) | מה סוג המכונות? (מכונות ייצור אוטומטיות ומכונות CNC)</p>
+            <p><span class="label">לינקים:</span> /jobs/production-workers/ | מאמר "עבודה במפעל ללא ניסיון"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: עובד אריזה — פתח תקווה</h4>
+            <p><span class="label">Title:</span> עובד אריזה דרוש — פתח תקווה | מנפאוור</p>
+            <p><span class="label">H1:</span> עובד אריזה דרוש — פתח תקווה | ללא ניסיון</p>
+            <p><span class="label">מילים לשלב:</span> עובד אריזה, מפעל מזון, אריזה ואחסון, מחסן, עבודה פיזית, ללא ניסיון</p>
+            <p><span class="label">FAQ:</span> האם צריך ניסיון? (לא, ללא ניסיון) | האם יש הסעות? (בהתאם למפעל)</p>
+            <p><span class="label">לינקים:</span> /jobs/production-workers/ | מאמר "עבודה במפעל ללא ניסיון"</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Sales -->
+<div class="cat-card c5">
+    <div class="cat-head"><h2>5. נציגי מכירות — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: סוכן מכירות שטח — מרכז</h4>
+            <p><span class="label">Title:</span> סוכן מכירות שטח דרוש — מרכז | מנפאוור</p>
+            <p><span class="label">H1:</span> סוכן מכירות שטח דרוש — אזור המרכז</p>
+            <p><span class="label">מילים לשלב:</span> סוכן מכירות שטח, רכב צמוד, עמידה ביעדים, B2B, ניהול לקוחות, פגישות שטח</p>
+            <p><span class="label">FAQ:</span> האם מקבלים רכב צמוד? (כן, רכב + טלפון + דלק) | מה מבנה השכר? (בסיס + עמלות, OTE 15,000-25,000 ₪)</p>
+            <p><span class="label">לינקים:</span> /jobs/sales/ | מאמר "איך להצליח במכירות שטח"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: נציג מכירות טלפוני — תל אביב</h4>
+            <p><span class="label">Title:</span> נציג/ת מכירות טלפוני — ת"א | מנפאוור</p>
+            <p><span class="label">H1:</span> נציג/ת מכירות טלפוני — תל אביב</p>
+            <p><span class="label">מילים לשלב:</span> מכירות טלפוניות, טלמרקטינג, שכנוע, יעדי מכירה, שכר + עמלות</p>
+            <p><span class="label">FAQ:</span> האם צריך ניסיון במכירות? (לא, הכשרה מלאה) | מהן שעות העבודה? (משמרות גמישות, כולל ערב)</p>
+            <p><span class="label">לינקים:</span> /jobs/sales/ | מאמר "עבודה במכירות ללא ניסיון"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: מנהל/ת לקוחות — חיפה</h4>
+            <p><span class="label">Title:</span> מנהל/ת לקוחות דרוש/ה — חיפה | מנפאוור</p>
+            <p><span class="label">H1:</span> מנהל/ת לקוחות דרוש/ה — חיפה</p>
+            <p><span class="label">מילים לשלב:</span> ניהול לקוחות, אפסיילינג, שימור לקוחות, CRM, שירות ומכירות</p>
+            <p><span class="label">FAQ:</span> מה ההבדל בין מנהל לקוחות לסוכן מכירות? (מנהל לקוחות מתמקד בלקוחות קיימים) | כמה מרוויחים? (10,000-16,000 ₪ כולל בונוס)</p>
+            <p><span class="label">לינקים:</span> /jobs/sales/ | מאמר שכר מכירות (#1)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Call Center -->
+<div class="cat-card c6">
+    <div class="cat-head"><h2>6. מוקדנים — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: נציג שירות לקוחות — ראשון לציון</h4>
+            <p><span class="label">Title:</span> נציג שירות לקוחות דרוש — ר"ל | מנפאוור</p>
+            <p><span class="label">H1:</span> נציג/ת שירות לקוחות — ראשון לציון</p>
+            <p><span class="label">מילים לשלב:</span> נציג שירות, מוקד טלפוני, שירות לקוחות, CRM, מענה טלפוני, תמיכה</p>
+            <p><span class="label">FAQ:</span> מהן המשמרות? (בוקר/ערב, גמישות לסטודנטים) | האם צריך ניסיון? (לא, הכשרה מלאה)</p>
+            <p><span class="label">לינקים:</span> /jobs/call-center/ | מאמר "עבודה במוקד לסטודנטים"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: מוקדן/ית מכירות — תל אביב</h4>
+            <p><span class="label">Title:</span> מוקדן/ית מכירות דרוש/ה — ת"א | מנפאוור</p>
+            <p><span class="label">H1:</span> מוקדן/ית מכירות — תל אביב | שכר + בונוסים</p>
+            <p><span class="label">מילים לשלב:</span> טלמרקטינג, מכירות טלפוניות, מוקד מכירות, בונוס, שכנוע, עמלות</p>
+            <p><span class="label">FAQ:</span> מה מבנה השכר? (שכר שעתי + עמלה על כל עסקה) | האם אפשר לעבוד מהבית? (חלק מהמשרות מאפשרות עבודה היברידית)</p>
+            <p><span class="label">לינקים:</span> /jobs/call-center/ | מאמר "עבודה במוקד מהבית"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: נציג/ת שימור — חיפה</h4>
+            <p><span class="label">Title:</span> נציג/ת שימור לקוחות — חיפה | מנפאוור</p>
+            <p><span class="label">H1:</span> נציג/ת שימור לקוחות — חיפה</p>
+            <p><span class="label">מילים לשלב:</span> שימור לקוחות, מניעת נטישה, הצעות ערך, תסריט שיחה, בונוס שימור</p>
+            <p><span class="label">FAQ:</span> מה ההבדל בין שימור למכירות? (שימור = מניעת ביטולים, מכירות = גיוס חדשים) | מה השכר? (בסיס + בונוס שימור, OTE 9,000-13,000 ₪)</p>
+            <p><span class="label">לינקים:</span> /jobs/call-center/ | מאמר שכר מוקדנים (#3)</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Drivers -->
+<div class="cat-card c7">
+    <div class="cat-head"><h2>7. נהגים — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: מלגזן — חולון</h4>
+            <p><span class="label">Title:</span> מלגזן דרוש — חולון | משמרות | מנפאוור</p>
+            <p><span class="label">H1:</span> מלגזן דרוש — חולון | עבודה במחסן</p>
+            <p><span class="label">מילים לשלב:</span> מלגזן, נהג מלגזה, מחסן, רישיון מלגזה, משמרות, עבודה פיזית</p>
+            <p><span class="label">FAQ:</span> האם צריך רישיון מלגזה? (כן, רישיון בתוקף — חובה) | כמה מרוויח מלגזן? (9,000-13,000 ₪/חודש + תוספת משמרות)</p>
+            <p><span class="label">לינקים:</span> /jobs/drivers/forklift/ | מאמר "רישיון מלגזה — המדריך"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: נהג משאית — באר שבע</h4>
+            <p><span class="label">Title:</span> נהג משאית דרוש — באר שבע | מנפאוור</p>
+            <p><span class="label">H1:</span> נהג משאית דרוש — באר שבע | רישיון C+E</p>
+            <p><span class="label">מילים לשלב:</span> נהג משאית, רישיון C+E, נהג רכב כבד, הובלה, לוגיסטיקה, מעל 15 טון</p>
+            <p><span class="label">FAQ:</span> איזה רישיון נדרש? (C+E לרכב מעל 15 טון) | האם יש נסיעות ארוכות? (תלוי במשרה — חלוקה עירונית או קווים בינעירוניים)</p>
+            <p><span class="label">לינקים:</span> /jobs/drivers/truck/ | מאמר "נהג משאית — רישיונות ושכר"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: נהג חלוקה — תל אביב</h4>
+            <p><span class="label">Title:</span> נהג חלוקה דרוש — תל אביב | מנפאוור</p>
+            <p><span class="label">H1:</span> נהג חלוקה והפצה דרוש — תל אביב</p>
+            <p><span class="label">מילים לשלב:</span> נהג חלוקה, הפצה, רכב עד 3.5 טון, משלוחים, עבודה עצמאית, רישיון B</p>
+            <p><span class="label">FAQ:</span> איזה רישיון צריך? (רישיון B רגיל לרכב עד 3.5 טון) | מהן שעות העבודה? (06:00-15:00 בדרך כלל)</p>
+            <p><span class="label">לינקים:</span> /jobs/drivers/ | מאמר "נהג משאית — רישיונות ושכר"</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Plumbers -->
+<div class="cat-card c8">
+    <div class="cat-head"><h2>8. אינסטלטורים — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: אינסטלטור אחזקה — תל אביב</h4>
+            <p><span class="label">Title:</span> אינסטלטור אחזקה דרוש — תל אביב | מנפאוור</p>
+            <p><span class="label">H1:</span> אינסטלטור אחזקה דרוש — תל אביב</p>
+            <p><span class="label">מילים לשלב:</span> אינסטלטור, אחזקת מבנים, צנרת, תיקוני אינסטלציה, ברזים, ניקוז</p>
+            <p><span class="label">FAQ:</span> האם צריך הסמכה? (ניסיון בתחום — חובה, הסמכה — יתרון) | מה כולל התפקיד? (תיקון תקלות צנרת, החלפת ברזים, אחזקה שוטפת)</p>
+            <p><span class="label">לינקים:</span> /jobs/plumbers/ | מאמר "שכר אינסטלטור"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: שרברב — חיפה</h4>
+            <p><span class="label">Title:</span> שרברב דרוש — חיפה | מנפאוור</p>
+            <p><span class="label">H1:</span> שרברב דרוש — חיפה | משרה מלאה</p>
+            <p><span class="label">מילים לשלב:</span> שרברב, עבודות אינסטלציה, תיקוני צנרת, מערכת ביוב, דוד שמש, אינסטלציה ביתית</p>
+            <p><span class="label">FAQ:</span> מה ההבדל בין שרברב לאינסטלטור? (שרברב = שם עממי, אינסטלטור = מקצועי — אותו תחום) | כמה מרוויחים? (10,000-16,000 ₪/חודש)</p>
+            <p><span class="label">לינקים:</span> /jobs/plumbers/ | מאמר "איך להיכנס לתחום האינסטלציה"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: אינסטלטור שיפוצים — ירושלים</h4>
+            <p><span class="label">Title:</span> אינסטלטור שיפוצים דרוש — ירושלים | מנפאוור</p>
+            <p><span class="label">H1:</span> אינסטלטור שיפוצים דרוש — ירושלים</p>
+            <p><span class="label">מילים לשלב:</span> אינסטלטור שיפוצים, התקנת חדרי רחצה, צנרת חדשה, שיפוץ דירות, קרמיקה</p>
+            <p><span class="label">FAQ:</span> מה כולל אינסטלציה בשיפוץ? (הנחת צנרת חדשה, התקנת כלים סניטריים) | האם צריך ניסיון? (2+ שנים בשיפוצים)</p>
+            <p><span class="label">לינקים:</span> /jobs/plumbers/ | מאמר "שכר אינסטלטור"</p>
+        </div>
+    </div>
+</div>
+
+<!-- Job Examples: Heavy Equipment -->
+<div class="cat-card c9">
+    <div class="cat-head"><h2>9. צמ"ה / ציוד כבד — 3 דוגמאות</h2><span class="stats">משרות אופטימיזציה</span></div>
+    <div class="cat-body">
+        <div class="job-example">
+            <h4>משרה 1: מפעיל באגר — באר שבע</h4>
+            <p><span class="label">Title:</span> מפעיל באגר דרוש — באר שבע | מנפאוור</p>
+            <p><span class="label">H1:</span> מפעיל באגר דרוש — באר שבע</p>
+            <p><span class="label">מילים לשלב:</span> מפעיל באגר, עבודות עפר, חפירה, רישיון מכונה ניידת, אתר בנייה, צמ"ה</p>
+            <p><span class="label">FAQ:</span> איזה רישיון צריך? (רישיון מכונה ניידת — קטגוריה 2) | כמה מרוויחים? (13,000-20,000 ₪ לפי ניסיון ואתר)</p>
+            <p><span class="label">לינקים:</span> /jobs/heavy-equipment/ | מאמר "רישיון צמ"ה — המדריך"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 2: מפעיל מנוף — חיפה</h4>
+            <p><span class="label">Title:</span> מפעיל מנוף דרוש — חיפה | מנפאוור</p>
+            <p><span class="label">H1:</span> מפעיל מנוף דרוש — חיפה</p>
+            <p><span class="label">מילים לשלב:</span> מפעיל מנוף, מנוף נייד, הרמה, בטיחות, אתר בנייה, רישיון מנוף</p>
+            <p><span class="label">FAQ:</span> מה ההכשרה הנדרשת? (קורס מפעילי מנופים + רישיון ייעודי) | האם זו עבודה עונתית? (ביקוש גבוה אפריל-אוקטובר, עבודה כל השנה)</p>
+            <p><span class="label">לינקים:</span> /jobs/heavy-equipment/ | מאמר "באגר, מנוף או שופל — השוואה"</p>
+        </div>
+        <div class="job-example">
+            <h4>משרה 3: נהג צמ"ה — אשדוד</h4>
+            <p><span class="label">Title:</span> נהג צמ"ה דרוש — אשדוד | מנפאוור</p>
+            <p><span class="label">H1:</span> נהג צמ"ה דרוש — אשדוד | רישיון מכונה ניידת</p>
+            <p><span class="label">מילים לשלב:</span> נהג צמ"ה, מפעיל ציוד כבד, שופל, טרקטור, עבודות תשתית, פיתוח</p>
+            <p><span class="label">FAQ:</span> מה ההבדל בין נהג צמ"ה למפעיל צמ"ה? (אותו תפקיד, שמות שונים) | כמה מרוויחים? (12,000-18,000 ₪ + שעות נוספות)</p>
+            <p><span class="label">לינקים:</span> /jobs/heavy-equipment/ | מאמר "רישיון צמ"ה — המדריך"</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="footer">
+    <p>NC Digital | Manpower Israel | מרץ 2026</p>
+    <p>המשך למחקר מילות מפתח צווארון כחול V1 — <a href="manpower-blue-collar-keyword-research.html" style="color:#93c5fd;">לדוח המקורי</a></p>
+</div>
+
+</body>
+</html>
