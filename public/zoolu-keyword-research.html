@@ -1,0 +1,2944 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>Zoolu — מחקר מילות מפתח מבוסס מתחרים | NC Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            direction: rtl;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 50%, #155e75 100%);
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.2em; font-weight: 900; margin-bottom: 8px; }
+        .header .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .header .date { margin-top: 12px; opacity: 0.7; font-size: 0.9em; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: 900;
+            color: #0891b2;
+        }
+        .stat-card .label { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+        /* Section */
+        .section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            font-size: 1.4em;
+            color: #0891b2;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #334155;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        th {
+            background: #0f172a;
+            color: #0891b2;
+            padding: 10px 12px;
+            text-align: right;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #1e293b;
+        }
+        tr:hover td { background: #334155; }
+        .kw { font-weight: 500; }
+        .vol { color: #0891b2; font-weight: 700; text-align: center; }
+        .src { color: #94a3b8; font-size: 0.85em; }
+
+        /* Category sections */
+        .category-section {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            cursor: pointer;
+            background: #1e293b;
+            transition: background 0.2s;
+        }
+        .category-header:hover { background: #334155; }
+        .category-header h3 { font-size: 1.1em; color: #f1f5f9; }
+        .badges { display: flex; gap: 8px; }
+        .badge {
+            background: #0891b2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+        .vol-badge { background: #155e75; }
+        .category-body {
+            padding: 0 20px 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .collapsed .category-body { display: none; }
+        .remaining {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        /* Search */
+        .search-box {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1em;
+            direction: rtl;
+        }
+        .search-box input::placeholder { color: #64748b; }
+        .search-box input:focus { outline: none; border-color: #0891b2; }
+
+        /* Methodology */
+        .methodology {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .methodology h2 { color: #0891b2; margin-bottom: 12px; }
+        .methodology ol { padding-right: 20px; }
+        .methodology li { margin-bottom: 8px; color: #cbd5e1; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #64748b;
+            font-size: 0.85em;
+        }
+        .footer a { color: #0891b2; text-decoration: none; }
+
+        /* Sheet link */
+        .sheet-link {
+            display: inline-block;
+            background: #0891b2;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            margin: 16px 0;
+        }
+        .sheet-link:hover { background: #0e7490; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Zoolu — מחקר מילות מפתח</h1>
+            <div class="subtitle">מחקר מבוסס ניתוח מתחרים | ישראל בלבד | עברית</div>
+            <div class="date">נוצר: 12/03/2026 | NC Digital</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">717</div>
+                <div class="label">מילות מפתח</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">502,740</div>
+                <div class="label">נפח חיפוש כולל</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">11</div>
+                <div class="label">קטגוריות</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">8</div>
+                <div class="label">מתחרים נסרקו</div>
+            </div>
+        </div>
+
+        <a href="https://docs.google.com/spreadsheets/d/12ZbI-LJ34eCbudaiVgMnajYllRKNWZyJb54h-HYguWk" target="_blank" class="sheet-link" style="display:block;text-align:center;">
+            פתח את גיליון מילות המפתח ב-Google Sheets
+        </a>
+
+        <div class="section">
+            <h2>ניתוח מתחרים</h2>
+            <table>
+                <thead>
+                    <tr><th>דומיין</th><th>מילות מפתח שנמצאו</th><th>מקור הנתונים</th><th>הערות</th></tr>
+                </thead>
+                <tbody>
+        <tr>
+            <td>mhaim1.com</td>
+            <td>81</td>
+            <td>XLSX (נתוני מחירון ותוכן)</td>
+            <td>מתחרה ישיר — חנות חיות מחמד עם סניפים בראשון לציון</td>
+        </tr>
+        <tr>
+            <td>mhaim1.com</td>
+            <td>100</td>
+            <td>SE Ranking Domain API</td>
+            <td>100 מילות מפתח אורגניות בישראל</td>
+        </tr>
+        <tr>
+            <td>petmarket.co.il</td>
+            <td>53</td>
+            <td>SE Ranking Domain API</td>
+            <td>53 מילות מפתח אורגניות בישראל</td>
+        </tr>
+        <tr>
+            <td>zooland.co.il</td>
+            <td>100</td>
+            <td>SE Ranking Domain API</td>
+            <td>100 מילות מפתח אורגניות בישראל</td>
+        </tr>
+        <tr>
+            <td>animalia.co.il</td>
+            <td>49</td>
+            <td>SE Ranking Domain API</td>
+            <td>49 מילות מפתח אורגניות בישראל</td>
+        </tr>
+        <tr>
+            <td>petshop.co.il</td>
+            <td>100</td>
+            <td>SE Ranking Domain API</td>
+            <td>100 מילות מפתח אורגניות בישראל</td>
+        </tr>
+        <tr>
+            <td>dogli.co.il</td>
+            <td>0</td>
+            <td>SE Ranking API — ללא נתונים</td>
+            <td>לא נמצאו נתונים — ייתכן שהדומיין חדש או לא מדורג</td>
+        </tr>
+        <tr>
+            <td>petstation.co.il</td>
+            <td>0</td>
+            <td>SE Ranking API — ללא נתונים</td>
+            <td>לא נמצאו נתונים — ייתכן שהדומיין חדש או לא מדורג</td>
+        </tr></tbody>
+            </table>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="חפש מילת מפתח..." oninput="filterKeywords(this.value)">
+        </div>
+
+        <div id="categories">
+            
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>מותג - Zoolu</h3>
+                <div class="badges">
+                    <span class="badge">3 מילות מפתח</span>
+                    <span class="badge vol-badge">2,180 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">זולו</td>
+                <td class="vol">1,500</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">zoolu</td>
+                <td class="vol">590</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">זולו חנות חיות</td>
+                <td class="vol">90</td>
+                <td class="src">SE Ranking API</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>כלבים - מזון</h3>
+                <div class="badges">
+                    <span class="badge">59 מילות מפתח</span>
+                    <span class="badge vol-badge">19,150 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">אוכל לכלבים</td>
+                <td class="vol">5,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">חטיפים לכלבים ⚠️</td>
+                <td class="vol">900</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">חטיפים לכלב</td>
+                <td class="vol">880</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">אוכל לכלב</td>
+                <td class="vol">720</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">מזון לכלבים</td>
+                <td class="vol">660</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">אוכל טבעי לכלבים</td>
+                <td class="vol">590</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">אוכל היפואלרגני לכלב</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">אוכל לכלבים מומלץ</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">nd אוכל לכלבים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">אוכל היפואלרגני לכלבים</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">אוכל רפואי לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">קערות אוכל לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">קערת אוכל לכלב</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">חטיפים דנטליים לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">עצמות לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">אוכל רטוב לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">מזון טבעי לכלבים</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">אוכל לכלבים סלמון</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">אוכל לכלבים קטנים</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">שימורים לכלבים</td>
+                <td class="vol">260</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">אוכל כלבים</td>
+                <td class="vol">250</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">אוכל לכלבים כשר לפסח</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">מזון רפואי לכלב</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">אוכל דיאטטי לכלבים</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">מזון רפואי לכלבים</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">אוכל רפואי לכלבים ⚠️</td>
+                <td class="vol">200</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">אוכל לכלבים מבוגרים ⚠️</td>
+                <td class="vol">200</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">שק אוכל לכלבים 20 קילו</td>
+                <td class="vol">200</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">אוכל מומלץ לכלבים קטנים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">אוכל לכלבים היפואלרגני</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">אוכל מומלץ לכלבים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">אוכל יבש לכלבים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">מזון יבש לכלבים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">חטיפים טבעיים לכלבים</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">מזון כלבים</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">מתקן אוכל לכלבים</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">אוכל לכלבים 20 קילו</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">אוכל לכלבים מבוגרים</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">כלי אוכל לכלבים</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">מזון היפואלרגני לכלבים</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">מזון רטוב לכלבים</td>
+                <td class="vol">110</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">שק אוכל לכלבים</td>
+                <td class="vol">100</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">מיכל אחסון מזון לכלבים</td>
+                <td class="vol">100</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">אוכל לכלבים בוגרים</td>
+                <td class="vol">90</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">מה כלבים אוכלים</td>
+                <td class="vol">90</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">מזון לכלבים מומלץ</td>
+                <td class="vol">90</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">אוכל לכלבים משלוחים</td>
+                <td class="vol">70</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">מזון דיאטטי לכלבים</td>
+                <td class="vol">50</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">מזון לכלב</td>
+                <td class="vol">50</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">אוכל זול לכלבים</td>
+                <td class="vol">50</td>
+                <td class="src">mhaim1.com (XLSX)</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 9 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>כלבים - אביזרים</h3>
+                <div class="badges">
+                    <span class="badge">164 מילות מפתח</span>
+                    <span class="badge vol-badge">74,440 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">כלבים</td>
+                <td class="vol">40,500</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">מיטה לכלב</td>
+                <td class="vol">4,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">שמפו לכלבים ⚠️</td>
+                <td class="vol">600</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">כלב ים לבן</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">משחת שיניים לכלב</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">כלב לבן</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">משחת שיניים לכלבים</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">מלונה לכלב גדול</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">רצועות לכלבים</td>
+                <td class="vol">540</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">מיטה לכלב קטן</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">כלב פוינטר</td>
+                <td class="vol">480</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">שם לכלב</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">כדור נגד פרעושים לכלבים</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">שמות לכלב</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">בושם לכלבים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">חיתולים לכלבים ⚠️</td>
+                <td class="vol">450</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">שמן סלמון לכלב</td>
+                <td class="vol">450</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">חיתול לכלב</td>
+                <td class="vol">440</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">גדר לכלב</td>
+                <td class="vol">440</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">חיתול לכלבה</td>
+                <td class="vol">440</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">רתמות לכלבים</td>
+                <td class="vol">410</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">מלונה לכלבים</td>
+                <td class="vol">410</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">משחקים לכלב</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">משחק לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">אופטלגין לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">כלוב אילוף לכלב</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">בית לכלב</td>
+                <td class="vol">390</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">רתמה לכלב קטן</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">שמות לכלבים זכרים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">משחקים לכלבים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">משחק לכלב</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">מה אסור לכלבים לאכול</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">צעצועים לכלבים</td>
+                <td class="vol">360</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">כלוב לכלבים</td>
+                <td class="vol">330</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">עצם לכלב</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">מעיל לכלב</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">מקלחת לכלב</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">כלב שחור לבן</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">מיטה לכלבים גדולים</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">מיטה אורטופדית לכלב</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">סוגי כלבים בינוניים</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">מיטות לכלבים גדולים</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">תירס לכלבים</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">בובת כלב</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">כלב מים</td>
+                <td class="vol">260</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">רצועות לכלב</td>
+                <td class="vol">260</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">קערה לכלב</td>
+                <td class="vol">260</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">מברשת לכלב</td>
+                <td class="vol">260</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">סוודר לכלב</td>
+                <td class="vol">260</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">אמפולות נגד פרעושים לכלבים</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 114 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>חתולים - מזון</h3>
+                <div class="badges">
+                    <span class="badge">22 מילות מפתח</span>
+                    <span class="badge vol-badge">6,600 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">אוכל לחתולים</td>
+                <td class="vol">2,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">שימורים לחתולים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">חטיפים לחתולים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">אוכל לחתולי רחוב</td>
+                <td class="vol">390</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">חטיפים לחתולים ⚠️</td>
+                <td class="vol">350</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">אוכל לחתולי רחוב ⚠️</td>
+                <td class="vol">350</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">אוכל יבש לחתולים</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">שימורים לחתולים ⚠️</td>
+                <td class="vol">300</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">אוכל רפואי לחתולים</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">אוכל לחתולים זול</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">אוכל לחתולים מומלץ</td>
+                <td class="vol">210</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">מזון יבש לחתולים</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">אוכל לחתול</td>
+                <td class="vol">160</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">אוכל י לחתולים ⚠️</td>
+                <td class="vol">150</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">אוכל יבש לחתולים מומלץ</td>
+                <td class="vol">110</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">מזון רטוב לחתולים</td>
+                <td class="vol">110</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">אוכל לחתולים בוגרים</td>
+                <td class="vol">40</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">אוכל לחתולי רחוב המלצות</td>
+                <td class="vol">40</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">מזון לחתולים</td>
+                <td class="vol">30</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">מעדנים לחתולים</td>
+                <td class="vol">30</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">מזון לחתולים urinary</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">מזון לחתולים cd</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>חתולים - חול</h3>
+                <div class="badges">
+                    <span class="badge">20 מילות מפתח</span>
+                    <span class="badge vol-badge">6,980 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">חול לחתולים ⚠️</td>
+                <td class="vol">1,600</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">חול לחתולים</td>
+                <td class="vol">740</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">ארגז חול</td>
+                <td class="vol">590</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">חול לחתול</td>
+                <td class="vol">500</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">חול מתגבש לחתול</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">חול מתגבש לחתולים</td>
+                <td class="vol">480</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">שירותים לחתולים</td>
+                <td class="vol">440</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">חול קריסטלי לחתולים</td>
+                <td class="vol">360</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">חול קריסטל לחתולים</td>
+                <td class="vol">360</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">חול סויה לחתולים</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">ארגז חול אוטומטי</td>
+                <td class="vol">250</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">חול לחתולים מומלץ</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">ארגז חול סגור לחתולים</td>
+                <td class="vol">110</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">ארגז חול לחתול גדול</td>
+                <td class="vol">110</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">חול מתגבש</td>
+                <td class="vol">110</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">חול קריסטל ⚠️</td>
+                <td class="vol">100</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">חול קריסטל</td>
+                <td class="vol">100</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">חול מתגבש לחתולים מומלץ</td>
+                <td class="vol">90</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">ארגז חול לחתול</td>
+                <td class="vol">20</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">שירותים לחתול</td>
+                <td class="vol">10</td>
+                <td class="src">SE Ranking API</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>חתולים - אביזרים</h3>
+                <div class="badges">
+                    <span class="badge">59 מילות מפתח</span>
+                    <span class="badge vol-badge">58,290 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">חתול</td>
+                <td class="vol">40,500</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">חתולה</td>
+                <td class="vol">3,200</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">חתול סיאמי</td>
+                <td class="vol">990</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">חתול בלי שיער</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">חתולים היפואלרגנים</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">חתול היפואלרגני</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">חתול טאבי</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">חתולים היפואלרגניים</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">חתולים בריטים</td>
+                <td class="vol">540</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">משחק לחתול</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">משחקים לחתולים</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">חתול ביתי</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">חטיף לחתול</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">חטיף לחתולים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">חתול בית</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">אמפולות לחתולים ⚠️</td>
+                <td class="vol">400</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">מתקני גירוד</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">משטחי גירוד לחתול</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">משטח גירוד לחתול</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">חתול אנגלי</td>
+                <td class="vol">390</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">צעצועים לחתולים</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">אמפולות נגד פרעושים לחתולים</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">משטחי גירוד</td>
+                <td class="vol">350</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">קולר לחתול</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">אמפולות לחתולים</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">אמפולה לחתול</td>
+                <td class="vol">320</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">מתקנים לחתולים</td>
+                <td class="vol">290</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">רתמה לחתול</td>
+                <td class="vol">210</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">כלוב נשיאה לחתול</td>
+                <td class="vol">210</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">חתול טריקולור</td>
+                <td class="vol">170</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">כמה נשמות יש לחתול</td>
+                <td class="vol">170</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">שמפו לחתולים</td>
+                <td class="vol">170</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">סוגי חתולים נדירים</td>
+                <td class="vol">170</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">קקי של חתולים</td>
+                <td class="vol">170</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">לשון של חתול</td>
+                <td class="vol">170</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">מיטת חתול</td>
+                <td class="vol">140</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">חתול אמריקני קצר שיער</td>
+                <td class="vol">140</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">חתול בירמן</td>
+                <td class="vol">140</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">חתול צ ינצ ילה</td>
+                <td class="vol">110</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">חתול צ'ינצ'ילה</td>
+                <td class="vol">110</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">אילוף חתולים</td>
+                <td class="vol">110</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">שלוקים לחתולים</td>
+                <td class="vol">100</td>
+                <td class="src">zoolu.co.il (link building)</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">ארגז צרכים לחתול</td>
+                <td class="vol">90</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">חתול בלי שערות</td>
+                <td class="vol">70</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">מטרנה לחתולים</td>
+                <td class="vol">70</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">מברשת לחתול</td>
+                <td class="vol">70</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">אופטלגין לחתול</td>
+                <td class="vol">50</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">שבב לחתול</td>
+                <td class="vol">40</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">חתול ספינקס קנדי</td>
+                <td class="vol">40</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">חתול בנגלי למסירה</td>
+                <td class="vol">40</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 9 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>גורים</h3>
+                <div class="badges">
+                    <span class="badge">30 מילות מפתח</span>
+                    <span class="badge vol-badge">6,580 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">גורי כלבים</td>
+                <td class="vol">660</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">כלב גור</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">גורי פיטבול</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">גור פיטבול</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">פיטבול גור</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">אוכל לכלבים גורים</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">אוכל לגורים</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">חתול גור</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">כלוב גורים</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">אוכל לגורים כלבים</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">אוכל לגורי כלבים</td>
+                <td class="vol">320</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">גור כלבים</td>
+                <td class="vol">290</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">גורים למכירה</td>
+                <td class="vol">260</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">רועה קווקזי גור</td>
+                <td class="vol">210</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">מזון לגורי חתולים</td>
+                <td class="vol">120</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">חיסונים לגורי כלבים</td>
+                <td class="vol">110</td>
+                <td class="src">animalia.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">אוכל מומלץ לגורי חתולים</td>
+                <td class="vol">110</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">פינצ'ר גור</td>
+                <td class="vol">90</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">מזון לגורי כלבים</td>
+                <td class="vol">70</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">מטרנה לגורי חתולים</td>
+                <td class="vol">70</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">אוכל לגורי חתולים</td>
+                <td class="vol">50</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">גדר גורים</td>
+                <td class="vol">30</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">גורים של חתולים</td>
+                <td class="vol">30</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">גורי פקינז ננסי למכירה</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">גורי אמסטף</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">יוקנובה גורים</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">בקבוק הנקה לגורים</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">בקבוק לגורי חתולים</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">אוכל לגורים מומלץ</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">חתולה עם גורים</td>
+                <td class="vol">10</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>מותגים</h3>
+                <div class="badges">
+                    <span class="badge">77 מילות מפתח</span>
+                    <span class="badge vol-badge">26,080 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">כנען</td>
+                <td class="vol">3,600</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">סימבה</td>
+                <td class="vol">2,400</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">רויאל קנין</td>
+                <td class="vol">1,500</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">wellness</td>
+                <td class="vol">1,000</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">פורינה</td>
+                <td class="vol">880</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">royal canin</td>
+                <td class="vol">810</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">קונג</td>
+                <td class="vol">720</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">וולנס</td>
+                <td class="vol">720</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">monge</td>
+                <td class="vol">700</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">kong</td>
+                <td class="vol">660</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">מונג</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">פרו פלאן</td>
+                <td class="vol">590</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">פריסקיז</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">acana</td>
+                <td class="vol">480</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">פרונטליין</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">קונג לכלב</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">פטסייף</td>
+                <td class="vol">480</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">מונג סלמון</td>
+                <td class="vol">450</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">מונג לכלבים ⚠️</td>
+                <td class="vol">400</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">אקאנה ⚠️</td>
+                <td class="vol">400</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">רויאל קנין לחתולים</td>
+                <td class="vol">390</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">friskies</td>
+                <td class="vol">390</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">pro plan</td>
+                <td class="vol">390</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">מונג דרמטוזיס</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">מונג' אוכל לכלבים</td>
+                <td class="vol">360</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">פרו פלאן ⚠️</td>
+                <td class="vol">300</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">פרונטליין ⚠️</td>
+                <td class="vol">300</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">purina pro plan</td>
+                <td class="vol">260</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">purina</td>
+                <td class="vol">260</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">אוכל לכלבים מונג</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">flexi</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">monge אוכל לכלבים</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">monge סלמון</td>
+                <td class="vol">250</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">simba</td>
+                <td class="vol">240</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">אקאנה</td>
+                <td class="vol">210</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">פלקסי</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">eminent</td>
+                <td class="vol">210</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">n&d ⚠️</td>
+                <td class="vol">200</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">מונג סלמון 12 קילו</td>
+                <td class="vol">200</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">מונג היפואלרגני</td>
+                <td class="vol">200</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">icat</td>
+                <td class="vol">150</td>
+                <td class="src">mhaim1.com (XLSX)</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">מונג'</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">מונג סלמון גורים</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">מונג כבש</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">פרו פלאן לחתולים</td>
+                <td class="vol">140</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">josera</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">פריסקיז מבצע</td>
+                <td class="vol">140</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">טרופיקל</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">whiskas</td>
+                <td class="vol">110</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">ג'וסרה</td>
+                <td class="vol">110</td>
+                <td class="src">SE Ranking API</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 27 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>מקומי - חנויות</h3>
+                <div class="badges">
+                    <span class="badge">28 מילות מפתח</span>
+                    <span class="badge vol-badge">28,340 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">חנות חיות</td>
+                <td class="vol">22,200</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">pet shop</td>
+                <td class="vol">660</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">חנות חיות תל אביב</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">חנות חיות רמת גן</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">פט שופ</td>
+                <td class="vol">480</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">חנות חיות ברחובות</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">חנות חיות בחולון</td>
+                <td class="vol">480</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">חנות חיות מחמד</td>
+                <td class="vol">480</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">חנויות חיות בקריות</td>
+                <td class="vol">390</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">חנות חיות אונליין</td>
+                <td class="vol">320</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">חנויות חיות</td>
+                <td class="vol">270</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">חנות חיות חולון</td>
+                <td class="vol">250</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">חנות חיות בתל אביב</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">חנות חיות טירת כרמל</td>
+                <td class="vol">170</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">חנות חיות גבעתיים</td>
+                <td class="vol">150</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">איגואנה חנות חיות</td>
+                <td class="vol">140</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">חנות חיות ברמת גן</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">חנות חיות משלוחים</td>
+                <td class="vol">70</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">חנות כלבים תל אביב</td>
+                <td class="vol">50</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">חנות חיות רוממה</td>
+                <td class="vol">50</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">חנות חיות סוקולוב חולון</td>
+                <td class="vol">50</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">חנות חיות בגבעתיים</td>
+                <td class="vol">40</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">חנות חיות תל אביב משלוחים</td>
+                <td class="vol">30</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">חנות חיות רוממה חיפה</td>
+                <td class="vol">20</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">אוכל לכלבים תל אביב</td>
+                <td class="vol">20</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">חנות חיות בדרום תל אביב</td>
+                <td class="vol">20</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">חנות חיות מחמד נתניה</td>
+                <td class="vol">20</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">pet store</td>
+                <td class="vol">10</td>
+                <td class="src">SE Ranking API</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>ציפורים ואחרים</h3>
+                <div class="badges">
+                    <span class="badge">59 מילות מפתח</span>
+                    <span class="badge vol-badge">36,020 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">אוגר</td>
+                <td class="vol">8,000</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">אקווריום</td>
+                <td class="vol">5,400</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">תוכי</td>
+                <td class="vol">5,400</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">ציפורים</td>
+                <td class="vol">4,400</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">טרריום</td>
+                <td class="vol">2,900</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">דגי נוי</td>
+                <td class="vol">1,900</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">תוכים</td>
+                <td class="vol">1,300</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">זוחלים</td>
+                <td class="vol">540</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">כלובים לתוכים</td>
+                <td class="vol">410</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">כלוב לתוכים</td>
+                <td class="vol">410</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">אוכל לדגים</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">אוכל לתוכים</td>
+                <td class="vol">390</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">כלוב לאוגר</td>
+                <td class="vol">330</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">תוכי סנגל</td>
+                <td class="vol">320</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">כלוב ציפורים</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">כלוב אוגרים</td>
+                <td class="vol">260</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">תוכי קאיק</td>
+                <td class="vol">210</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">אקווריום מחיר</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">אוכל לאוגרים</td>
+                <td class="vol">210</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">סוג של דג טורף</td>
+                <td class="vol">210</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">נסורת לאוגרים</td>
+                <td class="vol">170</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">כלוב לתוכי גדול</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">מה אוגרים אוכלים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">דג סייפן</td>
+                <td class="vol">170</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">סנגל תוכי</td>
+                <td class="vol">170</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">צעצועים לתוכים</td>
+                <td class="vol">170</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">אוכל לציפורים</td>
+                <td class="vol">140</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">הדג הכי יפה בעולם</td>
+                <td class="vol">110</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">דג ממשפחת הקרפיונים</td>
+                <td class="vol">110</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">אקווריום למכירה בזול</td>
+                <td class="vol">110</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">כלוב גדול לתוכים</td>
+                <td class="vol">100</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">תוכי קוקטייל</td>
+                <td class="vol">90</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">דג קרב תוחלת חיים</td>
+                <td class="vol">90</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">מזון לתוכים</td>
+                <td class="vol">90</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">פחם לאקווריום</td>
+                <td class="vol">90</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">איך דגים מתרבים</td>
+                <td class="vol">90</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">מזון לדגים</td>
+                <td class="vol">70</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">מה דגים אוכלים</td>
+                <td class="vol">70</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">מה תוכים אוכלים</td>
+                <td class="vol">70</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">מזון לציפורים</td>
+                <td class="vol">40</td>
+                <td class="src">SE Ranking API</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">דגי קוי</td>
+                <td class="vol">30</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">אוכל לדגי נוי</td>
+                <td class="vol">30</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">סוגי דגי מאכל</td>
+                <td class="vol">30</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">כלוב לתוכי</td>
+                <td class="vol">30</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">דגי זהב גדולים</td>
+                <td class="vol">20</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">האקווריום הגדול בישראל</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">דגי זהב רבייה</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">תמונות של דגים טורפים</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">איך לעצב אקווריום</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">דגי נוי לאקווריום מים מתוקים</td>
+                <td class="vol">10</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 9 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="category-section">
+            <div class="category-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h3>חיות מחמד - כללי</h3>
+                <div class="badges">
+                    <span class="badge">196 מילות מפתח</span>
+                    <span class="badge vol-badge">238,080 נפח חיפוש</span>
+                </div>
+            </div>
+            <div class="category-body">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th><th>מקור</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw">פודל טוי</td>
+                <td class="vol">22,200</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw">בורדר קולי</td>
+                <td class="vol">18,100</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw">שיצו</td>
+                <td class="vol">14,800</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw">גולדן רטריבר</td>
+                <td class="vol">14,800</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw">חיות</td>
+                <td class="vol">10,800</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw">רועה גרמני</td>
+                <td class="vol">10,800</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw">רועה בלגי</td>
+                <td class="vol">9,900</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw">פודל</td>
+                <td class="vol">9,900</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw">בולדוג צרפתי</td>
+                <td class="vol">8,100</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw">רוטווילר</td>
+                <td class="vol">8,000</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw">מכונת תספורת</td>
+                <td class="vol">8,000</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw">לברדור</td>
+                <td class="vol">8,000</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw">צ'יוואווה</td>
+                <td class="vol">6,600</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw">רועה קווקזי</td>
+                <td class="vol">6,600</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw">אקיטה</td>
+                <td class="vol">5,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw">מלינואה</td>
+                <td class="vol">5,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw">גולדן</td>
+                <td class="vol">4,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw">יורקשייר</td>
+                <td class="vol">4,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw">פומרניין</td>
+                <td class="vol">4,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw">אקיטה אמריקאית</td>
+                <td class="vol">4,400</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw">פיטבול</td>
+                <td class="vol">3,600</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw">קרציות</td>
+                <td class="vol">3,600</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw">קוקר ספניאל</td>
+                <td class="vol">3,200</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw">לברדודל</td>
+                <td class="vol">3,200</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw">ויסלה</td>
+                <td class="vol">2,900</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw">טרייר</td>
+                <td class="vol">2,900</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw">פודל ננסי</td>
+                <td class="vol">1,800</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw">ג'ק ראסל</td>
+                <td class="vol">1,300</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw">ארה</td>
+                <td class="vol">1,100</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw">כלוב לארנבים</td>
+                <td class="vol">1,000</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw">גק ראסל</td>
+                <td class="vol">920</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw">פינצ'ר</td>
+                <td class="vol">810</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw">מזון היפואלרגני ⚠️</td>
+                <td class="vol">800</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw">המחסן של חיים (sitelink rich snippet)</td>
+                <td class="vol">700</td>
+                <td class="src">mhaim1.com (XLSX)</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw">שירותים אוטומטיים</td>
+                <td class="vol">700</td>
+                <td class="src">mhaim1.com (content plan)</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw">אוכל לחיות</td>
+                <td class="vol">590</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw">אוכל לארנבים</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw">כלוב אילוף</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw">קולר נגד פרעושים</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw">קולר נגד נביחות</td>
+                <td class="vol">590</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw">כדור נגד פרעושים</td>
+                <td class="vol">590</td>
+                <td class="src">zoolu.co.il</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw">פינצ'ר מעורב</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw">ליזין</td>
+                <td class="vol">590</td>
+                <td class="src">petmarket.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw">קוקר ספניאל אמריקאי</td>
+                <td class="vol">590</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw">אמפולות נגד פרעושים</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw">אמפולה נגד פרעושים</td>
+                <td class="vol">480</td>
+                <td class="src">zooland.co.il (API)</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw">רועה קווקזי ענק</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw">פודל מיניאטורי</td>
+                <td class="vol">480</td>
+                <td class="src">mhaim1.com (API)</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw">ht</td>
+                <td class="vol">450</td>
+                <td class="src">zoolu.co.il (article plan)</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw">פינצ ר</td>
+                <td class="vol">440</td>
+                <td class="src">petshop.co.il (API)</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 146 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        </div>
+
+        <div class="methodology">
+            <h2>מתודולוגיה</h2>
+            <ol>
+                <li><strong>ניתוח אתר זולו</strong> — סריקת האתר להבנת קטגוריות המוצר, מותגים, סניפים פיזיים ומבנה האתר</li>
+                <li><strong>זיהוי מתחרים ישראליים</strong> — איתור מתחרים אמיתיים בשוק חנויות החיות בישראל על סמך נתוני XLSX + SE Ranking API</li>
+                <li><strong>סריקת מתחרים</strong> — שליפת מילות מפתח אורגניות של כל מתחרה דרך SE Ranking Domain API (source=il)</li>
+                <li><strong>הרחבת מילות מפתח</strong> — יצירת וריאציות עבריות (יחיד, רבים, סמיכות) + שילובי מותגים + מילות מפתח מקומיות</li>
+                <li><strong>אימות נפח חיפוש</strong> — כל מילות המפתח אומתו דרך SE Ranking Data API (source=il, HTTP 201)</li>
+                <li><strong>ארגון לקטגוריות</strong> — חלוקה ל-11 קטגוריות לפי סוג חיה, סוג מוצר, מותג ומיקום</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            <p>דוח זה נוצר על ידי NC Digital</p>
+            <p>כל הנתונים מבוססים על SE Ranking API (source=il) — ישראל בלבד</p>
+        </div>
+    </div>
+
+    <script>
+    function filterKeywords(query) {
+        query = query.toLowerCase();
+        document.querySelectorAll('.category-section').forEach(section => {
+            let found = false;
+            section.querySelectorAll('tbody tr').forEach(row => {
+                const kw = row.querySelector('.kw');
+                if (kw && kw.textContent.toLowerCase().includes(query)) {
+                    row.style.display = '';
+                    found = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            section.style.display = found || !query ? '' : 'none';
+            if (found && query) section.classList.remove('collapsed');
+        });
+    }
+    </script>
+</body>
+</html>
