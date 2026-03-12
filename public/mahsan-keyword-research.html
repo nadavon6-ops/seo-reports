@@ -1,0 +1,4424 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>מחקר מילות מפתח — המחסן של חיים | NC Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #0a0e17;
+            color: #e0e6ed;
+            line-height: 1.6;
+            direction: rtl;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        .header {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a2744 100%);
+            border: 1px solid #1e3a5f;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(90deg, #0891b2, #06b6d4, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .subtitle { color: #94a3b8; font-size: 1.1em; }
+        .header .date { color: #64748b; font-size: 0.9em; margin-top: 5px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #0d1b2a, #162032);
+            border: 1px solid #1e3a5f;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: 800;
+            color: #22d3ee;
+        }
+        .stat-card .label {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-top: 4px;
+        }
+
+        .search-box {
+            margin-bottom: 24px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            background: #0d1b2a;
+            border: 1px solid #1e3a5f;
+            border-radius: 10px;
+            color: #e0e6ed;
+            font-size: 1em;
+            font-family: 'Heebo', sans-serif;
+            direction: rtl;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+        }
+        .search-box input::placeholder { color: #4a5568; }
+
+        .section {
+            background: linear-gradient(135deg, #0d1b2a, #162032);
+            border: 1px solid #1e3a5f;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section h2 {
+            color: #22d3ee;
+            font-size: 1.4em;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead th {
+            background: #1a2744;
+            color: #22d3ee;
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid #1e3a5f;
+            position: sticky;
+            top: 0;
+        }
+        tbody td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #111d2e;
+        }
+        tbody tr:hover { background: rgba(8, 145, 178, 0.05); }
+        .kw-cell { font-weight: 500; }
+        .vol-cell { color: #22d3ee; font-weight: 600; text-align: left; direction: ltr; }
+
+        .tab-section {
+            background: linear-gradient(135deg, #0d1b2a, #162032);
+            border: 1px solid #1e3a5f;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tab-header:hover { background: rgba(8, 145, 178, 0.05); }
+        .tab-header h3 { color: #e0e6ed; font-size: 1.1em; }
+        .tab-stats { display: flex; gap: 10px; align-items: center; }
+        .badge {
+            background: #1a2744;
+            color: #94a3b8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .vol-badge { color: #22d3ee; border: 1px solid #0891b2; }
+        .toggle-icon { color: #64748b; transition: transform 0.3s; }
+        .tab-section.open .toggle-icon { transform: rotate(180deg); }
+        .tab-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .tab-section.open .tab-content {
+            max-height: 10000px;
+            padding: 0 24px 24px;
+        }
+        .remaining {
+            color: #64748b;
+            font-size: 0.9em;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #4a5568;
+            padding: 30px;
+            font-size: 0.85em;
+        }
+        .footer a { color: #0891b2; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .header { padding: 24px 16px; }
+            .header h1 { font-size: 1.6em; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 16px; }
+            .stat-card .value { font-size: 1.5em; }
+            .tab-header { flex-direction: column; gap: 8px; }
+            .tab-stats { flex-wrap: wrap; }
+            table { font-size: 0.9em; }
+            thead th, tbody td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>מחקר מילות מפתח — המחסן של חיים</h1>
+        <div class="subtitle">mhaim1.com | חנות חיות מחמד — מזון, ציוד ואביזרים</div>
+        <div class="date">12/03/2026 | NC Digital</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="value">1,876</div>
+            <div class="label">מילות מפתח</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">713,760</div>
+            <div class="label">נפח חיפוש חודשי כולל</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">11</div>
+            <div class="label">קטגוריות</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">7</div>
+            <div class="label">מתחרים שנסרקו</div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="חיפוש מילת מפתח..." oninput="filterKeywords(this.value)">
+    </div>
+
+    <div class="section">
+        <h2>מתחרים שנותחו</h2>
+        <table>
+            <thead><tr><th>דומיין</th><th>מילות מפתח שנמצאו</th></tr></thead>
+            <tbody>
+        <tr>
+            <td>zoolu.co.il</td>
+            <td>3,685</td>
+        </tr>
+        <tr>
+            <td>petmarket.co.il</td>
+            <td>38</td>
+        </tr>
+        <tr>
+            <td>zooland.co.il</td>
+            <td>4,355</td>
+        </tr>
+        <tr>
+            <td>animalia.co.il</td>
+            <td>38</td>
+        </tr>
+        <tr>
+            <td>pet4u.co.il</td>
+            <td>77</td>
+        </tr>
+        <tr>
+            <td>petshop.co.il</td>
+            <td>539</td>
+        </tr>
+        <tr>
+            <td>zoomarket.co.il</td>
+            <td>21</td>
+        </tr></tbody>
+        </table>
+    </div>
+
+    <h2 style="color: #22d3ee; font-size: 1.4em; margin-bottom: 16px;">קטגוריות מילות מפתח</h2>
+
+    
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>מותג - המחסן של חיים</h3>
+                <div class="tab-stats">
+                    <span class="badge">2 מילות מפתח</span>
+                    <span class="badge vol-badge">130 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">המחסן של חיים ראשון לציון</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">המחסן של חיים</td>
+                <td class="vol-cell">20</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>כלבים - מזון</h3>
+                <div class="tab-stats">
+                    <span class="badge">150 מילות מפתח</span>
+                    <span class="badge vol-badge">22,780 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">אוכל לכלבים</td>
+                <td class="vol-cell">5,400</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">חטיפים לכלב</td>
+                <td class="vol-cell">880</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">אוכל לכלב</td>
+                <td class="vol-cell">720</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">מזון לכלבים</td>
+                <td class="vol-cell">660</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">אוכל טבעי לכלבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">הילס אוכל לכלבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">גוסבי אוכל לכלבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">n&d אוכל לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">אוכל היפואלרגני לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">אוכל היפואלרגני לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">אוכל לכלבים מומלץ</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">אוכל רפואי לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">חטיפים דנטליים לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">אוכל רפואי לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">קערת אוכל לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">אוכל רטוב לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">עצמות לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">מונג' אוכל לכלבים</td>
+                <td class="vol-cell">360</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">מזון טבעי לכלבים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">אוכל לכלבים קטנים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">hills אוכל לכלבים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">אקאנה אוכל לכלבים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">שימורים לכלבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">now אוכל לכלבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">monge אוכל לכלבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">אוכל לכלב כשר לפסח</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">acana אוכל לכלבים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">אוכל דיאטטי לכלבים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">מזון רפואי לכלב</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">אוכל לכלבים כשר לפסח</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">מזון רפואי לכלבים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">אוכל מומלץ לכלבים קטנים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">מזון יבש לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">אוכל מומלץ לכלב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">אוכל יבש לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">אוכל לכלבים היפואלרגני</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">אוכל מומלץ לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">brit אוכל לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">אוכל לכלב היפואלרגני</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">אוכל לכלבים 20 קילו</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">מזון היפואלרגני לכלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">חטיפי כלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">בריט אוכל לכלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">אוכל לכלבים מבוגרים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">כלי אוכל לכלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">מזון רטוב לכלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">אוכל איכותי לכלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">אוכל לכלבים now</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">פורינה אוכל לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">אוכל לכלבים monge</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">מזון לכלבים מומלץ</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">advance אוכל לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">חטיפים לכלבים מתכון</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">orijen אוכל לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">חנות מזון לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">אוכל טרי לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">כמות אוכל לכלב לפי משקל</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">go מזון לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">חטיפים לכלבים במבצע</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">הילס מזון לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">רויאל קנין אוכל לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">מזון היפואלרגני לכלבים מומלץ</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">אוכל לכלבים פרו פלאן</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">אקאנה מזון לכלבים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">מזון לכלב</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">מלך האריות אוכל לכלבים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">אוכל טוב לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">חטיפים בריאים לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">אוכל ביתי לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">עצמות דנטליות לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">גוסבי מזון לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">יבואן מזון לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">אוכל לכלבים taste of the wild</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">אוכל לכלבים gosbi</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">אוכל לכלבים גדרה</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">מזון איכותי לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">מזון מומלץ לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">מזון אולטרה פרימיום לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">מזון לכלבים סלמון</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">מזון פרימיום לכלבים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">אוכל לכלב פומרניין</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">josera אוכל לכלבים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">אוכל היפואלרגני לכלבים מומלץ</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">בריט מזון לכלבים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">אוכל לכלבים בזול</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">חטיפים לכלבים תוצרת בית</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">אוכל לכלבים נגד נשירה</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">אוונט מזון לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>89</td>
+                <td class="kw-cell">דירוג אוכל לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>90</td>
+                <td class="kw-cell">מה אוכל כלב ים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>91</td>
+                <td class="kw-cell">אוכל שאסור לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>92</td>
+                <td class="kw-cell">מזון טרי לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>93</td>
+                <td class="kw-cell">acana מזון לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>94</td>
+                <td class="kw-cell">farmina אוכל לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>95</td>
+                <td class="kw-cell">סוגי מזון לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td class="kw-cell">מזון לכלבים רויאל קנין</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>97</td>
+                <td class="kw-cell">מזון רפואי לכלבים כליות</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>98</td>
+                <td class="kw-cell">purina אוכל לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>99</td>
+                <td class="kw-cell">חברות אוכל לכלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>100</td>
+                <td class="kw-cell">כמות אוכל לכלב</td>
+                <td class="vol-cell">20</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 50 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>כלבים - אביזרים</h3>
+                <div class="tab-stats">
+                    <span class="badge">155 מילות מפתח</span>
+                    <span class="badge vol-badge">28,420 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">מיטה לכלב</td>
+                <td class="vol-cell">4,400</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">קולר נגד פרעושים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">כדור נגד פרעושים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">מלונה לכלב גדול</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">כדורים נגד פרעושים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">כלוב אילוף</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">משחת שיניים לכלבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">קולר נגד נביחות</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">משחת שיניים לכלב</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">קולר חשמלי לכלבים</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">כדור נגד פרעושים לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">אמפולה נגד פרעושים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">מיטה לכלב קטן</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">מסרק לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">פרונטליין</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">גדר לכלב</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">חיתולים לכלב</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">חיתול לכלבה</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">חיתול לכלב</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">מלונה לכלבים</td>
+                <td class="vol-cell">410</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">רתמות לכלבים</td>
+                <td class="vol-cell">410</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">רתמה לכלבים</td>
+                <td class="vol-cell">410</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">כלוב אילוף לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">קולר דוקרנים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">רתמה לכלב קטן</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">אמפולה נגד פרעושים לחתול</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">צעצועים לכלבים</td>
+                <td class="vol-cell">360</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">צעצוע לכלבים</td>
+                <td class="vol-cell">360</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">כלוב לכלבים</td>
+                <td class="vol-cell">330</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">מיטה אורטופדית לכלב</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">ריסוס נגד פרעושים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">מיטות לכלבים גדולים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">כלוב הטסה</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">בובת כלב</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">רצועה לכלבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">קולר חנק</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">מיטות לכלבים בינוניים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">מיטה לכלב בינוני</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">קולר חשמלי</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">כלוב אילוף גדול</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">happy dog</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">כלוב לכלב גדול</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">כלוב טיסה לכלב</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">מיטה לכלבים</td>
+                <td class="vol-cell">200</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">מיטות לכלבים</td>
+                <td class="vol-cell">200</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">שמפו לכלב</td>
+                <td class="vol-cell">180</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">קולרים לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">גדר כלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">קולר לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">רתמה לכלב גדול</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">רצועה לכלב גדול</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">גדר תיחום לכלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">כלוב כלבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">גדר תיחום לכלב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">מיטות כלבים</td>
+                <td class="vol-cell">150</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">אביזרים לכלב</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">אביזרים לכלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">גדר אילוף לכלב</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">קולר סרסטו לכלב</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">קולר לכלב גדול</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">קולר אליזבת לכלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">מיטה גדולה לכלב</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">גדר חשמלית לכלב</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">פרונטליין תרסיס</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">שמן סלמון לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">שמפו היפואלרגני לכלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">קולר אליזבת לכלב</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">כדור נגד פרעושים לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">מלונה גדולה לכלב</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">פרונטליין לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">שמפו לכלבים מומלץ</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">בובות כלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">כלוב לכלבים גדולים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">חיתולים לכלבים מבוגרים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">חיתולים לכלבים במחזור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">כלובים לכלבים יד 2</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">כלוב הטסה לכלב</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">בובות לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">פרונטליין לחתולים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">צעצועי כלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">שמפו רפואי לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">קולר קרציות לכלב</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">מלונה לכלב כתר</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">מיטה פלאפי לכלב</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">קולר נגד נביחות מומלץ</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">רצועה לכלב נגד משיכות</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">מיטות לכלב</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">קולר חשמלי לכלב מומלץ</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>89</td>
+                <td class="kw-cell">רצועה נמתחת לכלב</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>90</td>
+                <td class="kw-cell">מלונה לכלב גדול למסירה</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>91</td>
+                <td class="kw-cell">גדר לכלבים קטנים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>92</td>
+                <td class="kw-cell">גדר לכלבים בבית</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>93</td>
+                <td class="kw-cell">גדר לכלבים גדולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>94</td>
+                <td class="kw-cell">קולר דוקרנים לכלב</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>95</td>
+                <td class="kw-cell">חיתולים לכלבים קטנים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td class="kw-cell">רצועה לשני כלבים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>97</td>
+                <td class="kw-cell">מלונה לכלב לחורף</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>98</td>
+                <td class="kw-cell">רצועה לכלב 5 מטר</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>99</td>
+                <td class="kw-cell">קולר נגד פרעושים לכלבים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>100</td>
+                <td class="kw-cell">קולר נגד נביחות חוות דעת</td>
+                <td class="vol-cell">50</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 55 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>חתולים - מזון</h3>
+                <div class="tab-stats">
+                    <span class="badge">58 מילות מפתח</span>
+                    <span class="badge vol-badge">7,980 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">אוכל לחתולים</td>
+                <td class="vol-cell">2,400</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">שימורים לחתולים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">שימורים לחתול</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">חטיפים לחתולים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">אוכל רטוב לחתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">אוכל לחתולי רחוב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">אוכל יבש לחתולים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">מזון יבש לחתולים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">אוכל רפואי לחתול</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">אוכל רפואי לחתולים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">אוכל לחתולים מומלץ</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">אוכל לחתול</td>
+                <td class="vol-cell">160</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">מזון חתולים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">מזון רטוב לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">אוכל יבש לחתולים מומלץ</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">מזון רפואי לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">מזון רטוב לחתול</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">אוכל מומלץ לחתול</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">אוכל מומלץ לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">אוכל טבעי לחתולים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">אוכל לחתולי רחוב חינם</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">אוכל דיאטטי לחתולים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">אקאנה אוכל לחתולים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">hills אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">מזון טבעי לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">כלי אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">מונג אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">מונג' אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">שק אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">אוכל זול לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">אוכל לחתולי רחוב המלצות</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">אוכל איכותי לחתולים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">מזון לחתולים מומלץ</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">אוכל לחתולי חצר</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">אוכל לחתולים royal canin</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">אוכל לחתולים בוגרים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">מזון לחתולים זול</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">מעדנים לחתולים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">מזון לחתולים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">מזון מומלץ לחתולים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">מזון איכותי לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">הילס מזון לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">אוליבר מזון לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">רויאל קנין אוכל לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">אוכל טוב לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">מזון לחתולים cd</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">אוכל לחתולים סופר פרימיום</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">אוכל רטוב איכותי לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">מה אוכלים חתולי רחוב</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">מזון לחתולים בחיפה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">פריסקיז מזון לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">מזון לחתול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">friskies אוכל לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">מזון לחתולים urinary</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">מזון יבש מומלץ לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">מזון לחתולים תל אביב</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">אוכל לחתולים בחיפה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">אקאנה מזון לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>חתולים - חול</h3>
+                <div class="tab-stats">
+                    <span class="badge">23 מילות מפתח</span>
+                    <span class="badge vol-badge">3,650 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">חול לחתולים</td>
+                <td class="vol-cell">740</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">ארגז חול</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">חול קריסטלי לחתולים</td>
+                <td class="vol-cell">360</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">חול קריסטלי</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">ארגז חול לחתול אוטומטי</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">חול לחתולים מומלץ</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">ארגז חול אוטומטי לחתול</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">ארגז חול אוטומטי לחתולים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">חול לחתולים עם פחם</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">ארגז חול לחתול מומלץ</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">ארגז חול סגור לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">ארגז חול לחתול גדול</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">חול מתגבש</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">שירותים חשמליים לחתול</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">חול מתגבש לחתולים מומלץ</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">ארגז חול עם מכסה</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">ארגז חול לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">ארגז חול לחתולים שמנקה את עצמו</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">שירותים אוטומטיים לחתול זאפ</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">חול לחתולים ללא ריח</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">שירותים לחתול עם מסנן</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">איך מרגילים חתול לארגז חול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">שירותים אוטומטיים לחתול סמארטסיפט</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>חתולים - אביזרים</h3>
+                <div class="tab-stats">
+                    <span class="badge">31 מילות מפתח</span>
+                    <span class="badge vol-badge">4,320 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">משחקים לחתולים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">משחק לחתול</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">משטחי גירוד לחתול</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">משטח גירוד לחתול</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">מתקן גירוד</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">צעצועים לחתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">צעצועים לחתול</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">משחק חתול</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">ציוד לחתולים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">משחקים של חתולים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">מיטת חתול</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">משחקים של חתול</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">catit</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">מתקן גירוד לחתול מומלץ</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">מתקן גירוד לחתול מבצע</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">מתקן גירוד לחתול למסירה</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">משחק עם חתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">משחק החתול</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">מתקן גירוד לחתול</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">קודי cat</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">מיטה לחתול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">מיטות לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">מתקן גירוד לחתול גרופון</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">מתקן גירוד לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">משחקי כלבים וחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">משחקי חתולים וכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">משחקי חתולים כלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">משחקים וצעצועים לחתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">משחק חתולה לבנה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">משחק החתולה המדברת</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">משחקי חתולים מדברים</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>גורים</h3>
+                <div class="tab-stats">
+                    <span class="badge">88 מילות מפתח</span>
+                    <span class="badge vol-badge">9,660 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">גור</td>
+                <td class="vol-cell">1,800</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">גורי כלבים</td>
+                <td class="vol-cell">660</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">אוכל לגורים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">גור פיטבול</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">גורי פיטבול</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">גורי</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">אוכל לכלבים גורים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">כלוב גורים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">חתול גור</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">אוכל רטוב לגורי חתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">גורים</td>
+                <td class="vol-cell">370</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">אוכל לגורי כלבים</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">בולדוג צרפתי גור</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">קינג צ'ארלס גור</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">חיסונים לגורי כלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">דג גורמי</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">אוכל מומלץ לגורי חתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">חתול בריטי גור</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">שמפו לגורים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">חגורת בטיחות לכלב</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">עד איזה גיל כלב נחשב גור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">מלטז גור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">לגור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">פינצ ר גור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">מלטז גורים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">אוכל מומלץ לגורים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">פינצ'ר גור</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">אוכל לחתולים גורים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">חתול פרסי גור</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">כלב לברדור גור</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">מטרנה לגורי חתולים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">תחליף חלב לגורי כלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">מזון לגורים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">הילס לגורים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">שרקנים גורים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">האם מותר לקלח גור כלבים בן חודשיים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">בונזו גורים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">כלב רוטווילר גור</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">גרגורים של חתולים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">חתול ספינקס גור</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">now גורים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">חגורת חנק</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">גרגור של חתול</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">אקנה גורים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">גור חתולים פרסי</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">גדר גורים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">גורים של חתולים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">קולר לגור</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">מאיזה גיל אפשר לקלח גור כלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">חגורה לכלב לרכב</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">צעצועים לגורי כלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">כמה גור חתולים צריך לאכול</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">מקלחת לגורי כלבים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">לברדור גור שחור</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">יוקנובה גורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">בקבוק הנקה לגורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">גור חתולים לא אוכל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">גור לברדור לבן</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">כמות אוכל לגורי כלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">יוקנובה גורים גזע גדול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">גורי בוקסר לאימוץ</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">גורי אמסטף</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">גורי פקינז ננסי למכירה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">בונזו גורים מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">אוכל לגורים מומלץ</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">רויאל קנין גורים מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">כמה אוכל גור חתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">אוכל לגורי כלבים בני חודש</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">go אוכל לגורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">פרונטליין לגורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">החלפת פרווה אצל גורי כלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">אקאנה לגורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">חתולה עם גורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">גורי לברדור חומים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">גידול גור חתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">מה גור חתולים אוכל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">חנות גורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">בקבוק לגורי חתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">אוכל לגור</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">גור הדברות חוות דעת</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">אקנה גורים גזע קטן</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">גור הדברות המלצות</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">חגורות בטיחות לרכב למכירה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">האכלת גורי חתולים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">גור חתולים פרסי לאימוץ</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">מקלחת לגורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">רשת אילוף גורים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">גורי ספינקס</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>מותגים</h3>
+                <div class="tab-stats">
+                    <span class="badge">110 מילות מפתח</span>
+                    <span class="badge vol-badge">24,600 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">סימבה</td>
+                <td class="vol-cell">2,400</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">רויאל קנין</td>
+                <td class="vol-cell">1,500</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">hills</td>
+                <td class="vol-cell">1,100</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">חתול בריטי</td>
+                <td class="vol-cell">990</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">פורינה</td>
+                <td class="vol-cell">880</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">royal canin</td>
+                <td class="vol-cell">810</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">קונג</td>
+                <td class="vol-cell">720</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">וולנס</td>
+                <td class="vol-cell">720</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">kong</td>
+                <td class="vol-cell">660</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">מונג</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">פריסקיז</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">טייסט אוף דה ווילד</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">פרו פלאן סלמון</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">פרו פלאן</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">חתולה בריטית</td>
+                <td class="vol-cell">540</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">חתולים בריטים</td>
+                <td class="vol-cell">540</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">acana</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">קונג לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">חתול בריטי ארוך שיער</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">הילס</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">רויאל קנין היפואלרגני</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">רויאל קנין לחתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">מונג דרמטוזיס</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">friskies</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">pro plan</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">טייסט אוף דה ווילד סלמון</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">purina</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">flexi</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">purina pro plan</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">simba</td>
+                <td class="vol-cell">240</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">פלקסי</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">בריטי קצר שיער</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">אקאנה</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">taste of the wild סלמון</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">חתול בריטי לבן</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">בריט</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">אקאנה לכלבים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">רויאל קנין גסטרו</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">פרו פלאן לחתולים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">josera</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">פרו פלאן לחתול</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">חתול בריטי אפור</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">חתול בריטי צינצילה</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">אוריג'ן</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">פריסקיז מבצע</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">פורינה פרו פלאן</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">חתול בריטי חום</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">רויאל קנין לכלבים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">מונג לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">נטורל אנד דלישס</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">whiskas</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">מונג' לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">ג'וסרה</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">מונג לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">חתול בריטי גולדן</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">חתול בריטי כחול</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">רויאל קנין היפואלרגני לחתול</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">מונג' לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">פרו פלאן כבש</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">בריטי חתול</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">רויאל קנין פודל</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">פרו פלאן לכלבים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">רויאל קנין מיני אדולט</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">wellness core</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">פרו פלאן חתולים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">פרו פלאן לכלב</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">חתול בריטי שחור</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">פריסקיז שימורים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">רצועת פלקסי</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">מונג' חתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">רויאל קנין יורינרי לכלב</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">בריט קר סלמון</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">מונג חתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">רויאל קנין יורינרי לחתול</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">הילס לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">kong לכלב</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">kong לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">פרמינה</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">חתול בריטי אופי</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">וולנס קור</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">רויאל קנין ישראל</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">taste of the wild מחיר</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">חתול בריטי קצר שיער לאימוץ</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">אקאנה כבש ותפוח</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">פרו פלאן גזע קטן</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">royal canin לחתולים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">פריסקיז מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">petsafe ישראל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>89</td>
+                <td class="kw-cell">pro plan מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>90</td>
+                <td class="kw-cell">orijen לכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>91</td>
+                <td class="kw-cell">חתול בריטי ארוך שיער כחול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>92</td>
+                <td class="kw-cell">acana מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>93</td>
+                <td class="kw-cell">מזרן סימבה ביקורת</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>94</td>
+                <td class="kw-cell">רויאל קנין מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>95</td>
+                <td class="kw-cell">חתול בריטי קצר שיער</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td class="kw-cell">orijen אוכל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>97</td>
+                <td class="kw-cell">אוריג'ן מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>98</td>
+                <td class="kw-cell">רויאל קנין ג וניור</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>99</td>
+                <td class="kw-cell">פרו פלאן סנסטיב</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>100</td>
+                <td class="kw-cell">חתול בריטי קצר שיער בית גידול</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 10 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>מקומי - חנויות</h3>
+                <div class="tab-stats">
+                    <span class="badge">83 מילות מפתח</span>
+                    <span class="badge vol-badge">31,140 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">חנות חיות</td>
+                <td class="vol-cell">22,200</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">חנויות חיות תל אביב</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">חנות חיות רמת גן</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">חנות חיות בפתח תקווה</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">חנות חיות בחולון</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">חנויות חיות בחולון</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">חנות חיות מחמד</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">חנות חיות לידי</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">חנות חיות בבת ים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">חנויות חיות בקריות</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">חנות חיות בקריות</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">חנות חיות אונליין</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">חנות חיות זולה</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">חנות חיות נשר</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">חנות חיות בחיפה</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">חנות חיות בתל אביב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">חנות חיות טירת כרמל</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">חנות חיות ברמת גן</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">חנות חיות תל מונד</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">חנות חיות בקרית אונו</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">חנות חיות דיזנגוף</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">חנות חיות גרנד קניון</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">חנות חיות בית שאן</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">תרנגולת חנות חיות</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">חנות חיות ברמת השרון</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">חנות חיות אבן גבירול</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">זולו חנות חיות</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">חנות חיות מעלות</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">חנות חיות בכפר יונה</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">zoo חנות חיות</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">אוכל לכלבים משלוחים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">חנות חיות משלוחים</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">חנות חיות נגבה רמת גן</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">חנות חיות גרנד קניון באר שבע</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">חנות חיות במרכז</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">חנות חיות בלפור בת ים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">חנות חיות רוממה</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">זאביק חנות חיות</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">חנות חיות ערד</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">חנות חיות כצנלסון גבעתיים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">חנות חיות ליד קניון הזהב</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">חנות חיות סוקולוב חולון</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">חנות חיות להבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">ספקים לחנות חיות</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">לורי חנות חיות</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">חנות חיות חצור</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">חנות חיות בבאר יעקב</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">חנות חיות סגולה</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">דרושים חנות חיות</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">חנות חיות חצור הגלילית</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">חנות חיות בחולון סוקולוב</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">חנות חיות קדימה צורן</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">חנות חיות סוקולוב רמת השרון</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">חנות חיות יהודה מכבי</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">חנות חיות מול זכרון</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">חנות חיות גילה</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">חנות חיות ויצמן גבעתיים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">חנות חיות דרושים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">זו חנות חיות</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">חנות חיות בנשר</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">אוכל משלוחים בת ים</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">חנות חיות מחמד נתניה</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">חנות חיות רוממה חיפה</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">סליידר גבעתיים משלוחים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">חנות חיות סנטר 1 ירושלים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">חנות חיות מחמד בבת ים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">משלוחים הדסה עין כרם</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">pets חנות חיות</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">zoo חנות חיות רמת אביב</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">זולו חנות חיות פלורנטין</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">חנות חיות באינטרנט</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">סופרמרקט לחיות מחמד בראשון לציון</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">זולו חנות חיות גבעתיים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">חנות חיות בירושלים קרית יובל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">חנות חיות בראשון לציון</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">חנות חיות קניון חיפה טלפון</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">חנות חיות מחמד בתל אביב</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">חנות חיות גבעתיים ויצמן</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">חנויות חיות בפתח תקווה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">חנות חיות חיפה</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">חנות חיות תל אביב אבן גבירול</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">פתיחת חנות חיות</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">חנות חיות בחיפה והקריות</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>ציפורים ואחרים</h3>
+                <div class="tab-stats">
+                    <span class="badge">322 מילות מפתח</span>
+                    <span class="badge vol-badge">137,280 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">דג</td>
+                <td class="vol-cell">20,100</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">דגים</td>
+                <td class="vol-cell">14,800</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">ציפור</td>
+                <td class="vol-cell">14,800</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">ארנב</td>
+                <td class="vol-cell">10,800</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">ארנבים</td>
+                <td class="vol-cell">10,800</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">ציפורי</td>
+                <td class="vol-cell">8,100</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">אוגר</td>
+                <td class="vol-cell">8,000</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">אקווריום</td>
+                <td class="vol-cell">5,400</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">תוכי</td>
+                <td class="vol-cell">5,400</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">ציפורים</td>
+                <td class="vol-cell">4,400</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">אוגרים</td>
+                <td class="vol-cell">1,900</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">ארנבת</td>
+                <td class="vol-cell">1,500</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">תוכים</td>
+                <td class="vol-cell">1,300</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">דג זהב</td>
+                <td class="vol-cell">1,000</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">אקווריום למכירה</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">אוכל לארנבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">תוכי ירוק</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">זוחלים</td>
+                <td class="vol-cell">540</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">דג גופי</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">דגי גופים</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">תוכי לורי</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">דג זברה</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">דגי זברה</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">דגי קויה</td>
+                <td class="vol-cell">410</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">כלובים לתוכים</td>
+                <td class="vol-cell">410</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">אוכל לתוכים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">אוכל לדגים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">דג כריש</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">כמה עולה ארנב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">טרריום לזוחלים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">אקווריום מים מלוחים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">דג טורף</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">כלוב לאוגר</td>
+                <td class="vol-cell">330</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">דג חתול</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">תוכי סנגל</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">דגי חתול</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">משאבה לאקווריום</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">דג דיסקוס</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">דגי דיסקוס</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">דג קוי מחיר</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">דקורציות לאקווריום</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">דגי זהב מחיר</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">חציר לארנבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">משאבת אוויר לאקווריום</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">כלוב ציפורים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">דגי קוי מחיר</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">דגים טורפים לאקווריום</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">קוצץ ציפורניים לכלב</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">תוכי קוניור</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">אוכל לאוגרים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">אספסת לארנבים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">גופים דגים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">גופי דג</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">דגים ציקלידים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">אקווריום מחיר</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">דג ציקליד</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">דג טורף לאקווריום</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">דגי ציקליד</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">סוגי אוגרים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">תוכי קאיק</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">שמן דגים לכלבים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">אוכל לאוגר</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">סוג של דג טורף</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">דגי ציקלידים</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">מה אוגרים אוכלים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">נסורת לאוגרים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">מה ארנבים אוכלים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">כמה עולה דג זהב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">דגי טטרה</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">ציפור קוקטייל</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">דג טטרה</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">צעצועים לתוכים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">כלוב לתוכים גדול</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">ארה תוכי</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">גזירת ציפורניים לכלב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">מתקני האכלה לציפורים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">דג סייפן</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">דגים טורפים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">דגי גמבוזיה</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">גוזז ציפורניים לכלב</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">נסורת לארנבים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">סנגל תוכי</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">כלובים לציפורים</td>
+                <td class="vol-cell">170</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">אוכל לציפורים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">ציפור פינק</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">עיצוב אקווריום</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">סייפן דג</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">חנות זוחלים</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>89</td>
+                <td class="kw-cell">תוכי קוקטייל לבן</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>90</td>
+                <td class="kw-cell">דג זהב בצנצנת</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>91</td>
+                <td class="kw-cell">הדג הכי יפה בעולם</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>92</td>
+                <td class="kw-cell">חמצן לאקווריום</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>93</td>
+                <td class="kw-cell">אקווריום לבית</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>94</td>
+                <td class="kw-cell">דג ממשפחת הקרפיונים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>95</td>
+                <td class="kw-cell">דג כריש לאקווריום</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td class="kw-cell">אקווריום 20 ליטר</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>97</td>
+                <td class="kw-cell">אקווריום 40 ליטר</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>98</td>
+                <td class="kw-cell">אוכל לדגי זהב</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>99</td>
+                <td class="kw-cell">אקווריום למכירה בזול</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>100</td>
+                <td class="kw-cell">רקעים לאקווריום</td>
+                <td class="vol-cell">110</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 222 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>חיות מחמד - כללי</h3>
+                <div class="tab-stats">
+                    <span class="badge">854 מילות מפתח</span>
+                    <span class="badge vol-badge">443,800 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">אוכל</td>
+                <td class="vol-cell">60,500</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">כלב</td>
+                <td class="vol-cell">60,500</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">כלבים</td>
+                <td class="vol-cell">40,500</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">חתול</td>
+                <td class="vol-cell">40,500</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">חטיף</td>
+                <td class="vol-cell">22,200</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">חתולים</td>
+                <td class="vol-cell">18,100</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">מיטה</td>
+                <td class="vol-cell">14,800</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">מזון</td>
+                <td class="vol-cell">12,100</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">מלונות</td>
+                <td class="vol-cell">10,800</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">מכונת תספורת</td>
+                <td class="vol-cell">8,000</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">חטיפים</td>
+                <td class="vol-cell">8,000</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">צעצוע</td>
+                <td class="vol-cell">6,600</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">משחת שיניים</td>
+                <td class="vol-cell">6,600</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">סוגי כלבים</td>
+                <td class="vol-cell">6,600</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">צעצועים</td>
+                <td class="vol-cell">6,600</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">מיטות</td>
+                <td class="vol-cell">5,400</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td class="kw-cell">שמפו</td>
+                <td class="vol-cell">4,400</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td class="kw-cell">קרציות</td>
+                <td class="vol-cell">3,600</td>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td class="kw-cell">חתולה</td>
+                <td class="vol-cell">3,200</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td class="kw-cell">חול</td>
+                <td class="vol-cell">2,400</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td class="kw-cell">מעדן</td>
+                <td class="vol-cell">2,400</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td class="kw-cell">מסרק</td>
+                <td class="vol-cell">2,400</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td class="kw-cell">מעדנים</td>
+                <td class="vol-cell">1,900</td>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td class="kw-cell">מזונות</td>
+                <td class="vol-cell">1,900</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td class="kw-cell">גדרות</td>
+                <td class="vol-cell">1,800</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td class="kw-cell">גדר</td>
+                <td class="vol-cell">1,500</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td class="kw-cell">חתול סקוטי</td>
+                <td class="vol-cell">1,300</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td class="kw-cell">קולר</td>
+                <td class="vol-cell">1,300</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td class="kw-cell">רצועה</td>
+                <td class="vol-cell">1,000</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td class="kw-cell">חתול סיאמי</td>
+                <td class="vol-cell">990</td>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td class="kw-cell">שימורים</td>
+                <td class="vol-cell">990</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td class="kw-cell">חנויות כלבים</td>
+                <td class="vol-cell">880</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td class="kw-cell">מתקני גירוד לחתולים</td>
+                <td class="vol-cell">810</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td class="kw-cell">כלוב</td>
+                <td class="vol-cell">810</td>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td class="kw-cell">כלב דוברמן</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td class="kw-cell">אוכל לחיות</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td class="kw-cell">כלבי פקינז</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td class="kw-cell">פלוטו הכלב</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td class="kw-cell">שיצו כלבים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td class="kw-cell">אמפולה</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td class="kw-cell">שמות לכלבים קטנים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td class="kw-cell">דררה כחולה</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td class="kw-cell">חתול בלי שיער</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td class="kw-cell">חתול היפואלרגני</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td class="kw-cell">כלב פקינז</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td class="kw-cell">שמות לכלבים נקבות</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td class="kw-cell">בננה לכלב</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td class="kw-cell">כלב בורדר קולי</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td class="kw-cell">כלב אמסטף</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td class="kw-cell">כלובים לחתולים</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td class="kw-cell">כלוב לחתול</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td class="kw-cell">חתולה סיאמית</td>
+                <td class="vol-cell">540</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td class="kw-cell">רצועות לכלבים</td>
+                <td class="vol-cell">540</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td class="kw-cell">כלבים גזעים</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>55</td>
+                <td class="kw-cell">מכונת תספורת לכלב</td>
+                <td class="vol-cell">500</td>
+            </tr>
+            <tr>
+                <td>56</td>
+                <td class="kw-cell">ענבים לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>57</td>
+                <td class="kw-cell">שם לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>58</td>
+                <td class="kw-cell">אמפולות נגד פרעושים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>59</td>
+                <td class="kw-cell">אננס לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>60</td>
+                <td class="kw-cell">אבטיח לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>61</td>
+                <td class="kw-cell">שמות לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>62</td>
+                <td class="kw-cell">כלב שארפיי</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>63</td>
+                <td class="kw-cell">אבטיח לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>64</td>
+                <td class="kw-cell">ענבים לכלבים</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>65</td>
+                <td class="kw-cell">כלב פוינטר</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>66</td>
+                <td class="kw-cell">רתמה</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>67</td>
+                <td class="kw-cell">מלונה</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>68</td>
+                <td class="kw-cell">כלב האסקי</td>
+                <td class="vol-cell">440</td>
+            </tr>
+            <tr>
+                <td>69</td>
+                <td class="kw-cell">משחקים לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>70</td>
+                <td class="kw-cell">סופרמרקט לחיות מחמד</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>71</td>
+                <td class="kw-cell">משחק לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>72</td>
+                <td class="kw-cell">מה אסור לכלבים לאכול</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>73</td>
+                <td class="kw-cell">אופטלגין לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>74</td>
+                <td class="kw-cell">משחק לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>75</td>
+                <td class="kw-cell">מחסומים לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>76</td>
+                <td class="kw-cell">שמות של כלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>77</td>
+                <td class="kw-cell">חתולים בלי פרווה</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>78</td>
+                <td class="kw-cell">אוכמניות לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>79</td>
+                <td class="kw-cell">חתול בנגלי למכירה</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>80</td>
+                <td class="kw-cell">משחקים לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>81</td>
+                <td class="kw-cell">ספה לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>82</td>
+                <td class="kw-cell">אמפולות נגד פרעושים לחתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>83</td>
+                <td class="kw-cell">ספה לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>84</td>
+                <td class="kw-cell">בית לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>85</td>
+                <td class="kw-cell">מזרן לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>86</td>
+                <td class="kw-cell">תפוח לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>87</td>
+                <td class="kw-cell">היפואלרגני</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>88</td>
+                <td class="kw-cell">סופר מרקט לחיות מחמד</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>89</td>
+                <td class="kw-cell">חיסון משושה</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>90</td>
+                <td class="kw-cell">חתול אנגלי</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>91</td>
+                <td class="kw-cell">כלב האסקי סיבירי</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>92</td>
+                <td class="kw-cell">חתול בלי פרווה</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>93</td>
+                <td class="kw-cell">מזרקת מים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>94</td>
+                <td class="kw-cell">מחסום לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>95</td>
+                <td class="kw-cell">לוכד חתולים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>96</td>
+                <td class="kw-cell">שמות לכלבים זכרים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>97</td>
+                <td class="kw-cell">כלבים האסקי סיבירי</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>98</td>
+                <td class="kw-cell">מתקני גירוד</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>99</td>
+                <td class="kw-cell">אומנה לכלבים</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>100</td>
+                <td class="kw-cell">מזרון לכלב</td>
+                <td class="vol-cell">390</td>
+            </tr></tbody>
+                </table>
+                <p class="remaining">+ 754 מילות מפתח נוספות בגיליון</p>
+            </div>
+        </div>
+
+    <div class="footer">
+        <p>נוצר על ידי <a href="https://n-c.digital">NC Digital</a> | מבוסס על נתוני SE Ranking API (Israel)</p>
+    </div>
+</div>
+
+<script>
+function filterKeywords(query) {
+    query = query.trim().toLowerCase();
+    const sections = document.querySelectorAll('.tab-section');
+
+    sections.forEach(section => {
+        const rows = section.querySelectorAll('tbody tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const kw = row.cells[1]?.textContent?.toLowerCase() || '';
+            const match = !query || kw.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+
+        if (query) {
+            section.classList.toggle('open', visibleCount > 0);
+            section.style.display = visibleCount > 0 ? '' : 'none';
+        } else {
+            section.style.display = '';
+        }
+    });
+}
+</script>
+</body>
+</html>
