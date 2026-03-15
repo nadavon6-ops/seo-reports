@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>מחקר מילות מפתח — מותגי יבוא חיות מחמד | NC Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #0a0e17;
+            color: #e0e6ed;
+            line-height: 1.6;
+            direction: rtl;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1a2744 100%);
+            border: 1px solid #1e3a5f;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(90deg, #0891b2, #06b6d4, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .subtitle { color: #94a3b8; font-size: 1.1em; }
+        .header .date { color: #64748b; font-size: 0.9em; margin-top: 5px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #0d1b2a, #162032);
+            border: 1px solid #1e3a5f;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .stat-card .value { font-size: 2em; font-weight: 800; color: #22d3ee; }
+        .stat-card .label { color: #94a3b8; font-size: 0.9em; margin-top: 4px; }
+        .search-box { margin-bottom: 24px; }
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px;
+            background: #0d1b2a;
+            border: 1px solid #1e3a5f;
+            border-radius: 10px;
+            color: #e0e6ed;
+            font-size: 1em;
+            font-family: 'Heebo', sans-serif;
+            direction: rtl;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+        }
+        .search-box input::placeholder { color: #4a5568; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: #1a2744;
+            color: #22d3ee;
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid #1e3a5f;
+            position: sticky;
+            top: 0;
+        }
+        tbody td { padding: 10px 16px; border-bottom: 1px solid #111d2e; }
+        tbody tr:hover { background: rgba(8, 145, 178, 0.05); }
+        .kw-cell { font-weight: 500; }
+        .vol-cell { color: #22d3ee; font-weight: 600; text-align: left; direction: ltr; }
+        .tab-section {
+            background: linear-gradient(135deg, #0d1b2a, #162032);
+            border: 1px solid #1e3a5f;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .tab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tab-header:hover { background: rgba(8, 145, 178, 0.05); }
+        .tab-header h3 { color: #e0e6ed; font-size: 1.1em; }
+        .tab-stats { display: flex; gap: 10px; align-items: center; }
+        .badge {
+            background: #1a2744;
+            color: #94a3b8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        .vol-badge { color: #22d3ee; border: 1px solid #0891b2; }
+        .toggle-icon { color: #64748b; transition: transform 0.3s; }
+        .tab-section.open .toggle-icon { transform: rotate(180deg); }
+        .tab-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .tab-section.open .tab-content {
+            max-height: 10000px;
+            padding: 0 24px 24px;
+        }
+        .remaining { color: #64748b; font-size: 0.9em; text-align: center; padding: 12px; }
+        .footer {
+            text-align: center;
+            color: #4a5568;
+            padding: 30px;
+            font-size: 0.85em;
+        }
+        .footer a { color: #0891b2; text-decoration: none; }
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .header { padding: 24px 16px; }
+            .header h1 { font-size: 1.6em; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 16px; }
+            .stat-card .value { font-size: 1.5em; }
+            .tab-header { flex-direction: column; gap: 8px; }
+            .tab-stats { flex-wrap: wrap; }
+            table { font-size: 0.9em; }
+            thead th, tbody td { padding: 8px 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>מחקר מילות מפתח — מותגי יבוא</h1>
+        <div class="subtitle">מותגי מזון וציוד לחיות מחמד — שוק ישראל</div>
+        <div class="date">15/03/2026 | NC Digital</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="value">49</div>
+            <div class="label">מילות מפתח</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">8,520</div>
+            <div class="label">נפח חיפוש חודשי כולל</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">11</div>
+            <div class="label">מותגים עם נתונים</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">17</div>
+            <div class="label">מותגים שנחקרו</div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="חיפוש מילת מפתח..." oninput="filterKeywords(this.value)">
+    </div>
+
+    
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Monge | מונג</h3>
+                <div class="tab-stats">
+                    <span class="badge">16 מילות מפתח</span>
+                    <span class="badge vol-badge">2,640 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">מונג</td>
+                <td class="vol-cell">590</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">מונג דרמטוזיס</td>
+                <td class="vol-cell">390</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">מונג' אוכל לכלבים</td>
+                <td class="vol-cell">360</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">monge</td>
+                <td class="vol-cell">320</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">monge אוכל לכלבים</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">מונג' לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">מונג לחתולים</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td class="kw-cell">מונג לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td class="kw-cell">מונג' לכלבים</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td class="kw-cell">אוכל לכלבים monge</td>
+                <td class="vol-cell">90</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td class="kw-cell">מונג' אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td class="kw-cell">מונג אוכל לחתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td class="kw-cell">מונג חתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td class="kw-cell">מונג' חתולים</td>
+                <td class="vol-cell">50</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td class="kw-cell">מונג רפואי</td>
+                <td class="vol-cell">20</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td class="kw-cell">מונג אוכל לכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Josera | גוסרה</h3>
+                <div class="tab-stats">
+                    <span class="badge">4 מילות מפתח</span>
+                    <span class="badge vol-badge">300 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">josera</td>
+                <td class="vol-cell">140</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">ג'וסרה</td>
+                <td class="vol-cell">110</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">josera אוכל לכלבים</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">ג'וסרה אוכל לכלבים חוות דעת</td>
+                <td class="vol-cell">20</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>KitCat | קיט-קט</h3>
+                <div class="tab-stats">
+                    <span class="badge">1 מילות מפתח</span>
+                    <span class="badge vol-badge">180 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">קיט קט</td>
+                <td class="vol-cell">180</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Eminent | אמיננט</h3>
+                <div class="tab-stats">
+                    <span class="badge">4 מילות מפתח</span>
+                    <span class="badge vol-badge">260 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">eminent</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">אמיננט</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">אמיננט מזון לכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">eminent אוכל לכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Wellness Core | וולנס קור</h3>
+                <div class="tab-stats">
+                    <span class="badge">7 מילות מפתח</span>
+                    <span class="badge vol-badge">1,850 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">wellness</td>
+                <td class="vol-cell">1,000</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">וולנס</td>
+                <td class="vol-cell">720</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">wellness core</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">וולנס קור</td>
+                <td class="vol-cell">30</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">wellness אוכל לכלבים</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">wellness ישראל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td class="kw-cell">וולנס מחירים</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Flexi | פלקסי</h3>
+                <div class="tab-stats">
+                    <span class="badge">5 מילות מפתח</span>
+                    <span class="badge vol-badge">590 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">flexi</td>
+                <td class="vol-cell">260</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">פלקסי</td>
+                <td class="vol-cell">210</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">רצועת פלקסי</td>
+                <td class="vol-cell">70</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">רצועה לכלב פלקסי</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">פלקסי רצועה לכלב</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Sanicat | סניקט</h3>
+                <div class="tab-stats">
+                    <span class="badge">1 מילות מפתח</span>
+                    <span class="badge vol-badge">10 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">סניקט</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Tropical | טרופיקל</h3>
+                <div class="tab-stats">
+                    <span class="badge">1 מילות מפתח</span>
+                    <span class="badge vol-badge">140 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">טרופיקל</td>
+                <td class="vol-cell">140</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>PetSafe | פטסייף</h3>
+                <div class="tab-stats">
+                    <span class="badge">3 מילות מפתח</span>
+                    <span class="badge vol-badge">500 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">פטסייף</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">petsafe ישראל</td>
+                <td class="vol-cell">10</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">petsafe מחיר</td>
+                <td class="vol-cell">10</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Kong | קונג</h3>
+                <div class="tab-stats">
+                    <span class="badge">6 מילות מפתח</span>
+                    <span class="badge vol-badge">1,960 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">קונג</td>
+                <td class="vol-cell">720</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td class="kw-cell">kong</td>
+                <td class="vol-cell">660</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td class="kw-cell">קונג לכלב</td>
+                <td class="vol-cell">480</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td class="kw-cell">kong לכלב</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td class="kw-cell">kong לכלבים</td>
+                <td class="vol-cell">40</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td class="kw-cell">קונג קלאסי</td>
+                <td class="vol-cell">20</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+        <div class="tab-section">
+            <div class="tab-header" onclick="this.parentElement.classList.toggle('open')">
+                <h3>Catit | קט-איט</h3>
+                <div class="tab-stats">
+                    <span class="badge">1 מילות מפתח</span>
+                    <span class="badge vol-badge">90 נפח חודשי</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+            </div>
+            <div class="tab-content">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>מילת מפתח</th><th>נפח חיפוש</th></tr>
+                    </thead>
+                    <tbody>
+            <tr>
+                <td>1</td>
+                <td class="kw-cell">catit</td>
+                <td class="vol-cell">90</td>
+            </tr></tbody>
+                </table>
+                
+            </div>
+        </div>
+
+    <div class="footer">
+        <p>נוצר על ידי <a href="https://n-c.digital">NC Digital</a> | מבוסס על נתוני SE Ranking API (Israel)</p>
+    </div>
+</div>
+
+<script>
+function filterKeywords(query) {
+    query = query.trim().toLowerCase();
+    const sections = document.querySelectorAll('.tab-section');
+    sections.forEach(section => {
+        const rows = section.querySelectorAll('tbody tr');
+        let visibleCount = 0;
+        rows.forEach(row => {
+            const kw = row.cells[1]?.textContent?.toLowerCase() || '';
+            const match = !query || kw.includes(query);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount++;
+        });
+        if (query) {
+            section.classList.toggle('open', visibleCount > 0);
+            section.style.display = visibleCount > 0 ? '' : 'none';
+        } else {
+            section.style.display = '';
+        }
+    });
+}
+</script>
+</body>
+</html>
