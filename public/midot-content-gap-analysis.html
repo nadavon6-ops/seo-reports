@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>ניתוח פערי תוכן — מידות | NC Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --card-alt: #162032;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #0891b2;
+            --accent-light: #22d3ee;
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.12);
+            --red: #ef4444;
+            --red-bg: rgba(239, 68, 68, 0.12);
+            --orange: #f59e0b;
+            --orange-bg: rgba(245, 158, 11, 0.12);
+            --purple: #a78bfa;
+            --purple-bg: rgba(167, 139, 250, 0.12);
+            --blue-bg: rgba(8, 145, 178, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            direction: rtl;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1a365d 50%, #0f172a 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 60px 40px 50px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .hero .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+        .hero .client-badge {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 24px;
+            background: var(--blue-bg);
+            border: 1px solid var(--accent);
+            border-radius: 50px;
+            font-size: 0.95rem;
+            color: var(--accent-light);
+            font-weight: 500;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 48px;
+        }
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent-light);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .num {
+            background: var(--accent);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-light);
+        }
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: var(--accent); }
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+        .badge-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(245,158,11,0.3); }
+        .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.3); }
+        .badge-cyan { background: var(--blue-bg); color: var(--accent-light); border: 1px solid rgba(8,145,178,0.3); }
+
+        /* Priority badge */
+        .priority {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .priority-critical { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+        .priority-high { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1a1a1a; }
+        .priority-medium { background: linear-gradient(135deg, #0891b2, #0e7490); color: #fff; }
+
+        /* KW Tags */
+        .kw-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .kw-tag {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .kw-tag .vol {
+            background: rgba(8, 145, 178, 0.2);
+            color: var(--accent-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .kw-tag .kd {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .kd-easy { background: rgba(16,185,129,0.2); color: var(--green); }
+        .kd-medium { background: rgba(245,158,11,0.2); color: var(--orange); }
+        .kd-hard { background: rgba(239,68,68,0.2); color: var(--red); }
+        .kw-primary {
+            border-color: var(--accent);
+            background: var(--blue-bg);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 0.88rem;
+        }
+        th {
+            background: var(--card-alt);
+            color: var(--accent-light);
+            padding: 12px 16px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent);
+            white-space: nowrap;
+        }
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        tr:hover td { background: rgba(8,145,178,0.05); }
+
+        /* Info box */
+        .info-box {
+            background: var(--blue-bg);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .info-box strong { color: var(--accent-light); }
+
+        .warning-box {
+            background: var(--orange-bg);
+            border: 1px solid var(--orange);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .warning-box strong { color: var(--orange); }
+
+        .success-box {
+            background: var(--green-bg);
+            border: 1px solid var(--green);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .success-box strong { color: var(--green); }
+
+        /* Detail grid inside cards */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .detail-item {
+            background: var(--card-alt);
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+        .detail-item .label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .detail-item .value {
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        /* Competitor strip */
+        .competitor-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .competitor-chip {
+            background: var(--card-alt);
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            color: var(--text-muted);
+            direction: ltr;
+        }
+
+        /* Action box */
+        .action-box {
+            background: linear-gradient(135deg, rgba(8,145,178,0.08), rgba(8,145,178,0.03));
+            border-right: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+        }
+        .action-box strong { color: var(--accent-light); }
+
+        /* Phase header */
+        .phase-header {
+            background: linear-gradient(135deg, var(--card), var(--card-alt));
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 24px;
+            margin: 32px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .phase-header .phase-num {
+            background: var(--accent);
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .phase-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Validation grid */
+        .validation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .validation-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .validation-item .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .v-pass .icon { background: var(--green-bg); color: var(--green); }
+        .v-warn .icon { background: var(--orange-bg); color: var(--orange); }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero { padding: 40px 20px 30px; }
+            .hero h1 { font-size: 1.8rem; }
+            .container { padding: 24px 16px; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .card-header { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+    <h1>ניתוח פערי תוכן — midot.co.il</h1>
+    <div class="subtitle">10 נושאים מומלצים למאמרים חדשים | מבוסס נתוני SE Ranking, ניתוח SERP ומיפוי מתחרים</div>
+    <div class="client-badge">מידות — יושרה כסטנדרט | מרץ 2026</div>
+</div>
+
+<div class="container">
+
+    <!-- Validation Status -->
+    <div class="section">
+        <div class="section-title"><span class="num">1</span> סטטוס אימות</div>
+        <div class="validation-grid">
+            <div class="validation-item v-pass">
+                <div class="icon">✓</div>
+                <div>
+                    <strong>אימות SERP</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">10 מילות מפתח נבדקו בגוגל — מידות מופיע ב-1 מתוך 10 בלבד (מבחני מיון, מיקום ~9)</div>
+                </div>
+            </div>
+            <div class="validation-item v-pass">
+                <div class="icon">✓</div>
+                <div>
+                    <strong>סריקת מתחרים</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">4 מתחרים נסרקו לעומק — Adam Milo הפסיק לפרסם (אוגוסט 2024). HRUS + HR Portal פעילים מאוד.</div>
+                </div>
+            </div>
+            <div class="validation-item v-pass">
+                <div class="icon">✓</div>
+                <div>
+                    <strong>בדיקת קניבליזציה</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">8 מתוך 10 נושאים — ללא חפיפה. 2 נושאים דורשים טיפול זהיר.</div>
+                </div>
+            </div>
+            <div class="validation-item v-pass">
+                <div class="icon">✓</div>
+                <div>
+                    <strong>אימות נפחי חיפוש</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">כל הנפחים אומתו מול SE Ranking Data API (source=il). תיקון: "שאלון אישיות" (480) > "מבחן אישיות" (150).</div>
+                </div>
+            </div>
+            <div class="validation-item v-warn">
+                <div class="icon">!</div>
+                <div>
+                    <strong>כוונת חיפוש (Intent)</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">נושא "שאלון אישיות" הוחלף — גוגל מציג כלים אינטראקטיביים, לא מאמרים. נושא 7 מוקד מחדש למעסיקים.</div>
+                </div>
+            </div>
+            <div class="validation-item v-warn">
+                <div class="icon">!</div>
+                <div>
+                    <strong>נושא 2A ללא נפח מאומת</strong>
+                    <div style="font-size:0.85rem; color:var(--text-muted)">AI + מבחני אמינות — נושא חדש ללא היסטוריית חיפוש. מבוסס על מגמת AI בוערת בתחום ה-HR.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="section">
+        <div class="section-title"><span class="num">2</span> מצב נוכחי — midot.co.il</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value">47</div>
+                <div class="label">מילות מפתח במעקב</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">17</div>
+                <div class="label">מאמרי בלוג קיימים</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">15</div>
+                <div class="label">מילות מפתח ללא דירוג (pos 0)</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">1/10</div>
+                <div class="label">נוכחות ב-SERP של נושאים מומלצים</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>תובנה מרכזית:</strong> Adam Milo — המתחרה הישיר מס׳ 1 של מידות — לא פרסם תוכן חדש מאז אוגוסט 2024. זהו חלון הזדמנות נדיר. כל נושא ברשימה זו נמצא כרגע ללא הגנה מהמתחרה העיקרי.
+        </div>
+    </div>
+
+    <!-- Competitors -->
+    <div class="section">
+        <div class="section-title"><span class="num">3</span> מפת מתחרים</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>מתחרה</th>
+                    <th>סוג</th>
+                    <th>סטטוס תוכן 2025-2026</th>
+                    <th>רמת איום</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Adam Milo</strong></td>
+                    <td>ישיר — מבחני אמינות</td>
+                    <td>0 מאמרים חדשים מאז אוגוסט 2024</td>
+                    <td><span class="badge badge-green">נמוך — רדום</span></td>
+                </tr>
+                <tr>
+                    <td><strong>HRUS</strong></td>
+                    <td>תוכן — פורטל HR</td>
+                    <td>100+ מאמרים, פרסום כמעט יומי, דגש AI</td>
+                    <td><span class="badge badge-orange">בינוני-גבוה</span></td>
+                </tr>
+                <tr>
+                    <td><strong>HR Portal</strong></td>
+                    <td>תוכן — חדשות HR</td>
+                    <td>100+ מאמרים, 3-5 בשבוע, שימור + AI</td>
+                    <td><span class="badge badge-orange">בינוני-גבוה</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Tamir Polygraph</strong></td>
+                    <td>פוליגרף — תוכן פעיל</td>
+                    <td>10+ פוסטים, כולל עמוד "מבחן אמינות"</td>
+                    <td><span class="badge badge-red">גבוה</span></td>
+                </tr>
+                <tr>
+                    <td><strong>LogiPass</strong></td>
+                    <td>ישיר — סינון מקוון SaaS</td>
+                    <td>עמודי מוצר + בלוג פעיל</td>
+                    <td><span class="badge badge-orange">בינוני</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Pilat</strong></td>
+                    <td>ישיר — מרכזי הערכה</td>
+                    <td>ללא בלוג פעיל</td>
+                    <td><span class="badge badge-green">נמוך</span></td>
+                </tr>
+                <tr>
+                    <td><strong>מכוני הכנה</strong><br><span style="font-size:0.8rem; color:var(--text-muted)">נועם, נדב, הדס, פסיכומטרי</span></td>
+                    <td>מידע — הכנה לבחינות</td>
+                    <td>תוכן ממוקד דרושי עבודה / מועמדים</td>
+                    <td><span class="badge badge-cyan">בינוני — קהל שונה</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 10 Topics -->
+    <div class="section">
+        <div class="section-title"><span class="num">4</span> 10 נושאי מאמרים מומלצים</div>
+
+        <!-- Phase 1 -->
+        <div class="phase-header">
+            <span class="phase-num">שלב 1</span>
+            <h3>סמכות ליבה — ניצחונות מהירים</h3>
+        </div>
+
+        <!-- Topic 1 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">1. מבחן אמינות לדוגמא: שאלות, תשובות וטיפים ב-2026</div>
+                    <div class="card-subtitle">כתיבה עבור מועמדים (לא מעסיקים) — מידות היא מפתחת המבחן ← סמכות ראשונית</div>
+                </div>
+                <span class="priority priority-critical">קריטי — ניצחון מהיר</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">מבחן אמינות לדוגמא <span class="vol">480/חודש</span> <span class="kd kd-easy">KD 7</span></span>
+                <span class="kw-tag">מבחן אמינות טיפים <span class="vol">140</span></span>
+                <span class="kw-tag">איך לעבור מבחן אמינות <span class="vol">40</span></span>
+                <span class="kw-tag">שאלות מבחן אמינות <span class="vol">30</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~690/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#6 — ניתן לדחוף לטופ 3</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-orange">בינוני</span> — מאמרים קיימים מסבירים מה זה מבחן אמינות, אך אף אחד לא מציג שאלות לדוגמא</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-orange">מועמדים</span> — SERP מציג אתרי הכנה. מידות כמפתחת המבחן = מקור הכי אמין</div>
+                </div>
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">migdalor-news.co.il</span>
+                    <span class="competitor-chip">machon-nadav.co.il</span>
+                    <span class="competitor-chip">s-bruck.co.il</span>
+                    <span class="competitor-chip">logipass.net</span>
+                    <span class="competitor-chip">modan-s.co.il</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מאמר ממוקד מועמדים — "מה לצפות ממבחן אמינות של מידות". סוגי שאלות, טיפים להתכוננות, מה נבדק. לינק פנימי למאמרים קיימים על סוגי מבחנים ויתרונות/חסרונות.
+            </div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">2. מעילות והונאות בארגון: סימנים, מניעה וכלים לזיהוי מוקדם</div>
+                    <div class="card-subtitle">מחליף מאמר שבור (404) + מקדם מוצר גילוי הונאות</div>
+                </div>
+                <span class="priority priority-critical">קריטי — מחליף 404</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">מעילות <span class="vol">480/חודש</span> <span class="kd kd-easy">KD 7</span></span>
+                <span class="kw-tag kw-primary">הונאות <span class="vol">500/חודש</span> <span class="kd kd-medium">KD 18</span></span>
+                <span class="kw-tag">מעילות עובדים</span>
+                <span class="kw-tag">מניעת הונאות</span>
+                <span class="kw-tag">הונאות פנים ארגוניות</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~980+/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#0 — לא מדורג כלל</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-orange">בינוני</span> — מאמר ישן (404) + עמוד מוצר. המאמר החדש מחליף את השבור.</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-green">מעסיקים ✓</span> — SERP: חקירות + חדשות + משפטי. אין מדריך מניעה.</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>שימו לב:</strong> "הונאות" (500) הוא ביטוי רחב — חלק מהחיפושים עשויים להתייחס להונאות סייבר/רשת. יש למקד את הכותרת ל"הונאות פנים ארגוניות" או "מעילות עובדים".
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP ("מעילות עובדים")</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">yifatbr.com</span>
+                    <span class="competitor-chip">keret.info</span>
+                    <span class="competitor-chip">calcalist.co.il</span>
+                    <span class="competitor-chip">boi.org.il</span>
+                    <span class="competitor-chip">globes.co.il</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מדריך מניעה חינוכי — סוגי הונאות, סימני אזהרה, סטטיסטיקות. הפניה 301 מה-URL השבור למאמר החדש. לינק פנימי לעמוד מוצר "הונאות פנים ארגוניות" + מידות שילד.
+            </div>
+        </div>
+
+        <!-- Topic 9 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">3. פוליגרף מול מבחן אמינות: מה ההבדל ומה עדיף למעסיקים?</div>
+                    <div class="card-subtitle">מידות = היחידה שמציעה את שתי האפשרויות ← מיקום ייחודי</div>
+                </div>
+                <span class="priority priority-critical">קריטי — שלב החלטה</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">פוליגרף מול מבחן אמינות <span class="vol">כוונת השוואה</span></span>
+                <span class="kw-tag">בדיקת פוליגרף אמינות <span class="vol">50</span></span>
+                <span class="kw-tag">פוליגרף אמינות <span class="vol">30</span></span>
+                <span class="kw-tag">מבחן אמינות ממוחשב <span class="vol">50</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~130+/חודש (כוונת רכישה גבוהה)</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#14 לפוליגרף אמינות, #2 למבחן ממוחשב</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-orange">בינוני</span> — עמודים נפרדים קיימים אך אין עמוד השוואה</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-green">שלב החלטה ✓</span> — מעסיקים בוחרים בין אפשרויות</div>
+                </div>
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">machon-noam.co.il</span>
+                    <span class="competitor-chip">etikapoly.com</span>
+                    <span class="competitor-chip">calcalist.co.il</span>
+                    <span class="competitor-chip">modan-s.co.il</span>
+                    <span class="competitor-chip">polygraphabir.com</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> השוואה אובייקטיבית — דיוק, עלות, זמן, היבטים משפטיים, חוויית עובד, מתי להשתמש בכל אחד. מידות כספק היחיד שמציע שתיהן. לינק לשני עמודי המוצר.
+            </div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">4. בדיקת פוליגרף: מחיר, תהליך ואמינות — המדריך המלא למעסיקים</div>
+                    <div class="card-subtitle">מטרגט Long-Tail "מחיר" (KD 2!) כדי לא להתנגש בעמוד המוצר</div>
+                </div>
+                <span class="priority priority-high">גבוה — KD 2</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">בדיקת פוליגרף מחיר <span class="vol">110/חודש</span> <span class="kd kd-easy">KD 2</span></span>
+                <span class="kw-tag">בדיקת פוליגרף <span class="vol">480</span> <span class="kd kd-medium">KD 16</span></span>
+                <span class="kw-tag">בדיקת פוליגרף לעובדים <span class="vol">50</span></span>
+                <span class="kw-tag">האם פוליגרף אמין <span class="vol">20</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~690+/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#0 — לא מדורג כלל</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-red">גבוה</span> — עמוד מוצר "בדיקת פוליגרף" קיים. חובה למקד ב-Long-Tail "מחיר"</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-green">מעסיקים ✓</span> — SERP: מכוני פוליגרף + שירותים</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>סיכון קניבליזציה:</strong> עמוד מוצר קיים ב- <code>/product/בדיקת-פוליגרף/</code>. המאמר חייב להיות ב-<code>/blog/</code> ולמקד ב"מחיר" ו"תהליך" כדי לא לפצל סמכות. לינק פנימי מהמאמר לעמוד המוצר.
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">he.wikipedia.org</span>
+                    <span class="competitor-chip">etikapoly.com</span>
+                    <span class="competitor-chip">rosh-group.com</span>
+                    <span class="competitor-chip">s-bruck.co.il</span>
+                    <span class="competitor-chip">polygraphabir.com</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מדריך החלטה למעסיקים — השוואת מחירים, תהליך הבדיקה שלב אחר שלב, אמינות (נתוני מחקר), היבטים משפטיים. URL: <code>/blog/בדיקת-פוליגרף-מחיר-תהליך/</code>
+            </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="phase-header">
+            <span class="phase-num">שלב 2</span>
+            <h3>הרחבת סמכות</h3>
+        </div>
+
+        <!-- Topic 2A -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">5. AI ומבחני אמינות: כיצד בינה מלאכותית משנה את סינון העובדים ב-2026</div>
+                    <div class="card-subtitle">נושא חדש — אף מתחרה לא מכסה את הזווית הספציפית הזו</div>
+                </div>
+                <span class="priority priority-high">גבוה — מגמה בוערת</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">AI מבחני אמינות <span class="vol">נושא חדש</span></span>
+                <span class="kw-tag">מבחן אמינות אונליין <span class="vol">10</span> <span class="kd kd-easy">KD 3</span></span>
+                <span class="kw-tag">מבחן אמינות ממוחשב <span class="vol">50</span> <span class="kd kd-easy">KD 6</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">ללא נפח מאומת — מבוסס מגמה</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#2 ל"מבחן אמינות ממוחשב"</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-green">נמוך</span> — מאמר קיים על "אמינות בעידן הדיגיטלי" ישן וכללי</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">תמיכה בביקוש</div>
+                    <div class="value">HRUS: 20+ מאמרי AI-HR ב-2026. HR Portal: 15+ מאמרי AI. אף אחד לא כתב על AI + מבחני אמינות.</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>שימו לב:</strong> לנושא זה אין נפח חיפוש מאומת. זהו הימור אסטרטגי על מגמה שכבר הוכיחה ביקוש (AI ב-HR) בזווית שאף אחד לא מכסה. אם הביקוש לא יתממש — ההשפעה תהיה מינימלית.
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> איך AI משנה את מבחני האמינות: אלגוריתמים לזיהוי זיוף תשובות, מבחנים אדפטיביים, ניתוח דפוסי תגובה, עתיד הסינון. מידות כחברה שמשלבת מחקר אקדמי + טכנולוגיה. לינק למוצרי IntegriTEST.
+            </div>
+        </div>
+
+        <!-- Topic 7 reframed -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">6. מבחני מיון לעבודה: מדריך למעסיקים — כל הסוגים ואיך לבחור</div>
+                    <div class="card-subtitle">מוקד מחדש: מדריך למעסיקים (לא הכנה למועמדים) ← כוונת חיפוש שונה</div>
+                </div>
+                <span class="priority priority-high">גבוה — איחוד דירוגים</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">מבחני מיון לעבודה <span class="vol">110/חודש</span> <span class="kd kd-easy">KD 7</span></span>
+                <span class="kw-tag">מבחן מיון לעבודה <span class="vol">110</span></span>
+                <span class="kw-tag">מבחן התאמה לעבודה <span class="vol">110</span></span>
+                <span class="kw-tag">מיון עובדים <span class="vol">90</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~420/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#9 (עמוד מוצר), #5 ו-#3 לווריאציות</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-orange">בינוני</span> — עמוד מוצר "מבדקי כישורים" קיים במיקום 9</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-orange">SERP = הכנה למועמדים</span> — המאמר ממוקד למעסיקים = זווית שונה</div>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מדריך מטריה למעסיקים — כל סוגי מבחני המיון (פסיכומטרי, אמינות, אישיות, כישורים, דינמיקה קבוצתית, מרכזי הערכה). לינק למוצרי מידות בתוך כל קטגוריה. שונה מעמוד המוצר שמתאר רק את הכלים של מידות.
+            </div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">7. בדיקות רקע לעובדים: מה חוקי, מה מותר ואיך עושים את זה נכון</div>
+                    <div class="card-subtitle">הרחבה לשירותים סמוכים — אין תוכן קיים כלל</div>
+                </div>
+                <span class="priority priority-medium">בינוני</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">בדיקות רקע <span class="vol">90/חודש</span> <span class="kd kd-medium">KD 15</span></span>
+                <span class="kw-tag">בדיקות רקע לעובדים <span class="vol">50</span></span>
+                <span class="kw-tag">בדיקות רקע למועמדים</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~190+/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#43 ל"לעובדים", #28 ל"למועמדים"</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-green">נמוך</span> — אין חפיפה עם תוכן קיים</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-green">מעסיקים ✓</span> — SERP: חברות חקירות + משפטי</div>
+                </div>
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">workrights.co.il</span>
+                    <span class="competitor-chip">keret.info</span>
+                    <span class="competitor-chip">background.co.il</span>
+                    <span class="competitor-chip">etikapoly.com</span>
+                    <span class="competitor-chip">tafnitin.com</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מדריך מעשי למעסיקים — מה בדיקות רקע כוללות, המסגרת החוקית בישראל, שלבי התהליך, עלויות, איך בדיקות רקע משלימות מבחני אמינות. לינק למוצר מידות שילד.
+            </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="phase-header">
+            <span class="phase-num">שלב 3</span>
+            <h3>משפך HR רחב — לפרסם אחרי ביסוס סמכות ליבה</h3>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">8. הערכת עובדים: שיטות, כלים ושאלון מוכן לשנת 2026</div>
+                    <div class="card-subtitle">מילת מפתח במעקב ללא דירוג כלל — חיבור למוצר TRUSTEE</div>
+                </div>
+                <span class="priority priority-medium">בינוני</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">הערכת עובדים <span class="vol">320/חודש</span> <span class="kd kd-medium">KD 11</span></span>
+                <span class="kw-tag">מערכת הערכת עובדים <span class="vol">50</span></span>
+                <span class="kw-tag">שאלון הערכת עובדים <span class="vol">40</span></span>
+                <span class="kw-tag">הערכת ביצועי עובדים <span class="vol">30</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~440/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#0 — לא מדורג כלל</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-green">נמוך</span> — אין תוכן על הערכת עובדים כללית</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סמכות נושאית</div>
+                    <div class="value"><span class="badge badge-orange">מחוץ לליבה</span> — נושא HR כללי. HRUS/Hilan שולטים. עדיפות נמוכה יותר.</div>
+                </div>
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">hamichlol.org.il</span>
+                    <span class="competitor-chip">hrus.co.il</span>
+                    <span class="competitor-chip">topsolutions.co.il</span>
+                    <span class="competitor-chip">synel.co.il</span>
+                    <span class="competitor-chip">education.gov.il</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מדריך מקיף — שיטות הערכה (360, KPI, OKR, הערכה שנתית), כלים, תבנית שאלון להורדה. לינק ל-TRUSTEE ו-IntegriTEST כפתרונות הערכה של מידות.
+            </div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">9. שימור עובדים: אסטרטגיות מבוססות נתונים לצמצום תחלופה ב-2026</div>
+                    <div class="card-subtitle">עמוד פילר (Hub) — מקשר למאמרים קיימים על תחלופת עובדים</div>
+                </div>
+                <span class="priority priority-medium">בינוני</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">שימור עובדים <span class="vol">110/חודש</span> <span class="kd kd-easy">KD 5</span></span>
+                <span class="kw-tag">שחיקה בעבודה <span class="vol">170</span></span>
+                <span class="kw-tag">תחלופת עובדים <span class="vol">30</span></span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~320+/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">לא מדורג</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-red">גבוה</span> — מאמרים #4 (חיזוי עזיבה) ו-#5 (טעויות) חופפים. חובה: עמוד Hub שמקשר אליהם.</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">יתרון ייחודי</div>
+                    <div class="value">StabiliTEST = כלי חיזוי התפטרות. נתונים ייחודיים שאף פורטל HR לא יכול לספק.</div>
+                </div>
+            </div>
+            <div class="warning-box">
+                <strong>סיכון קניבליזציה גבוה:</strong> מאמרים קיימים ("חיזוי מראש מי יישאר ומי יתפטר" + "טעויות שגורמות לעובדים לעזוב") חופפים. המאמר חייב להיות <strong>עמוד פילר (Hub)</strong> שמקשר אליהם כצלילות עמוקות, ומכסה אסטרטגיות שימור רחבות יותר (תגמול, תרבות, פיתוח קריירה).
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> עמוד Hub — אסטרטגיות שימור מבוססות נתונים. לינק פנימי למאמרים #4 ו-#5 הקיימים. זווית ייחודית: חיזוי עזיבה באמצעות נתוני StabiliTEST. לינק למוצרים StabiliTEST + IntegriEXIT.
+            </div>
+        </div>
+
+        <!-- Topic 10 -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">10. תהליך גיוס עובדים: שלבי הסינון שימנעו טעויות יקרות</div>
+                    <div class="card-subtitle">קידום צולב של מוצרים מרובים לאורך משפך הגיוס</div>
+                </div>
+                <span class="priority priority-medium">בינוני</span>
+            </div>
+            <div class="kw-grid">
+                <span class="kw-tag kw-primary">תהליך גיוס עובדים <span class="vol">70/חודש</span> <span class="kd kd-easy">KD 7</span></span>
+                <span class="kw-tag">גיוס עובדים <span class="vol">480</span> <span class="kd kd-hard">KD 50</span></span>
+                <span class="kw-tag">מיון עובדים <span class="vol">90</span></span>
+                <span class="kw-tag">סינון עובדים לפני קבלה לעבודה</span>
+            </div>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="label">נפח אשכול</div>
+                    <div class="value">~640+/חודש</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">דירוג נוכחי</div>
+                    <div class="value">#74 ל"מיון עובדים"</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">סיכון קניבליזציה</div>
+                    <div class="value"><span class="badge badge-green">נמוך</span> — עמודי ענפים ותעשיות ממוקדים בנישות ספציפיות</div>
+                </div>
+                <div class="detail-item">
+                    <div class="label">כוונת חיפוש</div>
+                    <div class="value"><span class="badge badge-green">מעסיקים ✓</span> — SERP: מדריכי HR, לא דרושים</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <strong>שימו לב:</strong> "גיוס עובדים" (480, KD 50) קשה מדי. המאמר מטרגט את ה-Long-Tail "תהליך גיוס עובדים" (70, KD 7) — בר-השגה הרבה יותר.
+            </div>
+            <div style="margin-top:12px">
+                <div class="label" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:6px">טופ 5 ב-SERP</div>
+                <div class="competitor-strip">
+                    <span class="competitor-chip">savionmedia.co.il</span>
+                    <span class="competitor-chip">niloosoft.com</span>
+                    <span class="competitor-chip">drushim.co.il</span>
+                    <span class="competitor-chip">hrplus.co.il</span>
+                    <span class="competitor-chip">synergia-recruiting.com</span>
+                </div>
+            </div>
+            <div class="action-box">
+                <strong>פעולה:</strong> מיפוי משפך גיוס מלא — מודעה → סינון ← בדיקת אמינות → ריאיון → קליטה. מבחן אמינות כשלב קריטי. קידום צולב: IntegriTEST, מבדקי כישורים, בדיקות רקע, Podium.
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Table -->
+    <div class="section">
+        <div class="section-title"><span class="num">5</span> טבלת סיכום</div>
+        <div style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>נושא</th>
+                        <th>מילת מפתח ראשית</th>
+                        <th>נפח</th>
+                        <th>KD</th>
+                        <th>Intent</th>
+                        <th>קניבליזציה</th>
+                        <th>עדיפות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>מבחן אמינות לדוגמא</td>
+                        <td>מבחן אמינות לדוגמא</td>
+                        <td><strong>690</strong></td>
+                        <td><span class="badge badge-green">7</span></td>
+                        <td><span class="badge badge-orange">מועמדים</span></td>
+                        <td><span class="badge badge-orange">בינוני</span></td>
+                        <td><span class="badge badge-red">קריטי</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>מעילות והונאות</td>
+                        <td>מעילות + הונאות</td>
+                        <td><strong>980+</strong></td>
+                        <td><span class="badge badge-green">7-18</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-orange">בינוני</span></td>
+                        <td><span class="badge badge-red">קריטי</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>פוליגרף מול מבחן אמינות</td>
+                        <td>השוואה</td>
+                        <td><strong>130+</strong></td>
+                        <td><span class="badge badge-green">—</span></td>
+                        <td><span class="badge badge-green">החלטה ✓</span></td>
+                        <td><span class="badge badge-orange">בינוני</span></td>
+                        <td><span class="badge badge-red">קריטי</span></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>בדיקת פוליגרף — מחיר</td>
+                        <td>בדיקת פוליגרף מחיר</td>
+                        <td><strong>690+</strong></td>
+                        <td><span class="badge badge-green">2</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-red">גבוה*</span></td>
+                        <td><span class="badge badge-orange">גבוה</span></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>AI ומבחני אמינות</td>
+                        <td>נושא חדש (מגמה)</td>
+                        <td><strong>?</strong></td>
+                        <td><span class="badge badge-green">—</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-green">נמוך</span></td>
+                        <td><span class="badge badge-orange">גבוה</span></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>מבחני מיון — למעסיקים</td>
+                        <td>מבחני מיון לעבודה</td>
+                        <td><strong>420</strong></td>
+                        <td><span class="badge badge-green">7</span></td>
+                        <td><span class="badge badge-orange">מוקד מחדש</span></td>
+                        <td><span class="badge badge-orange">בינוני</span></td>
+                        <td><span class="badge badge-orange">גבוה</span></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>בדיקות רקע לעובדים</td>
+                        <td>בדיקות רקע</td>
+                        <td><strong>190+</strong></td>
+                        <td><span class="badge badge-orange">15</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-green">נמוך</span></td>
+                        <td><span class="badge badge-cyan">בינוני</span></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>הערכת עובדים</td>
+                        <td>הערכת עובדים</td>
+                        <td><strong>440</strong></td>
+                        <td><span class="badge badge-orange">11</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-green">נמוך</span></td>
+                        <td><span class="badge badge-cyan">בינוני</span></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>שימור עובדים (Hub)</td>
+                        <td>שימור עובדים</td>
+                        <td><strong>320+</strong></td>
+                        <td><span class="badge badge-green">5</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-red">גבוה*</span></td>
+                        <td><span class="badge badge-cyan">בינוני</span></td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>תהליך גיוס עובדים</td>
+                        <td>תהליך גיוס עובדים</td>
+                        <td><strong>640+</strong></td>
+                        <td><span class="badge badge-green">7</span></td>
+                        <td><span class="badge badge-green">מעסיקים ✓</span></td>
+                        <td><span class="badge badge-green">נמוך</span></td>
+                        <td><span class="badge badge-cyan">בינוני</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:8px">* גבוה = דורש טיפול מיוחד (Long-Tail / עמוד Hub) כדי למנוע פגיעה בעמודים קיימים</div>
+    </div>
+
+    <!-- Data Sources -->
+    <div class="section">
+        <div class="section-title"><span class="num">6</span> מקורות נתונים</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>מקור</th>
+                    <th>שימוש</th>
+                    <th>תאריך</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>SE Ranking Project API</strong></td>
+                    <td>47 מילות מפתח במעקב, מיקומים, נפחים</td>
+                    <td>מרץ 2026</td>
+                </tr>
+                <tr>
+                    <td><strong>SE Ranking Data API</strong></td>
+                    <td>אימות נפחים (source=il), 80+ מילות מפתח נוספות</td>
+                    <td>מרץ 2026</td>
+                </tr>
+                <tr>
+                    <td><strong>סריקת אתר midot.co.il</strong></td>
+                    <td>209 עמודים ממופים, 17 מאמרי בלוג, 130+ פרסומים אקדמיים</td>
+                    <td>מרץ 2026</td>
+                </tr>
+                <tr>
+                    <td><strong>בדיקת SERP (10 מילות מפתח)</strong></td>
+                    <td>טופ 5 אורגני לכל מילת מפתח מומלצת</td>
+                    <td>מרץ 2026</td>
+                </tr>
+                <tr>
+                    <td><strong>סריקת מתחרים</strong></td>
+                    <td>Adam Milo, HRUS, HR Portal, Tamir Polygraph — בלוגים 2025-2026</td>
+                    <td>מרץ 2026</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<footer>
+    NC Digital | מרץ 2026
+</footer>
+
+</body>
+</html>
