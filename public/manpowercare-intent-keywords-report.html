@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>ManpowerCare — מילות מפתח בכוונה גבוהה | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.6;direction:rtl}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+
+/* Header */
+.header{text-align:center;padding:40px 20px 30px;border-bottom:1px solid rgba(8,145,178,0.3);margin-bottom:30px}
+.header h1{font-size:2rem;font-weight:800;color:#fff;margin-bottom:8px}
+.header .subtitle{font-size:1.1rem;color:#94a3b8;margin-bottom:12px}
+.header .meta{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.header .meta span{background:rgba(8,145,178,0.15);color:#0891b2;padding:4px 14px;border-radius:20px;font-size:0.85rem;font-weight:500}
+
+/* Section */
+.section{margin-bottom:40px}
+.section-title{font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.section-title .icon{width:32px;height:32px;background:#0891b2;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.section-desc{color:#94a3b8;font-size:0.95rem;margin-bottom:20px;padding-right:42px}
+
+/* Table */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid rgba(8,145,178,0.2)}
+table{width:100%;border-collapse:collapse;font-size:0.9rem}
+thead{background:rgba(8,145,178,0.15)}
+th{padding:12px 16px;text-align:right;font-weight:600;color:#0891b2;white-space:nowrap;border-bottom:1px solid rgba(8,145,178,0.2)}
+td{padding:10px 16px;border-bottom:1px solid rgba(30,41,59,0.8);vertical-align:middle}
+tr:hover{background:rgba(8,145,178,0.05)}
+.kw{font-weight:600;color:#fff}
+.vol{font-weight:700;color:#22d3ee;font-size:1rem}
+.vol.zero{color:#64748b;font-weight:400}
+
+/* Intent badges */
+.intent{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.intent.high{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3)}
+.intent.medium{background:rgba(251,191,36,0.2);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
+.intent.low{background:rgba(100,116,139,0.2);color:#94a3b8;border:1px solid rgba(100,116,139,0.3)}
+
+/* AI presence dots */
+.ai-dots{display:flex;gap:6px;align-items:center}
+.dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;border:2px solid}
+.dot.active{border-color:#22c55e;color:#22c55e;background:rgba(34,197,94,0.15)}
+.dot.inactive{border-color:#334155;color:#475569;background:transparent}
+
+/* Cluster cards */
+.clusters{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+.cluster-card{background:rgba(15,23,42,0.8);border:1px solid rgba(8,145,178,0.25);border-radius:14px;padding:24px;transition:border-color 0.2s}
+.cluster-card:hover{border-color:#0891b2}
+.cluster-name{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:4px}
+.cluster-priority{margin-bottom:12px}
+.cluster-stats{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.cluster-stat{text-align:center}
+.cluster-stat .num{font-size:1.4rem;font-weight:800;color:#22d3ee}
+.cluster-stat .label{font-size:0.75rem;color:#64748b}
+.cluster-kws{display:flex;flex-wrap:wrap;gap:6px}
+.cluster-kw{background:rgba(8,145,178,0.1);border:1px solid rgba(8,145,178,0.2);padding:3px 10px;border-radius:8px;font-size:0.8rem;color:#cbd5e1}
+.cluster-kw.has-ai{border-color:rgba(34,197,94,0.4);background:rgba(34,197,94,0.1);color:#86efac}
+
+/* Opportunity cards */
+.opps{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.opp-card{background:linear-gradient(135deg,rgba(8,145,178,0.1),rgba(15,23,42,0.9));border:1px solid rgba(8,145,178,0.3);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.opp-card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:#0891b2;border-radius:0 0 0 4px}
+.opp-rank{position:absolute;top:10px;left:10px;width:28px;height:28px;background:#0891b2;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;color:#fff}
+.opp-kw{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:6px}
+.opp-meta{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.opp-meta span{font-size:0.82rem;color:#94a3b8}
+.opp-meta .val{color:#22d3ee;font-weight:600}
+.opp-reason{font-size:0.85rem;color:#cbd5e1;line-height:1.5}
+
+/* Removed table */
+.removed-table td{color:#64748b}
+.removed-table .reason{font-size:0.82rem;color:#94a3b8}
+
+/* Footer */
+.footer{text-align:center;padding:30px 20px;border-top:1px solid rgba(8,145,178,0.2);margin-top:40px;color:#475569;font-size:0.85rem}
+.footer strong{color:#0891b2}
+
+/* Summary bar */
+.summary-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px}
+.summary-card{background:rgba(8,145,178,0.08);border:1px solid rgba(8,145,178,0.2);border-radius:12px;padding:20px;text-align:center}
+.summary-card .big{font-size:2rem;font-weight:800;color:#22d3ee}
+.summary-card .lbl{font-size:0.82rem;color:#94a3b8;margin-top:2px}
+
+@media(max-width:768px){
+  .container{padding:12px}
+  .header h1{font-size:1.5rem}
+  .clusters,.opps{grid-template-columns:1fr}
+  .summary-bar{grid-template-columns:repeat(2,1fr)}
+  table{font-size:0.82rem}
+  th,td{padding:8px 10px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <h1>ManpowerCare — מילות מפתח בכוונה גבוהה</h1>
+  <div class="subtitle">דוח מסונן ומדורג לפי כוונת המרה | manpowercare.co.il</div>
+  <div class="meta">
+    <span>תאריך: מרץ 2026</span>
+    <span>מקור נפח: SE Ranking Data API (IL)</span>
+    <span>מקור AI: SE Ranking AI Search</span>
+    <span>25 מילות מפתח פעילות</span>
+  </div>
+</div>
+
+<!-- Summary Bar -->
+<div class="summary-bar">
+  <div class="summary-card">
+    <div class="big">25</div>
+    <div class="lbl">מילות מפתח פעילות</div>
+  </div>
+  <div class="summary-card">
+    <div class="big">4,285</div>
+    <div class="lbl">נפח חיפוש חודשי כולל (IL)</div>
+  </div>
+  <div class="summary-card">
+    <div class="big">6</div>
+    <div class="lbl">אשכולות נושאיים</div>
+  </div>
+  <div class="summary-card">
+    <div class="big">9</div>
+    <div class="lbl">מופיע ב-AI (AIO/ChatGPT/Gemini)</div>
+  </div>
+  <div class="summary-card">
+    <div class="big">5</div>
+    <div class="lbl">שאילתות שהוסרו (לא רלוונטיות)</div>
+  </div>
+</div>
+
+<!-- Section 1: High-Intent Keywords -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">1</span>
+    מילות מפתח בכוונה גבוהה
+  </div>
+  <div class="section-desc">כל מילות המפתח מדורגות לפי כוונת המרה. נפח חיפוש מאומת מ-SE Ranking Data API (source=il). נוכחות AI מבוססת על SE Ranking AI Search.</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>מילת מפתח</th>
+          <th>נפח (IL)</th>
+          <th>כוונה</th>
+          <th>AIO</th>
+          <th>ChatGPT</th>
+          <th>Gemini</th>
+          <th>סוג</th>
+          <th>אשכול</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="kw">חברת סיעוד מומלצת</td>
+          <td class="vol">320</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot active">M+L</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>Mention+Link</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="kw">מטפלות סיעודיות</td>
+          <td class="vol">210</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="kw">מטפלת סיעודית פרטית</td>
+          <td class="vol">210</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="kw">חברת סיעוד</td>
+          <td class="vol">200</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="kw">חברות סיעוד</td>
+          <td class="vol">170</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="kw">רשימת חברות סיעוד</td>
+          <td class="vol">170</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot active">M</span></div></td>
+          <td>Mention</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td class="kw">שירותי סיעוד</td>
+          <td class="vol">140</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="kw">מטפלת לקשישים</td>
+          <td class="vol">140</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="kw">טיפול סיעודי</td>
+          <td class="vol">90</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td class="kw">שירותי סיעוד לקשישים</td>
+          <td class="vol">70</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot active">M</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>Mention</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td class="kw">מטפלת סיעודית זרה</td>
+          <td class="vol">50</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת זרה</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td class="kw">חברות סיעוד מומלצות</td>
+          <td class="vol">50</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td class="kw">מטפלת 24/7</td>
+          <td class="vol">40</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot active">M+L</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>Mention+Link</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td class="kw">רשימת חברות סיעוד ביטוח לאומי</td>
+          <td class="vol">40</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot active">M</span></div></td>
+          <td>Mention</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td class="kw">home health care services</td>
+          <td class="vol">40</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot active">M</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>Mention</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td class="kw">מטפלת זרה</td>
+          <td class="vol">30</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת זרה</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td class="kw">מטפלת סיעודית</td>
+          <td class="vol">20</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td class="kw">סיעוד לקשישים</td>
+          <td class="vol">10</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td class="kw">מטפלת סיעודית לקשישים</td>
+          <td class="vol">10</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td class="kw">עובדת זרה סיעודית</td>
+          <td class="vol">10</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת זרה</td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td class="kw">נתיב 2 נכי צה״ל</td>
+          <td class="vol zero">90*</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot active">M+L</span></div></td>
+          <td><div class="ai-dots"><span class="dot active">M+L</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>Mention+Link</td>
+          <td>נתיב 2</td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td class="kw">חברת סיעוד פרטית</td>
+          <td class="vol zero">—</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td class="kw">חברות סיעוד בישראל</td>
+          <td class="vol zero">—</td>
+          <td><span class="intent medium">בינוני</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>חברות סיעוד</td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td class="kw">עלות מטפלת סיעודית</td>
+          <td class="vol zero">—</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td class="kw">מחיר מטפלת סיעודית</td>
+          <td class="vol zero">—</td>
+          <td><span class="intent high">גבוה</span></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td><div class="ai-dots"><span class="dot inactive">—</span></div></td>
+          <td>—</td>
+          <td>מטפלת סיעודית</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:0.8rem;color:#64748b;margin-top:8px;padding-right:4px;">* נתיב 2 נכי צה״ל — נפח 90 לפי SE Ranking AI Search (AIO). ה-Data API לא מחזיר נתון (ווריאנט כתיב). ללא נפח = מילת מפתח אסטרטגית שנשמרה בגלל ערך עסקי.</p>
+</div>
+
+<!-- Section 2: Keyword Clusters -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">2</span>
+    אשכולות מילות מפתח
+  </div>
+  <div class="section-desc">מילות המפתח מקובצות לפי נושא עם עדיפות לפי נפח וכוונת המרה.</div>
+
+  <div class="clusters">
+
+    <!-- Cluster 1: חברות סיעוד -->
+    <div class="cluster-card">
+      <div class="cluster-name">חברות סיעוד</div>
+      <div class="cluster-priority"><span class="intent high">עדיפות גבוהה</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">8</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">950</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">3</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw has-ai">חברת סיעוד מומלצת (320)</span>
+        <span class="cluster-kw">חברת סיעוד (200)</span>
+        <span class="cluster-kw">חברות סיעוד (170)</span>
+        <span class="cluster-kw has-ai">רשימת חברות סיעוד (170)</span>
+        <span class="cluster-kw">חברות סיעוד מומלצות (50)</span>
+        <span class="cluster-kw has-ai">רשימת חברות סיעוד ביטוח לאומי (40)</span>
+        <span class="cluster-kw">חברת סיעוד פרטית</span>
+        <span class="cluster-kw">חברות סיעוד בישראל</span>
+      </div>
+    </div>
+
+    <!-- Cluster 2: שירותי סיעוד -->
+    <div class="cluster-card">
+      <div class="cluster-name">שירותי סיעוד וטיפול</div>
+      <div class="cluster-priority"><span class="intent high">עדיפות גבוהה</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">7</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">530</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">3</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw">שירותי סיעוד (140)</span>
+        <span class="cluster-kw">מטפלת לקשישים (140)</span>
+        <span class="cluster-kw">טיפול סיעודי (90)</span>
+        <span class="cluster-kw has-ai">שירותי סיעוד לקשישים (70)</span>
+        <span class="cluster-kw has-ai">מטפלת 24/7 (40)</span>
+        <span class="cluster-kw has-ai">home health care services (40)</span>
+        <span class="cluster-kw">סיעוד לקשישים (10)</span>
+      </div>
+    </div>
+
+    <!-- Cluster 3: מטפלת סיעודית -->
+    <div class="cluster-card">
+      <div class="cluster-name">מטפלת סיעודית</div>
+      <div class="cluster-priority"><span class="intent high">עדיפות גבוהה</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">6</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">480</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">0</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw">מטפלות סיעודיות (210)</span>
+        <span class="cluster-kw">מטפלת סיעודית פרטית (210)</span>
+        <span class="cluster-kw">מטפלת סיעודית (20)</span>
+        <span class="cluster-kw">מטפלת סיעודית לקשישים (10)</span>
+        <span class="cluster-kw">עלות מטפלת סיעודית</span>
+        <span class="cluster-kw">מחיר מטפלת סיעודית</span>
+      </div>
+    </div>
+
+    <!-- Cluster 4: מטפלת זרה -->
+    <div class="cluster-card">
+      <div class="cluster-name">מטפלת זרה / עובדת זרה</div>
+      <div class="cluster-priority"><span class="intent high">עדיפות גבוהה</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">4</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">90</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">0</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw">מטפלת סיעודית זרה (50)</span>
+        <span class="cluster-kw">מטפלת זרה (30)</span>
+        <span class="cluster-kw">עובדת זרה סיעודית (10)</span>
+        <span class="cluster-kw">עובדת זרה לקשישים</span>
+      </div>
+    </div>
+
+    <!-- Cluster 5: נתיב 2 -->
+    <div class="cluster-card">
+      <div class="cluster-name">נתיב 2 / נכי צה״ל</div>
+      <div class="cluster-priority"><span class="intent medium">עדיפות בינונית</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">1</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">90*</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">2</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw has-ai">נתיב 2 נכי צה״ל (90*)</span>
+      </div>
+      <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">נישה קטנה אבל ממירה — קישור ישיר בתוצאות ChatGPT לעמוד הטיפול בנכי צה״ל</p>
+    </div>
+
+    <!-- Cluster 6: גמלת סיעוד -->
+    <div class="cluster-card">
+      <div class="cluster-name">זכאות וגמלאות</div>
+      <div class="cluster-priority"><span class="intent low">עדיפות נמוכה</span></div>
+      <div class="cluster-stats">
+        <div class="cluster-stat"><div class="num">1</div><div class="label">מילות מפתח</div></div>
+        <div class="cluster-stat"><div class="num">660</div><div class="label">נפח כולל</div></div>
+        <div class="cluster-stat"><div class="num">0</div><div class="label">נוכחות AI</div></div>
+      </div>
+      <div class="cluster-kws">
+        <span class="cluster-kw">גמלת סיעוד (660)</span>
+      </div>
+      <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">נפח גבוה אבל כוונה מידעית — שער כניסה לשירותי סיעוד. מתאים לתוכן בלוג שמוביל לעמודי שירות.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Section 3: Top Opportunities -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">3</span>
+    הזדמנויות מובילות
+  </div>
+  <div class="section-desc">מילות מפתח עם נפח גבוה וכוונה גבוהה שבהן ManpowerCare עדיין לא מופיע ב-AI — פוטנציאל צמיחה מיידי.</div>
+
+  <div class="opps">
+
+    <div class="opp-card">
+      <span class="opp-rank">1</span>
+      <div class="opp-kw">מטפלות סיעודיות</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">210</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">נפח גבוה, כוונת המרה ישירה. אין נוכחות AI — יש ליצור תוכן ממוקד בעמוד שירותי מטפלות סיעודיות.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">2</span>
+      <div class="opp-kw">מטפלת סיעודית פרטית</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">210</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">שאילתה עם כוונת רכישה ברורה — משתמש מחפש מטפלת פרטית (לא דרך ביטוח לאומי). עמוד שירות ייעודי ימיר.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">3</span>
+      <div class="opp-kw">חברת סיעוד</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">200</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">מילת מפתח ליבה מספר 1 של התחום. ManpowerCare חייב להופיע כאן ב-AI. יש לחזק את עמוד הבית ועמוד "אודות" עם E-E-A-T ברור.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">4</span>
+      <div class="opp-kw">חברות סיעוד</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">170</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">ווריאנט רבים של "חברת סיעוד". תוכן השוואתי (רשימה) עם ManpowerCare בראש יכניס את האתר לתוצאות AI.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">5</span>
+      <div class="opp-kw">שירותי סיעוד</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">140</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">כבר מופיע ב-ChatGPT עם "שירותי סיעוד לקשישים" — אבל לא עם השאילתה הכללית. עמוד שירותים ראשי חזק יסגור את הפער.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">6</span>
+      <div class="opp-kw">מטפלת לקשישים</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">140</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">כוונת גיוס ישירה. תוכן שעונה על "איך מוצאים מטפלת לקשישים" עם CTA לשירותי ManpowerCare.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">7</span>
+      <div class="opp-kw">טיפול סיעודי</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">90</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">שאילתה כללית על טיפול סיעודי. מתאים לעמוד מידע + שירות שמסביר מה כולל טיפול סיעודי ואיך ManpowerCare מספק אותו.</div>
+    </div>
+
+    <div class="opp-card">
+      <span class="opp-rank">8</span>
+      <div class="opp-kw">מטפלת סיעודית זרה</div>
+      <div class="opp-meta">
+        <span>נפח: <span class="val">50</span></span>
+        <span>כוונה: <span class="val">גבוה</span></span>
+        <span>AI: <span style="color:#ef4444">לא מופיע</span></span>
+      </div>
+      <div class="opp-reason">ביקוש ספציפי למטפלת זרה סיעודית. עמוד שירות ייעודי "מטפלת זרה" עם תהליך, עלויות, ותנאים יכניס ל-AI.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Section 4: Removed Queries -->
+<div class="section">
+  <div class="section-title">
+    <span class="icon">4</span>
+    שאילתות שהוסרו
+  </div>
+  <div class="section-desc">שאילתות שהופיעו בדוח GEO המקורי אך אינן רלוונטיות לשירותי סיעוד של ManpowerCare.</div>
+
+  <div class="table-wrap removed-table">
+    <table>
+      <thead>
+        <tr>
+          <th>שאילתה</th>
+          <th>מקור מקורי</th>
+          <th>נפח (IL)</th>
+          <th>סיבת הסרה</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>בלבול ושכחה</td>
+          <td>AI Overview</td>
+          <td>50</td>
+          <td class="reason">מצב רפואי / מידעי בלבד — אין כוונת שירות</td>
+        </tr>
+        <tr>
+          <td>פרילנסרים בישראל</td>
+          <td>AI Overview</td>
+          <td>40</td>
+          <td class="reason">לא קשור לסיעוד — תחום פרילנס כללי</td>
+        </tr>
+        <tr>
+          <td>מנפאואר פרופשיונל טלפון</td>
+          <td>AI Overview</td>
+          <td>10</td>
+          <td class="reason">מותג אחר (Manpower Professional) — לא ManpowerCare</td>
+        </tr>
+        <tr>
+          <td>תועמלן רפואי דרושים</td>
+          <td>Gemini</td>
+          <td>—</td>
+          <td class="reason">משרות תועמלנות רפואית — לא שירותי סיעוד</td>
+        </tr>
+        <tr>
+          <td>משרת סטודנט ביוטכנולוגיה</td>
+          <td>Gemini</td>
+          <td>—</td>
+          <td class="reason">משרות ביוטכנולוגיה — לא קשור לסיעוד כלל</td>
+        </tr>
+        <tr>
+          <td>фирмы по уходу за пожилыми в израиле</td>
+          <td>AI Overview</td>
+          <td>20</td>
+          <td class="reason">רוסית — קהל יעד צר מאוד. נשמר בדוח GEO המלא אך לא נכלל ברשימת מילות מפתח ממוקדות</td>
+        </tr>
+        <tr>
+          <td>זכאות סיעוד</td>
+          <td>—</td>
+          <td>0</td>
+          <td class="reason">אפס נפח + כוונה מידעית בלבד — לא ממיר</td>
+        </tr>
+        <tr>
+          <td>סיעוד בבית</td>
+          <td>—</td>
+          <td>0</td>
+          <td class="reason">אפס נפח ב-API — ניתן להוסיף בעתיד אם יופיע נפח</td>
+        </tr>
+        <tr>
+          <td>עובדת זרה לקשישים</td>
+          <td>—</td>
+          <td>0</td>
+          <td class="reason">אפס נפח ב-API — ווריאנט של "מטפלת זרה" שכבר נמצא ברשימה</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <strong>NC Digital</strong> — דוח מילות מפתח בכוונה גבוהה | ManpowerCare<br>
+  מקורות: SE Ranking Data API (source=il), SE Ranking AI Search | מרץ 2026
+</div>
+
+</div>
+</body>
+</html>
