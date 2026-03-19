@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>QMD — מיפוי מילות מפתח לדפי מוצר</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #0891b2;
+    --accent-light: #22d3ee;
+    --green: #10b981;
+    --green-bg: rgba(16, 185, 129, 0.12);
+    --red: #f43f5e;
+    --red-bg: rgba(244, 63, 94, 0.12);
+    --yellow: #f59e0b;
+    --yellow-bg: rgba(245, 158, 11, 0.12);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167, 139, 250, 0.12);
+    --orange: #fb923c;
+    --orange-bg: rgba(251, 146, 60, 0.12);
+    --border: #334155;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: #000;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  .verified-badge {
+    display: inline-block;
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1px solid rgba(16,185,129,0.3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 16px;
+    margin-right: 8px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span { color: var(--accent-light); }
+
+  .header p {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+
+  .header-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .header-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .header-meta-item strong { color: var(--text-primary); }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .summary-card:hover { border-color: var(--accent); }
+
+  .summary-card .number {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .summary-card .label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .number-accent { color: var(--accent-light); }
+  .number-green { color: var(--green); }
+  .number-yellow { color: var(--yellow); }
+  .number-orange { color: var(--orange); }
+
+  .section { margin-bottom: 48px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .section-count {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 12px;
+  }
+
+  .sc-green { background: var(--green); }
+  .sc-yellow { background: var(--yellow); color: #000; }
+
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: var(--bg-hover);
+    padding: 14px 16px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  tbody tr:hover { background: rgba(8, 145, 178, 0.05); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .kw-cell {
+    font-weight: 600;
+    color: var(--text-primary);
+    direction: ltr;
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+
+  .vol-cell {
+    direction: ltr;
+    text-align: center;
+    font-weight: 600;
+    color: var(--accent-light);
+    font-family: 'Courier New', monospace;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-yes {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .badge-no {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1px solid rgba(244, 63, 94, 0.3);
+  }
+
+  .badge-optimize {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .badge-create {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .badge-page {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge-homepage {
+    background: rgba(34, 211, 238, 0.12);
+    color: var(--accent-light);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+  }
+
+  .badge-capabilities {
+    background: var(--purple-bg);
+    color: var(--purple);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+  }
+
+  .url-cell {
+    direction: ltr;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .url-cell a {
+    color: var(--accent-light);
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  .url-cell a:hover { text-decoration: underline; }
+
+  .dash-cell {
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .page-legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-homepage { background: var(--accent-light); }
+  .dot-capabilities { background: var(--purple); }
+  .dot-new { background: var(--yellow); }
+  .dot-skip { background: var(--red); }
+
+  .target-pages {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .target-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .target-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--accent-light);
+    direction: ltr;
+    text-align: left;
+  }
+
+  .target-card.card-cap h3 { color: var(--purple); }
+
+  .target-card .target-url {
+    font-size: 12px;
+    color: var(--text-muted);
+    direction: ltr;
+    text-align: left;
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+
+  .target-card .target-url a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .target-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+
+  .target-meta {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    direction: ltr;
+    text-align: left;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .target-meta .tm-label {
+    color: var(--accent-light);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .target-meta .tm-value {
+    color: var(--text-primary);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .target-meta .tm-chars {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .target-kw-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .target-kw-count strong { color: var(--green); }
+
+  .alert-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .alert-box.alert-red {
+    border-color: rgba(244, 63, 94, 0.4);
+    background: rgba(244, 63, 94, 0.05);
+  }
+
+  .alert-box h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .alert-box p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .alert-box code {
+    background: var(--bg-hover);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--accent-light);
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .note-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .note-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+
+  .note-card p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .note-card code {
+    background: var(--bg-hover);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--accent-light);
+    direction: ltr;
+    unicode-bidi: embed;
+  }
+
+  .footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .footer strong { color: var(--text-secondary); }
+
+  @media (max-width: 768px) {
+    .container { padding: 20px 12px; }
+    .header h1 { font-size: 24px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .header-meta { gap: 16px; }
+    table { font-size: 12px; }
+    thead th, tbody td { padding: 8px 10px; }
+    .target-pages { grid-template-columns: 1fr; }
+    .notes-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">NC DIGITAL — SEO</div>
+    <h1>QMD — <span>מיפוי מילות מפתח לדפי מוצר</span></h1>
+    <p>מיפוי מילות מפתח מסחריות לדפים קיימים באתר וזיהוי דפים חדשים שיש ליצור</p>
+    <div style="margin-top:12px">
+      <span class="verified-badge">Double Fact-Checked</span>
+      <span class="verified-badge">Double Error-Audited</span>
+    </div>
+    <div class="header-meta">
+      <div class="header-meta-item">אתר: <strong>&nbsp;qmd.net</strong></div>
+      <div class="header-meta-item">תאריך: <strong>&nbsp;19.03.2026</strong></div>
+      <div class="header-meta-item">סה״כ מילות מפתח: <strong>&nbsp;45</strong></div>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="number number-accent">45</div>
+      <div class="label">סה״כ מילות מפתח</div>
+    </div>
+    <div class="summary-card">
+      <div class="number number-green">18</div>
+      <div class="label">קיים דף — לאופטימיזציה</div>
+    </div>
+    <div class="summary-card">
+      <div class="number number-yellow">26</div>
+      <div class="label">אין דף — ליצירה</div>
+    </div>
+    <div class="summary-card">
+      <div class="number number-orange">1</div>
+      <div class="label">לא מומלץ לטרגט</div>
+    </div>
+    <div class="summary-card">
+      <div class="number number-accent">2</div>
+      <div class="label">דפים קיימים ממופים</div>
+    </div>
+  </div>
+
+  <!-- Flagged Keyword Alert -->
+  <div class="alert-box alert-red">
+    <h3 style="color:var(--red)">מילת מפתח מסומנת — לא מומלץ לטרגט</h3>
+    <p><code>cdmo</code> — נפח: 18,360 — מונח כללי השייך בעיקר לעולם הפארמה (Catalent, Lonza וכו׳). QMD הוא יצרן מכשור רפואי, לא CDMO פארמצי. ה-SERP נשלט על ידי חברות פארמה — טרפיק רלוונטי עבור QMD יהיה מזערי.</p>
+    <p style="margin-top:8px"><strong style="color:var(--text-primary)">חלופה:</strong> לטרגט את <code>medical device cdmo</code> (נפח: 80) שנמצא ברשימה וממופה נכון לדף הבית.</p>
+  </div>
+
+  <!-- Target Pages with Suggested Meta -->
+  <div class="section">
+    <div class="section-header">
+      <h2>דפים ממופים — Title & Meta מומלצים</h2>
+      <span class="section-count sc-green">2</span>
+    </div>
+    <div class="target-pages">
+      <div class="target-card">
+        <h3>Homepage</h3>
+        <div class="target-url"><a href="https://qmd.net/" target="_blank">https://qmd.net/</a></div>
+        <div class="target-label">Meta מומלץ:</div>
+        <div class="target-meta">
+          <span class="tm-label">Title:</span>
+          <span class="tm-value">QMD – Medical Device Contract Manufacturer & CDMO <span class="tm-chars">(49 תווים)</span></span>
+          <span class="tm-label">Meta Description:</span>
+          <span class="tm-value">QMD — global medical device contract manufacturer and CDMO. End-to-end OEM manufacturing of silicone and elastomer devices. ISO 13485, FDA-compliant. <span class="tm-chars">(149 תווים)</span></span>
+        </div>
+        <div class="target-kw-count">מילות מפתח ממופות: <strong>12</strong></div>
+      </div>
+      <div class="target-card card-cap">
+        <h3>Capabilities</h3>
+        <div class="target-url"><a href="https://qmd.net/capabilities/" target="_blank">https://qmd.net/capabilities/</a></div>
+        <div class="target-label">Meta מומלץ:</div>
+        <div class="target-meta">
+          <span class="tm-label">Title:</span>
+          <span class="tm-value">Medical Device Manufacturing Capabilities | QMD <span class="tm-chars">(47 תווים)</span></span>
+          <span class="tm-label">Meta Description:</span>
+          <span class="tm-value">Medical device manufacturing services — from component production and device assembly to packaging and sterilization in ISO Class 7/8 cleanrooms. <span class="tm-chars">(145 תווים)</span></span>
+        </div>
+        <div class="target-kw-count">מילות מפתח ממופות: <strong>6</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="page-legend">
+    <div class="legend-item"><div class="legend-dot dot-homepage"></div> Homepage — qmd.net/</div>
+    <div class="legend-item"><div class="legend-dot dot-capabilities"></div> Capabilities — qmd.net/capabilities/</div>
+    <div class="legend-item"><div class="legend-dot dot-new"></div> דף חדש ליצירה</div>
+    <div class="legend-item"><div class="legend-dot dot-skip"></div> לא מומלץ</div>
+  </div>
+
+  <!-- OPTIMIZE TABLE -->
+  <div class="section">
+    <div class="section-header">
+      <h2>דפים קיימים — לאופטימיזציה</h2>
+      <span class="section-count sc-green">18</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:3%">#</th>
+            <th style="width:27%">מילת מפתח</th>
+            <th style="width:8%">נפח חיפוש</th>
+            <th style="width:7%">דף קיים?</th>
+            <th style="width:12%">דף יעד</th>
+            <th style="width:30%">URL</th>
+            <th style="width:13%">פעולה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Homepage: 12 keywords -->
+          <tr>
+            <td>1</td>
+            <td class="kw-cell">medical device manufacturer</td>
+            <td class="vol-cell">1,800</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td class="kw-cell">cmo contract manufacturing</td>
+            <td class="vol-cell">1,390</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td class="kw-cell">medical manufacturing</td>
+            <td class="vol-cell">1,060</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td class="kw-cell">medical device contract manufacturing</td>
+            <td class="vol-cell">550</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td class="kw-cell">medical device contract manufacturer</td>
+            <td class="vol-cell">530</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td class="kw-cell">medical contract manufacturing</td>
+            <td class="vol-cell">440</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td class="kw-cell">medical device oem manufacturer</td>
+            <td class="vol-cell">120</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td class="kw-cell">medical device cdmo</td>
+            <td class="vol-cell">80</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td class="kw-cell">medical device cmo</td>
+            <td class="vol-cell">60</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td class="kw-cell">custom medical device manufacturer</td>
+            <td class="vol-cell">20</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td class="kw-cell">contract manufacturing organization medical</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td class="kw-cell">end to end medical device manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-homepage">Homepage</span></td>
+            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <!-- Capabilities: 6 keywords -->
+          <tr>
+            <td>13</td>
+            <td class="kw-cell">medical device assembly</td>
+            <td class="vol-cell">550</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td class="kw-cell">medical component manufacturing</td>
+            <td class="vol-cell">220</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td class="kw-cell">medical device manufacturing services</td>
+            <td class="vol-cell">70</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td class="kw-cell">contract medical device assembly</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>17</td>
+            <td class="kw-cell">turnkey medical device manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+          <tr>
+            <td>18</td>
+            <td class="kw-cell">vertically integrated medical device manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-yes">כן</span></td>
+            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
+            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
+            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CREATE NEW PAGE TABLE -->
+  <div class="section">
+    <div class="section-header">
+      <h2>דפים חדשים ליצירה</h2>
+      <span class="section-count sc-yellow">26</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:3%">#</th>
+            <th style="width:40%">מילת מפתח</th>
+            <th style="width:8%">נפח חיפוש</th>
+            <th style="width:7%">דף קיים?</th>
+            <th style="width:28%">URL</th>
+            <th style="width:14%">פעולה</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td class="kw-cell">medical device outsourcing</td>
+            <td class="vol-cell">130</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td class="kw-cell">medical device lifecycle management</td>
+            <td class="vol-cell">60</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td class="kw-cell">medical device supply chain management</td>
+            <td class="vol-cell">10</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td class="kw-cell">medical device toll manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td class="kw-cell">private label medical device manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td class="kw-cell">white label medical device</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td class="kw-cell">full service medical device manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td class="kw-cell">high volume medical device production</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td class="kw-cell">medical device second source manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td class="kw-cell">class ii medical device manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td class="kw-cell">class iii medical device manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td class="kw-cell">catheter contract manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td class="kw-cell">silicone medical device contract manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td class="kw-cell">elastomer medical device cmo</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td class="kw-cell">disposable device contract manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>16</td>
+            <td class="kw-cell">medical device manufacturing capacity planning</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>17</td>
+            <td class="kw-cell">single use device contract manufacturer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>18</td>
+            <td class="kw-cell">medical device scale up manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>19</td>
+            <td class="kw-cell">low volume medical device manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>20</td>
+            <td class="kw-cell">medical device technology transfer</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>21</td>
+            <td class="kw-cell">medical device dedicated manufacturing line</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>22</td>
+            <td class="kw-cell">medical device nearshoring</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>23</td>
+            <td class="kw-cell">medical device dual sourcing strategy</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>24</td>
+            <td class="kw-cell">medical device supply chain resilience</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>25</td>
+            <td class="kw-cell">medical device manufacturing automation</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+          <tr>
+            <td>26</td>
+            <td class="kw-cell">medical device clean manufacturing</td>
+            <td class="vol-cell">0</td>
+            <td><span class="badge badge-no">לא</span></td>
+            <td class="dash-cell">—</td>
+            <td><span class="badge badge-create">יצירת דף</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <div class="section-header">
+      <h2>המלצות מהביקורת</h2>
+    </div>
+    <div class="notes-grid">
+      <div class="note-card">
+        <h4>דף נחיתה ייעודי לשירותי ייצור</h4>
+        <p>12 מילות מפתח ממופות לדף הבית. מומלץ ליצור דף נחיתה ייעודי כמו <code>/contract-manufacturing/</code> שיקלוט את מילות המפתח בנפח 550–1,390 ויפנה עומס מדף הבית.</p>
+      </div>
+      <div class="note-card">
+        <h4>תוכן חסר באתר — CDMO / CMO</h4>
+        <p>המונחים "CDMO" ו-"CMO" לא מופיעים כלל בתוכן האתר הנוכחי. כדי שה-Title וה-Meta יהיו אפקטיביים, יש להוסיף מונחים אלו לתוכן דף הבית ודף ה-About.</p>
+      </div>
+      <div class="note-card">
+        <h4>אימות רישום FDA</h4>
+        <p>Meta Description מומלץ משתמש ב-"FDA-compliant" ולא "FDA-registered". יש לאמת את סטטוס רישום המתקנים ב-FDA לפני פרסום. אם הרישום מאומת — ניתן לשדרג ל-"FDA-registered".</p>
+      </div>
+      <div class="note-card">
+        <h4 style="color:var(--purple)">Capabilities — תוכן דק בסעיפים</h4>
+        <p>מילות מפתח כמו <code>automation</code>, <code>scale up</code>, <code>low volume</code>, <code>high volume</code> מוזכרות באתר כמשפט בודד או בולט ברשימה. לא מספיק לטרגוט — סומנו כ"יצירת דף חדש" עד שהתוכן יורחב.</p>
+      </div>
+      <div class="note-card">
+        <h4>Private Label / White Label</h4>
+        <p>דף הבית מזכיר "Private Labeling" במשפט אחד בלבד. לא מספיק עבור טרגוט. מומלץ ליצור דף ייעודי לשירותי Private Label / White Label שיכסה את שתי מילות המפתח.</p>
+      </div>
+      <div class="note-card">
+        <h4>דף Clinical Areas — פוטנציאל לא מנוצל</h4>
+        <p>הדף <code>/clinical-areas/</code> מכסה 6 תחומים קליניים (כירורגיה, אורולוגיה, כלי דם, גסטרו, טיפול נמרץ, מכשור חד-פעמי) אך אין מילות מפתח מהרשימה שממופות אליו. שווה לבדוק מילות מפתח ייעודיות לדף זה.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <strong>NC Digital</strong> &mdash; QMD Keyword-to-Page Mapping &mdash; 19.03.2026<br>
+    <span style="font-size:11px;color:var(--text-muted)">Double-verified by Fact-Checker & Error Detective agents (2 passes)</span>
+  </div>
+
+</div>
+</body>
+</html>
