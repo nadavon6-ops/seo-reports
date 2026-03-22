@@ -8,835 +8,905 @@
 <title>QMD — מיפוי מילות מפתח לדפי מוצר</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #1e293b;
-    --bg-hover: #334155;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent: #0891b2;
-    --accent-light: #22d3ee;
-    --green: #10b981;
-    --green-bg: rgba(16, 185, 129, 0.12);
-    --red: #f43f5e;
-    --red-bg: rgba(244, 63, 94, 0.12);
-    --yellow: #f59e0b;
-    --yellow-bg: rgba(245, 158, 11, 0.12);
-    --purple: #a78bfa;
-    --purple-bg: rgba(167, 139, 250, 0.12);
-    --orange: #fb923c;
-    --orange-bg: rgba(251, 146, 60, 0.12);
-    --teal: #2dd4bf;
-    --teal-bg: rgba(45, 212, 191, 0.12);
-    --border: #334155;
-  }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--card2:#334155;--border:#475569;--text:#e2e8f0;--text2:#94a3b8;--accent:#0891b2;--accent2:#06b6d4;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--purple:#a78bfa;--pink:#f472b6;--blue:#3b82f6}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;direction:rtl}
+.container{max-width:1400px;margin:0 auto;padding:20px}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Header */
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);border:1px solid var(--border);border-radius:16px;padding:40px;margin-bottom:30px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent))}
+.header h1{font-size:2.2em;font-weight:800;color:#fff;margin-bottom:8px}
+.header .sub{font-size:1.1em;color:var(--accent2);font-weight:500}
+.header .domain{font-size:0.95em;color:var(--text2);margin-top:6px;direction:ltr;unicode-bidi:plaintext}
 
-  body {
-    font-family: 'Heebo', sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+/* Stats bar */
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:30px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 16px;text-align:center}
+.stat-card .num{font-size:2em;font-weight:800;color:var(--accent2)}
+.stat-card .label{font-size:0.85em;color:var(--text2);margin-top:4px}
 
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 40px 24px;
-  }
+/* Legend */
+.legend{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:30px;display:flex;flex-wrap:wrap;gap:20px;align-items:center}
+.legend-title{font-weight:700;color:#fff;font-size:1em}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:0.9em;color:var(--text2)}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.dot-optimize{background:var(--accent2)}
+.dot-new{background:var(--green)}
+.dot-flag{background:var(--amber)}
 
-  .header {
-    text-align: center;
-    margin-bottom: 48px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
+/* Flagged */
+.flagged{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:20px;margin-bottom:30px;display:flex;gap:14px;align-items:flex-start}
+.flag-icon{font-size:1.4em;flex-shrink:0;margin-top:2px}
+.flag-content h3{color:var(--amber);font-size:1em;margin-bottom:4px}
+.flag-content p{color:var(--text2);font-size:0.9em;line-height:1.5}
+.flag-kw{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:2px 10px;font-weight:600;color:var(--amber);direction:ltr;unicode-bidi:plaintext;display:inline-block;margin:0 4px}
 
-  .header-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--accent), var(--accent-light));
-    color: #000;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 20px;
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
-  }
+/* Section headers */
+.section-header{display:flex;align-items:center;gap:12px;margin:36px 0 18px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.section-header h2{font-size:1.5em;font-weight:700;color:#fff}
+.section-badge{background:var(--accent);color:#fff;font-size:0.8em;font-weight:600;padding:4px 12px;border-radius:20px}
+.section-badge.green{background:var(--green)}
 
-  .header h1 {
-    font-size: 32px;
-    font-weight: 800;
-    margin-bottom: 8px;
-  }
+/* Optimize table */
+.optimize-group{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.group-header{background:var(--card2);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:default}
+.group-header .page-name{font-weight:700;color:#fff;font-size:1.05em}
+.group-header .page-url{font-size:0.82em;color:var(--accent2);direction:ltr;unicode-bidi:plaintext;font-weight:400}
+.group-header .kw-count{background:var(--accent);color:#fff;font-size:0.78em;font-weight:600;padding:3px 10px;border-radius:12px;white-space:nowrap}
+.group-body{padding:0}
+.kw-table{width:100%;border-collapse:collapse}
+.kw-table th{text-align:right;padding:10px 20px;font-size:0.8em;color:var(--text2);font-weight:500;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.15)}
+.kw-table td{padding:10px 20px;font-size:0.9em;border-bottom:1px solid rgba(71,85,105,0.3)}
+.kw-table tr:last-child td{border-bottom:none}
+.kw-table .kw-name{font-weight:500;color:var(--text);direction:ltr;unicode-bidi:plaintext}
+.kw-table .kw-vol{color:var(--accent2);font-weight:600;direction:ltr;unicode-bidi:plaintext;text-align:center}
+.kw-table .kw-tab{color:var(--text2);font-size:0.82em}
+.vol-zero{color:var(--text2)!important;font-weight:400!important}
 
-  .header h1 span { color: var(--accent-light); }
+/* New pages cards */
+.new-pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:18px;margin-bottom:30px}
+.new-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s}
+.new-card:hover{border-color:var(--green)}
+.new-card-header{background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));padding:16px 20px;border-bottom:1px solid var(--border)}
+.new-card-header h3{font-size:1.05em;font-weight:700;color:#fff;margin-bottom:4px}
+.new-card-header .slug{font-size:0.82em;color:var(--green);direction:ltr;unicode-bidi:plaintext;font-weight:400}
+.new-card-body{padding:16px 20px}
+.new-card-body .intent{font-size:0.85em;color:var(--text2);margin-bottom:12px;line-height:1.5}
+.new-kw-list{list-style:none;padding:0}
+.new-kw-list li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(71,85,105,0.2);font-size:0.88em}
+.new-kw-list li:last-child{border-bottom:none}
+.new-kw-list .nk-name{color:var(--text);direction:ltr;unicode-bidi:plaintext}
+.new-kw-list .nk-vol{color:var(--green);font-weight:600;direction:ltr;unicode-bidi:plaintext}
+.new-kw-list .nk-vol.zero{color:var(--text2);font-weight:400}
+.new-card-footer{padding:10px 20px;background:rgba(0,0,0,0.1);border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.82em;color:var(--text2)}
+.total-vol{color:var(--green);font-weight:600}
 
-  .section { margin-bottom: 48px; }
+/* Recommendations */
+.recs{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:30px}
+.recs h3{font-size:1.1em;font-weight:700;color:#fff;margin-bottom:14px}
+.rec-list{list-style:none;padding:0}
+.rec-list li{padding:10px 0;border-bottom:1px solid rgba(71,85,105,0.3);font-size:0.92em;color:var(--text);display:flex;gap:10px;align-items:flex-start}
+.rec-list li:last-child{border-bottom:none}
+.rec-num{background:var(--accent);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;flex-shrink:0;margin-top:2px}
 
-  .section-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
+/* Footer */
+.footer{text-align:center;padding:24px;color:var(--text2);font-size:0.85em;border-top:1px solid var(--border);margin-top:20px}
+.footer .brand{color:var(--accent2);font-weight:600}
 
-  .section-header h2 {
-    font-size: 22px;
-    font-weight: 700;
-  }
-
-  .section-count {
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 12px;
-  }
-
-  .sc-green { background: var(--green); }
-  .sc-yellow { background: var(--yellow); color: #000; }
-  .sc-purple { background: var(--purple); color: #000; }
-
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-
-  thead th {
-    background: var(--bg-hover);
-    padding: 14px 16px;
-    text-align: right;
-    font-weight: 700;
-    font-size: 13px;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--border);
-    white-space: nowrap;
-  }
-
-  tbody td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-
-  tbody tr:hover { background: rgba(8, 145, 178, 0.05); }
-  tbody tr:last-child td { border-bottom: none; }
-
-  .kw-cell {
-    font-weight: 600;
-    color: var(--text-primary);
-    direction: ltr;
-    text-align: left;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-  }
-
-  .vol-cell {
-    direction: ltr;
-    text-align: center;
-    font-weight: 600;
-    color: var(--accent-light);
-    font-family: 'Courier New', monospace;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .badge-yes {
-    background: var(--green-bg);
-    color: var(--green);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-
-  .badge-no {
-    background: var(--red-bg);
-    color: var(--red);
-    border: 1px solid rgba(244, 63, 94, 0.3);
-  }
-
-  .badge-optimize {
-    background: var(--green-bg);
-    color: var(--green);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-
-  .badge-create {
-    background: var(--yellow-bg);
-    color: var(--yellow);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-  }
-
-  .badge-page {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-
-  .badge-homepage {
-    background: rgba(34, 211, 238, 0.12);
-    color: var(--accent-light);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-  }
-
-  .badge-capabilities {
-    background: var(--purple-bg);
-    color: var(--purple);
-    border: 1px solid rgba(167, 139, 250, 0.3);
-  }
-
-  .badge-quality {
-    background: var(--teal-bg);
-    color: var(--teal);
-    border: 1px solid rgba(45, 212, 191, 0.3);
-  }
-
-  .url-cell {
-    direction: ltr;
-    text-align: left;
-    font-size: 12px;
-  }
-
-  .url-cell a {
-    color: var(--accent-light);
-    text-decoration: none;
-    word-break: break-all;
-  }
-
-  .url-cell a:hover { text-decoration: underline; }
-
-  .page-legend {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  .dot-homepage { background: var(--accent-light); }
-  .dot-capabilities { background: var(--purple); }
-  .dot-quality { background: var(--teal); }
-  .dot-new { background: var(--yellow); }
-  .dot-skip { background: var(--red); }
-
-  .alert-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-  }
-
-  .alert-box.alert-red {
-    border-color: rgba(244, 63, 94, 0.4);
-    background: rgba(244, 63, 94, 0.05);
-  }
-
-  .alert-box h3 {
-    font-size: 15px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-
-  .alert-box p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.7;
-  }
-
-  .alert-box code, .note-card code, .new-page-card code {
-    background: var(--bg-hover);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    color: var(--accent-light);
-    direction: ltr;
-    unicode-bidi: embed;
-  }
-
-  /* Page group header row */
-  .page-group-row td {
-    background: var(--bg-hover);
-    padding: 10px 16px;
-    font-weight: 700;
-    font-size: 14px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  .page-group-row:hover td { background: var(--bg-hover); }
-
-  /* New page cards */
-  .new-pages-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-    gap: 20px;
-  }
-
-  .new-page-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 24px;
-    border-top: 3px solid var(--yellow);
-  }
-
-  .new-page-card h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--yellow);
-    margin-bottom: 6px;
-  }
-
-  .new-page-slug {
-    direction: ltr;
-    text-align: left;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    color: var(--accent-light);
-    background: var(--bg-primary);
-    padding: 6px 12px;
-    border-radius: 6px;
-    margin-bottom: 16px;
-    border: 1px solid var(--border);
-  }
-
-  .new-page-keywords {
-    list-style: none;
-    padding: 0;
-  }
-
-  .new-page-keywords li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-    font-size: 13px;
-  }
-
-  .new-page-keywords li:last-child { border-bottom: none; }
-
-  .new-page-keywords .nk-keyword {
-    direction: ltr;
-    text-align: left;
-    font-family: 'Courier New', monospace;
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-
-  .new-page-keywords .nk-vol {
-    direction: ltr;
-    font-family: 'Courier New', monospace;
-    color: var(--accent-light);
-    font-weight: 600;
-    font-size: 12px;
-    flex-shrink: 0;
-    margin-right: 12px;
-  }
-
-  .new-page-intent {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-
-  .new-page-intent strong { color: var(--text-secondary); }
-
-  .notes-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
-  }
-
-  .note-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-  }
-
-  .note-card h4 {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent-light);
-    margin-bottom: 8px;
-  }
-
-  .note-card p {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-
-  .footer {
-    text-align: center;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 13px;
-  }
-
-  .footer strong { color: var(--text-secondary); }
-
-  @media (max-width: 768px) {
-    .container { padding: 20px 12px; }
-    .header h1 { font-size: 24px; }
-    table { font-size: 12px; }
-    thead th, tbody td { padding: 8px 10px; }
-    .new-pages-grid { grid-template-columns: 1fr; }
-    .notes-grid { grid-template-columns: 1fr; }
-  }
+/* Mobile */
+@media(max-width:768px){
+  .container{padding:12px}
+  .header{padding:24px 16px}
+  .header h1{font-size:1.5em}
+  .stats-bar{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-card .num{font-size:1.5em}
+  .legend{flex-direction:column;gap:10px}
+  .new-pages-grid{grid-template-columns:1fr}
+  .group-header{flex-direction:column;align-items:flex-start}
+  .kw-table th,.kw-table td{padding:8px 12px;font-size:0.82em}
+  .section-header h2{font-size:1.2em}
+}
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-badge">NC DIGITAL — SEO</div>
-    <h1>QMD — <span>מיפוי מילות מפתח לדפי מוצר</span></h1>
+<!-- Header -->
+<div class="header">
+  <h1>מיפוי מילות מפתח לדפי מוצר — QMD</h1>
+  <div class="sub">135 מילות מפתח → 37 דפים (18 קיימים + 19 חדשים)</div>
+  <div class="domain">qmd.net</div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat-card"><div class="num">135</div><div class="label">מילות מפתח נבחרו</div></div>
+  <div class="stat-card"><div class="num">18</div><div class="label">דפים קיימים לאופטימיזציה</div></div>
+  <div class="stat-card"><div class="num">19</div><div class="label">דפים חדשים ליצירה</div></div>
+  <div class="stat-card"><div class="num">9</div><div class="label">טאבים מהגיליון</div></div>
+  <div class="stat-card"><div class="num">1</div><div class="label">מילה מסומנת לבדיקה</div></div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <span class="legend-title">מקרא:</span>
+  <span class="legend-item"><span class="legend-dot dot-optimize"></span>אופטימיזציה לדף קיים</span>
+  <span class="legend-item"><span class="legend-dot dot-new"></span>יצירת דף חדש</span>
+  <span class="legend-item"><span class="legend-dot dot-flag"></span>מסומן לבדיקה — לא ממופה</span>
+</div>
+
+<!-- Flagged -->
+<div class="flagged">
+  <span class="flag-icon">⚠</span>
+  <div class="flag-content">
+    <h3>מילת מפתח מסומנת לבדיקה</h3>
+    <p><span class="flag-kw">cdmo</span> (נפח: 18,360) — תוצאות החיפוש נשלטות על ידי תחום הפארמה (Contract Development and Manufacturing Organization). QMD הוא יצרן מכשור רפואי, לא CDMO פארמצבטי. מומלץ לבחון האם ליצור דף ייעודי עם מיקוד ב-medical device CDMO או לוותר על מילה זו.</p>
   </div>
+</div>
 
-  <!-- Flagged Keyword Alert -->
-  <div class="alert-box alert-red">
-    <h3 style="color:var(--red)">מילת מפתח מסומנת — לא מומלץ לטרגט</h3>
-    <p><code>cdmo</code> — נפח: 18,360 — מונח כללי השייך בעיקר לעולם הפארמה (Catalent, Lonza וכו׳). QMD הוא יצרן מכשור רפואי, לא CDMO פארמצי. ה-SERP נשלט על ידי חברות פארמה — טרפיק רלוונטי עבור QMD יהיה מזערי.</p>
-    <p style="margin-top:8px"><strong style="color:var(--text-primary)">חלופה:</strong> לטרגט את <code>medical device cdmo</code> (נפח: 80) שנמצא ברשימה וממופה לדף הבית.</p>
+<!-- ===================== OPTIMIZE EXISTING ===================== -->
+<div class="section-header">
+  <h2>אופטימיזציה לדפים קיימים</h2>
+  <span class="section-badge">63 מילות מפתח → 18 דפים</span>
+</div>
+
+<!-- 1. Homepage -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">דף הבית</span><br><span class="page-url">qmd.net/</span></div>
+    <span class="kw-count">7 מילות מפתח</span>
   </div>
-
-  <!-- Legend -->
-  <div class="page-legend">
-    <div class="legend-item"><div class="legend-dot dot-homepage"></div> Homepage — qmd.net/</div>
-    <div class="legend-item"><div class="legend-dot dot-capabilities"></div> Capabilities — qmd.net/capabilities/</div>
-    <div class="legend-item"><div class="legend-dot dot-quality"></div> Quality & Regulatory — qmd.net/quality-regulatory/</div>
-    <div class="legend-item"><div class="legend-dot dot-new"></div> דף חדש ליצירה</div>
-    <div class="legend-item"><div class="legend-dot dot-skip"></div> לא מומלץ</div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">medical device manufacturer</td><td class="kw-vol">1,800</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">cmo contract manufacturing</td><td class="kw-vol">1,390</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device contract manufacturing</td><td class="kw-vol">550</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device contract manufacturer</td><td class="kw-vol">530</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device component manufacturer</td><td class="kw-vol">170</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device oem manufacturer</td><td class="kw-vol">120</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device cdmo</td><td class="kw-vol">80</td><td class="kw-tab">CMO & CDMO</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <!-- OPTIMIZE TABLE: Existing Pages -->
-  <div class="section">
-    <div class="section-header">
-      <h2>דפים קיימים — לאופטימיזציה</h2>
-      <span class="section-count sc-green">23 מילות מפתח → 3 דפים</span>
-    </div>
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:3%">#</th>
-            <th style="width:32%">מילת מפתח</th>
-            <th style="width:8%">נפח</th>
-            <th style="width:12%">דף יעד</th>
-            <th style="width:30%">URL</th>
-            <th style="width:15%">פעולה</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Homepage Group Header -->
-          <tr class="page-group-row">
-            <td colspan="6"><span class="badge-page badge-homepage">Homepage</span> &nbsp; qmd.net/ &nbsp;—&nbsp; 11 מילות מפתח</td>
-          </tr>
-          <tr>
-            <td>1</td>
-            <td class="kw-cell">medical device manufacturer</td>
-            <td class="vol-cell">1,800</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td class="kw-cell">cmo contract manufacturing</td>
-            <td class="vol-cell">1,390</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td class="kw-cell">medical manufacturing</td>
-            <td class="vol-cell">1,060</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td class="kw-cell">medical device contract manufacturing</td>
-            <td class="vol-cell">550</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td class="kw-cell">medical device contract manufacturer</td>
-            <td class="vol-cell">530</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>6</td>
-            <td class="kw-cell">medical contract manufacturing</td>
-            <td class="vol-cell">440</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>7</td>
-            <td class="kw-cell">medical device oem manufacturer</td>
-            <td class="vol-cell">120</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>8</td>
-            <td class="kw-cell">medical device cdmo</td>
-            <td class="vol-cell">80</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>9</td>
-            <td class="kw-cell">medical device cmo</td>
-            <td class="vol-cell">60</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>10</td>
-            <td class="kw-cell">custom medical device manufacturer</td>
-            <td class="vol-cell">20</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>11</td>
-            <td class="kw-cell">contract manufacturing organization medical</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-homepage">Homepage</span></td>
-            <td class="url-cell"><a href="https://qmd.net/" target="_blank">qmd.net/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-
-          <!-- Capabilities Group Header -->
-          <tr class="page-group-row">
-            <td colspan="6"><span class="badge-page badge-capabilities">Capabilities</span> &nbsp; qmd.net/capabilities/ &nbsp;—&nbsp; 9 מילות מפתח</td>
-          </tr>
-          <tr>
-            <td>12</td>
-            <td class="kw-cell">medical device assembly</td>
-            <td class="vol-cell">550</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>13</td>
-            <td class="kw-cell">medical component manufacturing</td>
-            <td class="vol-cell">220</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>14</td>
-            <td class="kw-cell">medical device manufacturing services</td>
-            <td class="vol-cell">70</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>15</td>
-            <td class="kw-cell">end to end medical device manufacturing</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>16</td>
-            <td class="kw-cell">full service medical device manufacturer</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>17</td>
-            <td class="kw-cell">turnkey medical device manufacturing</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>18</td>
-            <td class="kw-cell">vertically integrated medical device manufacturer</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>19</td>
-            <td class="kw-cell">contract medical device assembly</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>20</td>
-            <td class="kw-cell">medical device manufacturing automation</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-capabilities">Capabilities</span></td>
-            <td class="url-cell"><a href="https://qmd.net/capabilities/" target="_blank">qmd.net/capabilities/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-
-          <!-- Quality & Regulatory Group Header -->
-          <tr class="page-group-row">
-            <td colspan="6"><span class="badge-page badge-quality">Quality & Regulatory</span> &nbsp; qmd.net/quality-regulatory/ &nbsp;—&nbsp; 3 מילות מפתח</td>
-          </tr>
-          <tr>
-            <td>21</td>
-            <td class="kw-cell">class ii medical device manufacturer</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-quality">Quality</span></td>
-            <td class="url-cell"><a href="https://qmd.net/quality-regulatory/" target="_blank">qmd.net/quality-regulatory/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>22</td>
-            <td class="kw-cell">class iii medical device manufacturer</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-quality">Quality</span></td>
-            <td class="url-cell"><a href="https://qmd.net/quality-regulatory/" target="_blank">qmd.net/quality-regulatory/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-          <tr>
-            <td>23</td>
-            <td class="kw-cell">medical device clean manufacturing</td>
-            <td class="vol-cell">0</td>
-            <td><span class="badge-page badge-quality">Quality</span></td>
-            <td class="url-cell"><a href="https://qmd.net/quality-regulatory/" target="_blank">qmd.net/quality-regulatory/</a></td>
-            <td><span class="badge badge-optimize">אופטימיזציה</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<!-- 2. Capabilities -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">יכולות ושירותים</span><br><span class="page-url">qmd.net/capabilities/</span></div>
+    <span class="kw-count">3 מילות מפתח</span>
   </div>
-
-  <!-- CREATE NEW PAGES: Grouped by Intent -->
-  <div class="section">
-    <div class="section-header">
-      <h2>דפים חדשים ליצירה</h2>
-      <span class="section-count sc-yellow">21 מילות מפתח → 10 דפים</span>
-    </div>
-
-    <div class="new-pages-grid">
-
-      <!-- Page 1: Outsourcing & Nearshoring -->
-      <div class="new-page-card">
-        <h3>מיקור חוץ ו-Nearshoring</h3>
-        <div class="new-page-slug">/medical-device-outsourcing/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">medical device outsourcing</span><span class="nk-vol">130</span></li>
-          <li><span class="nk-keyword">medical device nearshoring</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> חברות שמחפשות להוציא את הייצור לקבלן חיצוני — nearshoring הוא תת-סוג של outsourcing</div>
-      </div>
-
-      <!-- Page 2: Lifecycle Management -->
-      <div class="new-page-card">
-        <h3>ניהול מחזור חיי מוצר</h3>
-        <div class="new-page-slug">/medical-device-lifecycle-management/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">medical device lifecycle management</span><span class="nk-vol">60</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט:</strong> ניהול מוצר מקצה לקצה — מתכנון דרך ייצור ועד סוף חיי המוצר (EOL)</div>
-      </div>
-
-      <!-- Page 3: Supply Chain & Dual Sourcing -->
-      <div class="new-page-card">
-        <h3>שרשרת אספקה ו-Dual Sourcing</h3>
-        <div class="new-page-slug">/medical-device-supply-chain/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">medical device supply chain management</span><span class="nk-vol">10</span></li>
-          <li><span class="nk-keyword">medical device supply chain resilience</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">medical device dual sourcing strategy</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">medical device second source manufacturer</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> ניהול שרשרת אספקה, הקטנת סיכון, גיבוי ייצור — כולם מחפשים שותף ייצור אמין כ-second source</div>
-      </div>
-
-      <!-- Page 4: Production Volume & Scaling -->
-      <div class="new-page-card">
-        <h3>נפח ייצור והגדלת סקייל</h3>
-        <div class="new-page-slug">/medical-device-production-volume/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">high volume medical device production</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">low volume medical device manufacturing</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">medical device scale up manufacturing</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">medical device manufacturing capacity planning</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> "האם אתם יכולים לטפל בנפח שלי?" — מ-low volume ל-high volume, scale up ותכנון קיבולת. דף אחד שמציג את כל הטווח</div>
-      </div>
-
-      <!-- Page 5: Private Label / White Label -->
-      <div class="new-page-card">
-        <h3>Private Label / White Label</h3>
-        <div class="new-page-slug">/private-label-medical-devices/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">private label medical device manufacturer</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">white label medical device</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> חברות שרוצות מכשיר מוגמר תחת המותג שלהן — private label ו-white label הם אותו דבר בהקשר הזה</div>
-      </div>
-
-      <!-- Page 6: Technology Transfer -->
-      <div class="new-page-card">
-        <h3>העברת טכנולוגיה וקו ייצור ייעודי</h3>
-        <div class="new-page-slug">/medical-device-technology-transfer/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">medical device technology transfer</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">medical device dedicated manufacturing line</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> העברת ייצור לשותף חדש — tech transfer כולל הקמת קו ייעודי כחלק מהתהליך</div>
-      </div>
-
-      <!-- Page 7: Silicone & Elastomer -->
-      <div class="new-page-card">
-        <h3>ייצור מכשירי סיליקון ואלסטומר</h3>
-        <div class="new-page-slug">/silicone-elastomer-manufacturing/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">silicone medical device contract manufacturing</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">elastomer medical device cmo</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> חברות שמחפשות יצרן המתמחה בחומרים — סיליקון הוא סוג של אלסטומר. זהו המומחיות המרכזית של QMD</div>
-      </div>
-
-      <!-- Page 8: Single-Use / Disposable -->
-      <div class="new-page-card">
-        <h3>ייצור מכשירים חד-פעמיים</h3>
-        <div class="new-page-slug">/single-use-device-manufacturing/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">disposable device contract manufacturer</span><span class="nk-vol">0</span></li>
-          <li><span class="nk-keyword">single use device contract manufacturer</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט משותף:</strong> "disposable" ו-"single use" הם אותו מונח בתעשיית המכשור הרפואי — דף שירות אחד</div>
-      </div>
-
-      <!-- Page 9: Catheter Contract Manufacturing -->
-      <div class="new-page-card">
-        <h3>ייצור קטטרים בקבלנות</h3>
-        <div class="new-page-slug">/catheter-contract-manufacturing/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">catheter contract manufacturer</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט:</strong> חברות שמחפשות יצרן קטטרים — QMD מייצר קטטרים ב-3 קווי מוצרים (Arthesys, Biometrix, Degania) אך אין דף שירות ייעודי לייצור בקבלנות</div>
-      </div>
-
-      <!-- Page 10: Toll Manufacturing -->
-      <div class="new-page-card">
-        <h3>Toll Manufacturing</h3>
-        <div class="new-page-slug">/medical-device-toll-manufacturing/</div>
-        <ul class="new-page-keywords">
-          <li><span class="nk-keyword">medical device toll manufacturing</span><span class="nk-vol">0</span></li>
-        </ul>
-        <div class="new-page-intent"><strong>אינטנט:</strong> הלקוח מספק חומרי גלם, היצרן מבצע את העיבוד — מודל עסקי שונה מייצור חוזי רגיל</div>
-      </div>
-
-    </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">medical device assembly</td><td class="kw-vol">550</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical component manufacturing</td><td class="kw-vol">220</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">medical device kit assembly</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Sterilization & Packaging</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <!-- Recommendations -->
-  <div class="section">
-    <div class="section-header">
-      <h2>המלצות</h2>
-    </div>
-    <div class="notes-grid">
-      <div class="note-card">
-        <h4>Homepage — תוכן חסר CMO/CDMO</h4>
-        <p>המונחים "CDMO" ו-"CMO" לא מופיעים בתוכן דף הבית הנוכחי. 11 מילות מפתח ממופות לדף הזה — יש להוסיף את המונחים לתוכן כדי שה-Title וה-Meta יהיו אפקטיביים.</p>
-      </div>
-      <div class="note-card">
-        <h4 style="color:var(--purple)">Capabilities — הרחבת סעיפים</h4>
-        <p>מילים כמו <code>automation</code>, <code>full service</code>, <code>turnkey</code> קיימות כבולטים/כותרות בלבד. לטרגט 9 מילות מפתח — יש להרחיב כל סעיף ל-2-3 פסקאות עם תוכן ייחודי.</p>
-      </div>
-      <div class="note-card">
-        <h4 style="color:var(--teal)">Quality — סעיפי FDA Class</h4>
-        <p>הדף מזכיר 510(k) ו-PMA אך לא מפרט ייצור לפי סיווג מכשירים. יש להוסיף סעיפים ייעודיים ל-Class II (510k) ו-Class III (PMA) עם דוגמאות לפרויקטים.</p>
-      </div>
-      <div class="note-card">
-        <h4>סיליקון/אלסטומר — הדף החשוב ביותר ליצירה</h4>
-        <p>QMD מתמחה בסיליקון ואלסטומר — זו המומחיות המרכזית. דף <code>/silicone-elastomer-manufacturing/</code> צריך להיות עמוד שירות מרכזי שמקשר לכל קווי המוצרים.</p>
-      </div>
-      <div class="note-card">
-        <h4>Clinical Areas — פוטנציאל לא מנוצל</h4>
-        <p>הדף <code>/clinical-areas/</code> מכסה 6 תחומים קליניים אך מציג מוצרי QMD בלבד — לא שירותי ייצור בקבלנות. שווה להוסיף זווית CMO או ליצור דפי שירות נפרדים (כמו דף הקטטרים).</p>
-      </div>
-      <div class="note-card">
-        <h4>אימות רישום FDA</h4>
-        <p>לפני פרסום Meta Descriptions עם "FDA-compliant" או "FDA-registered" — יש לאמת את סטטוס הרישום הנוכחי של כל מתקן.</p>
-      </div>
-    </div>
+<!-- 3. Quality & Regulatory -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">איכות ורגולציה</span><br><span class="page-url">qmd.net/quality-regulatory/</span></div>
+    <span class="kw-count">3 מילות מפתח</span>
   </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">cleanroom manufacturing</td><td class="kw-vol">690</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">iso class 7 cleanroom</td><td class="kw-vol">210</td><td class="kw-tab">CMO & CDMO</td></tr>
+        <tr><td class="kw-name">iso class 8 cleanroom</td><td class="kw-vol">50</td><td class="kw-tab">CMO & CDMO</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <strong>NC Digital</strong> &mdash; QMD Keyword-to-Page Mapping &mdash; 19.03.2026
+<!-- 4. Clinical Areas -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">תחומים קליניים</span><br><span class="page-url">qmd.net/clinical-areas/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
   </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">duckbill valve medical</td><td class="kw-vol">10</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">irrigation catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 5. Degania Urinary Catheters -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Degania — צנתרים אורולוגיים</span><br><span class="page-url">qmd.net/product/degania-urinary-catheters/</span></div>
+    <span class="kw-count">11 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">3 way catheter</td><td class="kw-vol">720</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">nephrostomy catheter</td><td class="kw-vol">650</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">3 way foley</td><td class="kw-vol">420</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">foley catheter kit</td><td class="kw-vol">180</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">foley catheter manufacturer</td><td class="kw-vol">40</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">urinary catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">foley catheter balloon manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">silicone foley catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">urinary drainage bag manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">urology disposable device manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">urology device contract manufacturing</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 6. Biometrix Temp-Sensing Foley -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Biometrix — פולי חישת טמפרטורה</span><br><span class="page-url">qmd.net/product/biometrix-temp-sensing-foley/</span></div>
+    <span class="kw-count">4 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">temp sensing foley</td><td class="kw-vol">180</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">temperature sensing foley</td><td class="kw-vol">170</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">temperature foley catheter</td><td class="kw-vol">50</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">temperature sensing catheter</td><td class="kw-vol">10</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 7. Arthesys PTA -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Arthesys — צנתרי PTA</span><br><span class="page-url">qmd.net/product/arthesys-pta-catheters/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">pta balloon</td><td class="kw-vol">180</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">pta balloon catheter</td><td class="kw-vol">60</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 8. Arthesys PTCA -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Arthesys — צנתרי PTCA</span><br><span class="page-url">qmd.net/product/arthesys-ptca-catheters/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">ptca balloon</td><td class="kw-vol">380</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">ptca balloon catheter</td><td class="kw-vol">370</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 9. Arthesys Aspiration -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Arthesys — צנתרי שאיבה</span><br><span class="page-url">qmd.net/product/arthesys-aspiration-catheters/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">aspiration catheter</td><td class="kw-vol">630</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">aspiration catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 10. Arthesys Y-Connectors -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Arthesys — מחברי Y</span><br><span class="page-url">qmd.net/product/arthesys-y-connectors/</span></div>
+    <span class="kw-count">1 מילת מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">y connector medical manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 11. Biometrix Arterial -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Biometrix — צנתרים עורקיים</span><br><span class="page-url">qmd.net/product/biometrix-arterial-catheters/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">arterial catheter</td><td class="kw-vol">700</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">vascular access device manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 12. Biometrix Rapid Infusion -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Biometrix — עירוי מהיר</span><br><span class="page-url">qmd.net/product/biometrix-rapid-infusion-catheter/</span></div>
+    <span class="kw-count">1 מילת מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">rapid infusion catheter</td><td class="kw-vol">510</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 13. Biometrix CVCs -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Biometrix — צנתרים ורידיים מרכזיים</span><br><span class="page-url">qmd.net/product/biometrix-central-venous-catheters/</span></div>
+    <span class="kw-count">3 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">central venous catheter manufacturer</td><td class="kw-vol">10</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">hemodynamic monitoring catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">triple lumen catheter assembly</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 14. Biometrix Products Overview -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Biometrix — סקירת מוצרים</span><br><span class="page-url">qmd.net/product-category/biometrix/</span></div>
+    <span class="kw-count">1 מילת מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">critical care device manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 15. Degania Wound Drainage -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Degania — ניקוז פצעים</span><br><span class="page-url">qmd.net/product/degania-wound-drainage/</span></div>
+    <span class="kw-count">8 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">wound drainage catheter</td><td class="kw-vol">10</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">wound drainage device manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">closed wound drainage manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">silicone wound drain manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">surgical drain manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">silicone drainage catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">fluted drain manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+        <tr><td class="kw-name">chest drainage system manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Catheter Design & Mfg</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 16. Degania Enteral Feeding -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Degania — הזנה אנטרלית</span><br><span class="page-url">qmd.net/product/degania-enteral-feeding/</span></div>
+    <span class="kw-count">6 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">gastrostomy button</td><td class="kw-vol">940</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">enteral catheter</td><td class="kw-vol">20</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">nasogastric tube manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">enteral feeding tube manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">jejunostomy tube manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+        <tr><td class="kw-name">peg catheter manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Clinical Applications</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 17. Degania Vessel Loops -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Degania — לולאות כלי דם</span><br><span class="page-url">qmd.net/product/degania-vessel-loops/</span></div>
+    <span class="kw-count">2 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">vessel loop</td><td class="kw-vol">2,620</td><td class="kw-tab">Silicone & Elastomers</td></tr>
+        <tr><td class="kw-name">vessel loop manufacturer</td><td class="kw-vol vol-zero">0</td><td class="kw-tab">Silicone & Elastomers</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 18. Degania Silicone Tubing -->
+<div class="optimize-group">
+  <div class="group-header">
+    <div><span class="page-name">Degania — צינורות סיליקון</span><br><span class="page-url">qmd.net/product/degania-silicone-tubing/</span></div>
+    <span class="kw-count">3 מילות מפתח</span>
+  </div>
+  <div class="group-body">
+    <table class="kw-table">
+      <thead><tr><th>מילת מפתח</th><th style="text-align:center">נפח חיפוש</th><th>טאב</th></tr></thead>
+      <tbody>
+        <tr><td class="kw-name">platinum cured silicone tubing</td><td class="kw-vol">310</td><td class="kw-tab">Silicone & Elastomers</td></tr>
+        <tr><td class="kw-name">medical grade silicone tubing</td><td class="kw-vol">140</td><td class="kw-tab">Extrusion & Tubing</td></tr>
+        <tr><td class="kw-name">silicone tubing manufacturer</td><td class="kw-vol">50</td><td class="kw-tab">Extrusion & Tubing</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== NEW PAGES ===================== -->
+<div class="section-header">
+  <h2>דפים חדשים ליצירה</h2>
+  <span class="section-badge green">72 מילות מפתח → 19 דפים</span>
+</div>
+
+<div class="new-pages-grid">
+
+<!-- New 1: Suction Catheter -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>צנתר שאיבה (Suction Catheter)</h3>
+    <div class="slug">/suction-catheters/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מוצר/רכש — חיפוש צנתרי שאיבה רפואיים. נפח גבוה מאוד.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">suction catheter</span><span class="nk-vol">26,990</span></li>
+      <li><span class="nk-name">suction catheter kit</span><span class="nk-vol">360</span></li>
+      <li><span class="nk-name">french suction catheter</span><span class="nk-vol">310</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>3 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 27,660</span>
+  </div>
+</div>
+
+<!-- New 2: Balloon Catheter -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>צנתרי בלון וייצור בלונים</h3>
+    <div class="slug">/balloon-catheters/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מוצר/ייצור — כל סוגי צנתרי הבלון וייצור בלונים רפואיים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">balloon catheter</span><span class="nk-vol">5,840</span></li>
+      <li><span class="nk-name">balloon tubing</span><span class="nk-vol">550</span></li>
+      <li><span class="nk-name">balloon catheters</span><span class="nk-vol">390</span></li>
+      <li><span class="nk-name">silicone balloons</span><span class="nk-vol">360</span></li>
+      <li><span class="nk-name">medical balloons</span><span class="nk-vol">340</span></li>
+      <li><span class="nk-name">balloon catheter manufacturer</span><span class="nk-vol">40</span></li>
+      <li><span class="nk-name">silicone balloon medical</span><span class="nk-vol">30</span></li>
+      <li><span class="nk-name">balloon forming medical</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>8 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 7,550</span>
+  </div>
+</div>
+
+<!-- New 3: Silicone Catheter -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>ייצור צנתרי סיליקון</h3>
+    <div class="slug">/silicone-catheters/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מוצר/ייצור — צנתרים עשויים סיליקון, מיקוד ב-OEM/CMO.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">silicone catheter</span><span class="nk-vol">7,830</span></li>
+      <li><span class="nk-name">silicone catheter manufacturer</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>2 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 7,830</span>
+  </div>
+</div>
+
+<!-- New 4: LSR / Liquid Silicone Rubber -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>הזרקת סיליקון נוזלי (LSR)</h3>
+    <div class="slug">/liquid-silicone-rubber/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: טכנולוגיה/שירות — תהליך ייצור LSR injection molding לרכיבים רפואיים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">liquid silicone rubber</span><span class="nk-vol">3,700</span></li>
+      <li><span class="nk-name">lsr injection molding</span><span class="nk-vol">430</span></li>
+      <li><span class="nk-name">liquid silicone rubber injection molding</span><span class="nk-vol">380</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>3 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 4,510</span>
+  </div>
+</div>
+
+<!-- New 5: Compression Molding -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>עיצוב בדחיסה (Compression Molding)</h3>
+    <div class="slug">/compression-molding/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: טכנולוגיה/שירות — תהליכי compression ו-transfer molding לסיליקון רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">compression molding</span><span class="nk-vol">3,060</span></li>
+      <li><span class="nk-name">silicone transfer molding</span><span class="nk-vol">20</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>2 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 3,080</span>
+  </div>
+</div>
+
+<!-- New 6: Catheter Parts & Components -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>חלקי צנתרים ורכיבים</h3>
+    <div class="slug">/catheter-parts/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: רכש רכיבים — חיפוש חלקי חילוף ורכיבים לצנתרים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">catheter parts</span><span class="nk-vol">2,280</span></li>
+      <li><span class="nk-name">catheter components</span><span class="nk-vol">60</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>2 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 2,340</span>
+  </div>
+</div>
+
+<!-- New 7: Silicone Injection Molding -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>הזרקת סיליקון ו-Overmolding</h3>
+    <div class="slug">/silicone-injection-molding/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: טכנולוגיה/שירות — הזרקת סיליקון, overmolding, וייצור בחדר נקי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">silicone molding manufacturer</span><span class="nk-vol">730</span></li>
+      <li><span class="nk-name">silicone injection molding</span><span class="nk-vol">530</span></li>
+      <li><span class="nk-name">medical device injection molding</span><span class="nk-vol">380</span></li>
+      <li><span class="nk-name">medical injection molding</span><span class="nk-vol">310</span></li>
+      <li><span class="nk-name">silicone overmolding</span><span class="nk-vol">140</span></li>
+      <li><span class="nk-name">cleanroom injection molding</span><span class="nk-vol">140</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>6 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 2,230</span>
+  </div>
+</div>
+
+<!-- New 8: Medical Tubing & Extrusion -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>צינורות רפואיים ושחול (Extrusion)</h3>
+    <div class="slug">/medical-tubing-extrusion/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מוצר/שירות — צינורות רפואיים, co-extrusion, צינורות למשאבות פריסטלטיות.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">pump tubing</span><span class="nk-vol">1,010</span></li>
+      <li><span class="nk-name">co extrusion</span><span class="nk-vol">950</span></li>
+      <li><span class="nk-name">medical tubing</span><span class="nk-vol">940</span></li>
+      <li><span class="nk-name">tube extrusion</span><span class="nk-vol">930</span></li>
+      <li><span class="nk-name">extruded tubing</span><span class="nk-vol">720</span></li>
+      <li><span class="nk-name">peristaltic pump tubing</span><span class="nk-vol">680</span></li>
+      <li><span class="nk-name">medical tubing manufacturers</span><span class="nk-vol">210</span></li>
+      <li><span class="nk-name">medical grade tubing</span><span class="nk-vol">110</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>8 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 5,550</span>
+  </div>
+</div>
+
+<!-- New 9: Medical Device Prototyping & NPI -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>אב-טיפוס ופיתוח מוצר חדש (NPI)</h3>
+    <div class="slug">/medical-device-prototyping/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות — פיתוח אב-טיפוס, הנדסה, NPI, ואימות מכשור רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">medical device prototyping</span><span class="nk-vol">480</span></li>
+      <li><span class="nk-name">medical device engineering</span><span class="nk-vol">430</span></li>
+      <li><span class="nk-name">medical device prototype</span><span class="nk-vol">420</span></li>
+      <li><span class="nk-name">medical prototyping</span><span class="nk-vol">120</span></li>
+      <li><span class="nk-name">medical device development services</span><span class="nk-vol">110</span></li>
+      <li><span class="nk-name">medical device concept development</span><span class="nk-vol">30</span></li>
+      <li><span class="nk-name">medical device pilot manufacturing</span><span class="nk-vol">10</span></li>
+      <li><span class="nk-name">medical device verification testing</span><span class="nk-vol">10</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>8 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 1,610</span>
+  </div>
+</div>
+
+<!-- New 10: Medical Device Design Services -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>שירותי עיצוב מכשור רפואי</h3>
+    <div class="slug">/medical-device-design-services/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות — design transfer, DFM, design review, ופיתוח תהליכים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">medical device design services</span><span class="nk-vol">190</span></li>
+      <li><span class="nk-name">medical device design transfer</span><span class="nk-vol">50</span></li>
+      <li><span class="nk-name">medical device design review</span><span class="nk-vol">50</span></li>
+      <li><span class="nk-name">medical device design for manufacturing</span><span class="nk-vol">20</span></li>
+      <li><span class="nk-name">medical device process development</span><span class="nk-vol">20</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>5 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 330</span>
+  </div>
+</div>
+
+<!-- New 11: Catheter Manufacturing Services -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>שירותי ייצור צנתרים (CMO)</h3>
+    <div class="slug">/catheter-manufacturing/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות/ספק — חיפוש יצרן צנתרים, ייצור חוזי, הרכבה.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">catheter manufacturer</span><span class="nk-vol">250</span></li>
+      <li><span class="nk-name">catheter manufacturers</span><span class="nk-vol">190</span></li>
+      <li><span class="nk-name">catheter manufacturing</span><span class="nk-vol">160</span></li>
+      <li><span class="nk-name">catheter assembly</span><span class="nk-vol">70</span></li>
+      <li><span class="nk-name">catheter contract manufacturing</span><span class="nk-vol">50</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>5 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 720</span>
+  </div>
+</div>
+
+<!-- New 12: Catheter Manufacturing Processes -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>תהליכי ייצור צנתרים</h3>
+    <div class="slug">/catheter-manufacturing-processes/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מידע טכני — תהליכי tipping, bonding, tip forming, אריזה וסטריליזציה.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">catheter tipping</span><span class="nk-vol">170</span></li>
+      <li><span class="nk-name">catheter packaging</span><span class="nk-vol">60</span></li>
+      <li><span class="nk-name">catheter sterilization</span><span class="nk-vol">40</span></li>
+      <li><span class="nk-name">catheter tip forming</span><span class="nk-vol">20</span></li>
+      <li><span class="nk-name">catheter bonding</span><span class="nk-vol">10</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>5 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 300</span>
+  </div>
+</div>
+
+<!-- New 13: Gamma Irradiation Sterilization -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>סטריליזציה בקרינת גמא</h3>
+    <div class="slug">/gamma-irradiation-sterilization/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות/מידע — סטריליזציה בקרינת גמא למכשור רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">gamma irradiation sterilization</span><span class="nk-vol">1,000</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>1 מילת מפתח</span>
+    <span class="total-vol">סה״כ נפח: 1,000</span>
+  </div>
+</div>
+
+<!-- New 14: Silicone Materials & Expertise -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>חומרי סיליקון רפואי</h3>
+    <div class="slug">/medical-grade-silicone/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מידע/שירות — סיליקון platinum cured, medical grade, למכשור רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">platinum cured silicone</span><span class="nk-vol">500</span></li>
+      <li><span class="nk-name">medical grade silicone</span><span class="nk-vol">450</span></li>
+      <li><span class="nk-name">medical grade silicone rubber</span><span class="nk-vol">70</span></li>
+      <li><span class="nk-name">silicone medical device contract manufacturing</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>4 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 1,020</span>
+  </div>
+</div>
+
+<!-- New 15: Hydrophilic Coating -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>ציפוי הידרופילי</h3>
+    <div class="slug">/hydrophilic-coating/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: טכנולוגיה/שירות — ציפוי הידרופילי לצנתרים ומכשור רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">hydrophilic catheter</span><span class="nk-vol">680</span></li>
+      <li><span class="nk-name">hydrophilic coating medical device</span><span class="nk-vol">120</span></li>
+      <li><span class="nk-name">hydrophilic catheter coating</span><span class="nk-vol">50</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>3 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 850</span>
+  </div>
+</div>
+
+<!-- New 16: Multi-Lumen Tubing -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>צינורות מרובי לומן</h3>
+    <div class="slug">/multi-lumen-tubing/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מוצר/מידע — צינורות dual/triple/multi lumen לשימושים רפואיים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">multi lumen tubing</span><span class="nk-vol">180</span></li>
+      <li><span class="nk-name">dual lumen tubing</span><span class="nk-vol">80</span></li>
+      <li><span class="nk-name">triple lumen tubing</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>3 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 260</span>
+  </div>
+</div>
+
+<!-- New 17: Advanced Medical Materials -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>חומרים רפואיים מתקדמים</h3>
+    <div class="slug">/advanced-medical-materials/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: מידע/שירות — פוליאורתן רפואי וחומרים רדיואופקיים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">medical grade polyurethane</span><span class="nk-vol">50</span></li>
+      <li><span class="nk-name">radiopaque material medical</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>2 מילות מפתח</span>
+    <span class="total-vol">סה״כ נפח: 50</span>
+  </div>
+</div>
+
+<!-- New 18: Medical Device Lifecycle -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>ניהול מחזור חיי מכשור רפואי</h3>
+    <div class="slug">/medical-device-lifecycle-management/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות — ליווי מוצר מפיתוח ועד ייצור סדרתי וסוף חיים.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">medical device lifecycle management</span><span class="nk-vol">60</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>1 מילת מפתח</span>
+    <span class="total-vol">סה״כ נפח: 60</span>
+  </div>
+</div>
+
+<!-- New 19: Private Label -->
+<div class="new-card">
+  <div class="new-card-header">
+    <h3>ייצור Private Label למכשור רפואי</h3>
+    <div class="slug">/private-label-medical-devices/</div>
+  </div>
+  <div class="new-card-body">
+    <div class="intent">כוונת חיפוש: שירות/ספק — ייצור מותג פרטי (OEM/private label) למכשור רפואי.</div>
+    <ul class="new-kw-list">
+      <li><span class="nk-name">private label medical device manufacturer</span><span class="nk-vol zero">0</span></li>
+    </ul>
+  </div>
+  <div class="new-card-footer">
+    <span>1 מילת מפתח</span>
+    <span class="total-vol">סה״כ נפח: 0</span>
+  </div>
+</div>
+
+</div><!-- end grid -->
+
+<!-- Recommendations -->
+<div class="recs">
+  <h3>המלצות ליישום</h3>
+  <ul class="rec-list">
+    <li><span class="rec-num">1</span>עדיפות ראשונה: דפי ״צנתר שאיבה״ (27,660), ״צנתר סיליקון״ (7,830), ״צנתר בלון״ (7,550) ו-״צינורות רפואיים״ (5,550) — הנפח הגבוה ביותר.</li>
+    <li><span class="rec-num">2</span>עדיפות שנייה: דפי טכנולוגיה — LSR (4,510), Compression Molding (3,080), Injection Molding (2,230) — מבדלים מהמתחרים.</li>
+    <li><span class="rec-num">3</span>דפים קיימים — יש לוודא שכל מילות המפתח הממופות מופיעות ב-Title, H1, ו-body copy של הדף הרלוונטי.</li>
+    <li><span class="rec-num">4</span>בדף הבית — לכלול את 7 מילות המפתח הראשיות (medical device manufacturer, cmo contract manufacturing וכו׳) ב-H1, meta title ו-above the fold.</li>
+    <li><span class="rec-num">5</span>דפים חדשים — לבנות כ-service/capability pages עם תוכן מעמיק (1,200+ מילים), תמונות תהליך, ו-CTAs ברורים.</li>
+    <li><span class="rec-num">6</span>מילה מסומנת: ״cdmo״ — לבחון SERP ידנית. אם יש הזדמנות עם long-tail כמו ״medical device cdmo״ (ממופה כבר לדף הבית), לוותר על המילה הגנרית.</li>
+    <li><span class="rec-num">7</span>Internal linking: לקשר בין דפי המוצרים הקיימים לדפי הטכנולוגיה/שירותים החדשים (למשל: Degania Silicone Tubing → Medical Tubing Extrusion).</li>
+  </ul>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <span class="brand">NC Digital</span> · מיפוי מילות מפתח לדפי מוצר — QMD · מרץ 2026
+</div>
 
 </div>
 </body>
