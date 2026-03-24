@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>מידות — בתי מלון ואירוח | קוד לעמוד שירות</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f5f5f5;
+            color: #102235;
+            direction: rtl;
+        }
+
+        /* ── Top Bar ── */
+        .top-bar {
+            background: #102236;
+            color: #fff;
+            padding: 20px 40px;
+            text-align: center;
+        }
+        .top-bar h1 { font-size: 1.4em; font-weight: 700; margin-bottom: 6px; }
+        .top-bar p { font-size: 14px; color: #a0c4c8; font-weight: 400; }
+
+        /* ── Tabs ── */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tab-btn {
+            padding: 14px 36px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #767676;
+            border-bottom: 3px solid transparent;
+            transition: .2s;
+        }
+        .tab-btn.active { color: #72b7bd; border-bottom-color: #72b7bd; }
+        .tab-btn:hover { color: #72b7bd; }
+
+        /* ── Panels ── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* ── Preview ── */
+        .preview-panel {
+            background: #fff;
+            max-width: 1200px;
+            margin: 30px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+        .preview-header {
+            background: #102236;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .preview-header img { height: 30px; }
+        .preview-header span { color: #72b7bd; font-size: 13px; }
+        .preview-body {
+            padding: 50px 60px;
+            max-width: 900px;
+        }
+
+        /* Simulate Midot product page styling */
+        .midot-content h2.main-title {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #102235;
+            line-height: 1.35;
+            margin-bottom: 14px;
+        }
+        .midot-content .subtitle-teal {
+            font-size: 1.35em;
+            font-weight: 400;
+            color: #72b7bd;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        .midot-content p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            color: #4a4a4a;
+        }
+        .midot-content h3 {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: #102235;
+            margin: 35px 0 14px;
+        }
+        .midot-content .callout {
+            background: #f0fafb;
+            border-right: 4px solid #72b7bd;
+            padding: 22px 26px;
+            margin: 28px 0;
+            border-radius: 2px;
+        }
+        .midot-content .callout p {
+            margin: 0;
+            color: #102235;
+        }
+        .midot-content .warning {
+            border-top: 2px dashed #ba2025;
+            border-bottom: 2px dashed #ba2025;
+            padding: 18px 0;
+            margin: 28px 0;
+            text-align: center;
+        }
+        .midot-content .warning p {
+            color: #767676;
+            font-weight: 500;
+            margin: 0;
+        }
+        .midot-content h3.solutions-title {
+            font-size: 1.5em;
+            text-align: center;
+            margin: 40px 0 30px;
+        }
+        .midot-content h4 {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #72b7bd;
+            margin: 24px 0 6px;
+        }
+        .midot-content .solution-desc {
+            margin-bottom: 20px;
+        }
+
+        /* ── Code Panel ── */
+        .code-panel {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        .code-header span { color: #94a3b8; font-size: 14px; }
+        .copy-btn {
+            background: #72b7bd;
+            color: #fff;
+            border: none;
+            padding: 8px 24px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: .2s;
+        }
+        .copy-btn:hover { background: #5a9ea3; }
+        .copy-btn.copied { background: #22c55e; }
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 0 0 8px 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            direction: ltr;
+            text-align: left;
+            white-space: pre;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* ── Instructions ── */
+        .instructions-panel {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .instruction-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 24px 28px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 6px rgba(0,0,0,.05);
+        }
+        .instruction-card h3 {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #72b7bd;
+            margin-bottom: 10px;
+        }
+        .instruction-card p, .instruction-card li {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+        .instruction-card ol { padding-right: 20px; }
+        .instruction-card li { margin-bottom: 6px; }
+        .instruction-card code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+            direction: ltr;
+            unicode-bidi: embed;
+        }
+
+        .page-footer {
+            text-align: center;
+            padding: 24px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        @media (max-width: 767px) {
+            .preview-body { padding: 30px 20px; }
+            .midot-content h2.main-title { font-size: 1.6em; }
+            .tab-btn { padding: 12px 16px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+    <h1>מידות — עמוד שירות: בתי מלון ואירוח</h1>
+    <p>קוד HTML מוכן להדבקה בעמוד שירות (בסגנון מבדקי כישורים) | NC Digital</p>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('preview', this)">תצוגה מקדימה</button>
+    <button class="tab-btn" onclick="switchTab('code', this)">קוד להעתקה</button>
+    <button class="tab-btn" onclick="switchTab('instructions', this)">הוראות הטמעה</button>
+</div>
+
+<!-- ═══ PREVIEW ═══ -->
+<div id="panel-preview" class="panel active">
+    <div class="preview-panel">
+        <div class="preview-header">
+            <img src="https://midot.co.il/wp-content/uploads/2020/06/midot-logo-white.png" alt="מידות">
+            <span>תצוגה מקדימה — עמוד שירות</span>
+        </div>
+        <div class="preview-body">
+            <div class="midot-content">
+
+                <h2 class="main-title">גיוס בטוח וחכם בבתי מלון: בדיקות אמינות וכלי מיון מתקדמים</h2>
+                <p class="subtitle-teal">כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים לתפקידים בענף המלונאות</p>
+
+                <p>ענף המלונאות בישראל מתאפיין במחזורי גיוס גבוהים, עבודה במשמרות ולוחות זמנים משתנים, לצד צורך מתמיד באיוש מהיר של תפקידים תפעוליים וניהוליים. בתי מלון פועלים בסביבה רוויית ממשקים – אורחים, צוותים, ספקים ומערכות – כאשר כל עובד ועובדת משפיעים באופן ישיר על חוויית האורח, הבטיחות והתפעול השוטף.</p>
+
+                <p>לצד האתגר התפעולי, נדרשת שמירה מתמדת על מוניטין הרשת והמוניטין של כל מלון בנפרד, בסביבה שבה אירועים חריגים עלולים לקבל חשיפה מיידית. תפקידים רבים בענף כוללים גישה לרכוש, לחדרי אורחים, למידע רגיש ולמערכות פנימיות, ולכן טעויות גיוס עלולות להפוך במהירות לבעיה תדמיתית.</p>
+
+                <p>במציאות זו, מיון המבוסס רק על קורות חיים וראיונות אינו מספק מענה מספק לרמת הסיכון הנדרשת. מידות מבינה את המורכבות הייחודית של גיוס כוח אדם לבתי מלון, ומספקת כלים מבוססי נתונים המסייעים בקבלת החלטות מושכלת כבר בשלבי הגיוס.</p>
+
+                <div class="callout">
+                    <p>בענף בתי המלון, תהליכי הגיוס נדרשים לאזן בין צורך באיוש מהיר לבין אחריות גבוהה לניהול סיכונים. סביבת עבודה דינמית, תחלופת עובדים ותפקידים ברמות רגישות שונות מחייבים מיון מעמיק מעבר לראיונות וקורות חיים. מיון מבוסס נתונים מוסיף שכבת אבחון משלימה, התומכת בקבלת החלטות מקצועיות ושומרת על יציבות תפעולית.</p>
+                </div>
+
+                <div class="warning">
+                    <p>מיון לא מדויק בבתי מלון עלול להפוך במהירות מאתגר תפעולי לאירוע תדמיתי.</p>
+                </div>
+
+                <p>למידות ניסיון עשיר בעבודה עם רשתות בתי מלון, והכלים והמבחנים פותחו והותאמו במיוחד לאתגרים הייחודיים של ענף האירוח.</p>
+
+                <h3 class="solutions-title">הפתרונות של מידות לענף בתי המלון והאירוח</h3>
+
+                <h4>מבחני אמינות</h4>
+                <p class="solution-desc">מבדקים מבוססי נתונים המסייעים להעריך רמת אמינות, יושרה ודפוסי התנהלות, עבור תפקידים תפעוליים וניהוליים בבתי מלון ובארגוני אירוח.</p>
+
+                <h4>בדיקות רקע</h4>
+                <p class="solution-desc">איסוף וניתוח מידע רלוונטי בהתאם לדרישות התפקיד והרגולציה, לצורך צמצום סיכונים ושיפור איכות תהליכי הגיוס.</p>
+
+                <h4>בדיקות מעמיקות לבעלי תפקידים רגישים</h4>
+                <p class="solution-desc">מבדקים ייעודיים לתפקידים הכוללים גישה לרכוש, מידע, אורחים או מערכות פנימיות, במטרה לתמוך בהחלטות גיוס וניהול מושכלות.</p>
+
+                <h4>התאמת המבדקים לנורמות הקיימות בארגון</h4>
+                <p class="solution-desc">התאמה של כלי האבחון לאופי הארגון, לתרבות הארגונית ולמאפיינים הייחודיים של כל רשת או מלון, תוך שמירה על אחידות וסטנדרט מקצועי.</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ CODE ═══ -->
+<div id="panel-code" class="panel">
+    <div class="code-panel">
+        <div class="code-header">
+            <span>HTML — העתק והדבק בתוך העמוד המשוכפל</span>
+            <button class="copy-btn" id="copyBtn" onclick="copyCode()">העתק קוד</button>
+        </div>
+        <div class="code-block" id="codeBlock"></div>
+    </div>
+</div>
+
+<!-- ═══ INSTRUCTIONS ═══ -->
+<div id="panel-instructions" class="panel">
+    <div class="instructions-panel">
+        <div class="instruction-card">
+            <h3>שלב 1 — שכפול העמוד הקיים</h3>
+            <ol>
+                <li>ב-WordPress, גשו לעמוד <strong>מבדקי כישורים</strong> (<code>/product/מבדקי-כישורים/</code>)</li>
+                <li>שכפלו את העמוד (Duplicate Page / Duplicate Post)</li>
+                <li>שנו את שם העמוד ל: <strong>בתי מלון ואירוח</strong></li>
+                <li>שנו את ה-Slug ל: <code>בתי-מלון-ואירוח</code></li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 2 — החלפת התוכן</h3>
+            <ol>
+                <li>פתחו את העמוד המשוכפל לעריכה</li>
+                <li>מחקו את כל התוכן הקיים (של מבדקי כישורים)</li>
+                <li>עברו ללשונית <strong>קוד להעתקה</strong> בדף הזה</li>
+                <li>לחצו <strong>העתק קוד</strong></li>
+                <li>הדביקו בעורך הטקסט (Text Editor / HTML mode)</li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 3 — הגדרות SEO</h3>
+            <ol>
+                <li>ב-Yoast / Rank Math:
+                    <br><strong>Meta Title:</strong> <code>בתי מלון ואירוח - מידות | בדיקות אמינות ומיון עובדים למלונות</code>
+                    <br><strong>Meta Description:</strong> <code>כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים בבתי מלון. מבחני מיון מותאמים לענף המלונאות, בדיקות רקע ופתרונות לגיוס בטוח וחכם בארגוני אירוח.</code>
+                </li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 4 — הוספה לתפריט</h3>
+            <ol>
+                <li>ב-WordPress → תפריטים (Menus)</li>
+                <li>הוסיפו את <strong>בתי מלון ואירוח</strong> כפריט תת-תפריט תחת <strong>ענפים ותעשיות</strong></li>
+            </ol>
+        </div>
+        <div class="instruction-card">
+            <h3>שלב 5 — פרסום ובדיקה</h3>
+            <ol>
+                <li>פרסמו את העמוד</li>
+                <li>בדקו תצוגה בדסקטופ ובמובייל</li>
+                <li>וודאו שמבנה הכותרות תקין: H2 ראשי → H3 פתרונות → H4 כרטיסים</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="page-footer">
+    NC Digital — מידות — קוד עמוד שירות בתי מלון ואירוח
+</div>
+
+<script>
+function switchTab(tab, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    btn.classList.add('active');
+}
+
+// The WordPress-ready HTML content to paste into the duplicated page
+const wpCode = `<h2>גיוס בטוח וחכם בבתי מלון: בדיקות אמינות וכלי מיון מתקדמים</h2>
+
+<p style="font-size:1.35em; color:#72b7bd; line-height:1.5; margin-bottom:30px;">כלים מבוססי נתונים לבדיקות אמינות ומיון עובדים לתפקידים בענף המלונאות</p>
+
+<p>ענף המלונאות בישראל מתאפיין במחזורי גיוס גבוהים, עבודה במשמרות ולוחות זמנים משתנים, לצד צורך מתמיד באיוש מהיר של תפקידים תפעוליים וניהוליים. בתי מלון פועלים בסביבה רוויית ממשקים – אורחים, צוותים, ספקים ומערכות – כאשר כל עובד ועובדת משפיעים באופן ישיר על חוויית האורח, הבטיחות והתפעול השוטף.</p>
+
+<p>לצד האתגר התפעולי, נדרשת שמירה מתמדת על מוניטין הרשת והמוניטין של כל מלון בנפרד, בסביבה שבה אירועים חריגים עלולים לקבל חשיפה מיידית. תפקידים רבים בענף כוללים גישה לרכוש, לחדרי אורחים, למידע רגיש ולמערכות פנימיות, ולכן טעויות גיוס עלולות להפוך במהירות לבעיה תדמיתית.</p>
+
+<p>במציאות זו, מיון המבוסס רק על קורות חיים וראיונות אינו מספק מענה מספק לרמת הסיכון הנדרשת. מידות מבינה את המורכבות הייחודית של גיוס כוח אדם לבתי מלון, ומספקת כלים מבוססי נתונים המסייעים בקבלת החלטות מושכלת כבר בשלבי הגיוס.</p>
+
+<div style="background:#f0fafb; border-right:4px solid #72b7bd; padding:22px 26px; margin:28px 0; border-radius:2px;">
+<p style="margin:0; color:#102235;">בענף בתי המלון, תהליכי הגיוס נדרשים לאזן בין צורך באיוש מהיר לבין אחריות גבוהה לניהול סיכונים. סביבת עבודה דינמית, תחלופת עובדים ותפקידים ברמות רגישות שונות מחייבים מיון מעמיק מעבר לראיונות וקורות חיים. מיון מבוסס נתונים מוסיף שכבת אבחון משלימה, התומכת בקבלת החלטות מקצועיות ושומרת על יציבות תפעולית.</p>
+</div>
+
+<div style="border-top:2px dashed #ba2025; border-bottom:2px dashed #ba2025; padding:18px 0; margin:28px 0; text-align:center;">
+<p style="color:#767676; font-weight:500; margin:0;">מיון לא מדויק בבתי מלון עלול להפוך במהירות מאתגר תפעולי לאירוע תדמיתי.</p>
+</div>
+
+<p>למידות ניסיון עשיר בעבודה עם רשתות בתי מלון, והכלים והמבחנים פותחו והותאמו במיוחד לאתגרים הייחודיים של ענף האירוח.</p>
+
+<h3 style="text-align:center; margin:40px 0 30px;">הפתרונות של מידות לענף בתי המלון והאירוח</h3>
+
+<h4 style="color:#72b7bd;">מבחני אמינות</h4>
+<p>מבדקים מבוססי נתונים המסייעים להעריך רמת אמינות, יושרה ודפוסי התנהלות, עבור תפקידים תפעוליים וניהוליים בבתי מלון ובארגוני אירוח.</p>
+
+<h4 style="color:#72b7bd;">בדיקות רקע</h4>
+<p>איסוף וניתוח מידע רלוונטי בהתאם לדרישות התפקיד והרגולציה, לצורך צמצום סיכונים ושיפור איכות תהליכי הגיוס.</p>
+
+<h4 style="color:#72b7bd;">בדיקות מעמיקות לבעלי תפקידים רגישים</h4>
+<p>מבדקים ייעודיים לתפקידים הכוללים גישה לרכוש, מידע, אורחים או מערכות פנימיות, במטרה לתמוך בהחלטות גיוס וניהול מושכלות.</p>
+
+<h4 style="color:#72b7bd;">התאמת המבדקים לנורמות הקיימות בארגון</h4>
+<p>התאמה של כלי האבחון לאופי הארגון, לתרבות הארגונית ולמאפיינים הייחודיים של כל רשת או מלון, תוך שמירה על אחידות וסטנדרט מקצועי.</p>`;
+
+document.getElementById('codeBlock').textContent = wpCode;
+
+function copyCode() {
+    navigator.clipboard.writeText(wpCode).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'הועתק!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'העתק קוד'; btn.classList.remove('copied'); }, 2000);
+    });
+}
+</script>
+
+</body>
+</html>
