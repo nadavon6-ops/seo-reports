@@ -1757,5 +1757,77 @@ if (window.innerWidth <= 767) {
     observer.observe(formCard);
 }
 
+// === Copy Code Tab ===
+(function() {
+    // Create floating tab
+    var tab = document.createElement('div');
+    tab.id = 'copyCodeTab';
+    tab.innerHTML = '{ } העתק קוד';
+    tab.style.cssText = 'position:fixed;left:0;top:50%;transform:translateY(-50%) rotate(-90deg);transform-origin:left center;background:#102235;color:#fff;padding:10px 20px;font-family:Heebo,sans-serif;font-size:14px;font-weight:500;cursor:pointer;z-index:99999;border-radius:0 0 8px 8px;letter-spacing:.5px;transition:background .2s;box-shadow:0 2px 10px rgba(0,0,0,.3);';
+    document.body.appendChild(tab);
+
+    // Create modal
+    var overlay = document.createElement('div');
+    overlay.id = 'codeOverlay';
+    overlay.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100000;justify-content:center;align-items:center;padding:20px;';
+    overlay.innerHTML = '<div style="background:#1a1a2e;border-radius:12px;width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid #333;flex-shrink:0;">' +
+            '<span style="color:#72b7bd;font-family:Heebo,sans-serif;font-size:16px;font-weight:700;">WordPress Code — Copy & Paste</span>' +
+            '<div style="display:flex;gap:10px;align-items:center;">' +
+                '<span id="codeCopyStatus" style="color:#4ade80;font-family:Heebo,sans-serif;font-size:13px;display:none;">&#10003; Copied!</span>' +
+                '<button id="codeCopyBtn" style="background:#72b7bd;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-family:Heebo,sans-serif;font-size:14px;font-weight:500;cursor:pointer;">העתק הכל</button>' +
+                '<button id="codeCloseBtn" style="background:none;border:none;color:#999;font-size:24px;cursor:pointer;padding:0 4px;">&times;</button>' +
+            '</div>' +
+        '</div>' +
+        '<pre id="codeContent" style="margin:0;padding:20px 24px;overflow:auto;flex:1;color:#e2e8f0;font-size:12px;line-height:1.5;font-family:monospace;white-space:pre;tab-size:2;-moz-tab-size:2;background:#1a1a2e;direction:ltr;text-align:left;"></pre>' +
+    '</div>';
+    document.body.appendChild(overlay);
+
+    var codeContent = document.getElementById('codeContent');
+    var copyBtn = document.getElementById('codeCopyBtn');
+    var closeBtn = document.getElementById('codeCloseBtn');
+    var copyStatus = document.getElementById('codeCopyStatus');
+
+    tab.onmouseenter = function() { tab.style.background = '#72b7bd'; };
+    tab.onmouseleave = function() { tab.style.background = '#102235'; };
+
+    tab.onclick = function() {
+        // Fetch own source
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', location.href, true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // Remove the copy-code tab script itself from displayed code
+                var code = xhr.responseText;
+                var cleanStart = code.indexOf('// === Copy Code Tab ===');
+                if (cleanStart > -1) {
+                    code = code.substring(0, cleanStart) + '</script>\n<!-- /wp:html -->';
+                }
+                codeContent.textContent = code;
+                overlay.style.display = 'flex';
+            }
+        };
+        xhr.send();
+    };
+
+    copyBtn.onclick = function() {
+        var text = codeContent.textContent;
+        navigator.clipboard.writeText(text).then(function() {
+            copyStatus.style.display = 'inline';
+            copyBtn.textContent = 'Copied!';
+            copyBtn.style.background = '#4ade80';
+            setTimeout(function() {
+                copyStatus.style.display = 'none';
+                copyBtn.textContent = 'העתק הכל';
+                copyBtn.style.background = '#72b7bd';
+            }, 2500);
+        });
+    };
+
+    closeBtn.onclick = function() { overlay.style.display = 'none'; };
+    overlay.onclick = function(e) { if (e.target === overlay) overlay.style.display = 'none'; };
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') overlay.style.display = 'none'; });
+})();
+
 </script>
 <!-- /wp:html -->
