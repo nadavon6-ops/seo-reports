@@ -10,13 +10,21 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #102235; direction: rtl; }
 
-.tab-nav {
+.top-bar {
+    background: #102235;
+    color: #fff;
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.tabs {
     display: flex;
     justify-content: center;
     gap: 48px;
     background: #fff;
     border-bottom: 1px solid #e0e0e0;
-    padding: 0;
     position: sticky;
     top: 0;
     z-index: 10000;
@@ -35,18 +43,25 @@ body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #102235; di
     transition: color .2s, border-color .2s;
 }
 .tab-btn:hover { color: #102235; }
-.tab-btn.active {
-    color: #102235;
-    border-bottom-color: #72b7bd;
-    font-weight: 700;
+.tab-btn.active { color: #102235; border-bottom-color: #72b7bd; font-weight: 700; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Preview */
+.preview-panel { background: #fff; }
+.preview-header {
+    background: #102236;
+    padding: 20px 40px;
+    text-align: center;
 }
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-#previewPanel iframe {
-    width: 100%;
-    height: calc(100vh - 56px);
-    border: none;
+.preview-header img { height: 40px; }
+.preview-body {
+    max-width: 100%;
+    margin: 0 auto;
 }
+
+/* Code */
 .code-header {
     display: flex;
     justify-content: space-between;
@@ -57,11 +72,7 @@ body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #102235; di
     max-width: 1200px;
     border-radius: 10px 10px 0 0;
 }
-.code-header-text {
-    color: #cbd5e1;
-    font-size: 15px;
-    font-weight: 400;
-}
+.code-header-text { color: #cbd5e1; font-size: 15px; }
 .copy-btn {
     background: #72b7bd;
     color: #fff;
@@ -93,18 +104,11 @@ body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #102235; di
     text-align: left;
     white-space: pre;
     tab-size: 2;
-    -moz-tab-size: 2;
 }
-.instructions {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-.instructions h2 {
-    font-size: 1.6em;
-    margin-bottom: 24px;
-    color: #102235;
-}
+
+/* Instructions */
+.instructions { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+.instructions h2 { font-size: 1.6em; margin-bottom: 24px; }
 .step {
     background: #fff;
     border-radius: 10px;
@@ -114,105 +118,66 @@ body { font-family: 'Heebo', sans-serif; background: #f5f5f5; color: #102235; di
     box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
 .step-num {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    background: #72b7bd;
-    color: #fff;
-    border-radius: 50%;
+    display: inline-block; width: 30px; height: 30px; background: #72b7bd;
+    color: #fff; border-radius: 50%; text-align: center; line-height: 30px;
+    font-size: 14px; font-weight: 700; margin-left: 12px;
+}
+.step-title { font-size: 16px; font-weight: 700; display: inline; }
+.step p { margin-top: 10px; font-size: 15px; line-height: 1.7; color: #444; }
+.step code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; direction: ltr; display: inline-block; }
+
+.page-footer {
+    background: #102235;
+    color: #94a3b8;
     text-align: center;
-    line-height: 30px;
-    font-size: 14px;
-    font-weight: 700;
-    margin-left: 12px;
-}
-.step-title {
-    font-size: 16px;
-    font-weight: 700;
-    display: inline;
-}
-.step p {
-    margin-top: 10px;
-    font-size: 15px;
-    line-height: 1.7;
-    color: #444;
-}
-.step code {
-    background: #f0f0f0;
-    padding: 2px 6px;
-    border-radius: 3px;
+    padding: 20px;
     font-size: 13px;
-    direction: ltr;
-    display: inline-block;
+    margin-top: 40px;
 }
 </style>
 </head>
 <body>
-<nav class="tab-nav">
-    <button class="tab-btn active" data-tab="previewPanel">תצוגה מקדימה</button>
-    <button class="tab-btn" data-tab="codePanel">קוד להעתקה</button>
-    <button class="tab-btn" data-tab="instructionsPanel">הוראות הטמעה</button>
+
+<div class="top-bar">מידות — IntegriTEST דף נחיתה</div>
+
+<nav class="tabs">
+    <button class="tab-btn active" data-tab="preview">תצוגה מקדימה</button>
+    <button class="tab-btn" data-tab="code">קוד להעתקה</button>
+    <button class="tab-btn" data-tab="instructions">הוראות הטמעה</button>
 </nav>
-<div id="previewPanel" class="tab-panel active">
-    <iframe src="midot-integritest-landing-wp.html" loading="lazy"></iframe>
+
+<div id="preview" class="panel active">
+    <div class="preview-panel">
+        <div class="preview-header">
+            <img src="https://midot.co.il/wp-content/uploads/2020/06/midot-logo-white.png" alt="מידות">
+        </div>
+        <div class="preview-body">
+            <iframe src="midot-integritest-landing-wp.html" style="width:100%;height:calc(100vh - 140px);border:none;" loading="lazy"></iframe>
+        </div>
+    </div>
 </div>
-<div id="codePanel" class="tab-panel">
+
+<div id="code" class="panel">
     <div class="code-header">
         <button class="copy-btn" id="copyBtn">העתק קוד</button>
         <span class="code-header-text">HTML — העתק והדבק בתוך העמוד המשוכפל</span>
     </div>
     <pre class="code-block" id="codeBlock">&lt;!-- wp:html --&gt;
-
-
 &lt;style&gt;
-
-/* AGGRESSIVE WORDPRESS THEME RESET */
-.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content,
-header.site-header, footer.site-footer, nav, .site-navigation,
-.wp-block-post-title, .entry-header, h1.entry-title {
-    all: unset !important;
-    display: block !important;
+/* IntegriTEST Landing Page — scoped styles */
+.integritest-lp {
+    font-family: &#x27;Heebo&#x27;, sans-serif;
+    font-weight: 400;
+    color: #102235;
+    direction: rtl;
+    line-height: 1.7;
+    font-size: 16px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
-
-/* Hide all WordPress elements */
-header, footer, nav, .site-header, .site-footer, .site-navigation,
-.wp-block-post-title, .entry-header, .entry-title {
-    display: none !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    overflow: hidden !important;
+.integritest-lp *, .integritest-lp *::before, .integritest-lp *::after {
+    box-sizing: border-box;
 }
-
-/* Make body and html full width with no WordPress styling */
-html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    background: transparent !important;
-    font-family: -apple-system, BlinkMacSystemFont, &#x27;Segoe UI&#x27;, Roboto, &#x27;Helvetica Neue&#x27;, Arial, sans-serif !important;
-}
-
-/* Force RTL */
-html {
-    direction: rtl !important;
-    lang: he !important;
-}
-
-/* Make content area full width */
-.entry-content, .wp-block-post-content, .wp-site-blocks, main, article {
-    max-width: none !important;
-    width: 100vw !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    position: relative !important;
-    left: 50% !important;
-    right: 50% !important;
-    margin-left: -50vw !important;
-    margin-right: -50vw !important;
-}
-
-
-/* Your design styles */
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -226,36 +191,10 @@ html {
             font-size: 16px;
         }
 
-        /* ── Draft Banner ── */
-        .draft-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 10000;
-            background: #fff3cd;
-            color: #856404;
-            text-align: center;
-            padding: 8px 40px;
-            font-size: 14px;
-            font-weight: 500;
-            border-bottom: 1px solid #ffc107;
-        }
-        .draft-banner .close-btn {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #856404;
-            line-height: 1;
-        }
-        body.banner-visible .navbar { top: 37px; }
-        body.banner-hidden .draft-banner { display: none; }
-        body.banner-hidden .navbar { top: 0; }
+        
+        
+        
+        
 
         /* ── Navbar ── */
         .navbar {
@@ -309,7 +248,7 @@ html {
             height: 44px;
             gap: 10px;
         }
-        body.banner-hidden .sub-navbar { top: 70px; }
+        
         .sub-navbar a {
             color: #102235;
             text-decoration: none;
@@ -351,7 +290,7 @@ html {
             padding-top: 190px;
             padding-bottom: 60px;
         }
-        body.banner-hidden .hero-lp { padding-top: 150px; }
+        
         .hero-grid {
             display: grid;
             grid-template-columns: 55% 45%;
@@ -802,9 +741,9 @@ html {
             .hamburger { display: flex; }
             .sub-navbar { display: none; }
 
-            body.banner-visible .navbar { top: 37px; }
+            
             .hero-lp { padding-top: 120px; padding-bottom: 40px; }
-            body.banner-hidden .hero-lp { padding-top: 90px; }
+            
 
             .hero-grid {
                 grid-template-columns: 1fr;
@@ -839,13 +778,8 @@ html {
         }
     
 &lt;/style&gt;
-
-
-
-
-
-
-
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&amp;display=swap&quot; rel=&quot;stylesheet&quot;&gt;
+&lt;div class=&quot;integritest-lp&quot;&gt;
 &lt;!-- ===== SECTION 2: Hero — Split Layout ===== --&gt;
 &lt;section class=&quot;hero-lp&quot; id=&quot;hero&quot;&gt;
     &lt;div class=&quot;container&quot;&gt;
@@ -1111,128 +1045,56 @@ if (window.innerWidth &lt;= 767) {
     observer.observe(formCard);
 }
 &lt;/script&gt;
-
-
-
+&lt;/div&gt;
 &lt;script&gt;
 document.documentElement.lang = &#x27;he&#x27;;
-
-// Smooth scroll for CTA buttons
-document.getElementById(&#x27;scrollToFormBtn&#x27;).addEventListener(&#x27;click&#x27;, function(e) {
-    e.preventDefault();
-    document.getElementById(&#x27;heroFormCard&#x27;).scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27; });
-});
-document.getElementById(&#x27;stickyScrollBtn&#x27;).addEventListener(&#x27;click&#x27;, function(e) {
-    e.preventDefault();
-    document.getElementById(&#x27;heroFormCard&#x27;).scrollIntoView({ behavior: &#x27;smooth&#x27;, block: &#x27;center&#x27; });
-});
-
-// Seamless logo carousel — clone items to fill viewport, then loop with rAF
-(function() {
-    var track = document.querySelector(&#x27;.logo-track&#x27;);
-    if (!track) return;
-    var items = Array.prototype.slice.call(track.querySelectorAll(&#x27;.logo-item&#x27;));
-    if (!items.length) return;
-
-    // Clone sets until the track is at least 3x viewport width
-    var safeWidth = window.innerWidth * 3;
-    var cloneSets = 0;
-    while (track.scrollWidth &lt; safeWidth &amp;&amp; cloneSets &lt; 10) {
-        items.forEach(function(item) { track.appendChild(item.cloneNode(true)); });
-        cloneSets++;
-    }
-
-    // Measure one original set width (items + gaps)
-    var gap = window.innerWidth &lt;= 767 ? 40 : 60;
-    var setWidth = 0;
-    for (var i = 0; i &lt; items.length; i++) {
-        setWidth += items[i].offsetWidth + gap;
-    }
-
-    var pos = 0;
-    var speed = 0.5;
-    var paused = false;
-
-    track.addEventListener(&#x27;mouseenter&#x27;, function() { paused = true; });
-    track.addEventListener(&#x27;mouseleave&#x27;, function() { paused = false; });
-
-    function animate() {
-        if (!paused) {
-            pos -= speed;
-            if (Math.abs(pos) &gt;= setWidth) pos += setWidth;
-            track.style.transform = &#x27;translateX(&#x27; + pos + &#x27;px)&#x27;;
-        }
-        requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-})();
-
-// Sticky mobile CTA — show after scrolling past hero form
-if (window.innerWidth &lt;= 767) {
-    var formCard = document.getElementById(&#x27;heroFormCard&#x27;);
-    var stickyCta = document.getElementById(&#x27;stickyCta&#x27;);
-    var observer = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-            if (entry.isIntersecting) {
-                stickyCta.classList.remove(&#x27;visible&#x27;);
-            } else {
-                stickyCta.classList.add(&#x27;visible&#x27;);
-            }
-        });
-    }, { threshold: 0.1 });
-    observer.observe(formCard);
-}
-
 &lt;/script&gt;
 &lt;!-- /wp:html --&gt;</pre>
 </div>
-<div id="instructionsPanel" class="tab-panel">
+
+<div id="instructions" class="panel">
     <div class="instructions">
         <h2>הוראות הטמעה בוורדפרס</h2>
         <div class="step">
             <span class="step-num">1</span>
-            <span class="step-title">שכפלו עמוד קיים או צרו עמוד חדש</span>
-            <p>בוורדפרס, גשו ל"עמודים" וצרו עמוד חדש, או שכפלו עמוד קיים באתר midot.co.il.</p>
+            <span class="step-title">שכפלו עמוד קיים באתר</span>
+            <p>בוורדפרס של midot.co.il, גשו ל"עמודים" ושכפלו עמוד קיים (למשל עמוד שירות). כך תקבלו את התפריט העליון, הפוטר והעיצוב הכללי של האתר.</p>
         </div>
         <div class="step">
             <span class="step-num">2</span>
             <span class="step-title">עברו לעורך קוד</span>
-            <p>בפינה הימנית העליונה של העורך, לחצו על שלוש הנקודות &#x22EE; ובחרו <code>עורך קוד</code> (Code Editor).</p>
+            <p>בעורך הוורדפרס, לחצו על &#x22EE; (שלוש נקודות) בפינה העליונה ובחרו <code>עורך קוד</code> (Code Editor).</p>
         </div>
         <div class="step">
             <span class="step-num">3</span>
-            <span class="step-title">מחקו את כל התוכן הקיים</span>
-            <p>סמנו הכל (<code>Ctrl+A</code>) ומחקו. העמוד חייב להיות ריק לפני ההדבקה.</p>
+            <span class="step-title">החליפו את התוכן</span>
+            <p>סמנו הכל (<code>Ctrl+A</code>) ומחקו. חזרו ללשונית <strong>"קוד להעתקה"</strong>, לחצו <strong>"העתק קוד"</strong>, וחזרו לוורדפרס והדביקו (<code>Ctrl+V</code>).</p>
         </div>
         <div class="step">
             <span class="step-num">4</span>
-            <span class="step-title">הדביקו את הקוד</span>
-            <p>עברו ללשונית <strong>"קוד להעתקה"</strong>, לחצו על <strong>"העתק קוד"</strong>, חזרו לעורך הקוד בוורדפרס והדביקו (<code>Ctrl+V</code>).</p>
+            <span class="step-title">הגדרות SEO ו-Slug</span>
+            <p>Slug: <code>integritest</code> (באנגלית בלבד). כותרת: <code>IntegriTEST — מבחן אמינות ממוחשב</code>. ודאו שהתבנית היא ברירת המחדל (לא Blank/Canvas).</p>
         </div>
         <div class="step">
             <span class="step-num">5</span>
-            <span class="step-title">הגדרות עמוד</span>
-            <p>בהגדרות העמוד, ודאו: תבנית = <code>Blank</code> או <code>Elementor Canvas</code>. כותרת: <code>IntegriTEST</code>. Slug: <code>integritest</code> (באנגלית בלבד).</p>
+            <span class="step-title">פרסום ובדיקה</span>
+            <p>לחצו "פרסום". ודאו שהתפריט העליון, הפוטר, הקרוסלה, הטופס והכפתורים עובדים כמצופה. הקוד <strong>לא דורס</strong> את עיצוב האתר — התפריט והפוטר נשארים.</p>
         </div>
         <div class="step">
             <span class="step-num">6</span>
-            <span class="step-title">פרסום ובדיקה</span>
-            <p>לחצו "פרסום" ובדקו את העמוד בדפדפן. ודאו שהקרוסלה, הכפתורים והטופס עובדים כמצופה.</p>
-        </div>
-        <div class="step">
-            <span class="step-num">7</span>
-            <span class="step-title">טופס — החלפה אופציונלית</span>
-            <p>הטופס הוא placeholder ב-HTML. ניתן להחליף בשורטקוד של Contact Form 7 או ווידג'ט Elementor. חפשו <code>&lt;!-- FORM PLACEHOLDER --&gt;</code> בקוד.</p>
+            <span class="step-title">טופס — החלפה</span>
+            <p>הטופס הוא placeholder. חפשו <code>&lt;!-- FORM PLACEHOLDER --&gt;</code> בקוד והחליפו בשורטקוד CF7 או ווידג&#39;ט Elementor.</p>
         </div>
     </div>
 </div>
+
+<div class="page-footer">NC Digital — IntegriTEST Landing Page &copy; 2026</div>
+
 <script>
-var tabBtns = document.querySelectorAll('.tab-btn');
-var panels = document.querySelectorAll('.tab-panel');
-tabBtns.forEach(function(btn) {
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
-        tabBtns.forEach(function(b) { b.classList.remove('active'); });
-        panels.forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
         btn.classList.add('active');
         document.getElementById(btn.dataset.tab).classList.add('active');
     });
@@ -1243,10 +1105,7 @@ document.getElementById('copyBtn').addEventListener('click', function() {
     navigator.clipboard.writeText(code).then(function() {
         btn.textContent = '\u2713 הועתק!';
         btn.classList.add('copied');
-        setTimeout(function() {
-            btn.textContent = 'העתק קוד';
-            btn.classList.remove('copied');
-        }, 2500);
+        setTimeout(function() { btn.textContent = 'העתק קוד'; btn.classList.remove('copied'); }, 2500);
     });
 });
 </script>
