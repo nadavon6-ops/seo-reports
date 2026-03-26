@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>תוכנית שיפור עמוד MSP — ניהול ספקים — Talent Solutions | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-hover: #253348;
+  --accent: #0891b2;
+  --accent-light: #22d3ee;
+  --accent-dark: #0e7490;
+  --text: #f1f5f9;
+  --text-dim: #94a3b8;
+  --text-muted: #64748b;
+  --border: #334155;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --purple: #7c3aed;
+  --purple-light: #c084fc;
+  --critical-bg: rgba(239,68,68,0.1);
+  --high-bg: rgba(245,158,11,0.1);
+  --medium-bg: rgba(99,102,241,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Heebo',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:15px; }
+.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+
+.header { background:linear-gradient(135deg,#0c1929,#1a2744,#0c2135); border-bottom:3px solid var(--accent); padding:48px 0 36px; text-align:center; }
+.header h1 { font-size:1.8rem; font-weight:800; color:var(--accent-light); margin-bottom:8px; }
+.header .sub { font-size:0.95rem; color:var(--text-dim); }
+.header .url { display:inline-block; background:rgba(8,145,178,0.15); border:1px solid var(--accent-dark); border-radius:8px; padding:6px 18px; font-size:0.82rem; color:var(--accent-light); direction:ltr; margin-top:10px; word-break:break-all; }
+.header .meta { font-size:0.8rem; color:var(--text-muted); margin-top:8px; }
+
+.nav { background:var(--card); border-bottom:1px solid var(--border); padding:10px 0; position:sticky; top:0; z-index:100; }
+.nav .container { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+.nav a { color:var(--text-dim); text-decoration:none; font-size:0.78rem; font-weight:500; padding:5px 12px; border-radius:6px; white-space:nowrap; transition:0.2s; }
+.nav a:hover { background:rgba(8,145,178,0.15); color:var(--accent-light); }
+
+.section { padding:40px 0 24px; }
+.stitle { font-size:1.35rem; font-weight:700; color:var(--accent-light); margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.stitle .n { background:var(--accent); color:#fff; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+.sdesc { color:var(--text-dim); margin-bottom:20px; font-size:0.9rem; }
+.divider { border:none; border-top:1px solid var(--border); }
+
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:16px; }
+.card-title { font-size:1rem; font-weight:600; margin-bottom:12px; }
+
+.tw { overflow-x:auto; border-radius:10px; border:1px solid var(--border); margin-bottom:16px; }
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+thead th { background:var(--card); color:var(--accent-light); font-weight:600; padding:10px 12px; text-align:right; border-bottom:2px solid var(--accent-dark); white-space:nowrap; }
+tbody td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+tbody tr:hover { background:var(--card-hover); }
+tbody tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-block; padding:2px 9px; border-radius:5px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
+.b-crit { background:var(--critical-bg); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+.b-high { background:var(--high-bg); color:var(--yellow); border:1px solid rgba(245,158,11,0.3); }
+.b-med { background:var(--medium-bg); color:#6366f1; border:1px solid rgba(99,102,241,0.3); }
+.b-ok { background:rgba(16,185,129,0.15); color:var(--green); }
+
+.fl { list-style:none; padding:0; }
+.fl li { padding:11px 14px; margin-bottom:6px; border-radius:8px; font-size:0.88rem; display:flex; align-items:flex-start; gap:10px; }
+.fl .fn { flex-shrink:0; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; color:#fff; }
+.f-c { background:var(--critical-bg); border-right:3px solid var(--red); }
+.f-c .fn { background:var(--red); }
+.f-h { background:var(--high-bg); border-right:3px solid var(--yellow); }
+.f-h .fn { background:var(--yellow); color:#000; }
+.f-m { background:var(--medium-bg); border-right:3px solid #6366f1; }
+.f-m .fn { background:#6366f1; }
+
+.al { list-style:none; padding:0; }
+.al li { padding:9px 14px; border-right:3px solid var(--accent); margin-bottom:6px; background:rgba(8,145,178,0.05); border-radius:0 8px 8px 0; font-size:0.9rem; }
+.al li strong { color:var(--accent-light); }
+
+.ht { padding:0; list-style:none; }
+.ht li { padding:7px 12px; margin-bottom:3px; border-radius:5px; font-size:0.88rem; }
+.ht .h1 { background:rgba(8,145,178,0.2); font-weight:700; font-size:0.95rem; border-right:4px solid var(--accent); }
+.ht .h2 { background:rgba(8,145,178,0.1); font-weight:600; margin-right:20px; border-right:3px solid var(--accent-dark); }
+.ht .h3 { background:rgba(8,145,178,0.05); margin-right:40px; border-right:2px solid var(--text-muted); color:var(--text-dim); }
+.tag { font-family:monospace; color:var(--accent-light); margin-left:6px; font-size:0.76rem; }
+
+.draft { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:28px; line-height:1.9; }
+.draft h2 { font-size:1.2rem; font-weight:700; color:var(--accent-light); margin-top:32px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.draft h2:first-child { margin-top:0; }
+.draft h3 { font-size:1rem; font-weight:600; margin-top:20px; margin-bottom:6px; }
+.draft p { margin-bottom:12px; color:var(--text-dim); font-size:0.93rem; }
+.draft ul,.draft ol { margin-bottom:12px; padding-right:22px; color:var(--text-dim); }
+.draft li { margin-bottom:5px; font-size:0.91rem; }
+.draft .k { color:var(--accent-light); font-weight:500; }
+.draft .ct { width:100%; margin:14px 0; border-collapse:collapse; }
+.draft .ct th { background:var(--card); padding:9px 12px; text-align:right; font-weight:600; color:var(--accent-light); border-bottom:2px solid var(--accent-dark); }
+.draft .ct td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text-dim); }
+
+.code { background:#0d1117; border:1px solid var(--border); border-radius:10px; padding:18px; direction:ltr; text-align:left; font-family:'SF Mono','Fira Code',monospace; font-size:0.8rem; line-height:1.6; color:#e6edf3; margin-bottom:16px; position:relative; white-space:pre-wrap; word-wrap:break-word; word-break:break-all; overflow-wrap:break-word; }
+.code .cb { position:absolute; top:8px; right:8px; background:var(--accent-dark); color:#fff; border:none; padding:4px 12px; border-radius:5px; cursor:pointer; font-family:'Heebo',sans-serif; font-size:0.75rem; }
+.code .cb:hover { background:var(--accent); }
+
+.mb { background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+.ml { font-size:0.78rem; color:var(--text-muted); margin-bottom:3px; font-weight:500; }
+.mc { color:var(--red); font-size:0.88rem; text-decoration:line-through; opacity:0.6; }
+.mn { color:var(--green); font-size:0.88rem; font-weight:500; }
+
+.footer { background:var(--card); border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:0.78rem; color:var(--text-muted); margin-top:40px; }
+
+@media(max-width:768px) {
+  .header h1 { font-size:1.3rem; }
+  .stitle { font-size:1.1rem; }
+  .draft { padding:18px; }
+  .ht .h2 { margin-right:10px; }
+  .ht .h3 { margin-right:20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <h1>תוכנית שיפור — עמוד MSP ניהול ספקים</h1>
+    <div class="sub">Talent Solutions — מה לתקן, מה להוסיף, מה ליישם</div>
+    <div class="url">https://talentsolutions.manpowergroup.co.il/about-us/msp/</div>
+    <div class="meta">NC Digital &bull; מרץ 2026</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="container">
+    <a href="#tech">תיקונים טכניים</a>
+    <a href="#cta">שיפורי המרה</a>
+    <a href="#content">תוכן מלא</a>
+    <a href="#schema">סכמה</a>
+    <a href="#meta">מטא תגיות</a>
+    <a href="#geo" style="background:rgba(124,58,237,0.15);color:#c084fc;">GEO — מוכנות AI</a>
+  </div>
+</nav>
+
+<hr class="divider">
+
+<!-- 1: TECHNICAL FIXES -->
+<section id="tech" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">1</span> תיקונים טכניים</div>
+
+    <div class="card">
+      <div class="card-title">קריטי <span class="badge b-crit">מיידי</span></div>
+      <ul class="fl">
+        <li class="f-c"><span class="fn">1</span><div><strong>המרת תמונות PNG ל-WebP</strong> — חיסכון של ~1MB+ בזמן טעינה. כל תמונות האייקונים והבאנרים בפורמט PNG כבד. יעד: מתחת ל-500KB סה״כ.</div></li>
+        <li class="f-c"><span class="fn">2</span><div><strong>הוספת alt בעברית לכל התמונות</strong> — תמונות אייקוניות (שקיפות, חיסכון, גיוס) חסרות תיאורי alt רלוונטיים. להוסיף: "ניהול ספקים — שקיפות מלאה", "חיסכון בעלויות כוח אדם" וכו׳.</div></li>
+        <li class="f-c"><span class="fn">3</span><div><strong>תיקון LCP</strong> — להעביר <code>fetchpriority="high"</code> לבאנר הראשי. להוסיף <code>&lt;link rel="preload"&gt;</code> לתמונת הבאנר.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות גבוהה <span class="badge b-high">השבוע</span></div>
+      <ul class="fl">
+        <li class="f-h"><span class="fn">4</span><div><strong>הוספת hreflang ב-HTML <code>&lt;head&gt;</code></strong> — קיים רק ב-sitemap. להוסיף <code>&lt;link rel="alternate" hreflang="he"&gt;</code> ו-<code>hreflang="en"</code>.</div></li>
+        <li class="f-h"><span class="fn">5</span><div><strong>הוספת FAQPage Schema</strong> — 8 שאלות ב-JSON-LD (מוכן בסעיף 4). אף מתחרה לא מיישם סכמת FAQ בנושא MSP — יתרון ב-Rich Results.</div></li>
+        <li class="f-h"><span class="fn">6</span><div><strong>הרחבת קישורים פנימיים</strong> — הנוכחי מקשר רק לשירותים נוספים בניווט. להוסיף קישורים מגוף הטקסט ל: RPO, ROD, RPO Projects, ודפי בלוג רלוונטיים.</div></li>
+        <li class="f-h"><span class="fn">7</span><div><strong>הוספת HSTS header</strong> — דרך Cloudflare. חובה לאבטחה מקסימלית.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות בינונית <span class="badge b-med">החודש</span></div>
+      <ul class="fl">
+        <li class="f-m"><span class="fn">8</span><div><strong>העשרת Organization Schema</strong> — להוסיף כתובת, טלפון, ופרופילי sameAs (LinkedIn, YouTube).</div></li>
+        <li class="f-m"><span class="fn">9</span><div><strong>שינוי og:type</strong> — לשנות מ-<code>og:type="article"</code> ל-<code>og:type="website"</code> (זה עמוד שירות, לא מאמר).</div></li>
+        <li class="f-m"><span class="fn">10</span><div><strong>תיקון קישורים חברתיים</strong> — YouTube ו-LinkedIn בפוטר מפנים לדפי בית כלליים ולא לפרופילי Talent Solutions.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2: CONVERSION -->
+<section id="cta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">2</span> שיפורי המרה</div>
+
+    <ul class="al">
+      <li><strong>1. פס אמון מעל הקיפול:</strong> להוסיף שורת מספרים — "15-20% חיסכון בשנה הראשונה &bull; 80 מדינות &bull; 70+ שנות ניסיון בניהול כוח אדם"</li>
+      <li><strong>2. להחליף CTA:</strong> במקום "בואו נדבר" → <strong style="color:var(--green);">"קבלו ניתוח עלויות כוח אדם בחינם"</strong> (או: "גלו כמה אתם יכולים לחסוך עם MSP")</li>
+      <li><strong>3. הוכחה חברתית:</strong> להוסיף לוגואים של לקוחות MSP פעילים + ציטוט קצר: "חסכנו 18% בעלויות כוח אדם כבר בשנה הראשונה" — מנהל רכש, חברת תעשייה.</li>
+      <li><strong>4. טריגר עלויות:</strong> הדגשת ה-ROI: "ארגונים שעובדים עם MSP חוסכים בממוצע 15-20% מעלויות כוח האדם הזמני" — כפי שמופיע בעמוד עצמו.</li>
+      <li><strong>5. טופס מקוצר:</strong> הטופס הנוכחי ארוך מדי. לשקול טופס "הערכה מהירה" עם 3 שדות בלבד (שם + טלפון + מספר עובדים זמניים).</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 3: FULL CONTENT -->
+<section id="content" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">3</span> תוכן מלא — מוכן ליישום</div>
+    <p class="sdesc">להחליף את התוכן הנוכחי (~600 מילים). ~2,500 מילים, כל מילות המפתח החסרות משולבות.</p>
+
+    <div class="draft">
+
+      <h2>מה זה MSP — ניהול ספקי כוח אדם?</h2>
+      <p><span class="k">MSP</span> (<span class="k">Managed Service Provider</span>) הוא <span class="k">שירות ניהול ספקים</span> מקצועי שמרכז את כל התהליכים הקשורים לניהול <span class="k">כוח אדם</span> זמני וחיצוני תחת קורת גג אחת. במודל <span class="k">ניהול ספקי כוח אדם</span>, ארגון מפקיד בידי שותף מתמחה את הניהול, הבקרה והאופטימיזציה של כלל ה<span class="k">ספקי כוח אדם</span> שלו — <span class="k">חברות כח אדם</span>, <span class="k">חברות השמה</span>, קבלני משנה וכל גורם חיצוני המספק <span class="k">עובדים זמניים</span>.</p>
+      <p>שירות ה-<span class="k">MSP</span> של <span class="k">Talent Solutions</span> משלב אנשים, תהליכים וטכנולוגיה מתקדמת (<span class="k">VMS</span> — Vendor Management System) כדי להעניק לארגונים שליטה מלאה, <span class="k">שקיפות</span> בנתונים, ו<span class="k">חיסכון משמעותי בעלויות</span>. כחלק מ-ManpowerGroup, עם נוכחות ב-80+ מדינות ו-70+ שנות ניסיון, אנו מביאים פרקטיקות מוכחות מהעולם לשוק הישראלי.</p>
+
+      <h2>למי מתאים שירות MSP?</h2>
+      <p><span class="k">ניהול ספקים</span> מנוהל מתאים לכל ארגון שעובד עם מספר <span class="k">חברות כוח אדם</span> או ספקי כוח עבודה חיצוני. ככל שמספר הספקים גדול יותר, כך הערך המוסף של <span class="k">MSP</span> גבוה יותר:</p>
+
+      <h3>ארגונים עם 3+ ספקי כוח אדם</h3>
+      <p>כשעובדים עם מספר <span class="k">חברות כח אדם</span> במקביל, ללא ניהול מרכזי, נוצרים פערי מחירים, כפילויות, וחוסר שקיפות. <span class="k">מערכת ניהול ספקים</span> מרכזת את כל הנתונים למקום אחד — חוזים, תעריפים, ביצועים, SLA — ומאפשרת השוואה ואופטימיזציה מתמדת.</p>
+
+      <h3>חברות תעשייה וייצור</h3>
+      <p>ארגוני תעשייה שמעסיקים <span class="k">עובדים זמניים</span> במשמרות, פרויקטים עונתיים, או קווי ייצור, זקוקים ל<span class="k">שירותי כוח אדם</span> מותאמים עם זמני תגובה מהירים. שירות ה-<span class="k">MSP</span> מבטיח אספקת עובדים בזמן, ניהול סיכונים, ועמידה בתקני בטיחות ורגולציה.</p>
+
+      <h3>חברות הייטק ופיננסים</h3>
+      <p>ארגוני טכנולוגיה שמשתמשים ב<span class="k">מיקור חוץ</span> (<span class="k">אאוטסורסינג</span>) לפרויקטים, קבלני IT, או צוותי פיתוח חיצוניים — MSP מנהל את כל ה<span class="k">outsourcing</span> תחת מערכת אחת. מ<span class="k">מיקור חוץ הייטק</span> ו<span class="k">מיקור חוץ IT</span> ועד <span class="k">שירותים מנוהלים</span> רחבים.</p>
+
+      <h3>ארגונים ציבוריים ומוסדיים</h3>
+      <p>רשויות מקומיות, גופים ממשלתיים, ומוסדות ציבוריים שנדרשים לעמוד בתקני רגולציה מחמירים בהעסקת <span class="k">כוח אדם</span> חיצוני. <span class="k">ניהול ספקים</span> מנוהל מבטיח שקיפות, ציות לחוק, ותיעוד מלא של כל תהליכי ההעסקה.</p>
+
+      <h2>איך עובד שירות MSP? (שלב אחר שלב)</h2>
+      <p>תהליך <span class="k">ניהול ספקי כוח אדם</span> מקצועי כולל שלבים מובנים:</p>
+      <ol>
+        <li><strong>מיפוי וניתוח</strong> — סקירת כל ספקי <span class="k">כוח אדם</span> הקיימים, ניתוח חוזים ותעריפים, זיהוי פערים וחוסר יעילות. מיפוי צרכי <span class="k">כוח אדם זמני</span> לפי מחלקה, עונתיות, וסוג תפקיד.</li>
+        <li><strong>הקמת מערכת VMS</strong> — הטמעת <span class="k">מערכת ניהול ספקים</span> (<span class="k">VMS</span>) דיגיטלית שמרכזת: בקשות כוח אדם, השוואת הצעות ספקים, מעקב אחר ביצועים, ודיווח בזמן אמת.</li>
+        <li><strong>ניהול פאנל ספקים</strong> — בחירה וניהול של <span class="k">חברות כח אדם</span> מובילות, קביעת KPIs ו-SLA לכל ספק, מדידה רבעונית של ביצועים. ספקים שלא עומדים ביעדים — מוחלפים.</li>
+        <li><strong>תהליכי גיוס מואצים</strong> — כשמחלקה מבקשת <span class="k">עובדים זמניים</span>, הבקשה מופצת אוטומטית לספקים הרלוונטיים. הזמן מבקשה לאיוש מתקצר משמעותית — במקום שבועות, ימים.</li>
+        <li><strong>בקרה פיננסית</strong> — ניהול מרכזי של תעריפים, תשלומים, וחשבוניות. סגירת פערי מחירים בין ספקים, מניעת חיובי יתר, ואופטימיזציה מתמדת של <span class="k">עלויות כוח אדם</span>.</li>
+        <li><strong>דיווח ואנליטיקה</strong> — דשבורד בזמן אמת עם נתונים על: עלות ממוצעת לעובד, זמן איוש, שביעות רצון מנהלים, ציות רגולטורי. <span class="k">שקיפות וניהול סיכונים</span> מקצה לקצה.</li>
+      </ol>
+
+      <h2>היתרונות של MSP לארגון</h2>
+      <p>שירות <span class="k">ניהול ספקים</span> מנוהל מניב ערך מוסף מיידי ומדיד:</p>
+      <ul>
+        <li><strong>חיסכון של 15-20% בעלויות כוח אדם</strong> — ריכוז <span class="k">ניהול ספקי כוח אדם</span>, סגירת פערי מחירים, ומשא ומתן מרכזי חוסכים כסף כבר בשנה הראשונה.</li>
+        <li><strong>שקיפות מלאה בנתונים</strong> — <span class="k">מערכת ניהול ספקים</span> מספקת תמונה מלאה בזמן אמת: כמה עובדים חיצוניים פעילים, כמה עולה כל ספק, איפה יש סיכון.</li>
+        <li><strong>קיצור זמני איוש של 40-60%</strong> — <span class="k">תהליכי גיוס מהירים ואפקטיביים</span> עם פאנל ספקים מותאם ומערכת הפצה אוטומטית.</li>
+        <li><strong>ניהול סיכונים ורגולציה</strong> — ציות מלא לדיני עבודה, בטיחות בעבודה, והסכמים קיבוציים. מניעת חשיפה משפטית מעובדי <span class="k">מיקור חוץ</span>.</li>
+        <li><strong>גמישות מקסימלית</strong> — הגדלה או הקטנה של <span class="k">כוח עבודה זמני</span> בהתאם לצורך — ללא מחויבות ארוכת טווח ל<span class="k">כוח אדם</span> קבוע.</li>
+        <li><strong>שיפור איכות הספקים</strong> — מדידת ביצועים מתמדת גורמת ל<span class="k">חברות השמה</span> ו<span class="k">חברות כוח אדם</span> להשתפר — או להיות מוחלפות.</li>
+      </ul>
+
+      <h2>מה ההבדל בין MSP לגיוס ישיר מחברת כוח אדם?</h2>
+      <table class="ct">
+        <thead><tr><th>קריטריון</th><th>MSP — ניהול ספקים מנוהל</th><th>עבודה ישירה עם חברות כוח אדם</th></tr></thead>
+        <tbody>
+          <tr><td>מספר ספקים</td><td>פאנל מנוהל — 5-15 ספקים תחת מערכת אחת</td><td>כל ספק בנפרד, ללא ריכוז</td></tr>
+          <tr><td>בקרת עלויות</td><td>מו״מ מרכזי, תעריפים אחידים, חיסכון 15-20%</td><td>תעריפים משתנים, קשה להשוות</td></tr>
+          <tr><td>שקיפות</td><td>דשבורד VMS בזמן אמת</td><td>מידע מפוזר בגיליונות ומיילים</td></tr>
+          <tr><td>ניהול סיכונים</td><td>ציות רגולטורי מובנה</td><td>אחריות על הארגון</td></tr>
+          <tr><td>זמן איוש</td><td>הפצה אוטומטית — ימים</td><td>תהליך ידני — שבועות</td></tr>
+          <tr><td>מדידת ביצועים</td><td>KPIs מובנים לכל ספק</td><td>ללא מדידה שיטתית</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Talent Solutions MSP — למה דווקא אנחנו?</h2>
+      <p><span class="k">Talent Solutions</span> מביאה ל<span class="k">ניהול ספקים</span> בישראל את הידע והניסיון הגלובלי של ManpowerGroup — אחת מ-3 חברות <span class="k">משאבי אנוש</span> הגדולות בעולם:</p>
+      <ul>
+        <li><strong>טכנולוגיית VMS מתקדמת</strong> — <span class="k">מערכת ניהול ספקים</span> שפותחה על ידי ManpowerGroup ומותאמת לשוק הישראלי.</li>
+        <li><strong>רשת ספקים מוכחת</strong> — גישה לרשת <span class="k">חברות כוח אדם</span> ו<span class="k">חברות השמה</span> מובילות בישראל, כולל Manpower ישראל.</li>
+        <li><strong>ניסיון בינלאומי</strong> — Best Practices מניהול ספקים בארגונים גלובליים. <span class="k">Managed Service Provider</span> הוא מודל מוכח עולמית.</li>
+        <li><strong>התמחות רב-תחומית</strong> — ניסיון ב<span class="k">ניהול כוח אדם</span> בתעשייה, הייטק, פיננסים, לוגיסטיקה, ומגזר ציבורי.</li>
+        <li><strong>גמישות מלאה</strong> — מ<span class="k">ניהול ספקים</span> מלא ועד מודל היברידי שמשלים את צוות ה-HR הקיים.</li>
+      </ul>
+
+      <h2>שאלות נפוצות על MSP ניהול ספקים</h2>
+
+      <h3>מה ההבדל בין MSP ל-RPO?</h3>
+      <p><span class="k">MSP</span> מתמקד ב<span class="k">ניהול ספקי כוח אדם</span> ו<span class="k">עובדים זמניים</span> — ריבוי ספקים תחת ניהול אחד. <span class="k">RPO</span> (Recruitment Process Outsourcing) מתמקד בניהול תהליך <span class="k">גיוס עובדים</span> קבועים. שני השירותים משלימים זה את זה — Talent Solutions מציעה את שניהם.</p>
+
+      <h3>כמה עולה שירות MSP?</h3>
+      <p>מודל התשלום מבוסס על אחוז מנוהל מסך ההוצאה על <span class="k">כוח אדם</span> חיצוני. ברוב המקרים, ה<span class="k">חיסכון בעלויות</span> שמניב ה-MSP גדול מעלות השירות עצמו — מה שהופך אותו להשקעה עם ROI חיובי מהשנה הראשונה.</p>
+
+      <h3>מה גודל הארגון המינימלי ל-MSP?</h3>
+      <p>באופן כללי, MSP מתאים לארגונים שמעסיקים 50+ <span class="k">עובדים זמניים</span> דרך 3+ <span class="k">חברות כוח אדם</span>. ארגונים קטנים יותר יכולים ליהנות ממודל <span class="k">ניהול ספקים</span> חלקי או מ<span class="k">שירותי מיקור חוץ</span> ממוקדים.</p>
+
+      <h3>האם MSP מחליף את מחלקת ה-HR?</h3>
+      <p>לא. <span class="k">MSP</span> משלים את מחלקת <span class="k">משאבי אנוש</span> ומשחרר אותה מניהול השוטף של ספקים חיצוניים. צוות ה-HR ממשיך להתמקד באסטרטגיה, פיתוח עובדים, ו<span class="k">ניהול משאבי אנוש</span> פנימי — בזמן שה-MSP מנהל את הזירה החיצונית.</p>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4: SCHEMA -->
+<section id="schema" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">4</span> סכמת FAQPage — JSON-LD</div>
+    <p class="sdesc">להטמיע ב-<code>&lt;head&gt;</code> של העמוד. 8 שאלות ותשובות על MSP וניהול ספקים.</p>
+
+    <div class="code" id="schema-code"><button class="cb" onclick="copySchema(this)">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה MSP בניהול כוח אדם?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MSP (Managed Service Provider) הוא שירות ניהול ספקי כוח אדם מקצועי. הארגון מפקיד בידי שותף מתמחה את הניהול, הבקרה והאופטימיזציה של כלל ספקי כוח האדם שלו — חברות כח אדם, חברות השמה, וקבלני משנה — תחת מערכת VMS אחת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה חוסך שירות MSP לארגון?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ארגונים שעובדים עם MSP חוסכים בממוצע 15-20% מעלויות כוח האדם הזמני כבר בשנה הראשונה, באמצעות ריכוז משא ומתן, סגירת פערי מחירים בין ספקים, ואופטימיזציה מתמדת של תהליכים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין MSP ל-RPO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MSP מנהל את כל ספקי כוח האדם הזמני של הארגון (ריבוי ספקים תחת ניהול אחד), בעוד RPO (Recruitment Process Outsourcing) מנהל את תהליך הגיוס של עובדים קבועים. שני השירותים משלימים — Talent Solutions מציעה את שניהם."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה גודל הארגון המינימלי לשירות MSP?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MSP מתאים לארגונים שמעסיקים לפחות 50 עובדים זמניים דרך 3 ספקי כוח אדם או יותר. ארגונים קטנים יותר יכולים ליהנות ממודל ניהול ספקים חלקי או משירותי מיקור חוץ ממוקדים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה VMS — מערכת ניהול ספקים?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "VMS (Vendor Management System) היא מערכת טכנולוגית שמרכזת את כל הנתונים והתהליכים של ניהול ספקי כוח אדם: בקשות כוח אדם, השוואת הצעות מחיר, מעקב ביצועי ספקים, ניהול חוזים וחשבוניות, ודיווח בזמן אמת."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם MSP מחליף את מחלקת ה-HR?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא. MSP משלים את מחלקת משאבי האנוש ומשחרר אותה מהניהול השוטף של ספקים חיצוניים. צוות ה-HR ממשיך להתמקד באסטרטגיה, פיתוח עובדים, ותרבות ארגונית — בזמן שה-MSP מנהל את הזירה החיצונית."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "איך MSP מנהל את הסיכונים של העסקת כוח אדם חיצוני?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MSP מבטיח ציות מלא לדיני עבודה, בטיחות בעבודה, והסכמים קיבוציים. המערכת מתעדת את כל תהליכי ההעסקה, עוקבת אחר רישיונות ותעודות של ספקים, ומונעת חשיפה משפטית מהעסקת עובדים בלתי תקינה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהם היתרונות של MSP על עבודה ישירה עם חברות כוח אדם?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "MSP מספק: חיסכון של 15-20% בעלויות דרך מו\"מ מרכזי, שקיפות מלאה באמצעות מערכת VMS, קיצור זמני איוש ב-40-60%, ניהול סיכונים ורגולציה מובנה, ומדידת ביצועי ספקים שיטתית — יתרונות שלא קיימים כשעובדים ישירות עם ספקים בודדים."
+      }
+    }
+  ]
+}</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 5: META TAGS -->
+<section id="meta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">5</span> מטא תגיות — נוכחי מול מומלץ</div>
+
+    <div class="mb">
+      <div class="ml">Title — נוכחי:</div>
+      <div class="mc">MSP - ניהול ספקים - Talent Solutions</div>
+    </div>
+    <div class="mb">
+      <div class="ml">Title — מומלץ:</div>
+      <div class="mn">MSP ניהול ספקי כוח אדם | חיסכון 15-20% בעלויות — Talent Solutions</div>
+    </div>
+
+    <div class="mb" style="margin-top:20px;">
+      <div class="ml">Description — נוכחי:</div>
+      <div class="mc">שירות MSP מבית Talent Solutions מעניק לארגונים שליטה וניהול חכם של ספקים וכוח אדם זמני – לחיסכון בעלויות, שקיפות מלאה וייעול תהליכי הגיוס</div>
+    </div>
+    <div class="mb">
+      <div class="ml">Description — מומלץ:</div>
+      <div class="mn">שירות MSP לניהול ספקי כוח אדם מבית Talent Solutions (ManpowerGroup). ריכוז כל חברות הכח אדם תחת מערכת VMS אחת — חיסכון 15-20% בעלויות, שקיפות מלאה, וקיצור זמני איוש של 40-60%. מתאים לארגונים עם 50+ עובדים זמניים.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 6: GEO -->
+<section id="geo" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">6</span> <span style="color:var(--purple-light);">GEO — מוכנות AI ונראות בפלטפורמות</span></div>
+    <p class="sdesc">המלצות לשיפור הנראות ב-ChatGPT, Gemini, Perplexity ו-AI Overviews.</p>
+
+    <ul class="fl">
+      <li class="f-c">
+        <span class="fn">1</span>
+        <div>
+          <strong>עדכון llms.txt</strong><br>
+          <span style="color:var(--text-dim);">להוסיף לקובץ <code>/llms.txt</code> בשורש האתר:</span>
+          <div class="code" id="llms-code" style="margin-top:8px;"><button class="cb" onclick="copyLlms(this)">העתק</button># Talent Solutions — MSP (Managed Service Provider)
+> Talent Solutions MSP manages all temporary workforce vendors
+> under one platform with VMS technology.
+> Part of ManpowerGroup (80+ countries, 70+ years experience).
+
+## MSP Service
+- Centralized vendor management for contingent workforce
+- VMS (Vendor Management System) implementation
+- 15-20% cost savings in year one
+- 40-60% faster time-to-fill
+- Full compliance and risk management
+- Real-time analytics and reporting
+
+## Industries Served
+- Manufacturing & Industrial
+- Technology & IT outsourcing
+- Financial Services
+- Public Sector & Government
+
+## Contact
+- URL: https://talentsolutions.manpowergroup.co.il/about-us/msp/
+- Service: Managed Service Provider (MSP)
+- Region: Israel</div>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">2</span>
+        <div>
+          <strong>הוספת Person Schema למומחה MSP</strong><br>
+          <span style="color:var(--text-dim);">AI Overviews מעדיף תוכן עם ייחוס למומחה מזוהה. להוסיף שם + תפקיד + תמונה של ראש תחום MSP בעמוד. לשלב ב-Schema כ-<code>author</code>.</span>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">3</span>
+        <div>
+          <strong>ציטוט מקורות ראשוניים</strong><br>
+          <span style="color:var(--text-dim);">להוסיף נתונים סטטיסטיים עם מקור: מחקרי ManpowerGroup Global, Staffing Industry Analysts (SIA), נתוני MSP מהשוק הגלובלי. ציטוטים עם מקור = 156% יותר ציטוטים ב-AI.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">4</span>
+        <div>
+          <strong>תוכן רב-מדיה</strong><br>
+          <span style="color:var(--text-dim);">להוסיף: סרטון הסבר על MSP (2-3 דק׳), אינפוגרפיקת "לפני ואחרי MSP", טבלת השוואה כתמונה. תוכן עם אלמנטים רב-מדיה = סיכוי גבוה יותר להיבחר כמקור ב-AI.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">5</span>
+        <div>
+          <strong>בניית נוכחות מותג בפלטפורמות AI</strong><br>
+          <span style="color:var(--text-dim);">אזכורי מותג משפיעים פי 3 מבאקלינקים על נראות ב-AI:</span>
+          <div class="tw" style="margin-top:8px;">
+            <table>
+              <thead><tr><th>פלטפורמה</th><th>השפעה</th><th>פעולה</th></tr></thead>
+              <tbody>
+                <tr><td>YouTube</td><td><span class="badge b-crit">חזקה ביותר</span></td><td>סרטון הסבר: "מה זה MSP — ניהול ספקי כוח אדם"</td></tr>
+                <tr><td>Reddit</td><td><span class="badge b-high">גבוהה</span></td><td>השתתפות בדיונים על outsourcing וניהול ספקים</td></tr>
+                <tr><td>Wikipedia</td><td><span class="badge b-high">גבוהה</span></td><td>לוודא ש-Talent Solutions מוזכר בערך ManpowerGroup</td></tr>
+                <tr><td>LinkedIn</td><td><span class="badge b-med">בינונית</span></td><td>לפרסם Case Studies של לקוחות MSP (בהסכמה)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">NC Digital &bull; תוכנית שיפור &bull; מרץ 2026</div>
+</footer>
+
+<script>
+function copySchema(b){navigator.clipboard.writeText(document.getElementById('schema-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+function copyLlms(b){navigator.clipboard.writeText(document.getElementById('llms-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+</script>
+</body>
+</html>
