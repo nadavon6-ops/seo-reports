@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>תוכנית שיפור עמוד RPO — Talent Solutions | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card-hover: #253348;
+  --accent: #0891b2;
+  --accent-light: #22d3ee;
+  --accent-dark: #0e7490;
+  --text: #f1f5f9;
+  --text-dim: #94a3b8;
+  --text-muted: #64748b;
+  --border: #334155;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --purple: #7c3aed;
+  --purple-light: #c084fc;
+  --critical-bg: rgba(239,68,68,0.1);
+  --high-bg: rgba(245,158,11,0.1);
+  --medium-bg: rgba(99,102,241,0.1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Heebo',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:15px; }
+.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+
+.header { background:linear-gradient(135deg,#0c1929,#1a2744,#0c2135); border-bottom:3px solid var(--accent); padding:48px 0 36px; text-align:center; }
+.header h1 { font-size:1.8rem; font-weight:800; color:var(--accent-light); margin-bottom:8px; }
+.header .sub { font-size:0.95rem; color:var(--text-dim); }
+.header .url { display:inline-block; background:rgba(8,145,178,0.15); border:1px solid var(--accent-dark); border-radius:8px; padding:6px 18px; font-size:0.82rem; color:var(--accent-light); direction:ltr; margin-top:10px; word-break:break-all; }
+.header .meta { font-size:0.8rem; color:var(--text-muted); margin-top:8px; }
+
+.nav { background:var(--card); border-bottom:1px solid var(--border); padding:10px 0; position:sticky; top:0; z-index:100; }
+.nav .container { display:flex; gap:4px; flex-wrap:wrap; justify-content:center; }
+.nav a { color:var(--text-dim); text-decoration:none; font-size:0.78rem; font-weight:500; padding:5px 12px; border-radius:6px; white-space:nowrap; transition:0.2s; }
+.nav a:hover { background:rgba(8,145,178,0.15); color:var(--accent-light); }
+
+.section { padding:40px 0 24px; }
+.stitle { font-size:1.35rem; font-weight:700; color:var(--accent-light); margin-bottom:6px; display:flex; align-items:center; gap:10px; }
+.stitle .n { background:var(--accent); color:#fff; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:700; flex-shrink:0; }
+.sdesc { color:var(--text-dim); margin-bottom:20px; font-size:0.9rem; }
+.divider { border:none; border-top:1px solid var(--border); }
+
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:16px; }
+.card-title { font-size:1rem; font-weight:600; margin-bottom:12px; }
+
+.tw { overflow-x:auto; border-radius:10px; border:1px solid var(--border); margin-bottom:16px; }
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+thead th { background:var(--card); color:var(--accent-light); font-weight:600; padding:10px 12px; text-align:right; border-bottom:2px solid var(--accent-dark); white-space:nowrap; }
+tbody td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+tbody tr:hover { background:var(--card-hover); }
+tbody tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-block; padding:2px 9px; border-radius:5px; font-size:0.75rem; font-weight:600; white-space:nowrap; }
+.b-crit { background:var(--critical-bg); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+.b-high { background:var(--high-bg); color:var(--yellow); border:1px solid rgba(245,158,11,0.3); }
+.b-med { background:var(--medium-bg); color:#6366f1; border:1px solid rgba(99,102,241,0.3); }
+.b-ok { background:rgba(16,185,129,0.15); color:var(--green); }
+
+.fl { list-style:none; padding:0; }
+.fl li { padding:11px 14px; margin-bottom:6px; border-radius:8px; font-size:0.88rem; display:flex; align-items:flex-start; gap:10px; }
+.fl .fn { flex-shrink:0; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; color:#fff; }
+.f-c { background:var(--critical-bg); border-right:3px solid var(--red); }
+.f-c .fn { background:var(--red); }
+.f-h { background:var(--high-bg); border-right:3px solid var(--yellow); }
+.f-h .fn { background:var(--yellow); color:#000; }
+.f-m { background:var(--medium-bg); border-right:3px solid #6366f1; }
+.f-m .fn { background:#6366f1; }
+
+.al { list-style:none; padding:0; }
+.al li { padding:9px 14px; border-right:3px solid var(--accent); margin-bottom:6px; background:rgba(8,145,178,0.05); border-radius:0 8px 8px 0; font-size:0.9rem; }
+.al li strong { color:var(--accent-light); }
+
+.ht { padding:0; list-style:none; }
+.ht li { padding:7px 12px; margin-bottom:3px; border-radius:5px; font-size:0.88rem; }
+.ht .h1 { background:rgba(8,145,178,0.2); font-weight:700; font-size:0.95rem; border-right:4px solid var(--accent); }
+.ht .h2 { background:rgba(8,145,178,0.1); font-weight:600; margin-right:20px; border-right:3px solid var(--accent-dark); }
+.ht .h3 { background:rgba(8,145,178,0.05); margin-right:40px; border-right:2px solid var(--text-muted); color:var(--text-dim); }
+.tag { font-family:monospace; color:var(--accent-light); margin-left:6px; font-size:0.76rem; }
+
+.draft { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:28px; line-height:1.9; }
+.draft h2 { font-size:1.2rem; font-weight:700; color:var(--accent-light); margin-top:32px; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.draft h2:first-child { margin-top:0; }
+.draft h3 { font-size:1rem; font-weight:600; margin-top:20px; margin-bottom:6px; }
+.draft p { margin-bottom:12px; color:var(--text-dim); font-size:0.93rem; }
+.draft ul,.draft ol { margin-bottom:12px; padding-right:22px; color:var(--text-dim); }
+.draft li { margin-bottom:5px; font-size:0.91rem; }
+.draft .k { color:var(--accent-light); font-weight:500; }
+.draft .ct { width:100%; margin:14px 0; border-collapse:collapse; }
+.draft .ct th { background:var(--card); padding:9px 12px; text-align:right; font-weight:600; color:var(--accent-light); border-bottom:2px solid var(--accent-dark); }
+.draft .ct td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text-dim); }
+
+.code { background:#0d1117; border:1px solid var(--border); border-radius:10px; padding:18px; direction:ltr; text-align:left; font-family:'SF Mono','Fira Code',monospace; font-size:0.8rem; line-height:1.6; color:#e6edf3; margin-bottom:16px; position:relative; white-space:pre-wrap; word-wrap:break-word; word-break:break-all; overflow-wrap:break-word; }
+.code .cb { position:absolute; top:8px; right:8px; background:var(--accent-dark); color:#fff; border:none; padding:4px 12px; border-radius:5px; cursor:pointer; font-family:'Heebo',sans-serif; font-size:0.75rem; }
+.code .cb:hover { background:var(--accent); }
+
+.mb { background:rgba(0,0,0,0.2); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+.ml { font-size:0.78rem; color:var(--text-muted); margin-bottom:3px; font-weight:500; }
+.mc { color:var(--red); font-size:0.88rem; text-decoration:line-through; opacity:0.6; }
+.mn { color:var(--green); font-size:0.88rem; font-weight:500; }
+
+.footer { background:var(--card); border-top:1px solid var(--border); padding:20px 0; text-align:center; font-size:0.78rem; color:var(--text-muted); margin-top:40px; }
+
+@media(max-width:768px) {
+  .header h1 { font-size:1.3rem; }
+  .stitle { font-size:1.1rem; }
+  .draft { padding:18px; }
+  .ht .h2 { margin-right:10px; }
+  .ht .h3 { margin-right:20px; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <h1>תוכנית שיפור — עמוד RPO גיוס מנוהל</h1>
+    <div class="sub">Talent Solutions — מה לתקן, מה להוסיף, מה ליישם</div>
+    <div class="url">https://talentsolutions.manpowergroup.co.il/attract/rpo/</div>
+    <div class="meta">NC Digital &bull; מרץ 2026</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="container">
+    <a href="#tech">תיקונים טכניים</a>
+    <a href="#cta">שיפורי המרה</a>
+    <a href="#content">תוכן מלא</a>
+    <a href="#schema">סכמה</a>
+    <a href="#meta">מטא תגיות</a>
+    <a href="#geo" style="background:rgba(124,58,237,0.15);color:#c084fc;">GEO — מוכנות AI</a>
+  </div>
+</nav>
+
+<hr class="divider">
+
+<!-- 1: TECHNICAL FIXES -->
+<section id="tech" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">1</span> תיקונים טכניים</div>
+
+    <div class="card">
+      <div class="card-title">קריטי <span class="badge b-crit">מיידי</span></div>
+      <ul class="fl">
+        <li class="f-c"><span class="fn">1</span><div><strong>הוספת alt בעברית לכל התמונות</strong> — רוב התמונות בעמוד (באנר, אייקונים, לוגואים בפוטר) חסרות alt text. להוסיף תיאור רלוונטי בעברית לכל תמונה: באנר ראשי, 3 אייקוני שירות (מעטפת ניהולית, SLA, גיוס משודרג), לוגואים.</div></li>
+        <li class="f-c"><span class="fn">2</span><div><strong>המרת תמונות ל-WebP</strong> — תמונות PNG/JPG צריכות המרה ל-WebP לחיסכון משמעותי בזמן טעינה. יעד: הפחתה של 40-60% בגודל קבצי תמונה.</div></li>
+        <li class="f-c"><span class="fn">3</span><div><strong>תיקון LCP — טעינת באנר ראשי</strong> — להוסיף <code>fetchpriority="high"</code> ו-<code>&lt;link rel="preload"&gt;</code> לתמונת הבאנר הראשית (situational-coaching-banner) כדי לשפר Largest Contentful Paint.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות גבוהה <span class="badge b-high">השבוע</span></div>
+      <ul class="fl">
+        <li class="f-h"><span class="fn">4</span><div><strong>הוספת hreflang ב-HTML <code>&lt;head&gt;</code></strong> — קיים רק ב-sitemap. להוסיף <code>&lt;link rel="alternate" hreflang="he"&gt;</code> ו-<code>hreflang="en"</code> בגוף ה-HTML.</div></li>
+        <li class="f-h"><span class="fn">5</span><div><strong>הוספת FAQPage Schema</strong> — 8 שאלות ב-JSON-LD (מוכן בסעיף 4). אף מתחרה לא מיישם — יתרון ב-Rich Results.</div></li>
+        <li class="f-h"><span class="fn">6</span><div><strong>הרחבת תוכן משמעותית</strong> — העמוד מכיל ~1,200 מילים. יש להרחיב ל-2,500+ מילים עם כיסוי מלא של אשכולות מילות מפתח (גרסה מוכנה בסעיף 3).</div></li>
+        <li class="f-h"><span class="fn">7</span><div><strong>הוספת קישורים פנימיים</strong> — לקשר מגוף הטקסט לשירותים: ROD, Market Intelligence, Outplacement, תוכניות פיתוח. נוכחית הקישור הפנימי חלש.</div></li>
+        <li class="f-h"><span class="fn">8</span><div><strong>תיקון URL שבור</strong> — <code>/manageandoptimize/%20</code> מכיל רווח מיותף. 2 קישורים בעמוד מפנים ל-URL המשובש. להסיר את ה-%20.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות בינונית <span class="badge b-med">החודש</span></div>
+      <ul class="fl">
+        <li class="f-m"><span class="fn">9</span><div><strong>העשרת Organization Schema</strong> — להוסיף כתובת, טלפון, ופרופילי sameAs (LinkedIn, YouTube) ל-Schema הקיים.</div></li>
+        <li class="f-m"><span class="fn">10</span><div><strong>תיקון קישורים חברתיים</strong> — YouTube ו-LinkedIn בפוטר מפנים לדפי בית כלליים ולא לפרופילי Talent Solutions הספציפיים.</div></li>
+        <li class="f-m"><span class="fn">11</span><div><strong>הוספת HSTS header</strong> — להגדיר דרך Cloudflare לאבטחה משופרת ושיפור אמון בעיני מנועי חיפוש.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2: CONVERSION -->
+<section id="cta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">2</span> שיפורי המרה</div>
+
+    <ul class="al">
+      <li><strong>1. פס אמון מעל הקיפול:</strong> להוסיף שורת מספרים — "70+ שנות ניסיון &bull; 80 מדינות &bull; מאות ארגונים בישראל &bull; 30% קיצור זמן גיוס"</li>
+      <li><strong>2. להחליף CTA:</strong> במקום "בואו נדבר" (גנרי) → <strong style="color:var(--green);">"קבלו הצעה לגיוס מנוהל"</strong> או "דברו עם מומחה RPO" — ספציפי יותר ומייצר דחיפות.</li>
+      <li><strong>3. ציטוט/עדות ליד ה-CTA:</strong> להוסיף ציטוט קצר מלקוח: "קיצרנו את זמן הגיוס ב-40% תוך חודשיים" — ליד כפתור הפעולה.</li>
+      <li><strong>4. טופס מקוצר:</strong> הטופס הנוכחי כולל 7+ שדות. לשקול טופס "הערכה מהירה" עם 3 שדות: שם + טלפון + גודל ארגון.</li>
+      <li><strong>5. ROI Calculator:</strong> להוסיף מחשבון פשוט — "כמה עובדים אתם מגייסים בשנה?" → הצגת חיסכון משוער בזמן ועלויות עם RPO.</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 3: FULL CONTENT -->
+<section id="content" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">3</span> תוכן מלא — מוכן ליישום</div>
+    <p class="sdesc">להחליף את התוכן הנוכחי (~1,200 מילים). ~2,500 מילים, כל מילות המפתח החסרות משולבות.</p>
+
+    <div class="draft">
+
+      <h2>מה זה RPO — גיוס בשירות מנוהל?</h2>
+      <p><span class="k">RPO</span> (<span class="k">Recruitment Process Outsourcing</span>) הוא <span class="k">גיוס בשירות מנוהל</span> — מודל שבו ארגון מעביר את ניהול תהליכי הגיוס, באופן מלא או חלקי, לשותף חיצוני מתמחה. בניגוד ל<span class="k">חברת השמה</span> רגילה שעובדת על בסיס משרה בודדת, <span class="k">שירותי מיקור חוץ</span> לגיוס (<span class="k">אאוטסורסינג</span>) כוללים ניהול מקצה לקצה: מהגדרת אסטרטגיית גיוס, דרך סינון ואיתור מועמדים, ועד קליטה וליווי בתפקיד.</p>
+      <p><span class="k">מיקור חוץ גיוס</span> הפך לפתרון מועדף בקרב ארגונים גדולים ובינוניים בישראל ובעולם. חברות בתחומי ה<span class="k">הייטק</span>, הפיננסים, התעשייה והשירותים בוחרות ב-<span class="k">RPO</span> כדי להתמודד עם אתגרי גיוס מורכבים: מחסור בטאלנטים, זמני גיוס ארוכים, ועלויות גיוס גבוהות.</p>
+
+      <h2>למי מתאים שירות RPO?</h2>
+      <p><span class="k">גיוס במיקור חוץ</span> מתאים למגוון רחב של ארגונים ומצבים. השירות גמיש ומותאם לצרכים הספציפיים של כל לקוח:</p>
+
+      <h3>ארגונים בצמיחה מהירה</h3>
+      <p>חברות שמגייסות עשרות ומאות עובדים בו-זמנית זקוקות ל<span class="k">מרכז גיוס מנוהל</span> שיכול להתרחב במהירות. <span class="k">Talent Solutions</span> מפעילה <span class="k">מרכזי גיוס במיקור חוץ</span> ייעודיים שמספקים מענה מיידי לצרכי <span class="k">גיוס המוני</span> (<span class="k">Mass Recruitment</span>).</p>
+
+      <h3>חברות הייטק ופיננסים</h3>
+      <p><span class="k">מיקור חוץ הייטק</span> ו-<span class="k">מיקור חוץ IT</span> דורשים הבנה מעמיקה של שוק הטכנולוגיה. צוות ה-RPO שלנו כולל מגייסים עם התמחות בפרופילים טכנולוגיים — מפתחים, DevOps, Data Scientists, מנהלי מוצר — שיודעים לאתר ולמשוך מועמדים בשוק תחרותי.</p>
+
+      <h3>ארגונים עם שינויים מבניים</h3>
+      <p>בתהליכי מיזוגים, רכישות או שינוי ארגוני, נדרש <span class="k">שירותי גיוס</span> מותאמים. פתרון ה-<span class="k">RPO</span> מאפשר גמישות מלאה — הגדלה או הקטנה של צוות הגיוס בהתאם לצרכים המשתנים, ללא מחויבות קבועה.</p>
+
+      <h3>ארגונים שרוצים לשפר תהליכים</h3>
+      <p>גם ללא <span class="k">גיוס המוני</span>, ארגונים בוחרים ב-RPO כדי לשדרג את תהליכי הגיוס הקיימים: קיצור זמני גיוס, שיפור חווית מועמד, והטמעת טכנולוגיה מתקדמת ל<span class="k">ניהול מועמדים</span>.</p>
+
+      <h2>איך עובד תהליך ה-RPO? (שלב אחר שלב)</h2>
+      <p>תהליך <span class="k">גיוס בשירות מנוהל</span> מקצועי כולל שלבים מובנים וברורים:</p>
+      <ol>
+        <li><strong>אפיון ואסטרטגיה</strong> — מיפוי צרכי הגיוס, הגדרת פרופילי תפקידים, קביעת KPIs ו-<span class="k">SLA</span>. כולל ניתוח שוק עבודה ומידע תחרותי (<span class="k">Market Intelligence</span>).</li>
+        <li><strong>הקמת צוות גיוס ייעודי</strong> — הצבת מגייסים מומחים On-Site או Remote, המשולבים כזרוע הארוכה של מחלקת <span class="k">משאבי אנוש</span>. צוות ה-RPO עובד עם הכלים והמערכות של הלקוח.</li>
+        <li><strong>סורסינג ואיתור מועמדים</strong> — שימוש במגוון ערוצי גיוס: לוחות דרושים, רשתות מקצועיות, Head Hunting, מאגרי מועמדים פנימיים ובינלאומיים של ManpowerGroup.</li>
+        <li><strong>סינון וניהול תהליך</strong> — ראיונות טלפוניים, מבחני התאמה, <span class="k">מעטפת ניהולית מקצועית</span> לכל שלבי המיון. ניהול חווית מועמד מקצה לקצה.</li>
+        <li><strong>קליטה והטמעה</strong> — ליווי המועמד בשלבי הקליטה הראשונים, מעקב שביעות רצון, ובקרה על שימור ב-90 הימים הראשונים.</li>
+        <li><strong>מדידה ואופטימיזציה</strong> — דוחות ביצועים שוטפים: Time-to-Fill, Quality of Hire, Cost per Hire, <span class="k">שימור עובדים</span>. שיפור מתמיד על בסיס נתונים.</li>
+      </ol>
+
+      <h2>היתרונות של RPO לארגון</h2>
+      <p>השקעה ב<span class="k">שירותי מיקור חוץ</span> לגיוס מניבה ערך מוסף משמעותי:</p>
+      <ul>
+        <li><strong>קיצור זמני גיוס של 30-50%</strong> — צוות גיוס ייעודי, תהליכים מובנים, ו<span class="k">SLA</span> מחייב מבטיחים מילוי משרות מהיר יותר.</li>
+        <li><strong>הפחתת עלויות גיוס של 20-40%</strong> — <span class="k">מיקור חוץ גיוס</span> חוסך בעלויות דמי השמה, פרסום משרות, וזמן ניהולי.</li>
+        <li><strong>שיפור איכות הגיוס</strong> — גישה למאגר מועמדים עצום של ManpowerGroup ב-80+ מדינות. <span class="k">גיוס משודרג</span> עם כלים ומתודולוגיות בינלאומיות.</li>
+        <li><strong>גמישות מלאה</strong> — הגדלה או הקטנה של צוות הגיוס בהתאם לצרכים. ללא מחויבות קבועה ל<span class="k">כוח אדם</span> פנימי.</li>
+        <li><strong>מיתוג מעסיק חזק</strong> — חווית מועמד מקצועית ואחידה שמחזקת את <span class="k">מותג המעסיק</span> (<span class="k">Employer Brand</span>).</li>
+        <li><strong>טכנולוגיה מתקדמת</strong> — הטמעת ATS, כלי AI לסינון, ופלטפורמות גיוס מתקדמות ללא עלות רכישה עבור הלקוח.</li>
+      </ul>
+
+      <h2>מה ההבדל בין RPO לחברת השמה?</h2>
+      <table class="ct">
+        <thead><tr><th>קריטריון</th><th>RPO — גיוס מנוהל</th><th>חברת השמה</th></tr></thead>
+        <tbody>
+          <tr><td>מודל</td><td><span class="k">מיקור חוץ</span> מקיף — ניהול כל תהליך הגיוס</td><td>עבודה על בסיס משרה בודדת</td></tr>
+          <tr><td>צוות</td><td>מגייסים ייעודיים On-Site, כחלק מהארגון</td><td>מגייס חיצוני ללא שילוב ארגוני</td></tr>
+          <tr><td>תמחור</td><td>Fee חודשי קבוע / עלות למשרה — צפיות תקציבית</td><td>דמי הצלחה (Success Fee) — 8-25% משכר שנתי</td></tr>
+          <tr><td>היקף</td><td>עשרות-מאות משרות בו-זמנית</td><td>1-5 משרות בדרך כלל</td></tr>
+          <tr><td>SLA</td><td><span class="k">SLA</span> מובנה עם יעדי ביצוע מדידים</td><td>ללא התחייבות לזמנים</td></tr>
+          <tr><td>טכנולוגיה</td><td>הטמעת כלים, דוחות, BI</td><td>כלים בסיסיים</td></tr>
+          <tr><td>מיתוג מעסיק</td><td>שמירה על <span class="k">Employer Brand</span> של הלקוח</td><td>המותג של <span class="k">חברת ההשמה</span></td></tr>
+        </tbody>
+      </table>
+      <p>בעוד <span class="k">חברת השמה</span> מספקת פתרון נקודתי, <span class="k">RPO</span> הוא שותפות אסטרטגית ארוכת טווח שמשנה את האופן שבו הארגון מגייס. <span class="k">חברות השמה</span> מתאימות למשרות בודדות; <span class="k">גיוס בשירות מנוהל</span> מתאים לארגונים שרוצים להפוך את הגיוס ליתרון תחרותי.</p>
+
+      <h2>שירותי ה-RPO שלנו</h2>
+
+      <h3>RPO מלא — End-to-End</h3>
+      <p>ניהול מלא של כל תהליכי הגיוס בארגון. צוות גיוס ייעודי, כלים טכנולוגיים, <span class="k">מעטפת ניהולית מקצועית</span>, ודוחות ביצועים שוטפים. מתאים לארגונים עם 50+ משרות פתוחות בשנה.</p>
+
+      <h3>RPO פרויקטלי</h3>
+      <p><span class="k">גיוס מנוהל</span> לפרויקטים מוגדרים בזמן: הקמת מחלקה חדשה, גיוס לאתר חדש, או <span class="k">גיוס המוני</span> לתקופת שיא. גמישות מלאה ללא מחויבות ארוכת טווח. שירותי <span class="k">מיקור חוץ של גיוס</span> (<span class="k">Recruitment Outsourcing</span>) מותאמים לטווח הקצר.</p>
+
+      <h3>RPO היברידי</h3>
+      <p>שילוב של צוות גיוס פנימי וחיצוני. צוות ה-RPO מטפל בפרופילים מורכבים או בנפחים גבוהים, בעוד הצוות הפנימי ממשיך לגייס לתפקידים שגרתיים. <span class="k">שירותים מנוהלים</span> בהתאמה אישית.</p>
+
+      <h3>מודיעין שוק עבודה (Market Intelligence)</h3>
+      <p>כחלק מה-RPO, מספקים ניתוח שוק עבודה מעמיק: מיפוי תחרות, בנצ'מרקים של שכר, זמינות מועמדים לפי פרופיל, ומגמות גיוס בענף. נתונים שמאפשרים קבלת החלטות מבוססות Data.</p>
+
+      <h2>למה לבחור ב-Talent Solutions?</h2>
+      <p><span class="k">Talent Solutions</span> היא זרוע <span class="k">שירותי הגיוס המנוהלים</span> של ManpowerGroup — המובילה בעולם בפתרונות <span class="k">כוח אדם</span> ו<span class="k">משאבי אנוש</span>.</p>
+      <ul>
+        <li><strong>ניסיון גלובלי:</strong> 70+ שנות ניסיון, נוכחות ב-80+ מדינות, אלפי פרויקטי RPO מוצלחים.</li>
+        <li><strong>מומחיות ישראלית:</strong> צוות מגייסים מקומי עם הכרות מעמיקה של שוק העבודה הישראלי, התרבות הארגונית, והחקיקה.</li>
+        <li><strong>גמישות מלאה:</strong> מ-RPO לפרויקט בודד ועד ניהול מקיף של כל הגיוס בארגון.</li>
+        <li><strong>מתודולוגיה מוכחת:</strong> תהליכים סטנדרטיים בינלאומיים + התאמה לשוק המקומי. <span class="k">SLA</span> מחייב עם יעדי ביצוע מדידים.</li>
+        <li><strong>רשת מועמדים:</strong> גישה למאגר מועמדים עצום בישראל ובעולם, כולל Passive Candidates שלא מפורסמים בלוחות דרושים.</li>
+      </ul>
+
+      <h2>שאלות נפוצות על RPO וגיוס מנוהל</h2>
+
+      <h3>מה זה RPO?</h3>
+      <p>RPO (Recruitment Process Outsourcing) הוא <span class="k">גיוס בשירות מנוהל</span> — מודל שבו חברה מעבירה את ניהול תהליכי הגיוס, באופן מלא או חלקי, לשותף חיצוני מתמחה. כולל: סורסינג, סינון, ניהול תהליך, קליטה ודיווח.</p>
+
+      <h3>מה ההבדל בין RPO לחברת השמה?</h3>
+      <p><span class="k">חברת השמה</span> עובדת על בסיס משרה בודדת עם דמי הצלחה. <span class="k">RPO</span> הוא <span class="k">מיקור חוץ</span> מקיף של כל תהליך הגיוס, עם צוות ייעודי, SLA, וכלים טכנולוגיים — שותפות אסטרטגית ולא שירות נקודתי.</p>
+
+      <h3>כמה זמן לוקח להקים RPO?</h3>
+      <p>תהליך ההקמה נמשך 2-4 שבועות. כולל: אפיון צרכים, הגדרת SLA, הצבת צוות גיוס, והטמעת כלים. RPO פרויקטלי יכול לצאת לדרך תוך שבוע.</p>
+
+      <h3>מה העלות של שירות RPO?</h3>
+      <p>התמחור משתנה לפי היקף ומורכבות: Fee חודשי קבוע או עלות למשרה שמולאה. בדרך כלל חוסך 20-40% מעלויות גיוס מסורתיות (<span class="k">חברות השמה</span> + פרסום + זמן ניהולי).</p>
+
+      <h3>האם RPO מתאים לחברות קטנות?</h3>
+      <p>בהחלט. RPO פרויקטלי מותאם גם לחברות קטנות ובינוניות שצריכות גיוס מואץ לתקופה מוגדרת. אין צורך בהתחייבות ארוכת טווח.</p>
+
+      <h3>מה כולל ה-SLA בשירות RPO?</h3>
+      <p><span class="k">SLA</span> כולל: Time-to-Fill (זמן מילוי משרה), Quality of Hire (איכות הגיוס), שביעות רצון מנהלים, שיעור שימור ב-90 ימים ראשונים, וזמני תגובה למשרות חדשות.</p>
+
+      <h3>מה זה מיקור חוץ?</h3>
+      <p><span class="k">מיקור חוץ</span> (<span class="k">אאוטסורסינג</span> / <span class="k">Outsourcing</span>) הוא העברת תהליכים עסקיים לניהול גורם חיצוני מתמחה. <span class="k">מיקור חוץ גיוס</span> (RPO) מתמקד בהעברת תהליכי הגיוס ל<span class="k">חברת מיקור חוץ</span> שמתמחה ב<span class="k">משאבי אנוש</span>.</p>
+
+      <h3>האם צוות ה-RPO עובד מהמשרדים שלנו?</h3>
+      <p>כן, לפי העדפת הלקוח. צוות ה-RPO יכול לעבוד On-Site (אצל הלקוח), Remote, או במודל היברידי. העבודה On-Site מחזקת את השילוב הארגוני ואת <span class="k">מותג המעסיק</span>.</p>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4: SCHEMA -->
+<section id="schema" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">4</span> FAQPage Schema — להטמיע</div>
+    <p class="sdesc">להדביק ב-<code>&lt;head&gt;</code> של העמוד. אף מתחרה לא מיישם.</p>
+
+    <div class="code">
+      <button class="cb" onclick="copySchema(this)">העתק</button>
+<pre id="schema-code">{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה RPO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "RPO (Recruitment Process Outsourcing) הוא גיוס בשירות מנוהל — מודל שבו חברה מעבירה את ניהול תהליכי הגיוס, באופן מלא או חלקי, לשותף חיצוני מתמחה. כולל: סורסינג, סינון, ניהול תהליך, קליטה ודיווח."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין RPO לחברת השמה?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "חברת השמה עובדת על בסיס משרה בודדת עם דמי הצלחה. RPO הוא מיקור חוץ מקיף של כל תהליך הגיוס, עם צוות ייעודי, SLA מחייב, וכלים טכנולוגיים — שותפות אסטרטגית ולא שירות נקודתי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח להקים RPO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "תהליך ההקמה נמשך 2-4 שבועות. כולל: אפיון צרכים, הגדרת SLA, הצבת צוות גיוס, והטמעת כלים טכנולוגיים. RPO פרויקטלי יכול לצאת לדרך תוך שבוע."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה העלות של שירות RPO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "התמחור משתנה לפי היקף ומורכבות: Fee חודשי קבוע או עלות למשרה שמולאה. בדרך כלל שירות RPO חוסך 20-40% מעלויות גיוס מסורתיות כולל חברות השמה, פרסום וזמן ניהולי."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם RPO מתאים לחברות קטנות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "בהחלט. RPO פרויקטלי מותאם גם לחברות קטנות ובינוניות שצריכות גיוס מואץ לתקופה מוגדרת. אין צורך בהתחייבות ארוכת טווח — רק תשלום עבור השירות שנצרך בפועל."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כולל ה-SLA בשירות RPO?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SLA כולל: Time-to-Fill (זמן מילוי משרה), Quality of Hire (איכות הגיוס), שביעות רצון מנהלים מגייסים, שיעור שימור ב-90 הימים הראשונים, וזמני תגובה למשרות חדשות."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה זה מיקור חוץ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מיקור חוץ (אאוטסורסינג / Outsourcing) הוא העברת תהליכים עסקיים לניהול גורם חיצוני מתמחה. מיקור חוץ גיוס (RPO) מתמקד בהעברת ניהול תהליכי הגיוס לחברה שמתמחה במשאבי אנוש, כמו Talent Solutions של ManpowerGroup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צוות ה-RPO עובד מהמשרדים שלנו?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "כן, לפי העדפת הלקוח. צוות ה-RPO יכול לעבוד On-Site אצל הלקוח, Remote, או במודל היברידי. עבודה On-Site מחזקת את השילוב הארגוני ואת חווית המועמד."
+      }
+    }
+  ]
+}</pre>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 5: META TAGS -->
+<section id="meta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">5</span> מטא תגיות — להחליף</div>
+
+    <div class="card">
+      <div class="card-title">Title Tag</div>
+      <div class="mb">
+        <div class="ml">נוכחי</div>
+        <div class="mc">RPO גיוס בשירות מנוהל - Talent Solutions | שירותי מיקור חוץ</div>
+      </div>
+      <div class="mb">
+        <div class="ml">להחליף ל:</div>
+        <div class="mn">RPO גיוס בשירות מנוהל | מיקור חוץ גיוס עובדים | Talent Solutions ישראל</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Meta Description</div>
+      <div class="mb">
+        <div class="ml">נוכחי</div>
+        <div class="mc">שירות RPO מבית Talent Solutions מציע גיוס בשירות מנוהל – פתרון גמיש ויעיל...</div>
+      </div>
+      <div class="mb">
+        <div class="ml">להחליף ל:</div>
+        <div class="mn">שירותי RPO מבית Talent Solutions — גיוס בשירות מנוהל במיקור חוץ. צוות גיוס ייעודי, SLA מחייב, קיצור זמני גיוס של 30-50%. ניסיון של 70+ שנה, 80 מדינות. קבלו הצעה מותאמת.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 6: GEO -->
+<section id="geo" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n" style="background:var(--purple);">6</span> <span style="color:var(--purple-light);">GEO — שיפורים לנראות ב-AI</span></div>
+    <p class="sdesc">פעולות לשיפור ציטוט ב-ChatGPT, Google AI Overviews ו-Perplexity.</p>
+
+    <ul class="fl">
+      <li class="f-c">
+        <span class="fn">1</span>
+        <div>
+          <strong>עדכון קובץ llms.txt</strong><br>
+          <span style="color:var(--text-dim);">לעדכן את <code>/llms.txt</code> בשורש האתר עם מידע על שירות ה-RPO:</span>
+          <div class="code" style="margin-top:8px;">
+            <button class="cb" onclick="copyLlms(this)">העתק</button>
+<pre id="llms-code"># Talent Solutions Israel
+> Professional RPO (Recruitment Process Outsourcing), career transition, and workforce solutions by ManpowerGroup Israel.
+
+## RPO Services
+- [RPO - Managed Recruitment](https://talentsolutions.manpowergroup.co.il/attract/rpo/): Full-cycle recruitment process outsourcing — dedicated teams, SLA-driven, technology-enabled. For organizations hiring 50+ roles/year.
+- [Project RPO](https://talentsolutions.manpowergroup.co.il/rpo-projects/): Project-based recruitment outsourcing for specific hiring surges or new site launches.
+- [Recruitment on Demand (ROD)](https://talentsolutions.manpowergroup.co.il/attract/rod/): Flexible, on-demand recruitment support.
+- [Market Intelligence](https://talentsolutions.manpowergroup.co.il/attract/market-intelligence/): Labor market analytics, salary benchmarks, talent availability mapping.
+
+## Key Facts
+- Part of ManpowerGroup, operating in 80+ countries for 70+ years
+- RPO reduces time-to-fill by 30-50% and cost-per-hire by 20-40%
+- Specializes in Israeli market: hi-tech, finance, industry, services
+- Models: Full RPO, Project RPO, Hybrid RPO
+- Languages: Hebrew, English</pre>
+          </div>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">2</span>
+        <div>
+          <strong>הוספת שם מחבר + Person Schema</strong><br>
+          <span style="color:var(--text-dim);">להוסיף: שם מחבר + תפקיד (למשל "ראש תחום RPO"), תאריך עדכון גלוי למשתמש, ו-Person Schema עם קישור ל-LinkedIn. מגביר אמון ב-E-E-A-T.</span>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">3</span>
+        <div>
+          <strong>ציטוט מקורות ראשוניים</strong><br>
+          <span style="color:var(--text-dim);">להוסיף נתונים סטטיסטיים עם מקור: "לפי סקר RPOA 2024, ארגונים עם RPO מדווחים על שיפור של 40% באיכות הגיוס". קישור למחקרי ManpowerGroup Global ולדו"ח שוק העבודה.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">4</span>
+        <div>
+          <strong>תוכן רב-מדיה</strong><br>
+          <span style="color:var(--text-dim);">תוכן עם אלמנטים רב-מדיה = 156% יותר ציטוטים ב-AI. להוסיף: סרטון "מה זה RPO?" (2-3 דק׳), אינפוגרפיקת תהליך (6 שלבים), טבלת השוואה RPO vs חברת השמה כתמונה.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">5</span>
+        <div>
+          <strong>בניית נוכחות מותג בפלטפורמות AI</strong><br>
+          <span style="color:var(--text-dim);">אזכורי מותג משפיעים פי 3 מבאקלינקים על נראות ב-AI:</span>
+          <div class="tw" style="margin-top:8px;">
+            <table>
+              <thead><tr><th>פלטפורמה</th><th>השפעה</th><th>פעולה</th></tr></thead>
+              <tbody>
+                <tr><td>YouTube</td><td><span class="badge b-crit">חזקה ביותר</span></td><td>ליצור סרטוני "מה זה RPO?" ו"RPO vs חברת השמה"</td></tr>
+                <tr><td>Reddit</td><td><span class="badge b-high">גבוהה</span></td><td>השתתפות בדיונים על מיקור חוץ גיוס ו-HR</td></tr>
+                <tr><td>Wikipedia</td><td><span class="badge b-high">גבוהה</span></td><td>לוודא ש-Talent Solutions מוזכר בערך RPO ו-ManpowerGroup</td></tr>
+                <tr><td>LinkedIn</td><td><span class="badge b-med">בינונית</span></td><td>לפרסם תוכן קבוע על RPO, גיוס מנוהל ומגמות בגיוס</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">NC Digital &bull; תוכנית שיפור &bull; מרץ 2026</div>
+</footer>
+
+<script>
+function copySchema(b){navigator.clipboard.writeText(document.getElementById('schema-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+function copyLlms(b){navigator.clipboard.writeText(document.getElementById('llms-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+</script>
+</body>
+</html>
