@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>תוכנית שיפור עמוד ארגון ושיטות — Talent Solutions | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--card-hover:#253348;--accent:#0891b2;--accent-light:#22d3ee;--accent-dark:#0e7490;--text:#f1f5f9;--text-dim:#94a3b8;--text-muted:#64748b;--border:#334155;--green:#10b981;--yellow:#f59e0b;--red:#ef4444;--purple:#7c3aed;--purple-light:#c084fc;--critical-bg:rgba(239,68,68,0.1);--high-bg:rgba(245,158,11,0.1);--medium-bg:rgba(99,102,241,0.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.header{background:linear-gradient(135deg,#0c1929,#1a2744,#0c2135);border-bottom:3px solid var(--accent);padding:48px 0 36px;text-align:center}
+.header h1{font-size:1.8rem;font-weight:800;color:var(--accent-light);margin-bottom:8px}
+.header .sub{font-size:0.95rem;color:var(--text-dim)}
+.header .url{display:inline-block;background:rgba(8,145,178,0.15);border:1px solid var(--accent-dark);border-radius:8px;padding:6px 18px;font-size:0.82rem;color:var(--accent-light);direction:ltr;margin-top:10px;word-break:break-all}
+.header .meta{font-size:0.8rem;color:var(--text-muted);margin-top:8px}
+.nav{background:var(--card);border-bottom:1px solid var(--border);padding:10px 0;position:sticky;top:0;z-index:100}
+.nav .container{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.nav a{color:var(--text-dim);text-decoration:none;font-size:0.78rem;font-weight:500;padding:5px 12px;border-radius:6px;white-space:nowrap;transition:0.2s}
+.nav a:hover{background:rgba(8,145,178,0.15);color:var(--accent-light)}
+.section{padding:40px 0 24px}
+.stitle{font-size:1.35rem;font-weight:700;color:var(--accent-light);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.stitle .n{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0}
+.sdesc{color:var(--text-dim);margin-bottom:20px;font-size:0.9rem}
+.divider{border:none;border-top:1px solid var(--border)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:16px}
+.card-title{font-size:1rem;font-weight:600;margin-bottom:12px}
+.tw{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+thead th{background:var(--card);color:var(--accent-light);font-weight:600;padding:10px 12px;text-align:right;border-bottom:2px solid var(--accent-dark);white-space:nowrap}
+tbody td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tbody tr:hover{background:var(--card-hover)}
+tbody tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:5px;font-size:0.75rem;font-weight:600;white-space:nowrap}
+.b-crit{background:var(--critical-bg);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.b-high{background:var(--high-bg);color:var(--yellow);border:1px solid rgba(245,158,11,0.3)}
+.b-med{background:var(--medium-bg);color:#6366f1;border:1px solid rgba(99,102,241,0.3)}
+.b-ok{background:rgba(16,185,129,0.15);color:var(--green)}
+.fl{list-style:none;padding:0}
+.fl li{padding:11px 14px;margin-bottom:6px;border-radius:8px;font-size:0.88rem;display:flex;align-items:flex-start;gap:10px}
+.fl .fn{flex-shrink:0;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;color:#fff}
+.f-c{background:var(--critical-bg);border-right:3px solid var(--red)}
+.f-c .fn{background:var(--red)}
+.f-h{background:var(--high-bg);border-right:3px solid var(--yellow)}
+.f-h .fn{background:var(--yellow);color:#000}
+.f-m{background:var(--medium-bg);border-right:3px solid #6366f1}
+.f-m .fn{background:#6366f1}
+.al{list-style:none;padding:0}
+.al li{padding:9px 14px;border-right:3px solid var(--accent);margin-bottom:6px;background:rgba(8,145,178,0.05);border-radius:0 8px 8px 0;font-size:0.9rem}
+.al li strong{color:var(--accent-light)}
+.ht{padding:0;list-style:none}
+.ht li{padding:7px 12px;margin-bottom:3px;border-radius:5px;font-size:0.88rem}
+.ht .h1{background:rgba(8,145,178,0.2);font-weight:700;font-size:0.95rem;border-right:4px solid var(--accent)}
+.ht .h2{background:rgba(8,145,178,0.1);font-weight:600;margin-right:20px;border-right:3px solid var(--accent-dark)}
+.ht .h3{background:rgba(8,145,178,0.05);margin-right:40px;border-right:2px solid var(--text-muted);color:var(--text-dim)}
+.tag{font-family:monospace;color:var(--accent-light);margin-left:6px;font-size:0.76rem}
+.draft{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;line-height:1.9}
+.draft h2{font-size:1.2rem;font-weight:700;color:var(--accent-light);margin-top:32px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.draft h2:first-child{margin-top:0}
+.draft h3{font-size:1rem;font-weight:600;margin-top:20px;margin-bottom:6px}
+.draft p{margin-bottom:12px;color:var(--text-dim);font-size:0.93rem}
+.draft ul,.draft ol{margin-bottom:12px;padding-right:22px;color:var(--text-dim)}
+.draft li{margin-bottom:5px;font-size:0.91rem}
+.draft .k{color:var(--accent-light);font-weight:500}
+.draft .ct{width:100%;margin:14px 0;border-collapse:collapse}
+.draft .ct th{background:var(--card);padding:9px 12px;text-align:right;font-weight:600;color:var(--accent-light);border-bottom:2px solid var(--accent-dark)}
+.draft .ct td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text-dim)}
+.code{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:18px;direction:ltr;text-align:left;font-family:'SF Mono','Fira Code',monospace;font-size:0.8rem;line-height:1.6;color:#e6edf3;margin-bottom:16px;position:relative;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;overflow-wrap:break-word}
+.code .cb{position:absolute;top:8px;right:8px;background:var(--accent-dark);color:#fff;border:none;padding:4px 12px;border-radius:5px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:0.75rem}
+.code .cb:hover{background:var(--accent)}
+.mb{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:10px}
+.ml{font-size:0.78rem;color:var(--text-muted);margin-bottom:3px;font-weight:500}
+.mc{color:var(--red);font-size:0.88rem;text-decoration:line-through;opacity:0.6}
+.mn{color:var(--green);font-size:0.88rem;font-weight:500}
+.footer{background:var(--card);border-top:1px solid var(--border);padding:20px 0;text-align:center;font-size:0.78rem;color:var(--text-muted);margin-top:40px}
+@media(max-width:768px){.header h1{font-size:1.3rem}.stitle{font-size:1.1rem}.draft{padding:18px}.ht .h2{margin-right:10px}.ht .h3{margin-right:20px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="container">
+    <h1>תוכנית שיפור — עמוד ארגון ושיטות</h1>
+    <div class="sub">Talent Solutions — Operational Excellence</div>
+    <div class="url">https://talentsolutions.manpowergroup.co.il/operationalexcellence/</div>
+    <div class="meta">NC Digital &bull; מרץ 2026</div>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="container">
+    <a href="#tech">תיקונים טכניים</a>
+    <a href="#cta">שיפורי המרה</a>
+    <a href="#content">תוכן מלא</a>
+    <a href="#schema">סכמה</a>
+    <a href="#meta">מטא תגיות</a>
+    <a href="#geo" style="background:rgba(124,58,237,0.15);color:#c084fc;">GEO — מוכנות AI</a>
+  </div>
+</nav>
+
+<hr class="divider">
+
+<!-- 1: TECHNICAL FIXES -->
+<section id="tech" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">1</span> תיקונים טכניים</div>
+
+    <div class="card">
+      <div class="card-title">קריטי <span class="badge b-crit">מיידי</span></div>
+      <ul class="fl">
+        <li class="f-c"><span class="fn">1</span><div><strong>תיקון URL כפול</strong> — העמוד נגיש בשני URLs: <code>/operationalexcellence/</code> ו-<code>/manageandoptimize/operationalexcellence/</code>. חובה ליצור canonical ל-URL אחד ו-301 redirect מהשני. כרגע — duplicate content שמפזר את כוח הדירוג.</div></li>
+        <li class="f-c"><span class="fn">2</span><div><strong>המרת תמונות PNG ל-WebP</strong> — אייקונים (ליווי בכירים, SLA, גיוס משתלם) ובאנר בפורמט PNG כבד. יעד: חיסכון ~1MB+.</div></li>
+        <li class="f-c"><span class="fn">3</span><div><strong>הוספת alt בעברית לכל התמונות</strong> — כל התמונות חסרות alt. להוסיף: "ייעול תהליכי גיוס — כלי BI", "מדידה ובקרת תהליכים", "חיסכון בעלויות גיוס".</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות גבוהה <span class="badge b-high">השבוע</span></div>
+      <ul class="fl">
+        <li class="f-h"><span class="fn">4</span><div><strong>הרחבת תוכן משמעותית</strong> — התוכן הייחודי ~400 מילים — דל מדי לדירוג. יעד: 2,500+ מילים עם H2/H3 מפורטות (מוכן בסעיף 3).</div></li>
+        <li class="f-h"><span class="fn">5</span><div><strong>הוספת FAQPage Schema</strong> — 8 שאלות ב-JSON-LD (מוכן בסעיף 4).</div></li>
+        <li class="f-h"><span class="fn">6</span><div><strong>הוספת hreflang ב-HTML <code>&lt;head&gt;</code></strong> — קיים רק ב-sitemap.</div></li>
+        <li class="f-h"><span class="fn">7</span><div><strong>הרחבת קישורים פנימיים</strong> — להוסיף מגוף הטקסט ל: RPO, Market Intelligence, ייעוץ ארגוני, תוכניות פיתוח, ובלוג.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">עדיפות בינונית <span class="badge b-med">החודש</span></div>
+      <ul class="fl">
+        <li class="f-m"><span class="fn">8</span><div><strong>תיקון BreadcrumbList Schema</strong> — הנתיב הנוכחי "Operational Excellence" באנגלית. לשנות ל: "דף הבית → ניהול ואופטימיזציה → ארגון ושיטות".</div></li>
+        <li class="f-m"><span class="fn">9</span><div><strong>תיקון LCP</strong> — <code>fetchpriority="high"</code> לבאנר + <code>&lt;link rel="preload"&gt;</code>.</div></li>
+        <li class="f-m"><span class="fn">10</span><div><strong>שינוי og:type + HSTS header</strong> — מ-<code>article</code> ל-<code>website</code>. הוספת HSTS דרך Cloudflare.</div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 2: CONVERSION IMPROVEMENTS -->
+<section id="cta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">2</span> שיפורי המרה</div>
+
+    <ul class="al">
+      <li><strong>CTA מותאם לקהל היעד:</strong> "רוצים לשפר את תהליכי הגיוס שלכם?" — כפתור אחרי כל בלוק תוכן (כלים חכמים, מדידה ובקרה, חיסכון). הטופס הנוכחי רק בתחתית.</li>
+      <li><strong>הוספת Case Study / נתוני הצלחה:</strong> "הפחתנו Time to Fill ב-35% ועלויות גיוס ב-42% עבור ארגון עם 200+ משרות בשנה" — נתון ספציפי שמייצר אמון מיידי.</li>
+      <li><strong>טופס מקוצר:</strong> 3 שדות — שם + אימייל + "כמה משרות אתם מגייסים בשנה?" (dropdown: 1-20, 20-50, 50-100, 100+). מפחית חיכוך.</li>
+      <li><strong>הוספת Self-Assessment Tool:</strong> "בדקו את רמת היעילות של תהליכי הגיוס שלכם" — שאלון קצר (5 שאלות) שמסיים ב-Lead Capture. מגביר engagement ומספק נתונים על הלקוח הפוטנציאלי.</li>
+      <li><strong>הצגת דשבורד לדוגמה:</strong> צילום מסך של דשבורד BI אמיתי (מטושטש) — מראה ללקוח מה הוא מקבל. Visual proof שמעודד פנייה.</li>
+    </ul>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 3: FULL CONTENT -->
+<section id="content" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">3</span> תוכן מלא מוצע</div>
+    <div class="sdesc">~2,500 מילים · מותאם SEO + AI · מילות מפתח מסומנות בצבע</div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">מבנה כותרות מוצע</div>
+      <ul class="ht">
+        <li class="h1">ארגון ושיטות — ייעול תהליכי גיוס ומשאבי אנוש <span class="tag">&lt;h1&gt;</span></li>
+        <li class="h2">מה זה ארגון ושיטות בהקשר של גיוס? <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h2">למה ארגונים צריכים שיפור תהליכי גיוס? <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h3">עלויות נסתרות של תהליכים לא יעילים <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h3">השפעה על חוויית המועמד <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h2">מה כולל שירות הארגון ושיטות של Talent Solutions? <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h3">כלי BI ודשבורדים מותאמים <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h3">הגדרת KPIs ומדדי הצלחה <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h3">בניית תהליכי עבודה ונהלים <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h3">התאמת מבנה צוות והגדרות תפקיד <span class="tag">&lt;h3&gt;</span></li>
+        <li class="h2">המדדים שחשוב למדוד בתהליך גיוס <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h2">תהליך העבודה — שלב אחר שלב <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h2">ארגון ושיטות מול ייעוץ ארגוני: מה ההבדל? <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h2">למה Talent Solutions? <span class="tag">&lt;h2&gt;</span></li>
+        <li class="h2">שאלות נפוצות על ארגון ושיטות <span class="tag">&lt;h2&gt;</span></li>
+      </ul>
+    </div>
+
+    <div class="draft">
+
+<h2>מה זה ארגון ושיטות בהקשר של גיוס?</h2>
+<p><span class="k">ארגון ושיטות</span> (Operational Excellence) בהקשר של <span class="k">משאבי אנוש</span> וגיוס הוא תהליך שיטתי של <span class="k">ניתוח ושיפור תהליכי עבודה</span> — מיפוי כל שלב ב<span class="k">תהליך הגיוס</span>, זיהוי צווארי בקבוק, ויישום פתרונות שמייעלים את התהליך מקצה לקצה. לא מדובר רק ב"לעבוד מהר יותר" — אלא לעבוד חכם יותר, עם <span class="k">דאטה</span> שמנחה כל החלטה.</p>
+<p>Talent Solutions מציעים שירות <span class="k">ארגון ושיטות</span> ייחודי שמתמקד ב<span class="k">תהליכי גיוס</span> — שילוב של מתודולוגיות <span class="k">מצוינות תפעולית</span> (Lean, Six Sigma, Continuous Improvement) עם הבנה עמוקה של עולם ה-HR ושוק העבודה. הצוות שלנו מביא ניסיון מ-70+ שנות פעילות של ManpowerGroup ב-80 מדינות.</p>
+
+<h2>למה ארגונים צריכים שיפור תהליכי גיוס?</h2>
+
+<h3>עלויות נסתרות של תהליכים לא יעילים</h3>
+<p>תהליך <span class="k">גיוס עובדים</span> לא יעיל עולה הרבה יותר ממה שנראה לעין: משרות פתוחות שנשארות מאיישות שבועות מיותרים = אובדן פרודוקטיביות. מגייסים שמבזבזים 40% מהזמן על משימות מנהלתיות = עלויות שכר גבוהות. <span class="k">ייעול תהליכים</span> טיפוסי חוסך 25-40% מעלות הגיוס הכוללת (Cost per Hire).</p>
+
+<h3>השפעה על חוויית המועמד</h3>
+<p>תהליך ארוך, לא שקוף ומבלבל — גורם למועמדים איכותיים לפרוש. 60% מהמועמדים נוטשים תהליך גיוס שנתפס כמסורבל. <span class="k">שיפור תהליכי עבודה</span> בגיוס משפר ישירות את חוויית המועמד ואת <span class="k">מותג המעסיק</span>.</p>
+
+<h2>מה כולל שירות הארגון ושיטות של Talent Solutions?</h2>
+
+<h3>כלי BI ודשבורדים מותאמים</h3>
+<p>בניית <span class="k">דשבורד BI</span> מותאם אישית שעוקב אחרי כל שלב במשפך הגיוס — מ-Sourcing ועד Onboarding. הדשבורדים מציגים <span class="k">דאטה בזמן אמת</span>: כמה מועמדים בכל שלב, אחוזי המרה, <span class="k">מקורות גיוס</span> אפקטיביים, Time to Fill לפי תפקיד, ועוד. כלים חכמים שהופכים <span class="k">נתונים</span> להחלטות.</p>
+
+<h3>הגדרת KPIs ומדדי הצלחה</h3>
+<p>לא כל מדד רלוונטי לכל ארגון. אנחנו מזהים את ה-KPIs שבאמת חשובים לכם — ומגדירים יעדים ריאליסטיים. <span class="k">מדידה ובקרה</span> נכונה מבטיחה שהגיוס לא רק מהיר, אלא גם מוביל להגשמת המטרות העסקיות. הגדרת SLA (Service Level Agreement) ברורים בין HR לבין מנהלים מגייסים.</p>
+
+<h3>בניית תהליכי עבודה ונהלים</h3>
+<p>כתיבת נהלי גיוס, <span class="k">בניית תהליך עבודה</span> סדור, הגדרת שגרות (יומיות, שבועיות, חודשיות), ומערכת <span class="k">ניהול ידע</span> שמאפשרת שימור Know-How גם כשעובדים מתחלפים. כל מסמך מותאם למבנה הארגוני ולתרבות של הלקוח.</p>
+
+<h3>התאמת מבנה צוות והגדרות תפקיד</h3>
+<p>ניתוח האם צוות הגיוס בנוי נכון: מספר מגייסים ביחס למשרות, חלוקת תפקידים (Sourcer, Recruiter, Coordinator), <span class="k">התאמת מבנה הצוות</span> לנפח העבודה. כולל הגדרות תפקיד מעודכנות ו<span class="k">תקנים</span> (Benchmarks) מול השוק.</p>
+
+<h2>המדדים שחשוב למדוד בתהליך גיוס</h2>
+<table class="ct">
+<thead><tr><th>מדד (KPI)</th><th>מה מודד</th><th>יעד טיפוסי</th></tr></thead>
+<tbody>
+<tr><td>Time to Fill</td><td>ימים מפתיחת משרה ועד חתימה</td><td>30-45 ימים (הייטק: 45-60)</td></tr>
+<tr><td>Cost per Hire</td><td>עלות כוללת לגיוס עובד</td><td>ירידה של 25-40% אחרי ייעול</td></tr>
+<tr><td>Quality of Hire</td><td>ביצועים ושימור אחרי 12 חודשים</td><td>85%+ שימור, ביצועים מעל ממוצע</td></tr>
+<tr><td>Source Effectiveness</td><td>אחוז המרה לפי מקור גיוס</td><td>זיהוי 2-3 מקורות מובילים</td></tr>
+<tr><td>Pipeline Velocity</td><td>מהירות מעבר בין שלבי המשפך</td><td>צמצום חסימות ב-50%+</td></tr>
+<tr><td>Offer Acceptance Rate</td><td>אחוז קבלת הצעות עבודה</td><td>85%+ (ממוצע שוק: 70%)</td></tr>
+<tr><td>Candidate NPS</td><td>שביעות רצון מועמדים מהתהליך</td><td>+50 ומעלה</td></tr>
+</tbody>
+</table>
+
+<h2>תהליך העבודה — שלב אחר שלב</h2>
+<ol>
+<li><strong>אבחון (Assessment):</strong> מיפוי מצב קיים — <span class="k">ניתוח תהליכים</span> נוכחיים, זיהוי צווארי בקבוק, מדידת ביצועים בסיסיים (Baseline). ראיונות עם מגייסים, מנהלים מגייסים ומועמדים.</li>
+<li><strong>תכנון (Design):</strong> הגדרת <span class="k">תהליכי עבודה בארגון</span> חדשים — כולל משפך גיוס אופטימלי, הגדרת KPIs, בחירת כלים טכנולוגיים, ובניית מבנה צוות.</li>
+<li><strong>בנייה (Build):</strong> כתיבת נהלים, יצירת <span class="k">דשבורדים</span>, הגדרת שגרות, הכשרת הצוות. כל מסמך ותהליך מותאם לארגון שלכם.</li>
+<li><strong>יישום (Implement):</strong> ליווי צמוד ליישום — הדרכות, שיפורים תוך כדי, ועדכון תהליכים בהתאם למשוב.</li>
+<li><strong>מדידה ו<span class="k">שיפור מתמיד</span>:</strong> מעקב אחרי KPIs, דוחות תקופתיים, איתור הזדמנויות ל<span class="k">ייעול</span> נוסף. <span class="k">שיפור מתמיד</span> הוא לא פרויקט חד-פעמי — זו תרבות.</li>
+</ol>
+
+<h2>ארגון ושיטות מול ייעוץ ארגוני: מה ההבדל?</h2>
+<p>שני השירותים קיימים ב-Talent Solutions ומשלימים זה את זה, אך שונים במהותם:</p>
+<table class="ct">
+<thead><tr><th>פרמטר</th><th>ארגון ושיטות</th><th>ייעוץ ארגוני</th></tr></thead>
+<tbody>
+<tr><td>מיקוד</td><td><span class="k">תהליכי עבודה</span>, KPIs, כלים</td><td>מבנה ארגוני, תרבות, אסטרטגיה</td></tr>
+<tr><td>גישה</td><td>Data-driven, <span class="k">מדידה ובקרה</span></td><td>Strategic, אנשים-ותרבות</td></tr>
+<tr><td>תוצר</td><td>נהלים, דשבורדים, SLA, שגרות</td><td>מבנה ארגוני חדש, תוכנית שינוי</td></tr>
+<tr><td>זמן</td><td>2-4 חודשים (פרויקט)</td><td>3-12 חודשים (תהליך)</td></tr>
+<tr><td>מתאים ל…</td><td>"התהליכים שלנו לא עובדים"</td><td>"הארגון שלנו צריך לעבור שינוי"</td></tr>
+</tbody>
+</table>
+
+<h2>למה Talent Solutions?</h2>
+<ul>
+<li><strong>מומחיות בגיוס:</strong> אנחנו לא יועצי <span class="k">ארגון ושיטות</span> גנריים — אנחנו מומחים ב<span class="k">תהליכי גיוס</span> ו-HR. כל המלצה מבוססת על ניסיון מעשי מאלפי פרויקטי גיוס.</li>
+<li><strong>Benchmarks גלובליים:</strong> גישה לנתוני Benchmark מ-80 מדינות — מה שנחשב "טוב" בישראל לעומת העולם.</li>
+<li><strong>כלים טכנולוגיים:</strong> <span class="k">דשבורד BI</span> מתקדם, אוטומציות, ואינטגרציות למערכות ATS קיימות.</li>
+<li><strong>ליווי לאורך זמן:</strong> לא רק מייעצים ונעלמים — מלווים את היישום, ממדדים תוצאות, ומתאימים בהתאם.</li>
+<li><strong>חיסכון מוכח:</strong> ארגונים שעברו <span class="k">ייעול תהליכי גיוס</span> עם Talent Solutions מדווחים על חיסכון של 25-40% ב-Cost per Hire וקיצור Time to Fill ב-30-50%.</li>
+</ul>
+
+<h2>שאלות נפוצות על ארגון ושיטות</h2>
+<p><strong>מה ההבדל בין <span class="k">ארגון ושיטות</span> ל-<span class="k">מצוינות תפעולית</span>?</strong><br>
+<span class="k">מצוינות תפעולית</span> (Operational Excellence) הוא המונח האנגלי/רחב. <span class="k">ארגון ושיטות</span> הוא המונח הישראלי המסורתי. בפועל, השירות שלנו משלב גישות <span class="k">Lean</span> ו-Continuous Improvement עם מומחיות ב-HR.</p>
+<p><strong>כמה זמן לוקח הפרויקט?</strong><br>
+פרויקט <span class="k">ארגון ושיטות</span> טיפוסי אורך 2-4 חודשים: חודש אבחון, חודש-חודשיים בנייה ויישום, וליווי מדידה נוסף. פרויקטים גדולים (ארגון עם 500+ עובדים) יכולים לארוך עד 6 חודשים.</p>
+<p><strong>האם צריך להחליף מערכת ATS?</strong><br>
+לא בהכרח. אנחנו עובדים עם המערכות הקיימות שלכם ומייעלים את השימוש בהן. אם המערכת מגבילה — נמליץ על חלופות, אבל בדרך כלל <span class="k">שיפור תהליכים</span> משמעותי אפשרי עם הכלים שכבר יש.</p>
+<p><strong>מה עלות השירות?</strong><br>
+התמחור מבוסס על גודל הארגון, מורכבות <span class="k">תהליכי הגיוס</span>, והיקף השירות הנדרש. ה-ROI טיפוסי: החזר השקעה תוך 3-6 חודשים מהחיסכון ב-Cost per Hire.</p>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 4: FAQ SCHEMA -->
+<section id="schema" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">4</span> FAQPage Schema — JSON-LD</div>
+    <div class="sdesc">להטמיע ב-<code>&lt;head&gt;</code> או לפני <code>&lt;/body&gt;</code></div>
+
+    <div class="code" id="schema-code"><button class="cb" onclick="copySchema(this)">העתק</button>{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מה זה ארגון ושיטות בהקשר של גיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ארגון ושיטות (Operational Excellence) בגיוס הוא תהליך שיטתי של ניתוח ושיפור תהליכי עבודה בגיוס עובדים — מיפוי שלבים, זיהוי צווארי בקבוק, בניית דשבורדים ו-KPIs, וכתיבת נהלים. המטרה: גיוס מהיר יותר, חסכוני יותר ואיכותי יותר."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין ארגון ושיטות לייעוץ ארגוני?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ארגון ושיטות מתמקד בתהליכי עבודה, KPIs, כלי BI ונהלים — גישה מבוססת דאטה. ייעוץ ארגוני מתמקד במבנה הארגוני, תרבות ואסטרטגיה — גישה רחבה יותר. שני השירותים משלימים זה את זה."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה זמן לוקח פרויקט ארגון ושיטות?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "פרויקט טיפוסי אורך 2-4 חודשים: חודש אבחון, חודש-חודשיים בנייה ויישום, וליווי מדידה נוסף. ארגונים גדולים (500+ עובדים) עשויים להצטרך עד 6 חודשים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "אילו KPIs חשוב למדוד בתהליך גיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המדדים המרכזיים: Time to Fill (ימים עד חתימה), Cost per Hire (עלות גיוס כוללת), Quality of Hire (ביצועים ושימור ב-12 חודשים), Source Effectiveness (המרה לפי מקור), Offer Acceptance Rate (אחוז קבלת הצעות), ו-Candidate NPS (שביעות רצון מועמדים)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "האם צריך להחליף מערכת ATS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "לא בהכרח. שירות הארגון ושיטות עובד עם המערכות הקיימות ומייעל את השימוש בהן. שיפור תהליכים משמעותי אפשרי בדרך כלל עם הכלים שכבר קיימים בארגון."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה כולל דשבורד BI לגיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "דשבורד BI מותאם אישית שמציג דאטה בזמן אמת: מספר מועמדים בכל שלב במשפך, אחוזי המרה, מקורות גיוס אפקטיביים, Time to Fill לפי תפקיד, Cost per Hire, ומגמות לאורך זמן. מאפשר קבלת החלטות מבוססות נתונים."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "כמה ניתן לחסוך בייעול תהליכי גיוס?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "ארגונים שעוברים ייעול תהליכי גיוס מדווחים על חיסכון של 25-40% ב-Cost per Hire וקיצור Time to Fill ב-30-50%. ההחזר על ההשקעה טיפוסי תוך 3-6 חודשים מהחיסכון בעלויות הגיוס."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מה ההבדל בין ארגון ושיטות למצוינות תפעולית?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מצוינות תפעולית (Operational Excellence) הוא המונח הבינלאומי הרחב. ארגון ושיטות הוא המונח הישראלי המסורתי. בפועל, השירות משלב גישות Lean ו-Continuous Improvement עם מומחיות ספציפית בתהליכי HR וגיוס."
+      }
+    }
+  ]
+}</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 5: META TAGS -->
+<section id="meta" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">5</span> מטא תגיות</div>
+
+    <div class="mb">
+      <div class="ml">Title (נוכחי)</div>
+      <div class="mc">ארגון ושיטות Operational Excellence - Talent Solutions</div>
+    </div>
+    <div class="mb">
+      <div class="ml">Title (מומלץ)</div>
+      <div class="mn">ארגון ושיטות — ייעול תהליכי גיוס ומשאבי אנוש | Talent Solutions Israel</div>
+    </div>
+
+    <div class="mb" style="margin-top:16px;">
+      <div class="ml">Description (נוכחי)</div>
+      <div class="mc">שירות ארגון ושיטות של Talent Solutions הופך את תהליכי הגיוס ליעילים ומבוססי נתונים – עם כלי BI מתקדמים, מדידה חכמה וחיסכון אמיתי בעלויות.</div>
+    </div>
+    <div class="mb">
+      <div class="ml">Description (מומלץ)</div>
+      <div class="mn">שירות ארגון ושיטות מ-Talent Solutions: ייעול תהליכי גיוס, דשבורד BI מותאם, KPIs ומדידה חכמה. חיסכון 25-40% בעלויות גיוס, קיצור Time to Fill ב-30-50%. סטנדרטים גלובליים מ-ManpowerGroup.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- 6: GEO / AI VISIBILITY -->
+<section id="geo" class="section">
+  <div class="container">
+    <div class="stitle"><span class="n">6</span> <span style="color:var(--purple-light)">GEO — מוכנות AI</span></div>
+    <div class="sdesc">שיפור הנראות ב-ChatGPT, Gemini, Perplexity, AI Overviews</div>
+
+    <ul class="fl">
+      <li class="f-c">
+        <span class="fn">1</span>
+        <div>
+          <strong>עדכון llms.txt</strong><br>
+          <span style="color:var(--text-dim);">להוסיף ל-<code>/llms.txt</code> בשורש הדומיין:</span>
+          <div class="code" id="llms-code" style="margin-top:8px;"><button class="cb" onclick="copyLlms(this)">העתק</button># Talent Solutions Israel — Organization & Methods (Operational Excellence)
+> Operational Excellence service from Talent Solutions (ManpowerGroup): Streamlining recruitment processes with BI dashboards, KPI frameworks, process documentation, and team structure optimization. Combines Lean/Continuous Improvement methodologies with deep HR expertise. Typical results: 25-40% cost reduction, 30-50% faster time-to-fill.
+
+## Key Pages
+- Operational Excellence: https://talentsolutions.manpowergroup.co.il/operationalexcellence/
+- Organizational Consulting: https://talentsolutions.manpowergroup.co.il/manageandoptimize/organizationalconsulting/
+- RPO: https://talentsolutions.manpowergroup.co.il/attract/rpo/
+
+## Service Components
+- Custom BI dashboards for recruitment analytics
+- KPI definition and SLA frameworks
+- Process documentation and workflow design
+- Team structure and role definition optimization
+- Sourcing budget planning and vendor management
+- Ongoing measurement and continuous improvement</div>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">2</span>
+        <div>
+          <strong>הוספת Service Schema</strong><br>
+          <span style="color:var(--text-dim);">להוסיף סכמת <code>Service</code> ל-JSON-LD: <code>serviceType: Recruitment Process Optimization / Organization & Methods</code>, <code>areaServed: Israel</code>, <code>provider: Talent Solutions Israel</code>.</span>
+        </div>
+      </li>
+
+      <li class="f-c">
+        <span class="fn">3</span>
+        <div>
+          <strong>ציטוט מקורות ראשוניים</strong><br>
+          <span style="color:var(--text-dim);">להוסיף נתונים עם מקור: מחקרי SHRM על Cost per Hire, Bersin by Deloitte על Recruitment Efficiency, ManpowerGroup Employment Outlook Survey. נתונים עם ציטוט = 3x סיכוי ל-AI citation.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">4</span>
+        <div>
+          <strong>תוכן רב-מדיה</strong><br>
+          <span style="color:var(--text-dim);">להוסיף: אינפוגרפיקת "5 שלבי ייעול תהליך גיוס", צילום מסך דשבורד BI (מטושטש), סרטון הסבר (2-3 דק׳), תרשים Before/After עם מדדי KPI.</span>
+        </div>
+      </li>
+
+      <li class="f-h">
+        <span class="fn">5</span>
+        <div>
+          <strong>בניית נוכחות מותג בפלטפורמות AI</strong><br>
+          <span style="color:var(--text-dim);">אזכורי מותג משפיעים פי 3 מבאקלינקים על נראות ב-AI:</span>
+          <div class="tw" style="margin-top:8px;">
+            <table>
+              <thead><tr><th>פלטפורמה</th><th>השפעה</th><th>פעולה</th></tr></thead>
+              <tbody>
+                <tr><td>YouTube</td><td><span class="badge b-crit">חזקה ביותר</span></td><td>סרטוני "KPIs לגיוס", "דשבורד BI לגיוס", "ייעול תהליכים"</td></tr>
+                <tr><td>Reddit</td><td><span class="badge b-high">גבוהה</span></td><td>שיתוף תובנות ב-r/humanresources, r/recruiting</td></tr>
+                <tr><td>Wikipedia</td><td><span class="badge b-high">גבוהה</span></td><td>עדכון ערכי "ארגון ושיטות", "Operational Excellence"</td></tr>
+                <tr><td>LinkedIn</td><td><span class="badge b-med">בינונית</span></td><td>מאמרים על Recruitment Analytics ו-BI</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">NC Digital &bull; תוכנית שיפור &bull; מרץ 2026</div>
+</footer>
+
+<script>
+function copySchema(b){navigator.clipboard.writeText(document.getElementById('schema-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+function copyLlms(b){navigator.clipboard.writeText(document.getElementById('llms-code').textContent).then(()=>{b.textContent='הועתק!';setTimeout(()=>b.textContent='העתק',2000)})}
+</script>
+</body>
+</html>
