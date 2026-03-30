@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="en">
+<title>QMD — SEO / GEO Improvement Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0a0f1a;
+    color: #e2e8f0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.report-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1a2744 50%, #0f172a 100%);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+.report-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-bottom: 8px;
+}
+.report-header .subtitle {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+}
+.report-header .agency {
+    font-size: 12px;
+    color: #64748b;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Metrics Row */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.metric-card {
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+.metric-card .value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #38bdf8;
+}
+.metric-card .value.red { color: #f87171; }
+.metric-card .value.green { color: #4ade80; }
+.metric-card .value.amber { color: #fbbf24; }
+.metric-card .label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Sections */
+.section {
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.section-header {
+    background: linear-gradient(90deg, #1e293b 0%, #111827 100%);
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    border-bottom: 1px solid #1e293b;
+}
+.section-header:hover { background: #1e293b; }
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+.section-header .badge {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.section-header .badge.critical {
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+}
+.section-header .badge.new-page {
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+}
+.section-header .toggle {
+    font-size: 18px;
+    color: #64748b;
+    transition: transform 0.3s;
+}
+.section-body {
+    padding: 24px;
+    display: none;
+}
+.section.open .section-body { display: block; }
+.section.open .toggle { transform: rotate(180deg); }
+
+/* Page blocks */
+.page-block {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+.page-block:last-child { margin-bottom: 0; }
+.page-url {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    word-break: break-all;
+}
+.page-url a { color: #38bdf8; text-decoration: none; }
+.page-url a:hover { text-decoration: underline; }
+
+.sub-heading {
+    font-size: 14px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin: 16px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #1e293b;
+}
+.sub-heading:first-child { margin-top: 0; }
+
+ul.fix-list {
+    list-style: none;
+    padding: 0;
+}
+ul.fix-list li {
+    padding: 6px 0 6px 20px;
+    position: relative;
+    font-size: 14px;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+ul.fix-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #38bdf8;
+}
+ul.fix-list li.missing::before { content: '✕'; color: #f87171; }
+ul.fix-list li.add::before { content: '+'; color: #4ade80; }
+ul.fix-list li.fix::before { content: '!'; color: #fbbf24; }
+
+.kw-tag {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    color: #7dd3fc;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin: 2px;
+    font-family: monospace;
+}
+.kw-tag .vol {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.meta-fix {
+    background: #0c1222;
+    border-left: 3px solid #38bdf8;
+    padding: 10px 14px;
+    margin: 8px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 13px;
+}
+.meta-fix .label {
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.meta-fix .current { color: #f87171; text-decoration: line-through; }
+.meta-fix .recommended { color: #4ade80; }
+
+/* New page box */
+.new-page-box {
+    background: linear-gradient(135deg, #0f2922 0%, #0f172a 100%);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+.new-page-box .url-rec {
+    font-family: monospace;
+    font-size: 14px;
+    color: #4ade80;
+    margin-bottom: 12px;
+}
+
+/* Priority table */
+table.priority-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+table.priority-table th {
+    background: #1e293b;
+    color: #94a3b8;
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+table.priority-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #1e293b;
+    color: #cbd5e1;
+}
+table.priority-table tr:hover td { background: rgba(56, 189, 248, 0.05); }
+
+.priority-high { color: #f87171; font-weight: 600; }
+.priority-medium { color: #fbbf24; font-weight: 600; }
+.priority-low { color: #4ade80; font-weight: 600; }
+
+/* Charts */
+.chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.chart-card {
+    background: #111827;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 20px;
+}
+.chart-card h3 {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container { padding: 12px; }
+    .report-header { padding: 24px 16px; }
+    .report-header h1 { font-size: 22px; }
+    .metrics-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-row { grid-template-columns: 1fr; }
+    .section-body { padding: 16px; }
+}
+
+/* Footer */
+.report-footer {
+    text-align: center;
+    padding: 30px;
+    color: #475569;
+    font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="report-header">
+    <div class="agency">NC DIGITAL</div>
+    <h1>QMD — SEO / GEO Improvement Report</h1>
+    <div class="subtitle">Implementation-Focused Analysis for qmd.net | Global Market | March 2026</div>
+</div>
+
+<!-- METRICS -->
+<div class="metrics-row">
+    <div class="metric-card">
+        <div class="value">46</div>
+        <div class="label">Domain Authority</div>
+    </div>
+    <div class="metric-card">
+        <div class="value red">78</div>
+        <div class="label">US Monthly Traffic</div>
+    </div>
+    <div class="metric-card">
+        <div class="value red">~0</div>
+        <div class="label">Commercial KW Rankings</div>
+    </div>
+    <div class="metric-card">
+        <div class="value amber">573</div>
+        <div class="label">Target Keywords</div>
+    </div>
+    <div class="metric-card">
+        <div class="value amber">10.7%</div>
+        <div class="label">AI Share of Voice</div>
+    </div>
+    <div class="metric-card">
+        <div class="value red">0</div>
+        <div class="label">Pages with Meta Desc</div>
+    </div>
+</div>
+
+<!-- CHARTS -->
+<div class="chart-row">
+    <div class="chart-card">
+        <h3>AI Share of Voice — Competitor Comparison</h3>
+        <canvas id="sovChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+        <h3>Target Keywords by Category (Volume)</h3>
+        <canvas id="kwChart" height="200"></canvas>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: PAGE-LEVEL FIXES — EXISTING PAGES                 -->
+<!-- ============================================================ -->
+
+<div class="section open" id="sec-pages">
+    <div class="section-header" onclick="toggleSection('sec-pages')">
+        <h2>Section 1 — Page-Level Fixes (Existing Pages)</h2>
+        <div><span class="badge critical">29 Pages</span> <span class="toggle">▼</span></div>
+    </div>
+    <div class="section-body">
+
+<!-- HOMEPAGE -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/" target="_blank">https://qmd.net/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">cdmo <span class="vol">18,360</span></span>
+<span class="kw-tag">medical device manufacturer <span class="vol">1,800</span></span>
+<span class="kw-tag">cmo contract manufacturing <span class="vol">1,390</span></span>
+<span class="kw-tag">medical manufacturing <span class="vol">1,060</span></span>
+<span class="kw-tag">medical device contract manufacturing <span class="vol">550</span></span>
+<span class="kw-tag">medical device assembly <span class="vol">550</span></span>
+<span class="kw-tag">silicone molding manufacturer <span class="vol">730</span></span>
+<span class="kw-tag">iso 13485 certified companies <span class="vol">460</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Homepage - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Medical Device Contract Manufacturer & CDMO | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">QMD is an ISO 13485-certified contract manufacturer specializing in silicone and elastomer medical devices. End-to-end CDMO services from prototyping to sterilization.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="current">Solutions to Bring Your Medical Devices to Market</div>
+    <div class="recommended">Medical Device Contract Manufacturer — End-to-End CDMO Solutions</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="missing">No mention of "CDMO" or "CMO" anywhere on the homepage — the highest-volume keyword (18,360/mo) is completely absent</li>
+    <li class="missing">No mention of "contract manufacturing" — core business proposition missing from homepage copy</li>
+    <li class="fix">Add an introductory paragraph that includes: contract manufacturer, CDMO, medical device assembly, ISO 13485 certified</li>
+    <li class="add">Add H2 section: "Full-Service Medical Device Contract Manufacturing" with keywords: medical device contract manufacturer, medical device outsourcing, medical device OEM manufacturer</li>
+    <li class="add">Add H2 section: "ISO 13485 Certified Manufacturing" covering: quality management, FDA registered, regulatory compliance</li>
+    <li class="add">Add internal links to new capability sub-pages (silicone molding, tubing extrusion, sterilization, prototyping, advanced materials)</li>
+    <li class="add">Add structured data: Organization schema with @type, name, url, logo, address, certifications</li>
+    <li class="add">Add WebSite schema with SearchAction (if search is implemented)</li>
+</ul>
+</div>
+
+<!-- CAPABILITIES -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/capabilities/" target="_blank">https://qmd.net/capabilities/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">medical device assembly <span class="vol">550</span></span>
+<span class="kw-tag">medical component manufacturing <span class="vol">220</span></span>
+<span class="kw-tag">medical device manufacturing services <span class="vol">70</span></span>
+<span class="kw-tag">end to end medical device manufacturing <span class="vol">0*</span></span>
+<span class="kw-tag">turnkey medical device manufacturing <span class="vol">0*</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Capabilities - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Medical Device Manufacturing Capabilities | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">QMD offers end-to-end medical device manufacturing: silicone molding, tubing extrusion, device assembly, sterilization, and packaging. 1 billion+ components produced annually.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">This page must become the HUB linking to 6 new capability sub-pages (see Section 2)</li>
+    <li class="missing">Services are listed as bullets but not linked to dedicated pages — no depth for any capability</li>
+    <li class="add">Add visible navigation cards/links to: Silicone Molding, Medical Tubing & Extrusion, Sterilization & Packaging, Prototyping & NPI, Advanced Materials & Coatings</li>
+    <li class="add">Add "medical device assembly" and "medical component manufacturing" in body copy</li>
+    <li class="add">Add internal links FROM each capability bullet TO the dedicated sub-page</li>
+    <li class="add">Add BreadcrumbList schema: Home > Capabilities</li>
+</ul>
+</div>
+
+<!-- QUALITY & REGULATORY -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/quality-regulatory/" target="_blank">https://qmd.net/quality-regulatory/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords (from Regulatory & Quality tab — 50 keywords)</div>
+<div>
+<span class="kw-tag">medical device classification <span class="vol">1,200</span></span>
+<span class="kw-tag">post market surveillance <span class="vol">1,140</span></span>
+<span class="kw-tag">medical device quality management system <span class="vol">1,000</span></span>
+<span class="kw-tag">ce marking medical device <span class="vol">820</span></span>
+<span class="kw-tag">biocompatibility testing <span class="vol">820</span></span>
+<span class="kw-tag">eu mdr 2017 745 <span class="vol">810</span></span>
+<span class="kw-tag">medical device regulatory affairs <span class="vol">760</span></span>
+<span class="kw-tag">design history file <span class="vol">720</span></span>
+<span class="kw-tag">iso 14971 risk management <span class="vol">660</span></span>
+<span class="kw-tag">510k submission <span class="vol">600</span></span>
+<span class="kw-tag">design control medical device <span class="vol">550</span></span>
+<span class="kw-tag">risk management medical device <span class="vol">510</span></span>
+<span class="kw-tag">device master record <span class="vol">500</span></span>
+<span class="kw-tag">fda 21 cfr 820 <span class="vol">370</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Quality & Regulatory - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Quality & Regulatory — ISO 13485, FDA, CE Marking | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">QMD maintains ISO 13485:2016 certification, FDA 21 CFR 820 compliance, and EU MDR 2017/745 readiness across 6 global facilities. MDSAP certified, 510(k) support included.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Page currently lists certifications by location but lacks searchable content for 50 regulatory keywords</li>
+    <li class="add">Add H2: "Quality Management System" covering: ISO 13485 QMS, CAPA, process validation, document control, complaint handling</li>
+    <li class="add">Add H2: "Regulatory Affairs Support" covering: 510(k) submission, CE marking, EU MDR 2017/745, device classification, post-market surveillance</li>
+    <li class="add">Add H2: "Design Controls" covering: design history file, design verification, design validation, risk management (ISO 14971), FMEA</li>
+    <li class="add">Add H2: "Biocompatibility & Testing" covering: ISO 10993, biocompatibility testing, cytotoxicity testing, USP Class VI</li>
+    <li class="add">Add H2: "Audit & Compliance" covering: FDA inspection readiness, MDSAP certification, supplier qualification, change control</li>
+    <li class="add">Add FAQ section with FAQPage schema targeting: "What is FDA 21 CFR 820?", "What certifications does QMD hold?", "Does QMD support 510(k) submissions?"</li>
+</ul>
+</div>
+
+<!-- CLINICAL AREAS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/clinical-areas/" target="_blank">https://qmd.net/clinical-areas/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords (from Clinical Applications tab)</div>
+<div>
+<span class="kw-tag">vessel loop <span class="vol">2,620</span></span>
+<span class="kw-tag">gastrostomy button <span class="vol">940</span></span>
+<span class="kw-tag">suction catheter kit <span class="vol">360</span></span>
+<span class="kw-tag">foley catheter kit <span class="vol">180</span></span>
+<span class="kw-tag">duckbill valve medical <span class="vol">10</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Clinical Areas - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Clinical Areas — Surgical, Urology, Vascular, Critical Care | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">QMD manufactures elastomeric medical devices for surgery, urology, vascular, gastroenterology, and critical care. Catheters, drains, vessel loops, and feeding tubes.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Page lists clinical areas but does not mention specific product keywords from the target list</li>
+    <li class="add">Under Surgical section: add "vessel loop" and "wound drainage" keywords with links to product pages</li>
+    <li class="add">Under Urology section: add "foley catheter kit", "urinary catheter" with links to Degania products</li>
+    <li class="add">Under Gastroenterology section: add "gastrostomy button", "enteral feeding tube" with links</li>
+    <li class="add">Under Critical Care section: add "suction catheter kit", "rapid infusion catheter" with links</li>
+    <li class="add">Each clinical area section should link to the corresponding product sub-pages</li>
+    <li class="add">Add BreadcrumbList schema: Home > Clinical Areas</li>
+</ul>
+</div>
+
+<!-- ARTHESYS PRODUCTS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/arthesys-products/" target="_blank">https://qmd.net/product/arthesys-products/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">ptca balloon catheter <span class="vol">370</span></span>
+<span class="kw-tag">ptca balloon <span class="vol">380</span></span>
+<span class="kw-tag">pta balloon catheter <span class="vol">60</span></span>
+<span class="kw-tag">pta balloon <span class="vol">180</span></span>
+<span class="kw-tag">aspiration catheter <span class="vol">630</span></span>
+<span class="kw-tag">balloon catheter manufacturer <span class="vol">40</span></span>
+<span class="kw-tag">catheter manufacturer <span class="vol">250</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Arthesys™ Products - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Arthesys™ Vascular Products — PTCA & PTA Balloon Catheters | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Arthesys™ coronary and peripheral vascular products by QMD. PTCA balloon catheters, PTA catheters, aspiration catheters, Y-connectors, and cobalt chromium stents.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Page mentions "coronary and peripheral vascular products" but does not include target keywords: balloon catheter manufacturer, catheter manufacturer, catheter contract manufacturing</li>
+    <li class="add">Add "balloon catheter manufacturer" and "catheter manufacturer" in the introductory paragraph</li>
+    <li class="add">Add "catheter contract manufacturing" in the services/capabilities section</li>
+    <li class="add">Add Product schema for each product with brand, manufacturer, category</li>
+</ul>
+</div>
+
+<!-- BIOMETRIX PRODUCTS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/biometrix-products/" target="_blank">https://qmd.net/product/biometrix-products/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">arterial catheter <span class="vol">700</span></span>
+<span class="kw-tag">rapid infusion catheter <span class="vol">510</span></span>
+<span class="kw-tag">central venous catheter manufacturer <span class="vol">10</span></span>
+<span class="kw-tag">temp sensing foley <span class="vol">180</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Biometrix™ Products - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Biometrix™ Critical Care — Arterial, CVC & Rapid Infusion Catheters | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Biometrix™ critical care products by QMD: central venous catheters, arterial catheters, rapid infusion catheters, and temperature sensing Foley catheters.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Add target keywords in product overview paragraph: "arterial catheter", "rapid infusion catheter", "temperature sensing foley"</li>
+    <li class="add">Each product card should include the exact target keyword as link text, not just brand name</li>
+    <li class="add">Add Product schema for each Biometrix product</li>
+</ul>
+</div>
+
+<!-- DEGANIA PRODUCTS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/degania-products/" target="_blank">https://qmd.net/product/degania-products/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">silicone catheter <span class="vol">7,830</span></span>
+<span class="kw-tag">silicone foley catheter <span class="vol">630</span></span>
+<span class="kw-tag">disposable catheter <span class="vol">320</span></span>
+<span class="kw-tag">single use medical device <span class="vol">210</span></span>
+<span class="kw-tag">medical silicone tubing <span class="vol">650</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Degania™ Products - QMD: Silicone & Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Degania™ Silicone Medical Devices — Catheters, Drains, Tubing | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Degania™ silicone medical devices: urinary catheters, wound drainage, enteral feeding tubes, vessel loops, and medical-grade silicone tubing by QMD.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="missing">"silicone catheter" (7,830 vol) — the 2nd highest-volume keyword — is not on this page</li>
+    <li class="add">Add "silicone catheter", "silicone foley catheter", "disposable catheter" to the product overview text</li>
+    <li class="add">Mention "single use medical device" and "disposable medical device" as product characteristics</li>
+    <li class="add">Add internal link to new Silicone Molding capability page</li>
+</ul>
+</div>
+
+<!-- TSC FOLEY CATHETERS (Best performing page) -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/" target="_blank">https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</a></div>
+
+<div class="sub-heading">Current Rankings (strongest page on site)</div>
+<ul class="fix-list">
+    <li>temp sensing foley: #1 (AI Overview) + #3 (PAA) + #17 (organic)</li>
+    <li>temperature sensing foley catheter: #1 (AI Overview) + #5 (PAA)</li>
+    <li>temperature probe foley catheter: #2 (PAA)</li>
+    <li>foley temperature: #19</li>
+</ul>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">temperature foley catheter <span class="vol">50</span></span>
+<span class="kw-tag">temperature sensing catheter <span class="vol">10</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Temperature Sensing (TSC) Foley Catheters - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Temperature Sensing Foley Catheters | Biometrix™ by QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Biometrix™ temperature sensing Foley catheters for continuous core body temperature monitoring. 100% silicone, ±0.1°C accuracy, sizes 6Fr-18Fr. FDA cleared.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">This is QMD's best-performing page — protect existing rankings while optimizing</li>
+    <li class="add">Add "temperature foley catheter" and "temperature sensing catheter" naturally in body text</li>
+    <li class="add">Add FAQ section: "What is a temperature sensing Foley catheter?", "How accurate is temperature measurement?" — targets PAA features</li>
+    <li class="add">Add Product schema with specifications</li>
+    <li class="add">Add internal link to new Silicone Molding page (material info) and Clinical Areas page</li>
+</ul>
+</div>
+
+<!-- RAPID INFUSION CATHETERS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/biometrix-products/rapid-infusion-catheters/" target="_blank">https://qmd.net/product/biometrix-products/rapid-infusion-catheters/</a></div>
+
+<div class="sub-heading">Current Rankings</div>
+<ul class="fix-list">
+    <li>rapid infusion catheter: #1 (AI Overview) + #24 (organic)</li>
+</ul>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Rapid Infusion Catheters - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Rapid Infusion Catheters — Large-Bore Venous Access | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Biometrix™ rapid infusion catheters for trauma and critical care. 8Fr large-bore design for high-flow fluid resuscitation. Available in kits and packs.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="add">Expand content depth — page is thin compared to ranking potential</li>
+    <li class="add">Add FAQ: "What is a rapid infusion catheter?", "When is rapid infusion used?" for AI citation</li>
+    <li class="add">Add Product schema</li>
+</ul>
+</div>
+
+<!-- VESSEL LOOPS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/degania-products/vessel-loops/" target="_blank">https://qmd.net/product/degania-products/vessel-loops/</a></div>
+
+<div class="sub-heading">Current Rankings</div>
+<ul class="fix-list">
+    <li>vessel loop: #22 | vessel loops: #20</li>
+</ul>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">vessel loop <span class="vol">2,620</span></span>
+<span class="kw-tag">silicone vessel loop <span class="vol">0*</span></span>
+<span class="kw-tag">vessel loop manufacturer <span class="vol">0*</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Vessel Loops - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Silicone Vessel Loops — Surgical Retraction | Degania™ by QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Degania™ silicone vessel loops for surgical tissue retraction. Platinum-cured, radiopaque, color-coded. Mini, Maxi, and Super Maxi sizes available.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Currently #20-22 for "vessel loop" (2,620 vol) — moving to top 10 is achievable with on-page fixes</li>
+    <li class="add">Add introductory paragraph defining what vessel loops are and their surgical purpose — targets AI citation and featured snippets</li>
+    <li class="add">Add "vessel loop manufacturer" and "silicone vessel loop" in body text</li>
+    <li class="add">Add H2: "Applications in Surgery" covering specific procedures</li>
+    <li class="add">Add FAQ: "What is a vessel loop?", "What sizes do vessel loops come in?"</li>
+    <li class="add">Add Product schema</li>
+</ul>
+</div>
+
+<!-- CENTRAL VENOUS CATHETERS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/biometrix-products/central-venous-catheters/" target="_blank">https://qmd.net/product/biometrix-products/central-venous-catheters/</a></div>
+
+<div class="sub-heading">Current Rankings</div>
+<ul class="fix-list">
+    <li>central venous pressure catheters: #97 | double lumen venous catheter: #61 | cvc double lumen: #64</li>
+</ul>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">3 way catheter <span class="vol">720</span></span>
+<span class="kw-tag">catheter parts <span class="vol">2,280</span></span>
+<span class="kw-tag">catheter components <span class="vol">60</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Central Venous Catheters - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Central Venous Catheters (CVC) — Single to Quad Lumen | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Biometrix™ central venous catheters: single, double, triple, and quad lumen designs for drug infusion, blood sampling, and parenteral nutrition. Pediatric and adult sizes.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Page has good product detail but is not ranking well — position 61-97 for target terms</li>
+    <li class="add">Add introductory paragraph with "central venous catheter" and "CVC" definitions</li>
+    <li class="add">Include "catheter parts" and "catheter components" when describing kit contents</li>
+    <li class="add">Add "3 way catheter" where relevant to triple-lumen descriptions</li>
+    <li class="add">Add FAQ section targeting informational queries</li>
+    <li class="add">Add Product schema with lumen configuration details</li>
+</ul>
+</div>
+
+<!-- ARTERIAL CATHETERS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/biometrix-products/arterial-catheters/" target="_blank">https://qmd.net/product/biometrix-products/arterial-catheters/</a></div>
+
+<div class="sub-heading">Current Rankings</div>
+<ul class="fix-list">
+    <li>arterial catheter: #76 (was #89) | arterial line kits: #73</li>
+</ul>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Arterial Catheters - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Arterial Catheters & Arterial Line Kits | Biometrix™ by QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Biometrix™ arterial catheters for hemodynamic monitoring. Available as arterial line kits with transducer sets for continuous blood pressure monitoring.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Currently #73-76 — content needs significant expansion to compete</li>
+    <li class="add">Add detailed introductory content defining arterial catheters and their clinical use</li>
+    <li class="add">Include "arterial line kits" terminology alongside product descriptions</li>
+    <li class="add">Add specifications table, FAQ section, Product schema</li>
+</ul>
+</div>
+
+<!-- URINARY CATHETERS -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/degania-products/urinary-catheters/" target="_blank">https://qmd.net/product/degania-products/urinary-catheters/</a></div>
+
+<div class="sub-heading">Current Rankings</div>
+<ul class="fix-list">
+    <li>3 way irrigation catheter: #19</li>
+</ul>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">silicone foley catheter <span class="vol">630</span></span>
+<span class="kw-tag">hydrophilic catheter <span class="vol">680</span></span>
+<span class="kw-tag">3 way foley <span class="vol">420</span></span>
+<span class="kw-tag">3 way catheter <span class="vol">720</span></span>
+<span class="kw-tag">disposable urinary catheter <span class="vol">30</span></span>
+<span class="kw-tag">foley catheter manufacturer <span class="vol">40</span></span>
+<span class="kw-tag">single use catheter <span class="vol">240</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Urinary Catheters - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Silicone Urinary Catheters — Foley, 3-Way, Drainage | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Degania™ silicone Foley catheters: 2-way drainage, 3-way irrigation, and temperature sensing options. Medical-grade silicone, biocompatible, single-use.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="add">Add "silicone foley catheter" and "3 way foley" as keyword-rich headings</li>
+    <li class="add">Add "foley catheter manufacturer", "disposable urinary catheter", "single use catheter" in copy</li>
+    <li class="add">Add "hydrophilic catheter" mention if applicable to product coating options</li>
+    <li class="add">Add Product schema, FAQ section</li>
+</ul>
+</div>
+
+<!-- ENTERAL FEEDING -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/degania-products/enteral-feeding/" target="_blank">https://qmd.net/product/degania-products/enteral-feeding/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords</div>
+<div>
+<span class="kw-tag">gastrostomy button <span class="vol">940</span></span>
+<span class="kw-tag">enteral catheter <span class="vol">20</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Enteral Feeding - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Enteral Feeding Tubes & Gastrostomy Buttons | Degania™ by QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Degania™ enteral feeding solutions: gastrostomy tubes, G-buttons, nasogastric tubes, PEG catheters, and jejunal tubes. ENFit® compliant, medical-grade silicone.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">Page already mentions G-Buttons but does not use the high-volume term "gastrostomy button" (940/mo)</li>
+    <li class="add">Use "gastrostomy button" as H2 or in prominent position alongside "G-Button"</li>
+    <li class="add">Add Product schema for each feeding product type</li>
+</ul>
+</div>
+
+<!-- SILICONE TUBING -->
+<div class="page-block">
+<div class="page-url"><a href="https://qmd.net/product/degania-products/silicone-tubing/" target="_blank">https://qmd.net/product/degania-products/silicone-tubing/</a></div>
+
+<div class="sub-heading">Missing Selected Keywords (from Extrusion & Tubing tab — 59 keywords)</div>
+<div>
+<span class="kw-tag">medical tubing <span class="vol">940</span></span>
+<span class="kw-tag">medical silicone tubing <span class="vol">650</span></span>
+<span class="kw-tag">platinum cured silicone tubing <span class="vol">310</span></span>
+<span class="kw-tag">medical grade silicone tubing <span class="vol">140</span></span>
+<span class="kw-tag">medical tubing manufacturer <span class="vol">180</span></span>
+<span class="kw-tag">silicone tubing manufacturer <span class="vol">50</span></span>
+</div>
+
+<div class="sub-heading">Metadata / Headings Fixes</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="current">Silicone Tubing - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Medical Silicone Tubing — Platinum Cured, ISO 13485 | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="current">(none)</div>
+    <div class="recommended">Medical-grade platinum cured silicone tubing by QMD. ISO 13485 manufactured in Class 8 cleanrooms. Custom ID/OD, ETO and gamma sterilization compatible.</div>
+</div>
+
+<div class="sub-heading">Content / Structure Fixes</div>
+<ul class="fix-list">
+    <li class="fix">This is a product page under Degania — it should NOT be the primary tubing/extrusion page</li>
+    <li class="add">Add "medical tubing", "medical silicone tubing", "platinum cured silicone tubing" in H2s and body</li>
+    <li class="add">Add "medical tubing manufacturer", "silicone tubing manufacturer" in the overview paragraph</li>
+    <li class="add">Link to new /capabilities/medical-tubing-extrusion/ page for extrusion capability detail</li>
+    <li class="add">Keep this page focused on the PRODUCT; extrusion capability content belongs on the new page</li>
+</ul>
+</div>
+
+<!-- REMAINING PRODUCT PAGES (grouped) -->
+<div class="page-block">
+<div class="page-url">Remaining Product Sub-Pages (PTCA, PTA, Aspiration, Y-Connectors, Cygnus II, Wound Drainage)</div>
+
+<div class="sub-heading">All Need These Universal Fixes</div>
+<ul class="fix-list">
+    <li class="missing">Meta description: ALL missing — add unique, keyword-rich descriptions (155 chars max)</li>
+    <li class="fix">Title tags: ALL follow generic pattern — rewrite with primary target keyword first</li>
+    <li class="add">Add Product schema (JSON-LD) to every product page</li>
+    <li class="add">Add BreadcrumbList schema to every page</li>
+    <li class="add">Add internal links between related product pages and to corresponding Clinical Areas section</li>
+</ul>
+
+<div class="sub-heading">Specific Keyword Mappings</div>
+<ul class="fix-list">
+    <li class="add"><strong>PTCA Catheters:</strong> Add "ptca balloon catheter" (370), "ptca balloon" (380), "balloon catheter" (5,840) as H2/body keywords</li>
+    <li class="add"><strong>PTA Catheters:</strong> Add "pta balloon catheter" (60), "pta balloon" (180), "peripheral balloon catheter" (10)</li>
+    <li class="add"><strong>Aspiration Catheters:</strong> Add "aspiration catheter" (630) — currently branded as PEGASE, add generic term</li>
+    <li class="add"><strong>Wound Drainage:</strong> Add "wound drainage catheter" (10), "surgical drain manufacturer" (0*), link to disposable device keywords</li>
+    <li class="add"><strong>Y-Connectors:</strong> Low search volume, but add "y connector medical manufacturer" for niche capture</li>
+</ul>
+</div>
+
+<!-- ABOUT, LOCATIONS, CONTACT -->
+<div class="page-block">
+<div class="page-url">About, Locations, Contact Pages</div>
+
+<div class="sub-heading">Metadata Fixes (ALL missing meta descriptions)</div>
+<div class="meta-fix">
+    <div class="label">About — Title</div>
+    <div class="current">About - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">About QMD — Global Medical Device Contract Manufacturer</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Locations — Title</div>
+    <div class="current">Locations - QMD: Silicone &amp; Polyisoprene Elastomer Manufacturer</div>
+    <div class="recommended">Global Locations — QMD Manufacturing Facilities</div>
+</div>
+
+<div class="sub-heading">Content Fixes</div>
+<ul class="fix-list">
+    <li class="add">About page: Add "medical device contract manufacturer", "CDMO" in first paragraph</li>
+    <li class="add">About page: Add "medical device manufacturer israel" for location-specific query</li>
+    <li class="add">Locations page: Add LocalBusiness schema for each facility</li>
+    <li class="add">Contact page: Add structured data with phone, email, address</li>
+</ul>
+</div>
+
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: NEW PAGES REQUIRED                                 -->
+<!-- ============================================================ -->
+
+<div class="section open" id="sec-new">
+    <div class="section-header" onclick="toggleSection('sec-new')">
+        <h2>Section 2 — New Pages Required</h2>
+        <div><span class="badge new-page">6 New Pages</span> <span class="toggle">▼</span></div>
+    </div>
+    <div class="section-body">
+
+<p style="color:#94a3b8; margin-bottom:16px; font-size:14px;">These 6 pages are critical. They cover 317 orphaned keywords with zero landing pages on the current site. Freudenberg Medical — which has 2.2x QMD's AI Share of Voice — has equivalent pages for molding, extrusion, and coatings.</p>
+
+<!-- NEW PAGE 1: CONTRACT MANUFACTURING / CDMO -->
+<div class="new-page-box">
+<div class="url-rec">/services/contract-manufacturing/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: CMO & CDMO Services — 45 keywords)</div>
+<div>
+<span class="kw-tag">cdmo <span class="vol">18,360</span></span>
+<span class="kw-tag">medical device manufacturer <span class="vol">1,800</span></span>
+<span class="kw-tag">cmo contract manufacturing <span class="vol">1,390</span></span>
+<span class="kw-tag">medical manufacturing <span class="vol">1,060</span></span>
+<span class="kw-tag">medical device contract manufacturing <span class="vol">550</span></span>
+<span class="kw-tag">medical device assembly <span class="vol">550</span></span>
+<span class="kw-tag">medical device contract manufacturer <span class="vol">530</span></span>
+<span class="kw-tag">medical contract manufacturing <span class="vol">440</span></span>
+<span class="kw-tag">medical component manufacturing <span class="vol">220</span></span>
+<span class="kw-tag">medical device outsourcing <span class="vol">130</span></span>
+<span class="kw-tag">medical device oem manufacturer <span class="vol">120</span></span>
+<span class="kw-tag">medical device cdmo <span class="vol">80</span></span>
+<span class="kw-tag">medical device cmo <span class="vol">60</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Medical Device Contract Manufacturing (CDMO) | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD is a full-service medical device CDMO. ISO 13485 certified contract manufacturing from prototyping to sterilized finished devices. OEM and private label capabilities.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Medical Device Contract Manufacturing & CDMO Services</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: What is Medical Device Contract Manufacturing?  — Definition paragraph for AI citation</li>
+    <li class="add">H2: End-to-End CDMO Services — Covers: prototyping, tooling, molding, extrusion, assembly, packaging, sterilization</li>
+    <li class="add">H2: OEM & Private Label Manufacturing — Target: medical device oem manufacturer, private label medical device manufacturer</li>
+    <li class="add">H2: Supply Chain & Capacity — Target: medical device supply chain management, high volume medical device production</li>
+    <li class="add">H2: Why Choose QMD as Your CMO — Target: how to choose medical device manufacturer, medical device outsourcing checklist</li>
+    <li class="add">Internal links TO: each capability sub-page, quality/regulatory, clinical areas</li>
+    <li class="add">Internal links FROM: homepage, capabilities hub, about page</li>
+    <li class="add">Schema: Service schema with provider (QMD Organization), area served (Global)</li>
+</ul>
+</div>
+
+<!-- NEW PAGE 2: SILICONE MOLDING -->
+<div class="new-page-box">
+<div class="url-rec">/capabilities/silicone-molding/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: Silicone & Elastomers — 53 keywords)</div>
+<div>
+<span class="kw-tag">silicone catheter <span class="vol">7,830</span></span>
+<span class="kw-tag">liquid silicone rubber <span class="vol">3,700</span></span>
+<span class="kw-tag">compression molding <span class="vol">3,060</span></span>
+<span class="kw-tag">rubber molding <span class="vol">1,690</span></span>
+<span class="kw-tag">silicone rubber molding <span class="vol">920</span></span>
+<span class="kw-tag">liquid silicone rubber molding <span class="vol">880</span></span>
+<span class="kw-tag">silicone elastomer <span class="vol">870</span></span>
+<span class="kw-tag">lsr molding <span class="vol">700</span></span>
+<span class="kw-tag">silicone injection molding <span class="vol">530</span></span>
+<span class="kw-tag">platinum cured silicone <span class="vol">500</span></span>
+<span class="kw-tag">medical grade silicone <span class="vol">450</span></span>
+<span class="kw-tag">lsr injection molding <span class="vol">430</span></span>
+<span class="kw-tag">silicone balloons <span class="vol">360</span></span>
+<span class="kw-tag">silicone overmolding <span class="vol">140</span></span>
+<span class="kw-tag">biocompatible silicone <span class="vol">120</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Medical Silicone Molding — LSR, Compression, Injection | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD specializes in medical silicone molding: liquid silicone rubber (LSR), compression molding, and injection molding. Platinum cured, biocompatible, ISO 13485.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Medical Silicone & Elastomer Molding</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: Liquid Silicone Rubber (LSR) Molding — Target: lsr molding, lsr injection molding, liquid silicone rubber molding</li>
+    <li class="add">H2: Compression Molding — Target: compression molding, rubber molding, silicone rubber molding</li>
+    <li class="add">H2: Silicone Injection Molding — Target: silicone injection molding, medical silicone molding</li>
+    <li class="add">H2: Materials — Target: medical grade silicone, platinum cured silicone, biocompatible silicone, silicone elastomer, polyisoprene rubber</li>
+    <li class="add">H2: Silicone Components — Target: silicone balloons, silicone catheter, silicone overmolding</li>
+    <li class="add">Competitor reference: Freudenberg ranks #4 for "medical molding" with /technologies/custom-molding — match their depth</li>
+</ul>
+</div>
+
+<!-- NEW PAGE 3: MEDICAL TUBING & EXTRUSION -->
+<div class="new-page-box">
+<div class="url-rec">/capabilities/medical-tubing-extrusion/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: Extrusion & Tubing — 59 keywords)</div>
+<div>
+<span class="kw-tag">pump tubing <span class="vol">1,010</span></span>
+<span class="kw-tag">co extrusion <span class="vol">950</span></span>
+<span class="kw-tag">medical tubing <span class="vol">940</span></span>
+<span class="kw-tag">tube extrusion <span class="vol">930</span></span>
+<span class="kw-tag">microbore <span class="vol">750</span></span>
+<span class="kw-tag">extruded tubing <span class="vol">720</span></span>
+<span class="kw-tag">tubing extrusion <span class="vol">680</span></span>
+<span class="kw-tag">peristaltic pump tubing <span class="vol">680</span></span>
+<span class="kw-tag">balloon tubing <span class="vol">550</span></span>
+<span class="kw-tag">medical extrusion <span class="vol">510</span></span>
+<span class="kw-tag">microbore tubing <span class="vol">210</span></span>
+<span class="kw-tag">multi lumen tubing <span class="vol">180</span></span>
+<span class="kw-tag">medical tubing manufacturer <span class="vol">180</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Medical Tubing & Extrusion — Multi-Lumen, Microbore | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD medical tubing extrusion: multi-lumen, microbore, co-extrusion, and balloon tubing. Silicone and polyurethane, tight tolerances, ISO 13485 cleanroom manufacturing.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Medical Tubing Extrusion & Custom Tubing Solutions</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: Extrusion Capabilities — Target: tube extrusion, tubing extrusion, medical extrusion, co extrusion</li>
+    <li class="add">H2: Multi-Lumen Tubing — Target: multi lumen tubing, dual lumen tubing, single lumen tubing</li>
+    <li class="add">H2: Microbore & Precision Tubing — Target: microbore, microbore tubing</li>
+    <li class="add">H2: Pump Tubing — Target: pump tubing, peristaltic pump tubing</li>
+    <li class="add">H2: Balloon Tubing — Target: balloon tubing</li>
+    <li class="add">H2: Materials & Specifications — Target: medical grade tubing, reinforced silicone tubing, biocompatible tubing</li>
+    <li class="add">Competitor reference: Freudenberg ranks #6 for "tubing extrusion" with /technologies/custom-extrusions</li>
+</ul>
+</div>
+
+<!-- NEW PAGE 4: STERILIZATION & PACKAGING -->
+<div class="new-page-box">
+<div class="url-rec">/capabilities/sterilization-packaging/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: Sterilization & Packaging — 56 keywords)</div>
+<div>
+<span class="kw-tag">medical packaging <span class="vol">1,160</span></span>
+<span class="kw-tag">gamma irradiation sterilization <span class="vol">1,000</span></span>
+<span class="kw-tag">medical device labeling <span class="vol">820</span></span>
+<span class="kw-tag">medical device packaging <span class="vol">790</span></span>
+<span class="kw-tag">tyvek pouch <span class="vol">760</span></span>
+<span class="kw-tag">cleanroom manufacturing <span class="vol">690</span></span>
+<span class="kw-tag">medical device sterilization <span class="vol">390</span></span>
+<span class="kw-tag">sterile packaging <span class="vol">360</span></span>
+<span class="kw-tag">iso class 7 cleanroom <span class="vol">210</span></span>
+<span class="kw-tag">sterilization packaging <span class="vol">190</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Medical Device Sterilization & Packaging | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD sterilization and packaging: ETO, gamma irradiation, Tyvek pouching, cleanroom assembly (ISO 7/8), medical device labeling, and shelf life validation.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Medical Device Sterilization & Packaging Services</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: Sterilization Methods — Target: gamma irradiation sterilization, eto sterilization, medical device sterilization</li>
+    <li class="add">H2: Sterile Packaging — Target: medical packaging, medical device packaging, sterile packaging, Tyvek pouch</li>
+    <li class="add">H2: Cleanroom Manufacturing — Target: cleanroom manufacturing, iso class 7 cleanroom, iso class 8 cleanroom</li>
+    <li class="add">H2: Labeling & Compliance — Target: medical device labeling, UDI</li>
+    <li class="add">H2: Validation & Testing — Target: packaging integrity testing, shelf life testing, sterilization validation</li>
+</ul>
+</div>
+
+<!-- NEW PAGE 5: PROTOTYPING & NPI -->
+<div class="new-page-box">
+<div class="url-rec">/capabilities/prototyping-npi/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: NPI & Prototyping — 62 keywords)</div>
+<div>
+<span class="kw-tag">prototype injection molding <span class="vol">810</span></span>
+<span class="kw-tag">medical device prototyping <span class="vol">480</span></span>
+<span class="kw-tag">medical device engineering <span class="vol">430</span></span>
+<span class="kw-tag">medical device prototype <span class="vol">420</span></span>
+<span class="kw-tag">medical device injection molding <span class="vol">380</span></span>
+<span class="kw-tag">medical injection molding <span class="vol">310</span></span>
+<span class="kw-tag">prototype mold <span class="vol">210</span></span>
+<span class="kw-tag">medical device design services <span class="vol">190</span></span>
+<span class="kw-tag">rapid injection molding prototyping <span class="vol">190</span></span>
+<span class="kw-tag">cleanroom injection molding <span class="vol">140</span></span>
+<span class="kw-tag">micro molding <span class="vol">140</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Medical Device Prototyping & NPI Services | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD prototyping and new product introduction: prototype injection molding, DFM, design verification, tooling, and production ramp-up for medical devices.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Medical Device Prototyping & New Product Introduction</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: Prototype Injection Molding — Target: prototype injection molding, prototype mold, rapid injection molding</li>
+    <li class="add">H2: Medical Device Engineering — Target: medical device engineering, medical device design services, DFM</li>
+    <li class="add">H2: Cleanroom Injection Molding — Target: cleanroom injection molding, micro molding</li>
+    <li class="add">H2: Design Transfer & Scale-Up — Target: medical device design transfer, pilot production, production ramp up</li>
+    <li class="add">H2: Verification & Validation — Target: medical device verification testing, design freeze</li>
+</ul>
+</div>
+
+<!-- NEW PAGE 6: ADVANCED MATERIALS & COATINGS -->
+<div class="new-page-box">
+<div class="url-rec">/capabilities/advanced-materials/</div>
+<div class="sub-heading">Target Keyword Cluster (Tab: Advanced Materials & Coatings — 42 keywords)</div>
+<div>
+<span class="kw-tag">overmolding <span class="vol">1,660</span></span>
+<span class="kw-tag">overmold <span class="vol">900</span></span>
+<span class="kw-tag">hydrophilic coating medical device <span class="vol">120</span></span>
+<span class="kw-tag">medical polymer <span class="vol">90</span></span>
+<span class="kw-tag">medical grade silicone rubber <span class="vol">70</span></span>
+<span class="kw-tag">hydrophilic catheter coating <span class="vol">50</span></span>
+<span class="kw-tag">medical grade polyurethane <span class="vol">50</span></span>
+<span class="kw-tag">antimicrobial silicone <span class="vol">50</span></span>
+<span class="kw-tag">biocompatible coating <span class="vol">40</span></span>
+</div>
+
+<div class="sub-heading">Recommended Title / Meta / H1</div>
+<div class="meta-fix">
+    <div class="label">Title Tag</div>
+    <div class="recommended">Advanced Materials & Coatings — Overmolding, Hydrophilic | QMD</div>
+</div>
+<div class="meta-fix">
+    <div class="label">Meta Description</div>
+    <div class="recommended">QMD advanced materials: overmolding, hydrophilic coatings, antimicrobial silicone, medical-grade polyurethane, and biocompatible coatings for medical devices.</div>
+</div>
+<div class="meta-fix">
+    <div class="label">H1</div>
+    <div class="recommended">Advanced Materials & Medical Device Coatings</div>
+</div>
+
+<div class="sub-heading">Content Structure</div>
+<ul class="fix-list">
+    <li class="add">H2: Overmolding — Target: overmolding, overmold, silicone overmolding</li>
+    <li class="add">H2: Hydrophilic Coatings — Target: hydrophilic coating medical device, hydrophilic catheter coating</li>
+    <li class="add">H2: Medical Polymers & Elastomers — Target: medical polymer, medical grade silicone rubber, medical grade polyurethane</li>
+    <li class="add">H2: Antimicrobial & Biocompatible Solutions — Target: antimicrobial silicone, biocompatible coating</li>
+    <li class="add">Competitor reference: Freudenberg ranks #19 for "medical coatings" with /technologies/coatings</li>
+</ul>
+</div>
+
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: SITEWIDE / INFRASTRUCTURE FIXES                    -->
+<!-- ============================================================ -->
+
+<div class="section open" id="sec-infra">
+    <div class="section-header" onclick="toggleSection('sec-infra')">
+        <h2>Section 3 — Sitewide / Infrastructure Fixes</h2>
+        <div><span class="badge critical">Pre-Redesign</span> <span class="toggle">▼</span></div>
+    </div>
+    <div class="section-body">
+
+<div class="sub-heading">Meta Tags & Titles</div>
+<ul class="fix-list">
+    <li class="missing">ZERO pages have meta descriptions — every page returns (none). Add unique, keyword-rich meta descriptions to all 29 pages before any other work</li>
+    <li class="fix">All title tags follow the pattern "PageName - QMD: Silicone & Polyisoprene Elastomer Manufacturer" — this wastes title tag space on a repeated brand suffix. Rewrite every title with the primary keyword first, brand last, pipe separator</li>
+    <li class="fix">Homepage title says "Homepage" — never use "Homepage" as a title prefix</li>
+</ul>
+
+<div class="sub-heading">Heading Hierarchy</div>
+<ul class="fix-list">
+    <li class="fix">Products Archive page (/product/) has no H1 — "Products Archive" appears as a page label, not a heading</li>
+    <li class="fix">Locations page has no H1</li>
+    <li class="fix">Some pages have H2s that are purely decorative ("How can we help?") — these waste heading slots that should contain target keywords</li>
+</ul>
+
+<div class="sub-heading">Schema / Structured Data</div>
+<ul class="fix-list">
+    <li class="missing">No Organization schema on any page — add to homepage with name, url, logo, address, ISO certifications, sameAs links</li>
+    <li class="missing">No Product schema on any product page — add to all 15 product sub-pages</li>
+    <li class="missing">No BreadcrumbList schema — add to every page (Home > Category > Page)</li>
+    <li class="missing">No FAQPage schema — add FAQ sections to capability and product pages</li>
+    <li class="add">Add WebSite schema to homepage</li>
+    <li class="add">Add LocalBusiness schema to Locations page (multiple locations)</li>
+</ul>
+
+<div class="sub-heading">Internal Linking</div>
+<ul class="fix-list">
+    <li class="fix">Homepage does not link to any capability sub-pages (they don't exist yet — create them, then link)</li>
+    <li class="fix">Product pages do not cross-link to related products or Clinical Areas sections</li>
+    <li class="fix">No contextual internal links in body copy — all navigation is via the top menu only</li>
+    <li class="add">Build hub-and-spoke architecture: /capabilities/ as hub → 6 capability sub-pages as spokes</li>
+    <li class="add">Link each Clinical Areas section to relevant product pages</li>
+    <li class="add">Link from every product page to the relevant capability page (e.g., urinary catheters → silicone molding)</li>
+    <li class="add">Add "Related Products" sections on each product sub-page</li>
+    <li class="add">Add footer links to key capability pages</li>
+</ul>
+
+<div class="sub-heading">URL Structure & Navigation</div>
+<ul class="fix-list">
+    <li class="fix">/coming-soon/ page is in the sitemap — remove if not needed or add noindex</li>
+    <li class="add">Add new capability pages to main navigation under "Capabilities" dropdown</li>
+    <li class="add">Add /services/contract-manufacturing/ to main navigation</li>
+    <li class="fix">Product Archive page (/product/) serves as a default list — consider redirecting to /capabilities/ or adding proper content</li>
+</ul>
+
+<div class="sub-heading">XML Sitemap</div>
+<ul class="fix-list">
+    <li class="fix">Sitemap index has 4 sub-sitemaps but doesn't include the new capability pages (add after creation)</li>
+    <li class="fix">Ensure all new pages are added to page-sitemap.xml immediately after creation</li>
+    <li class="add">Add lastmod dates that reflect actual content updates</li>
+</ul>
+
+<div class="sub-heading">Content Architecture for GEO (AI Visibility)</div>
+<ul class="fix-list">
+    <li class="fix">Current AI Share of Voice: 10.7% vs Spectrum Plastics 65.7%, Freudenberg 23.6%</li>
+    <li class="fix">Zero presence in ChatGPT, Perplexity, and Gemini — all competitors also at zero, creating first-mover opportunity</li>
+    <li class="add">Add definition paragraphs at the top of each capability page (e.g., "Medical silicone molding is...") — these get cited by AI Overviews</li>
+    <li class="add">Add comparison tables (e.g., LSR vs compression vs transfer molding) — AI models prefer structured, citable data</li>
+    <li class="add">Add FAQ sections with clear Q&A format on all capability and product pages — directly targets PAA and AI citation</li>
+    <li class="add">Ensure each page has a clear, factual introductory paragraph that could be extracted as an AI snippet</li>
+    <li class="add">Add specification lists and data tables — AI Overviews frequently cite structured technical data</li>
+</ul>
+
+<div class="sub-heading">Migration / Redesign Checklist</div>
+<ul class="fix-list">
+    <li class="fix">Before replacing the current design: create 301 redirect map for ALL existing URLs</li>
+    <li class="fix">Preserve all current URL paths — any URL change requires a 301 redirect</li>
+    <li class="fix">The TSC Foley page ranks #1 in AI Overview — protect this URL above all others</li>
+    <li class="fix">Rapid Infusion Catheter page also ranks #1 in AI Overview — protect this URL</li>
+    <li class="add">Implement canonical tags on every page (currently missing)</li>
+    <li class="add">Ensure robots.txt allows crawling of all new capability pages</li>
+    <li class="add">Set up Google Search Console if not already configured</li>
+    <li class="add">Submit updated sitemap after all new pages are live</li>
+</ul>
+
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: PRIORITY ORDER                                     -->
+<!-- ============================================================ -->
+
+<div class="section open" id="sec-priority">
+    <div class="section-header" onclick="toggleSection('sec-priority')">
+        <h2>Section 4 — Priority Order</h2>
+        <div><span class="badge">Implementation Roadmap</span> <span class="toggle">▼</span></div>
+    </div>
+    <div class="section-body">
+
+<table class="priority-table">
+<thead>
+<tr><th>Priority</th><th>Action</th><th>Target Keywords (Volume)</th><th>Impact</th></tr>
+</thead>
+<tbody>
+
+<tr><td class="priority-high">P0 — Immediate</td><td>Add meta descriptions to all 29 existing pages</td><td>All — currently 0/29 pages have descriptions</td><td>Quick win: improves CTR across all rankings</td></tr>
+
+<tr><td class="priority-high">P0 — Immediate</td><td>Rewrite all 29 title tags with primary keywords</td><td>All — currently using generic brand suffix pattern</td><td>Direct ranking factor improvement</td></tr>
+
+<tr><td class="priority-high">P0 — Immediate</td><td>Create /services/contract-manufacturing/ page</td><td>cdmo (18,360), medical device manufacturer (1,800), cmo contract manufacturing (1,390) — 45 kw total</td><td>Highest-volume keyword cluster has ZERO landing page</td></tr>
+
+<tr><td class="priority-high">P0 — Immediate</td><td>Rewrite homepage H1, add CMO/CDMO messaging</td><td>cdmo, medical device contract manufacturer, medical manufacturing</td><td>Homepage currently misses core business terms</td></tr>
+
+<tr><td class="priority-high">P0 — Immediate</td><td>Add Organization + WebSite schema to homepage</td><td>—</td><td>Foundation for all structured data</td></tr>
+
+<tr><td class="priority-high">P1 — Week 2-3</td><td>Create /capabilities/silicone-molding/ page</td><td>silicone catheter (7,830), liquid silicone rubber (3,700), compression molding (3,060) — 53 kw</td><td>2nd highest-volume cluster, competitor already ranks</td></tr>
+
+<tr><td class="priority-high">P1 — Week 2-3</td><td>Create /capabilities/medical-tubing-extrusion/ page</td><td>pump tubing (1,010), co extrusion (950), medical tubing (940) — 59 kw</td><td>Freudenberg ranks #6 for tubing extrusion with equivalent page</td></tr>
+
+<tr><td class="priority-high">P1 — Week 2-3</td><td>Create /capabilities/sterilization-packaging/ page</td><td>medical packaging (1,160), gamma irradiation (1,000) — 56 kw</td><td>Core service with zero web presence</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Optimize TSC Foley page (protect #1 AI ranking)</td><td>temp sensing foley cluster (~1,500 combined)</td><td>Protect existing #1 position, add FAQ for wider capture</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Optimize Vessel Loops page (move from #22 to top 10)</td><td>vessel loop (2,620)</td><td>Already #22, achievable with content expansion</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Optimize Urinary Catheters page</td><td>silicone foley catheter (630), 3 way catheter (720), hydrophilic catheter (680)</td><td>High-volume product keywords with existing page</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Expand Quality & Regulatory page content</td><td>50 regulatory keywords, top: med device classification (1,200), post market surveillance (1,140)</td><td>Page exists but content is thin vs. keyword targets</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Create /capabilities/prototyping-npi/ page</td><td>prototype injection molding (810), med device prototyping (480) — 62 kw</td><td>Important capability, existing Capabilities page only mentions as bullet</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Add Product schema to all 15 product pages</td><td>—</td><td>Enables rich results in search</td></tr>
+
+<tr><td class="priority-medium">P2 — Month 2</td><td>Add BreadcrumbList schema to all pages</td><td>—</td><td>Improves site hierarchy signals</td></tr>
+
+<tr><td class="priority-low">P3 — Month 3</td><td>Create /capabilities/advanced-materials/ page</td><td>overmolding (1,660), overmold (900) — 42 kw</td><td>Lower volume cluster, but competitor Freudenberg has /coatings page</td></tr>
+
+<tr><td class="priority-low">P3 — Month 3</td><td>Optimize all remaining product sub-pages</td><td>PTCA, PTA, Aspiration, CVC, Arterial, Wound Drainage, Enteral Feeding</td><td>Title/meta/content fixes for product pages</td></tr>
+
+<tr><td class="priority-low">P3 — Month 3</td><td>Build hub-and-spoke internal linking architecture</td><td>—</td><td>Connect capabilities hub to 6 sub-pages, cross-link products</td></tr>
+
+<tr><td class="priority-low">P3 — Month 3</td><td>Add FAQ sections + FAQPage schema to key pages</td><td>—</td><td>Targets PAA and AI citation opportunities</td></tr>
+
+<tr><td class="priority-low">P3 — Month 3</td><td>Optimize About + Locations pages</td><td>medical device manufacturer israel, LocalBusiness schema</td><td>Supporting pages, lower direct impact</td></tr>
+
+</tbody>
+</table>
+
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="report-footer">
+    NC Digital | QMD SEO/GEO Improvement Report | March 2026<br>
+    Data sources: SE Ranking Data API, SE Ranking AI Overview, site crawl analysis<br>
+    573 keywords analyzed across 11 client-selected categories | 29 existing pages + 6 new pages recommended
+</div>
+
+</div><!-- /.container -->
+
+<script>
+function toggleSection(id) {
+    document.getElementById(id).classList.toggle('open');
+}
+
+// AI Share of Voice Chart
+const sovCtx = document.getElementById('sovChart').getContext('2d');
+new Chart(sovCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Spectrum Plastics', 'Freudenberg Medical', 'QMD', 'Teleflex'],
+        datasets: [{
+            label: 'Link Presence',
+            data: [174, 45, 13, 0],
+            backgroundColor: 'rgba(56, 189, 248, 0.7)',
+            borderRadius: 4
+        }, {
+            label: 'Brand Mentions',
+            data: [57, 28, 16, 0],
+            backgroundColor: 'rgba(74, 222, 128, 0.7)',
+            borderRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { labels: { color: '#94a3b8', font: { size: 11 } } }
+        },
+        scales: {
+            x: { ticks: { color: '#64748b', font: { size: 11 } }, grid: { color: '#1e293b' } },
+            y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+        }
+    }
+});
+
+// Keyword Volume by Category Chart
+const kwCtx = document.getElementById('kwChart').getContext('2d');
+new Chart(kwCtx, {
+    type: 'doughnut',
+    data: {
+        labels: [
+            'Catheter Design (26,990)',
+            'CMO/CDMO (18,360)',
+            'Silicone & Elastomers (7,830)',
+            'Clinical Apps (2,620)',
+            'Extrusion & Tubing (1,010)',
+            'Advanced Materials (1,660)',
+            'Sterilization & Packaging (1,160)',
+            'Regulatory & Quality (1,200)',
+            'NPI & Prototyping (810)',
+            'Buyer Intent (730)',
+            'Single-Use (320)'
+        ],
+        datasets: [{
+            data: [26990, 18360, 7830, 2620, 1010, 1660, 1160, 1200, 810, 730, 320],
+            backgroundColor: [
+                '#38bdf8', '#818cf8', '#4ade80', '#fbbf24', '#f87171',
+                '#a78bfa', '#2dd4bf', '#fb923c', '#e879f9', '#94a3b8', '#64748b'
+            ],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: { color: '#94a3b8', font: { size: 10 }, padding: 8, boxWidth: 12 }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>
