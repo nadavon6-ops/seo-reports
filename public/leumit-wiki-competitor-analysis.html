@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>ניתוח מבנה ויקיפדיה — השוואת קופות חולים מתחרות | לאומית</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:#0f172a;color:#e2e8f0;line-height:1.7;direction:rtl}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px}
+
+/* Header */
+.header{text-align:center;padding:48px 0 32px;border-bottom:2px solid #0891b2}
+.header h1{font-size:2.2rem;font-weight:800;color:#fff;margin-bottom:8px}
+.header .subtitle{font-size:1.15rem;color:#0891b2;font-weight:500;margin-bottom:4px}
+.header .sub2{font-size:0.95rem;color:#94a3b8}
+
+/* Section headers */
+.section{margin-top:48px}
+.section-num{display:inline-block;background:#0891b2;color:#fff;width:32px;height:32px;border-radius:50%;text-align:center;line-height:32px;font-weight:700;font-size:0.9rem;margin-left:10px;vertical-align:middle}
+.section-title{font-size:1.4rem;font-weight:700;color:#fff;display:inline;vertical-align:middle}
+.section-line{height:1px;background:#1e293b;margin-top:12px;margin-bottom:24px}
+
+/* HMO cards */
+.hmo-card{background:#1e293b;border-radius:14px;padding:28px;margin-bottom:24px;border-right:5px solid #0891b2}
+.hmo-card.clalit{border-right-color:#22c55e}
+.hmo-card.maccabi{border-right-color:#3b82f6}
+.hmo-card.meuhedet{border-right-color:#f59e0b}
+.hmo-card h3{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:6px}
+.hmo-card .hmo-meta{color:#94a3b8;font-size:0.85rem;margin-bottom:16px}
+
+/* Stats row */
+.mini-stats{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.mini-stat{background:#0f172a;border-radius:8px;padding:10px 16px;text-align:center;flex:1;min-width:100px}
+.mini-stat .n{font-size:1.4rem;font-weight:800;color:#0891b2}
+.mini-stat .l{font-size:0.7rem;color:#64748b;margin-top:2px}
+.mini-stat.clalit .n{color:#22c55e}
+.mini-stat.maccabi .n{color:#3b82f6}
+.mini-stat.meuhedet .n{color:#f59e0b}
+
+/* Structure list */
+.struct-list{list-style:none;padding:0}
+.struct-list li{padding:8px 16px;margin:4px 0;border-radius:6px;font-size:0.9rem;color:#cbd5e1;position:relative}
+.struct-list li.h2{background:#0f172a;border-right:3px solid #0891b2;font-weight:600;color:#fff}
+.struct-list li.h3{margin-right:28px;background:rgba(15,23,42,0.5);border-right:2px solid #475569;font-size:0.85rem}
+.struct-list li.sup{background:rgba(15,23,42,0.3);border-right:2px solid #334155;color:#64748b}
+.struct-list li.clalit.h2{border-right-color:#22c55e}
+.struct-list li.maccabi.h2{border-right-color:#3b82f6}
+.struct-list li.meuhedet.h2{border-right-color:#f59e0b}
+
+/* Comparison table */
+.comp-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.9rem}
+.comp-table th{background:#1e293b;color:#fff;padding:12px 16px;text-align:right;font-weight:600;border-bottom:2px solid #0891b2}
+.comp-table td{padding:10px 16px;border-bottom:1px solid #1e293b;color:#cbd5e1}
+.comp-table tr:hover td{background:#1e293b}
+.comp-table .check{color:#22c55e;font-weight:700;text-align:center;font-size:1.1rem}
+.comp-table .cross{color:#475569;text-align:center;font-size:1.1rem}
+.comp-table .section-label{font-weight:600;color:#fff}
+.comp-table .cat-row td{background:#0f172a;font-weight:600;color:#0891b2;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.5px}
+
+/* Common elements cards */
+.common-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:20px 0}
+.common-card{background:#1e293b;border-radius:10px;padding:20px;border-top:3px solid #22c55e}
+.common-card h4{color:#fff;font-size:0.95rem;font-weight:600;margin-bottom:8px}
+.common-card p{color:#94a3b8;font-size:0.85rem}
+.common-card.partial{border-top-color:#f59e0b}
+.common-card.unique{border-top-color:#ef4444}
+
+/* Conclusion box */
+.conclusion-box{background:linear-gradient(135deg,#1e293b 0%,#162032 100%);border-radius:14px;padding:28px;margin:24px 0;border:1px solid #0891b2}
+.conclusion-box h3{color:#0891b2;font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.conclusion-list{list-style:none;padding:0}
+.conclusion-list li{padding:10px 0;border-bottom:1px solid #1e293b;color:#e2e8f0;font-size:0.92rem;padding-right:20px;position:relative}
+.conclusion-list li:last-child{border-bottom:none}
+.conclusion-list li::before{content:"→";color:#0891b2;position:absolute;right:0;font-weight:700}
+
+/* Blueprint */
+.blueprint{background:#0f172a;border:2px solid #0891b2;border-radius:14px;padding:28px;margin:24px 0}
+.blueprint h3{color:#0891b2;font-size:1.1rem;font-weight:700;margin-bottom:16px;text-align:center}
+.bp-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #1e293b}
+.bp-item:last-child{border-bottom:none}
+.bp-num{background:#0891b2;color:#fff;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;margin-top:2px}
+.bp-content .bp-title{color:#fff;font-weight:600;font-size:0.95rem}
+.bp-content .bp-desc{color:#64748b;font-size:0.8rem;margin-top:2px}
+.bp-content .bp-source{color:#0891b2;font-size:0.75rem;margin-top:2px}
+
+/* Links row */
+.links-row{display:flex;gap:12px;margin:24px 0;flex-wrap:wrap;justify-content:center}
+.report-link{display:inline-block;padding:8px 20px;border:1px solid #334155;border-radius:8px;color:#94a3b8;text-decoration:none;font-size:0.85rem;transition:all 0.2s}
+.report-link:hover{border-color:#0891b2;color:#0891b2}
+.report-link.clalit:hover{border-color:#22c55e;color:#22c55e}
+.report-link.maccabi:hover{border-color:#3b82f6;color:#3b82f6}
+.report-link.meuhedet:hover{border-color:#f59e0b;color:#f59e0b}
+
+.footer{text-align:center;padding:40px 0 24px;margin-top:48px;border-top:1px solid #1e293b;color:#64748b;font-size:0.8rem}
+
+@media(max-width:768px){
+.header h1{font-size:1.6rem}
+.comp-table{font-size:0.8rem}
+.comp-table th,.comp-table td{padding:8px 10px}
+.common-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+<h1>ניתוח מבנה ויקיפדיה — קופות חולים מתחרות</h1>
+<div class="subtitle">כללית | מכבי | מאוחדת</div>
+<div class="sub2">ניתוח ארכיטקטורת תוכן והשוואת מבנים לצורך בניית ערך אופטימלי ללאומית</div>
+</div>
+
+<div class="links-row">
+<a class="report-link clalit" href="leumit-wiki-clalit-structure.html">דוח כללית</a>
+<a class="report-link maccabi" href="leumit-wiki-maccabi-structure.html">דוח מכבי</a>
+<a class="report-link meuhedet" href="leumit-wiki-meuhedet-structure.html">דוח מאוחדת</a>
+</div>
+
+<!-- SECTION 1: CLALIT -->
+<div class="section">
+<span class="section-num">1</span>
+<span class="section-title">כללית שירותי בריאות</span>
+<div class="section-line"></div>
+
+<div class="hmo-card clalit">
+<h3>כללית שירותי בריאות</h3>
+<div class="hmo-meta">הערך המקיף ביותר | הקמה: 1911 | 50%+ מהאוכלוסייה | 48,000 עובדים</div>
+<div class="mini-stats">
+<div class="mini-stat clalit"><div class="n">8</div><div class="l">סעיפי תוכן</div></div>
+<div class="mini-stat clalit"><div class="n">1</div><div class="l">H3</div></div>
+<div class="mini-stat clalit"><div class="n">29</div><div class="l">הפניות</div></div>
+</div>
+<ul class="struct-list">
+<li class="h2 clalit">היסטוריה</li>
+<li class="h2 clalit">בתי החולים של שירותי בריאות כללית</li>
+<li class="h2 clalit">מכון כללית למחקר</li>
+<li class="h2 clalit">כללית חדשנות</li>
+<li class="h3">תוכניות לעידוד יזמות פנים ארגונית</li>
+<li class="h2 clalit">חברות בנות של כללית</li>
+<li class="h2 clalit">מחשוב השירות לציבור</li>
+<li class="h2 clalit">מנכ"לי שירותי בריאות כללית</li>
+<li class="h2 clalit">התפתחות סמליל הארגון</li>
+<li class="sup">לקריאה נוספת | קישורים חיצוניים | הערות שוליים</li>
+</ul>
+</div>
+</div>
+
+<!-- SECTION 2: MACCABI -->
+<div class="section">
+<span class="section-num">2</span>
+<span class="section-title">מכבי שירותי בריאות</span>
+<div class="section-line"></div>
+
+<div class="hmo-card maccabi">
+<h3>מכבי שירותי בריאות</h3>
+<div class="hmo-meta">ערך בינוני | הקמה: 1940 | 2.37 מיליון חברים | דגש על ממשל ארגוני</div>
+<div class="mini-stats">
+<div class="mini-stat maccabi"><div class="n">3</div><div class="l">סעיפי תוכן</div></div>
+<div class="mini-stat maccabi"><div class="n">3</div><div class="l">H3</div></div>
+<div class="mini-stat maccabi"><div class="n">25</div><div class="l">הפניות</div></div>
+</div>
+<ul class="struct-list">
+<li class="h2 maccabi">היסטוריה</li>
+<li class="h3">שנות ה-90</li>
+<li class="h3">סמל הארגון</li>
+<li class="h2 maccabi">ארגון הקופה ומוסדותיה</li>
+<li class="h2 maccabi">פעילויות ושירותי מכבי</li>
+<li class="h3">מכון קאהן-סגול-מכבי למחקר ולחדשנות (KSM)</li>
+<li class="sup">קישורים חיצוניים | הערות שוליים</li>
+</ul>
+</div>
+</div>
+
+<!-- SECTION 3: MEUHEDET -->
+<div class="section">
+<span class="section-num">3</span>
+<span class="section-title">קופת חולים מאוחדת</span>
+<div class="section-line"></div>
+
+<div class="hmo-card meuhedet">
+<h3>קופת חולים מאוחדת</h3>
+<div class="hmo-meta">ערך קצר | הקמה: 1931/1974 | מעל מיליון לקוחות | 11,000 עובדים</div>
+<div class="mini-stats">
+<div class="mini-stat meuhedet"><div class="n">4</div><div class="l">סעיפי תוכן</div></div>
+<div class="mini-stat meuhedet"><div class="n">0</div><div class="l">H3</div></div>
+<div class="mini-stat meuhedet"><div class="n">29</div><div class="l">הפניות</div></div>
+</div>
+<ul class="struct-list">
+<li class="h2 meuhedet">היסטוריה</li>
+<li class="h2 meuhedet">פעילות ושירותים</li>
+<li class="h2 meuhedet">סמל הקופה</li>
+<li class="h2 meuhedet">פרשיות שחיתות</li>
+<li class="sup">לקריאה נוספת | קישורים חיצוניים | הערות שוליים</li>
+</ul>
+</div>
+</div>
+
+<!-- SECTION 4: COMPARISON -->
+<div class="section">
+<span class="section-num">4</span>
+<span class="section-title">השוואה צולבת</span>
+<div class="section-line"></div>
+
+<table class="comp-table">
+<thead>
+<tr>
+<th>סעיף</th>
+<th style="text-align:center;color:#22c55e">כללית</th>
+<th style="text-align:center;color:#3b82f6">מכבי</th>
+<th style="text-align:center;color:#f59e0b">מאוחדת</th>
+</tr>
+</thead>
+<tbody>
+<tr class="cat-row"><td colspan="4">סעיפי ליבה (משותפים לכולם)</td></tr>
+<tr><td class="section-label">פתיח רב-פסקאות + Infobox</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+<tr><td class="section-label">היסטוריה</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+<tr><td class="section-label">שירותים / פעילויות</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+<tr><td class="section-label">סמל / לוגו</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+<tr><td class="section-label">קישורים חיצוניים</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+<tr><td class="section-label">הערות שוליים</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+
+<tr class="cat-row"><td colspan="4">סעיפים חלקיים (בחלק מהערכים)</td></tr>
+<tr><td class="section-label">מכון מחקר</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">לקריאה נוספת</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="check">&#10003;</td></tr>
+
+<tr class="cat-row"><td colspan="4">סעיפים ייחודיים (בערך אחד בלבד)</td></tr>
+<tr><td class="section-label">בתי חולים (רשימה מפורטת)</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">חדשנות</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">חברות בנות</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">שירותים דיגיטליים</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">רשימת מנכ"לים</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">מבנה ארגוני / ממשל</td><td class="cross">&#10007;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+<tr><td class="section-label">פרשיות שחיתות</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="check">&#10003;</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- SECTION 5: COMMON ELEMENTS -->
+<div class="section">
+<span class="section-num">5</span>
+<span class="section-title">אלמנטים משותפים בכל שלושת הערכים</span>
+<div class="section-line"></div>
+
+<div class="common-grid">
+<div class="common-card">
+<h4>פתיח (Lead) מובנה</h4>
+<p>כל שלושת הערכים פותחים בפתיח רב-פסקאות הכולל: שם, תאריך הקמה, גודל (חברים/עובדים), מיקום מטה, ומעמד משפטי. בנוסף תיבת מידע (Infobox) עם נתוני מפתח.</p>
+</div>
+<div class="common-card">
+<h4>היסטוריה</h4>
+<p>סעיף ראשון בכל שלושת הערכים. מכסה את ההקמה, אבני דרך עיקריות, מיזוגים ושינויים ארגוניים לאורך השנים. זהו תמיד הסעיף הארוך ביותר.</p>
+</div>
+<div class="common-card">
+<h4>שירותים ופעילויות</h4>
+<p>כל שלושת הערכים מפרטים את השירותים המוצעים: בתי חולים, מרפאות, ביטוח משלים, ושירותים ייחודיים. שמות וסגנון הכותרת משתנים אך התוכן דומה.</p>
+</div>
+<div class="common-card">
+<h4>סמל הארגון / לוגו</h4>
+<p>כל שלושת הערכים כוללים סעיף על התפתחות הלוגו לאורך השנים. המיקום משתנה: בכללית ומאוחדת כסעיף עצמאי, במכבי כתת-סעיף של היסטוריה.</p>
+</div>
+<div class="common-card">
+<h4>קישורים חיצוניים</h4>
+<p>אתר רשמי + פרופילי מדיה חברתית (פייסבוק, X, אינסטגרם, טיקטוק, לינקדאין, YouTube). מופיע בכל שלושת הערכים ללא יוצא מן הכלל.</p>
+</div>
+<div class="common-card">
+<h4>הערות שוליים (25-29)</h4>
+<p>כל שלושת הערכים נתמכים ב-25 עד 29 הפניות ממוספרות. זהו סטנדרט ויקיפדיה שמעיד על רמת מיקור עקבית.</p>
+</div>
+</div>
+
+<div class="common-grid">
+<div class="common-card partial">
+<h4>מכון מחקר (2 מתוך 3)</h4>
+<p>כללית ומכבי מפרטים מכוני מחקר ייעודיים. מכבי כתת-סעיף של שירותים, כללית כסעיף עצמאי. מאוחדת לא כוללת סעיף מחקר.</p>
+</div>
+<div class="common-card partial">
+<h4>לקריאה נוספת (2 מתוך 3)</h4>
+<p>כללית ומאוחדת כוללות ביבליוגרפיה נוספת. מכבי לא כוללת סעיף זה.</p>
+</div>
+</div>
+</div>
+
+<!-- SECTION 6: CONCLUSIONS -->
+<div class="section">
+<span class="section-num">6</span>
+<span class="section-title">מסקנות מבניות לבניית ערך לאומית</span>
+<div class="section-line"></div>
+
+<div class="conclusion-box">
+<h3>דפוסים מבניים עיקריים</h3>
+<ul class="conclusion-list">
+<li>הפתיח הוא הנכס הקריטי ביותר: הוא מופיע ב-Google Knowledge Panel וב-AI Overviews. כל שלושת הערכים משקיעים בו משמעותית</li>
+<li>היסטוריה תמיד ראשון: כל שלושת הערכים פותחים בסעיף היסטוריה לאחר הפתיח. זהו דפוס סטנדרטי בוויקיפדיה</li>
+<li>שירותים הוא סעיף הליבה השני: מפרט את מה שהקופה מציעה בפועל. כללית מפרידה לסעיפים ייעודיים, מכבי ומאוחדת מרכזות בסעיף אחד</li>
+<li>עומק = אמינות: לכללית 8 סעיפי תוכן ולמאוחדת 4. ערכים מקיפים יותר נתפסים כאמינים ומקצועיים יותר</li>
+<li>סעיף הלוגו הוא סטנדרט: כל שלוש כוללות אותו. קל ליצור, מבוסס עובדות, ומוסיף עומק ויזואלי</li>
+<li>הפניות (25-29) הן הסטנדרט: פחות מ-25 הפניות ייתפס כערך חלש. יש להכין 25+ מקורות אמינים</li>
+</ul>
+</div>
+
+<div class="blueprint">
+<h3>תבנית מבנית מומלצת לערך לאומית</h3>
+
+<div class="bp-item">
+<div class="bp-num">0</div>
+<div class="bp-content">
+<div class="bp-title">פתיח (Lead) — 3-4 פסקאות + Infobox</div>
+<div class="bp-desc">שם מלא, שנת הקמה (1933), גודל (מעל מיליון חברים), מספר עובדים, מיקום מטה, מנכ"ל נוכחי, מסגרת חוקית</div>
+<div class="bp-source">מופיע בכל 3 הערכים</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">1</div>
+<div class="bp-content">
+<div class="bp-title">היסטוריה</div>
+<div class="bp-desc">הקמה ב-1933, שינויי שם וארגון, חוק ביטוח בריאות ממלכתי 1995, אבני דרך עד היום</div>
+<div class="bp-source">מופיע בכל 3 הערכים כסעיף ראשון</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">2</div>
+<div class="bp-content">
+<div class="bp-title">שירותים ופעילויות</div>
+<div class="bp-desc">בתי חולים, מרפאות, ביטוח משלים, שירותים ייחודיים, פריסה גיאוגרפית</div>
+<div class="bp-source">מופיע בכל 3 הערכים</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">3</div>
+<div class="bp-content">
+<div class="bp-title">מכון מחקר / פעילות מחקרית</div>
+<div class="bp-desc">פרויקטי מחקר, שיתופי פעולה, פרסומים אקדמיים</div>
+<div class="bp-source">מופיע בכללית ומכבי (2 מתוך 3)</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">4</div>
+<div class="bp-content">
+<div class="bp-title">חדשנות ושירותים דיגיטליים</div>
+<div class="bp-desc">אפליקציות, טלמדיצינה, טכנולוגיה רפואית, פיתוחים דיגיטליים</div>
+<div class="bp-source">מופיע בכללית בלבד — יתרון תחרותי אם יתווסף ללאומית</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">5</div>
+<div class="bp-content">
+<div class="bp-title">מבנה ארגוני</div>
+<div class="bp-desc">הנהלה, מועצה, גופי פיקוח</div>
+<div class="bp-source">מופיע במכבי בלבד — מוסיף שקיפות ואמינות</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">6</div>
+<div class="bp-content">
+<div class="bp-title">רשימת מנכ"לים</div>
+<div class="bp-desc">טבלה כרונולוגית מהקמה ועד היום</div>
+<div class="bp-source">מופיע בכללית בלבד — קל ליצור, מוסיף עומק</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">7</div>
+<div class="bp-content">
+<div class="bp-title">התפתחות סמליל הארגון</div>
+<div class="bp-desc">שינויי לוגו לאורך השנים, עיצוב נוכחי</div>
+<div class="bp-source">מופיע בכל 3 הערכים</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">8</div>
+<div class="bp-content">
+<div class="bp-title">לקריאה נוספת</div>
+<div class="bp-desc">ספרים ומאמרים אקדמיים על תולדות לאומית</div>
+<div class="bp-source">מופיע בכללית ומאוחדת (2 מתוך 3)</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">9</div>
+<div class="bp-content">
+<div class="bp-title">קישורים חיצוניים</div>
+<div class="bp-desc">אתר רשמי + כל פרופילי המדיה החברתית</div>
+<div class="bp-source">מופיע בכל 3 הערכים</div>
+</div>
+</div>
+
+<div class="bp-item">
+<div class="bp-num">10</div>
+<div class="bp-content">
+<div class="bp-title">הערות שוליים</div>
+<div class="bp-desc">יעד: 25+ הפניות ממקורות אמינים ומגוונים</div>
+<div class="bp-source">סטנדרט: 25-29 הפניות בכל 3 הערכים</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="footer">
+NC Digital — ניתוח מבנה ויקיפדיה: השוואת קופות חולים מתחרות — אפריל 2026
+</div>
+
+</div>
+</body>
+</html>
