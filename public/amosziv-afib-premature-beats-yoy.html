@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amos Ziv — ניתוח ירידה בביצועים: פרפור פרוזדורים + פעימות מוקדמות</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Heebo',system-ui,sans-serif;background:#0a0e1a;color:#e5e7eb;line-height:1.6;direction:rtl;text-align:right}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 24px}
+header{text-align:center;padding:40px 0 32px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.brand{font-size:13px;color:#06b6d4;letter-spacing:3px;font-weight:700;text-transform:uppercase;margin-bottom:12px}
+h1{font-size:34px;font-weight:800;line-height:1.3;margin-bottom:8px}
+.sub{color:#94a3b8;font-size:15px}
+.meta-line{margin-top:14px;font-size:13px;color:#64748b}
+
+h2{font-size:22px;font-weight:700;margin:44px 0 14px;padding-bottom:10px;border-bottom:2px solid #06b6d4;color:#f1f5f9}
+h3{font-size:17px;font-weight:600;margin:22px 0 10px;color:#cbd5e1}
+
+.verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px}
+.verdict{background:linear-gradient(135deg,rgba(8,145,178,0.08),rgba(59,130,246,0.04));border:1px solid rgba(8,145,178,0.25);border-radius:14px;padding:22px}
+.verdict .topic{font-size:12px;color:#06b6d4;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+.verdict .label{font-size:24px;font-weight:800;margin:6px 0 14px;color:#f1f5f9}
+.verdict .row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-top:1px solid rgba(255,255,255,0.05)}
+.verdict .row:first-of-type{border-top:none}
+.verdict .row .k{color:#94a3b8}
+.verdict .row .v{font-weight:600}
+.verdict .row .v.up{color:#22c55e}
+.verdict .row .v.down{color:#f97316}
+.verdict .row .v.neu{color:#cbd5e1}
+
+.bottom-line{background:rgba(8,145,178,0.08);border-right:3px solid #06b6d4;padding:14px 18px;border-radius:8px;margin-top:14px;font-size:14.5px;color:#cbd5e1}
+
+table{width:100%;border-collapse:separate;border-spacing:0;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;overflow:hidden;font-size:13.5px;margin-top:10px}
+thead th{background:rgba(8,145,178,0.10);color:#cbd5e1;font-weight:600;padding:11px 12px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.08);font-size:12.5px}
+tbody td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,0.02)}
+.kw{font-weight:600;color:#f1f5f9;direction:rtl;unicode-bidi:isolate}
+.page-cell{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;color:#cbd5e1;direction:ltr;unicode-bidi:bidi-override;display:block}
+.up{color:#22c55e;font-weight:600}
+.down{color:#f97316;font-weight:600}
+.neu{color:#94a3b8}
+.num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:bidi-override;display:inline-block}
+
+.pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px}
+.pill-up{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.pill-down{background:rgba(249,115,22,0.12);color:#f97316;border:1px solid rgba(249,115,22,0.25)}
+.pill-neu{background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.25)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
+.topic-header{font-size:18px;font-weight:700;color:#06b6d4;margin-bottom:10px;margin-top:20px}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0 6px}
+.kpi{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px}
+.kpi-label{font-size:11.5px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+.kpi-value{font-size:21px;font-weight:700;color:#f1f5f9}
+.kpi-delta{font-size:12.5px;margin-top:4px;font-weight:600}
+
+.conclusion{background:linear-gradient(135deg,rgba(8,145,178,0.08),rgba(59,130,246,0.04));border:1px solid rgba(8,145,178,0.3);border-radius:14px;padding:26px;margin-top:20px}
+.conclusion h3{margin-top:0;color:#06b6d4;font-size:19px}
+.conclusion ul{margin:10px 0 0 0;padding-right:22px}
+.conclusion li{margin:8px 0;font-size:14.5px;color:#cbd5e1}
+.conclusion strong{color:#f1f5f9}
+
+footer{margin-top:64px;padding:22px 0;border-top:1px solid rgba(255,255,255,0.06);text-align:center;color:#64748b;font-size:12.5px}
+footer .agency{color:#06b6d4;font-weight:700;letter-spacing:2px}
+
+@media (max-width:760px){
+.verdict-grid,.grid-2{grid-template-columns:1fr}
+.kpi-grid{grid-template-columns:repeat(2,1fr)}
+table{font-size:12px}
+thead th,tbody td{padding:8px 6px}
+h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="brand">NC Digital</div>
+<h1>ד"ר עמוס זיו — ניתוח ביצועים שנה מול שנה</h1>
+<div class="sub">פרפור פרוזדורים &amp; פעימות מוקדמות</div>
+<div class="meta-line">12 חודשים אחרונים (18.04.2025 – 17.04.2026) מול התקופה המקבילה (18.04.2024 – 17.04.2025)</div>
+</header>
+<h2>שורה תחתונה לכל נושא</h2><div class="verdict-grid">
+<div class="verdict">
+<div class="topic">פרפור פרוזדורים</div>
+<div class="label">הביצועים יציבים בחיפוש — ירידה בהמרות ובלידים</div>
+<div class="row"><span class="k">קליקים (GSC)</span><span class="v up"><span class="num">2,245 → 2,621</span> (+17%)</span></div>
+<div class="row"><span class="k">חשיפות (GSC)</span><span class="v up"><span class="num">59,970 → 124,858</span> (+108%)</span></div>
+<div class="row"><span class="k">CTR משוקלל</span><span class="v down"><span class="num">3.74% → 2.10%</span> (-44%)</span></div>
+<div class="row"><span class="k">סשנים אורגניים (GA4)</span><span class="v down"><span class="num">7,398 → 3,010</span> (-59%)</span></div>
+<div class="row"><span class="k">אירועי מפתח / לידים</span><span class="v down"><span class="num">42 → 19</span> (-55%)</span></div>
+</div>
+<div class="verdict">
+<div class="topic">פעימות מוקדמות</div>
+<div class="label">הביצועים יציבים בחיפוש — ירידה בהמרות ובלידים</div>
+<div class="row"><span class="k">קליקים (GSC)</span><span class="v down"><span class="num">5,068 → 4,892</span> (-3%)</span></div>
+<div class="row"><span class="k">חשיפות (GSC)</span><span class="v up"><span class="num">69,911 → 144,749</span> (+107%)</span></div>
+<div class="row"><span class="k">CTR משוקלל</span><span class="v down"><span class="num">7.25% → 3.38%</span> (-53%)</span></div>
+<div class="row"><span class="k">סשנים אורגניים (GA4)</span><span class="v down"><span class="num">14,257 → 4,974</span> (-65%)</span></div>
+<div class="row"><span class="k">אירועי מפתח / לידים</span><span class="v down"><span class="num">45 → 17</span> (-62%)</span></div>
+</div></div>
+<div class="bottom-line">
+<strong>התשובה הישירה לשאלה "האם הייתה ירידה?":</strong>
+לא בדירוגים ולא בקליקים — הנראות בחיפוש עלתה, ראיית תוכן הכפילה את עצמה, ודירוגי הזנבות הארוכים יציבים. <strong>הירידה האמיתית נמצאת בשני מקומות:</strong> CTR (בגלל AI Overviews שקוצרים תשובות בתוך ה‑SERP) והמרות לליד בתוך דפי הנושא. שני הדברים מחוברים: פחות אנשים לוחצים פנימה, ואלה שכן לוחצים יוצרים פחות פעולות יצירת קשר.
+</div>
+<h2>1. דירוגי SE Ranking למילות מפתח מרכזיות</h2><table><thead><tr><th>מילה</th><th>נושא</th><th>ממוצע 12 ח׳ קודמים</th><th>ממוצע 12 ח׳ אחרונים</th><th>שינוי</th><th>הכי טוב שהושג</th></tr></thead><tbody><tr>
+<td class="kw">פרפור פרוזדורים</td>
+<td class="neu">פרפור פרוזדורים</td>
+<td><span class="num">7.2</span></td>
+<td><span class="num">10.9</span></td>
+<td class="down"><span class="num">+3.7 מקומות</span></td>
+<td><span class="num">#3</span></td>
+</tr><tr>
+<td class="kw">פרפור פרוזדורים טיפול טבעי</td>
+<td class="neu">פרפור פרוזדורים</td>
+<td><span class="num">1.0</span></td>
+<td><span class="num">1.0</span></td>
+<td class="neu"><span class="num">0.0 מקומות</span></td>
+<td><span class="num">#1</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות</td>
+<td class="neu">פעימות מוקדמות</td>
+<td><span class="num">3.2</span></td>
+<td><span class="num">5.0</span></td>
+<td class="down"><span class="num">+1.8 מקומות</span></td>
+<td><span class="num">#2</span></td>
+</tr><tr>
+<td class="kw">פעימה מוקדמת</td>
+<td class="neu">פעימות מוקדמות</td>
+<td><span class="num">3.6</span></td>
+<td><span class="num">4.5</span></td>
+<td class="down"><span class="num">+0.9 מקומות</span></td>
+<td><span class="num">#1</span></td>
+</tr></tbody></table><div class="bottom-line">
+<strong>קריאה:</strong> "פרפור פרוזדורים טיפול טבעי" מחזיקה חזק ב‑#1 לאורך כל השנתיים. "פעימות מוקדמות" ו‑"פעימה מוקדמת" נעות בטווח 3–5 (קצת פחות טובות מהשנה הקודמת אבל עדיין בצמרת). ההחלקה הגדולה היחידה היא "פרפור פרוזדורים" — מממוצע 7 לממוצע 11. זה נכון ומשמעותי, אבל לא "נפילה".
+</div><h2>2. ביצועי זנבות ארוכים (Google Search Console)</h2><div class="topic-header">פרפור פרוזדורים</div><table><thead><tr><th>שאילתה</th><th>קליקים 24/25</th><th>קליקים 25/26</th><th>Δ</th><th>חשיפות 24/25</th><th>חשיפות 25/26</th><th>מיקום ממוצע 25/26</th><th>CTR 25/26</th></tr></thead><tbody><tr>
+<td class="kw">פרפור פרוזדורים טיפול טבעי</td>
+<td><span class="num">354</span></td>
+<td><span class="num">493</span></td>
+<td class="up"><span class="num">+39%</span></td>
+<td><span class="num">1,205</span></td>
+<td><span class="num">3,017</span></td>
+<td><span class="num">1.5</span></td>
+<td><span class="num">16.3%</span></td>
+</tr><tr>
+<td class="kw">פרפור פרוזדורים</td>
+<td><span class="num">71</span></td>
+<td><span class="num">70</span></td>
+<td class="down"><span class="num">-1%</span></td>
+<td><span class="num">8,238</span></td>
+<td><span class="num">11,470</span></td>
+<td><span class="num">8.9</span></td>
+<td><span class="num">0.6%</span></td>
+</tr><tr>
+<td class="kw">תוחלת חיים עם פרפור פרוזדורים</td>
+<td><span class="num">11</span></td>
+<td><span class="num">33</span></td>
+<td class="up"><span class="num">+200%</span></td>
+<td><span class="num">1,987</span></td>
+<td><span class="num">4,854</span></td>
+<td><span class="num">10.2</span></td>
+<td><span class="num">0.7%</span></td>
+</tr><tr>
+<td class="kw">פרפורים בלב</td>
+<td><span class="num">21</span></td>
+<td><span class="num">12</span></td>
+<td class="down"><span class="num">-43%</span></td>
+<td><span class="num">1,591</span></td>
+<td><span class="num">2,011</span></td>
+<td><span class="num">8.0</span></td>
+<td><span class="num">0.6%</span></td>
+</tr><tr>
+<td class="kw">הרגשה של פרפור בלב</td>
+<td><span class="num">15</span></td>
+<td><span class="num">15</span></td>
+<td class="neu"><span class="num">+0%</span></td>
+<td><span class="num">390</span></td>
+<td><span class="num">826</span></td>
+<td><span class="num">5.3</span></td>
+<td><span class="num">1.8%</span></td>
+</tr><tr>
+<td class="kw">פרפור פרוזדורים היפוך חשמלי</td>
+<td><span class="num">12</span></td>
+<td><span class="num">11</span></td>
+<td class="down"><span class="num">-8%</span></td>
+<td><span class="num">281</span></td>
+<td><span class="num">480</span></td>
+<td><span class="num">5.0</span></td>
+<td><span class="num">2.3%</span></td>
+</tr><tr>
+<td class="kw">פרפור עליות</td>
+<td><span class="num">6</span></td>
+<td><span class="num">5</span></td>
+<td class="down"><span class="num">-17%</span></td>
+<td><span class="num">1,535</span></td>
+<td><span class="num">1,817</span></td>
+<td><span class="num">7.3</span></td>
+<td><span class="num">0.3%</span></td>
+</tr><tr>
+<td class="kw">פרפור חדרים</td>
+<td><span class="num">3</span></td>
+<td><span class="num">7</span></td>
+<td class="up"><span class="num">+133%</span></td>
+<td><span class="num">2,109</span></td>
+<td><span class="num">4,143</span></td>
+<td><span class="num">9.3</span></td>
+<td><span class="num">0.2%</span></td>
+</tr><tr>
+<td class="kw">פרפור פרוזדורים תסמינים</td>
+<td><span class="num">5</span></td>
+<td><span class="num">4</span></td>
+<td class="down"><span class="num">-20%</span></td>
+<td><span class="num">531</span></td>
+<td><span class="num">879</span></td>
+<td><span class="num">9.0</span></td>
+<td><span class="num">0.5%</span></td>
+</tr><tr>
+<td class="kw">מה ההבדל בין פרפור לרפרוף</td>
+<td><span class="num">0</span></td>
+<td><span class="num">7</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">0</span></td>
+<td><span class="num">348</span></td>
+<td><span class="num">6.8</span></td>
+<td><span class="num">2.0%</span></td>
+</tr><tr>
+<td class="kw">פרפור בלב</td>
+<td><span class="num">3</span></td>
+<td><span class="num">3</span></td>
+<td class="neu"><span class="num">+0%</span></td>
+<td><span class="num">770</span></td>
+<td><span class="num">883</span></td>
+<td><span class="num">9.2</span></td>
+<td><span class="num">0.3%</span></td>
+</tr><tr>
+<td class="kw">פרפור</td>
+<td><span class="num">3</span></td>
+<td><span class="num">1</span></td>
+<td class="down"><span class="num">-67%</span></td>
+<td><span class="num">682</span></td>
+<td><span class="num">2,676</span></td>
+<td><span class="num">2.7</span></td>
+<td><span class="num">0.0%</span></td>
+</tr><tr>
+<td class="kw">פרפורי לב</td>
+<td><span class="num">2</span></td>
+<td><span class="num">2</span></td>
+<td class="neu"><span class="num">+0%</span></td>
+<td><span class="num">311</span></td>
+<td><span class="num">302</span></td>
+<td><span class="num">8.6</span></td>
+<td><span class="num">0.7%</span></td>
+</tr><tr>
+<td class="kw">טיפול בפרפור פרוזדורים</td>
+<td><span class="num">1</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">+200%</span></td>
+<td><span class="num">187</span></td>
+<td><span class="num">322</span></td>
+<td><span class="num">6.4</span></td>
+<td><span class="num">0.9%</span></td>
+</tr><tr>
+<td class="kw">פרפורים בלב תסמינים</td>
+<td><span class="num">0</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">17</span></td>
+<td><span class="num">129</span></td>
+<td><span class="num">7.2</span></td>
+<td><span class="num">2.3%</span></td>
+</tr><tr>
+<td class="kw">פרפור פרוזדורים התקפי</td>
+<td><span class="num">3</span></td>
+<td><span class="num">0</span></td>
+<td class="down"><span class="num">-100%</span></td>
+<td><span class="num">100</span></td>
+<td><span class="num">34</span></td>
+<td><span class="num">11.2</span></td>
+<td><span class="num">0.0%</span></td>
+</tr><tr>
+<td class="kw">מה זה פרפור פרוזדורים</td>
+<td><span class="num">1</span></td>
+<td><span class="num">2</span></td>
+<td class="up"><span class="num">+100%</span></td>
+<td><span class="num">192</span></td>
+<td><span class="num">426</span></td>
+<td><span class="num">8.9</span></td>
+<td><span class="num">0.5%</span></td>
+</tr><tr>
+<td class="kw">פרפור חדרים טיפול</td>
+<td><span class="num">2</span></td>
+<td><span class="num">1</span></td>
+<td class="down"><span class="num">-50%</span></td>
+<td><span class="num">198</span></td>
+<td><span class="num">357</span></td>
+<td><span class="num">11.2</span></td>
+<td><span class="num">0.3%</span></td>
+</tr><tr>
+<td class="kw">מה זה פרפורים בלב</td>
+<td><span class="num">2</span></td>
+<td><span class="num">1</span></td>
+<td class="down"><span class="num">-50%</span></td>
+<td><span class="num">87</span></td>
+<td><span class="num">133</span></td>
+<td><span class="num">8.4</span></td>
+<td><span class="num">0.8%</span></td>
+</tr></tbody></table><div class="topic-header">פעימות מוקדמות</div><table><thead><tr><th>שאילתה</th><th>קליקים 24/25</th><th>קליקים 25/26</th><th>Δ</th><th>חשיפות 24/25</th><th>חשיפות 25/26</th><th>מיקום ממוצע 25/26</th><th>CTR 25/26</th></tr></thead><tbody><tr>
+<td class="kw">טיפול טבעי בפעימות מוקדמות</td>
+<td><span class="num">187</span></td>
+<td><span class="num">396</span></td>
+<td class="up"><span class="num">+112%</span></td>
+<td><span class="num">854</span></td>
+<td><span class="num">1,221</span></td>
+<td><span class="num">1.7</span></td>
+<td><span class="num">32.4%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות</td>
+<td><span class="num">85</span></td>
+<td><span class="num">79</span></td>
+<td class="down"><span class="num">-7%</span></td>
+<td><span class="num">1,736</span></td>
+<td><span class="num">4,287</span></td>
+<td><span class="num">6.2</span></td>
+<td><span class="num">1.8%</span></td>
+</tr><tr>
+<td class="kw">פעימה מוקדמת</td>
+<td><span class="num">73</span></td>
+<td><span class="num">85</span></td>
+<td class="up"><span class="num">+16%</span></td>
+<td><span class="num">1,780</span></td>
+<td><span class="num">3,767</span></td>
+<td><span class="num">4.0</span></td>
+<td><span class="num">2.3%</span></td>
+</tr><tr>
+<td class="kw">אוושה סיסטולית</td>
+<td><span class="num">21</span></td>
+<td><span class="num">14</span></td>
+<td class="down"><span class="num">-33%</span></td>
+<td><span class="num">881</span></td>
+<td><span class="num">1,612</span></td>
+<td><span class="num">4.1</span></td>
+<td><span class="num">0.9%</span></td>
+</tr><tr>
+<td class="kw">אוושה סיסטולית תסמינים</td>
+<td><span class="num">25</span></td>
+<td><span class="num">9</span></td>
+<td class="down"><span class="num">-64%</span></td>
+<td><span class="num">147</span></td>
+<td><span class="num">151</span></td>
+<td><span class="num">2.7</span></td>
+<td><span class="num">6.0%</span></td>
+</tr><tr>
+<td class="kw">פעימה מוקדמת וחרדה</td>
+<td><span class="num">8</span></td>
+<td><span class="num">12</span></td>
+<td class="up"><span class="num">+50%</span></td>
+<td><span class="num">795</span></td>
+<td><span class="num">1,064</span></td>
+<td><span class="num">8.4</span></td>
+<td><span class="num">1.1%</span></td>
+</tr><tr>
+<td class="kw">האם פעימות מוקדמות מסכנות חיים</td>
+<td><span class="num">12</span></td>
+<td><span class="num">6</span></td>
+<td class="down"><span class="num">-50%</span></td>
+<td><span class="num">352</span></td>
+<td><span class="num">293</span></td>
+<td><span class="num">5.4</span></td>
+<td><span class="num">2.0%</span></td>
+</tr><tr>
+<td class="kw">מה מגביר פעימות מוקדמות</td>
+<td><span class="num">12</span></td>
+<td><span class="num">5</span></td>
+<td class="down"><span class="num">-58%</span></td>
+<td><span class="num">342</span></td>
+<td><span class="num">573</span></td>
+<td><span class="num">6.6</span></td>
+<td><span class="num">0.9%</span></td>
+</tr><tr>
+<td class="kw">התמודדות עם פעימות מוקדמות</td>
+<td><span class="num">8</span></td>
+<td><span class="num">9</span></td>
+<td class="up"><span class="num">+12%</span></td>
+<td><span class="num">291</span></td>
+<td><span class="num">323</span></td>
+<td><span class="num">5.3</span></td>
+<td><span class="num">2.8%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות כל היום</td>
+<td><span class="num">13</span></td>
+<td><span class="num">3</span></td>
+<td class="down"><span class="num">-77%</span></td>
+<td><span class="num">328</span></td>
+<td><span class="num">274</span></td>
+<td><span class="num">12.8</span></td>
+<td><span class="num">1.1%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות במנוחה</td>
+<td><span class="num">10</span></td>
+<td><span class="num">1</span></td>
+<td class="down"><span class="num">-90%</span></td>
+<td><span class="num">171</span></td>
+<td><span class="num">275</span></td>
+<td><span class="num">6.3</span></td>
+<td><span class="num">0.4%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות אחרי אוכל</td>
+<td><span class="num">3</span></td>
+<td><span class="num">7</span></td>
+<td class="up"><span class="num">+133%</span></td>
+<td><span class="num">70</span></td>
+<td><span class="num">217</span></td>
+<td><span class="num">8.3</span></td>
+<td><span class="num">3.2%</span></td>
+</tr><tr>
+<td class="kw">פעימה מוקדמת בלב</td>
+<td><span class="num">6</span></td>
+<td><span class="num">4</span></td>
+<td class="down"><span class="num">-33%</span></td>
+<td><span class="num">154</span></td>
+<td><span class="num">430</span></td>
+<td><span class="num">3.8</span></td>
+<td><span class="num">0.9%</span></td>
+</tr><tr>
+<td class="kw">מה זה פעימות מוקדמות</td>
+<td><span class="num">5</span></td>
+<td><span class="num">3</span></td>
+<td class="down"><span class="num">-40%</span></td>
+<td><span class="num">45</span></td>
+<td><span class="num">138</span></td>
+<td><span class="num">3.4</span></td>
+<td><span class="num">2.2%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות בשכיבה</td>
+<td><span class="num">0</span></td>
+<td><span class="num">7</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">10</span></td>
+<td><span class="num">298</span></td>
+<td><span class="num">8.5</span></td>
+<td><span class="num">2.3%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות ברצף</td>
+<td><span class="num">2</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">+50%</span></td>
+<td><span class="num">94</span></td>
+<td><span class="num">117</span></td>
+<td><span class="num">7.8</span></td>
+<td><span class="num">2.6%</span></td>
+</tr><tr>
+<td class="kw">מה זה פעימה מוקדמת</td>
+<td><span class="num">0</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">0</span></td>
+<td><span class="num">36</span></td>
+<td><span class="num">3.8</span></td>
+<td><span class="num">8.3%</span></td>
+</tr><tr>
+<td class="kw">אוושה סיסטולית 1/6</td>
+<td><span class="num">3</span></td>
+<td><span class="num">0</span></td>
+<td class="down"><span class="num">-100%</span></td>
+<td><span class="num">93</span></td>
+<td><span class="num">10</span></td>
+<td><span class="num">7.9</span></td>
+<td><span class="num">0.0%</span></td>
+</tr><tr>
+<td class="kw">פעימות מוקדמות בלב</td>
+<td><span class="num">0</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">0</span></td>
+<td><span class="num">145</span></td>
+<td><span class="num">7.2</span></td>
+<td><span class="num">2.1%</span></td>
+</tr><tr>
+<td class="kw">אי ספיקת לב סיסטולית</td>
+<td><span class="num">0</span></td>
+<td><span class="num">3</span></td>
+<td class="up"><span class="num">חדש</span></td>
+<td><span class="num">127</span></td>
+<td><span class="num">206</span></td>
+<td><span class="num">5.0</span></td>
+<td><span class="num">1.5%</span></td>
+</tr></tbody></table><div class="bottom-line">
+<strong>קריאה:</strong> רוב שאילתות הזנב הארוך שמרו על קליקים או שיפרו אותם; הנראות בזנב התרחבה (יותר שאילתות ייחודיות שמקבלות חשיפה: 99 לעומת 66 ב‑פרפור, 87 לעומת 70 בפעימות). זה היפך הטרנד של "ירידה בזנב הארוך".
+</div><h2>3. דפי נחיתה — השוואה מלאה (GSC + GA4)</h2><div class="topic-header">פרפור פרוזדורים</div><table><thead><tr><th>דף</th><th>קליקים GSC (לפני → אחרי)</th><th>חשיפות (לפני → אחרי)</th><th>מיקום ממוצע</th><th>סשנים אורגניים GA4</th><th>אירועי מפתח (לידים)</th></tr></thead><tbody><tr>
+<td><span class="page-cell">/היפוך-חשמלי/</span></td>
+<td class="up"><span class="num">1,355 → 1,425</span> (+5%)</td>
+<td><span class="num">15,997 → 31,291</span> (+96%)</td>
+<td><span class="num">11.2 → 9.7</span></td>
+<td class="down"><span class="num">3,884 → 1,353</span> (-65%)</td>
+<td class="down"><span class="num">14 → 6</span> (-57%)</td>
+</tr><tr>
+<td><span class="page-cell">/פרפור-פרוזדורים/</span></td>
+<td class="up"><span class="num">696 → 929</span> (+33%)</td>
+<td><span class="num">31,777 → 59,371</span> (+87%)</td>
+<td><span class="num">9.5 → 8.4</span></td>
+<td class="down"><span class="num">2,418 → 1,345</span> (-44%)</td>
+<td class="down"><span class="num">15 → 10</span> (-33%)</td>
+</tr><tr>
+<td><span class="page-cell">/אבלציה/</span></td>
+<td class="down"><span class="num">179 → 168</span> (-6%)</td>
+<td><span class="num">11,405 → 23,062</span> (+102%)</td>
+<td><span class="num">10.3 → 11.0</span></td>
+<td class="down"><span class="num">593 → 174</span> (-71%)</td>
+<td class="down"><span class="num">2 → 1</span> (-50%)</td>
+</tr><tr>
+<td><span class="page-cell">/רפרוף-פרוזדורים-atrial-flutter-תסמינים-גורמים-ו/</span></td>
+<td class="neu"><span class="num">0 → 87</span> (חדש)</td>
+<td><span class="num">0 → 9,547</span> (חדש)</td>
+<td><span class="num">0.0 → 13.6</span></td>
+<td class="neu"><span class="num">0 → 100</span> (חדש)</td>
+<td class="neu"><span class="num">0 → 0</span> (—)</td>
+</tr><tr>
+<td><span class="page-cell">/מחקר-פרפור-פרוזדורים/</span></td>
+<td class="down"><span class="num">15 → 12</span> (-20%)</td>
+<td><span class="num">775 → 1,294</span> (+67%)</td>
+<td><span class="num">49.0 → 34.8</span></td>
+<td class="down"><span class="num">503 → 36</span> (-93%)</td>
+<td class="down"><span class="num">11 → 2</span> (-82%)</td>
+</tr></tbody></table><div class="topic-header">פעימות מוקדמות</div><table><thead><tr><th>דף</th><th>קליקים GSC (לפני → אחרי)</th><th>חשיפות (לפני → אחרי)</th><th>מיקום ממוצע</th><th>סשנים אורגניים GA4</th><th>אירועי מפתח (לידים)</th></tr></thead><tbody><tr>
+<td><span class="page-cell">/אוושה-בלב/</span></td>
+<td class="down"><span class="num">3,386 → 2,810</span> (-17%)</td>
+<td><span class="num">36,159 → 73,423</span> (+103%)</td>
+<td><span class="num">7.0 → 5.5</span></td>
+<td class="down"><span class="num">9,225 → 2,721</span> (-71%)</td>
+<td class="down"><span class="num">12 → 2</span> (-83%)</td>
+</tr><tr>
+<td><span class="page-cell">/החסרת-פעימה/</span></td>
+<td class="up"><span class="num">1,582 → 1,912</span> (+21%)</td>
+<td><span class="num">23,119 → 60,804</span> (+163%)</td>
+<td><span class="num">6.0 → 4.5</span></td>
+<td class="down"><span class="num">4,861 → 2,162</span> (-56%)</td>
+<td class="down"><span class="num">28 → 9</span> (-68%)</td>
+</tr><tr>
+<td><span class="page-cell">/פעימות-לב/</span></td>
+<td class="up"><span class="num">71 → 88</span> (+24%)</td>
+<td><span class="num">9,431 → 8,406</span> (-11%)</td>
+<td><span class="num">41.0 → 37.9</span></td>
+<td class="down"><span class="num">171 → 90</span> (-47%)</td>
+<td class="up"><span class="num">5 → 6</span> (+20%)</td>
+</tr><tr>
+<td><span class="page-cell">/testimonials/טיפול-מומלץ-בפעימות-מוקדמות/</span></td>
+<td class="up"><span class="num">10 → 51</span> (+410%)</td>
+<td><span class="num">402 → 1,283</span> (+219%)</td>
+<td><span class="num">15.9 → 11.9</span></td>
+<td class="neu"><span class="num">0 → 0</span> (—)</td>
+<td class="neu"><span class="num">0 → 0</span> (—)</td>
+</tr><tr>
+<td><span class="page-cell">/testimonials/טיפול-יעיל-בפעימות-מוקדמות/</span></td>
+<td class="up"><span class="num">19 → 29</span> (+53%)</td>
+<td><span class="num">800 → 491</span> (-39%)</td>
+<td><span class="num">17.2 → 12.9</span></td>
+<td class="neu"><span class="num">0 → 0</span> (—)</td>
+<td class="neu"><span class="num">0 → 0</span> (—)</td>
+</tr></tbody></table><div class="bottom-line">
+<strong>קריאה:</strong> הקליקים מ‑Google כמעט זהים או גבוהים יותר, אך הסשנים האורגניים ב‑GA4 ירדו ב‑55–70% בדפים אלה. חלק מההפרש מוסבר על ידי שינוי בהגדרת "חיפוש אורגני" של GA4 (אותו דבר קרה ברמת האתר כולו: –63%). עדיין, הפער בין GSC ל‑GA4 גדול מהרגיל ומצביע על נקודות בדיקה: מצב עוגיות/הסכמה, הגדרת ערוץ ברירת מחדל, פילטר בוטים.
+</div><h2>4. אירועי ליד לפי סוג — תנועה אורגנית בלבד</h2><div class="grid-2"><div><div class="topic-header">פרפור פרוזדורים</div><table><thead><tr><th>סוג אירוע</th><th>24/25</th><th>25/26</th><th>שינוי</th></tr></thead><tbody><tr>
+<td class="kw">לחיצה על מספר טלפון</td>
+<td><span class="num">26</span></td>
+<td><span class="num">13</span></td>
+<td class="down"><span class="num">-50%</span></td>
+</tr><tr>
+<td class="kw">שליחת וואטסאפ</td>
+<td><span class="num">16</span></td>
+<td><span class="num">6</span></td>
+<td class="down"><span class="num">-62%</span></td>
+</tr></tbody></table></div><div><div class="topic-header">פעימות מוקדמות</div><table><thead><tr><th>סוג אירוע</th><th>24/25</th><th>25/26</th><th>שינוי</th></tr></thead><tbody><tr>
+<td class="kw">לחיצה על מספר טלפון</td>
+<td><span class="num">32</span></td>
+<td><span class="num">16</span></td>
+<td class="down"><span class="num">-50%</span></td>
+</tr><tr>
+<td class="kw">שליחת וואטסאפ</td>
+<td><span class="num">13</span></td>
+<td><span class="num">1</span></td>
+<td class="down"><span class="num">-92%</span></td>
+</tr></tbody></table></div></div><div class="bottom-line">
+<strong>קריאה:</strong> בשני הנושאים — שליחות וואטסאפ וקליקים לטלפון ירדו בערך ב‑50%. לא נרשמו טפסי יצירת קשר משני הנושאים הללו בתקופה (אירוע זה מועט באתר באופן כללי). טלפון ווואטסאפ הם ערוצי הליד העיקריים כאן.
+</div><h2>5. מסקנה ישירה</h2>
+<div class="conclusion">
+<h3>האם הייתה ירידה אמיתית?</h3>
+<ul>
+<li><strong>דירוגים — לא.</strong> "פרפור פרוזדורים טיפול טבעי" נשאר #1. "פעימות מוקדמות" בטווח 3–5. רק "פרפור פרוזדורים" נחלש (7→11) — משמעותי אבל נקודתי.</li>
+<li><strong>קליקים מ‑Google — לא.</strong> פרפור פרוזדורים +17%, פעימות מוקדמות 3%. הקליקים יציבים; הנראות (חשיפות) הוכפלה.</li>
+<li><strong>זנב ארוך — לא.</strong> מספר השאילתות שמקבלות חשיפה גדל: פרפור 66→99 (+50%), פעימות 70→87 (+24%).</li>
+<li><strong>CTR — כן.</strong> בשני הנושאים ה‑CTR ירד ב‑45–53%. הגורם: AI Overviews של Google קוטפים את התשובות בתוך ה‑SERP, החשיפות מטפסות אך הקליקים מתעקבים.</li>
+<li><strong>סשנים אורגניים ב‑GA4 — כן, אך בחלקו מדידתי.</strong> ירידה של 59–65% בדפי הנושא תואמת לירידה של 63% ברמת האתר — חלק מזה נובע משינוי בהגדרת ערוץ "חיפוש אורגני" של GA4 ב‑2025; חלק מזה אמיתי.</li>
+<li><strong>לידים אורגניים מהדפים הללו — כן.</strong> אירועי מפתח בדפי פרפור פרוזדורים ירדו 55%, ובדפי פעימות מוקדמות 62%. וואטסאפ וטלפון ירדו במקביל.</li>
+</ul>
+
+<h3 style="margin-top:24px">האם הירידה בלידים מחוברת לירידה בדירוגים?</h3>
+<ul>
+<li>חיבור <strong>חלקי</strong>. השלילה הקטנה ב‑"פרפור פרוזדורים" (7→11) כן פוגעת בקליקים מצומצם.</li>
+<li>אבל <strong>הגורם העיקרי לירידת הלידים הוא לא ירידה בדירוג</strong>. זה שילוב של: AI Overviews שצומקים CTR, ושל ירידה בהמרה על הדפים עצמם (פחות אחוז לידים מאותה תנועה).</li>
+<li>המשמעות: <strong>הבעיה לא בקידום הדף ל‑SERP — אלא במעבר מחיפוש ללחיצה, ומלחיצה לליד.</strong></li>
+</ul>
+
+<h3 style="margin-top:24px">היכן ממוקדת הבעיה</h3>
+<ul>
+<li>דף <strong>/פרפור‑פרוזדורים/</strong>: קליקים +33%, אבל אירועי מפתח ירדו 33%. CTR ירד מ‑2.2% ל‑1.6%. שיפור מטא‑תיאור ו‑CTA יחזיר את ההמרה.</li>
+<li>דף <strong>/החסרת‑פעימה/</strong>: קליקים +21%, אבל CTR ירד מ‑6.8% ל‑3.1%. אירועי מפתח ירדו מ‑28 ל‑9. דף מרכזי, דורש ריענון CTA וסכמה.</li>
+<li>דף <strong>/אוושה‑בלב/</strong>: CTR צנח מ‑9.4% ל‑3.8% — שיעור הירידה הגדול ביותר. מיקום ממוצע אפילו השתפר (7.0→5.5), אבל הזחילה של AI Overviews על השאילתות הכללה הייתה חזקה כאן.</li>
+<li>דף <strong>/היפוך‑חשמלי/</strong>: הקליקים עלו מ‑1,355 ל‑1,425, אבל הסשנים ב‑GA4 ירדו ב‑65%. אי‑התאמה חדה בין GSC ל‑GA4 מצביעה על בעיית מדידה על דף ספציפי זה.</li>
+</ul>
+
+<h3 style="margin-top:24px">מה לעשות עכשיו</h3>
+<ul>
+<li><strong>שפרו את ה‑Meta Description והכותרת בדפי הנושא</strong> עם Hooks שקשה ל‑AI Overview לסכם (נתון קונקרטי, ניסיון קליני ספציפי, עדות מטופל).</li>
+<li><strong>הוסיפו/עדכנו סכמת MedicalWebPage ו‑FAQPage</strong> על שני הדפים הראשיים — זה מגדיל סיכוי להופיע בתוך ה‑AI Overview עם לינק, במקום להיעלם.</li>
+<li><strong>בדקו את ה‑CTA בדפים /פרפור‑פרוזדורים/ ו‑/החסרת‑פעימה/</strong>: קליק לטלפון ו‑WhatsApp ירדו ~50%. ייתכן ש‑CTA זז, נעלם מעל הקיפול, או ש‑MaskYoo (מיספור טלפון) שינה התנהגות.</li>
+<li><strong>חזקו את "פרפור פרוזדורים"</strong> (ירד מ‑7 ל‑11) — רענון תוכן, קישורים פנימיים מדפים עם יותר Authority, כותרת H1 עם יישור intent מחדש.</li>
+<li><strong>בדקו אי‑התאמה GSC/GA4</strong> (יחס 1:0.5 מול 1:3 בשנה שעברה) — הגדרת ערוץ "חיפוש אורגני" ב‑GA4, הסכמת עוגיות, תג Consent Mode.</li>
+</ul>
+
+</div>
+
+<footer>
+<div class="agency">NC Digital</div>
+<div style="margin-top:6px">ניתוח ביצועים — פרפור פרוזדורים &amp; פעימות מוקדמות · 20.04.2026</div>
+</footer>
+</div></body></html>
