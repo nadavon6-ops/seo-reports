@@ -191,9 +191,9 @@
     <ul class="issues">
       <li class="hi"><b>Cloudflare Bot Detection (challenge-platform/jsd/main.js)</b> — הסקריפט חוסם את ה-Main Thread כמעט 5 שניות בסלולר ו-1.3 שניות בדסקטופ. <span class="cost">~5,000ms</span></li>
       <li class="hi"><b>JavaScript מיותר בטעינה ראשונית</b> — 575KB לא בשימוש בסלולר, 1,355KB בדסקטופ. נטענים chunks ספציפיים לעמודים כמו <code>/my/dashboard/smartAgent</code>, <code>/employers/[slug]</code> ו-<code>/frequently-asked-questions</code> על עמוד הבית. <span class="cost">~1,355KB</span></li>
-      <li><b>אוסף סקריפטים צד-שלישי טוענים מוקדם מדי</b> — GTM + Google Ads + Tag Manager נוסף, TikTok Pixel, Facebook Pixel, OneTrust CookieLaw, ווידג'ט נגישות acsbapp. רצים לפני אירוע טעינה מלאה. <span class="cost">~900ms TBT</span></li>
+      <li><b>אוסף סקריפטים צד-שלישי טוענים מוקדם מדי</b> — <code>GTM-MM466BW</code> + gtag <code>G-X5YPSNW48L</code> + AW-674976774 Google Ads, TikTok Pixel, Facebook Pixel, OneTrust CookieLaw, ווידג'ט נגישות acsbapp. כולם רצים לפני אירוע טעינה מלאה. <span class="cost">~750ms script</span></li>
       <li><b>ווידג'ט נגישות acsbapp</b> — 92KB שנטענים, 71KB לא בשימוש. טוען בראש הדף. <span class="cost">92KB</span></li>
-      <li><b>CLS 0.166 בדסקטופ</b> — קפיצת layout גדולה מעל הסף של Core Web Vitals. רוב הסיכויים: hero/באנר ללא מידות מוגדרות, או גופן שמוחלף בזמן טעינה. <span class="cost">CLS 0.166</span></li>
+      <li><b>CLS 0.166 בדסקטופ</b> — קפיצת layout מעל הסף של Core Web Vitals (0.1). יש לזהות באמצעות DevTools Performance את האלמנט שקופץ ולטפל בו. <span class="cost">CLS 0.166</span></li>
       <li><b>TTI גבוה במיוחד בסלולר — 14.2 שניות</b> עד שהדף ריספונסיבי לחלוטין למשתמש.</li>
     </ul>
 
@@ -203,8 +203,8 @@
       <li><b>Code-splitting מבוסס-route עם <code>dynamic()</code> של Next.js</b> — טעינו chunks של עמודים אחרים רק כשהמשתמש מנווט אליהם. בדקו ב-<code>next/bundle-analyzer</code> שה-Homepage bundle לא מכיל את smartAgent, employers, specializations. <span class="cost">~600KB</span></li>
       <li><b>העבירו את כל תגי השיווק מאחורי Consent Mode v2 + deferred loading</b> — GTM יטען ב-<code>requestIdleCallback</code>, ו-TikTok / Facebook Pixel רק לאחר LCP. פונקציונלית ללא שינוי, מבחינת ביצועים עשרות אחוזים שחרור Main Thread.</li>
       <li><b>Lazy-load לווידג'ט הנגישות</b> — טעינו את acsbapp רק לאחר אירוע <code>load</code> או באינטראקציה ראשונה, לא בראש הדף.</li>
-      <li><b>פתרו את ה-CLS בדסקטופ</b> — קבעו <code>width</code> ו-<code>height</code> על כל תמונת hero ובאנרים מעל הקו-הראשי, הוסיפו <code>font-display: optional</code> ל-Heebo או preload לגופן הראשי.</li>
-      <li><b>הסירו redirect מיותר ב-<code>manpower.co.il → www.manpower.co.il</code></b> אם קיים, והוסיפו <code>preconnect</code> ל-<code>cdn.cookielaw.org</code> ו-<code>www.googletagmanager.com</code> (רק אלה שנשארים).</li>
+      <li><b>פתרו את ה-CLS בדסקטופ</b> — קבעו <code>width</code> ו-<code>height</code> על תמונות hero ובאנרים מעל הקפל, וודאו ש-iframes/embeds מקבלים גודל שמור מראש. אתרו את האלמנט הקופץ דרך DevTools → Performance → Layout Shifts.</li>
+      <li><b>הוסיפו <code>preconnect</code></b> ל-<code>cdn.cookielaw.org</code> ו-<code>www.googletagmanager.com</code> כדי לקצר RTT לצד-שלישי שנשאר אחרי הדחייה.</li>
     </ul>
   </section>
 
@@ -266,9 +266,10 @@
     <ul class="issues">
       <li class="hi"><b>Cloudflare Bot Detection (challenge-platform/jsd/main.js)</b> — 4.75 שניות של Main Thread בסלולר, 1.3 שניות בדסקטופ. זהה ל-Manpower. <span class="cost">~4,750ms</span></li>
       <li class="hi"><b>HubSpot Analytics (<code>js-eu1.hs-analytics.net</code>)</b> — 2.15 שניות של עיבוד בסלולר. טעינה סינכרונית מוקדם בדף. <span class="cost">~2,150ms</span></li>
-      <li class="hi"><b>Next.js bundles עמוסים בטעינה ראשונית</b> — 142KB בלתי-משומשים מ-<code>/service/[slug]</code>, 111KB מ-<code>/careers</code>, 106KB מ-Google Ads Tag, 85KB מ-<code>_app</code>. מגיעים ל-<code>~700KB</code> JS מבוזבז. <span class="cost">~700KB</span></li>
-      <li><b>ריבוי תגי Analytics וקונברסיות</b> — GTM container (TMHMZBL), Google Ads AW-974622154, gtag G-3GJ0D5M8ZR — כולם לפני LCP. <span class="cost">~500ms TBT</span></li>
-      <li><b>ווידג'ט נגישות acsbapp</b> — 114KB לא בשימוש. טעון בראש הדף. <span class="cost">114KB</span></li>
+      <li class="hi"><b>Next.js bundles עמוסים בטעינה ראשונית</b> — בסלולר 557KB JS מבוזבז כולל 85KB מ-<code>_app</code>, 72KB מ-<code>/our-services/[slug]</code>, ו-24KB מ-<code>main</code>. בדסקטופ 1,207KB מבוזבז כולל 142KB מ-<code>/service/[slug]</code>, 111KB מ-<code>/careers</code> ו-74KB מ-<code>/salary-calculator</code>. <span class="cost">557KB / 1,207KB</span></li>
+      <li><b>ריבוי תגי Analytics וקונברסיות</b> — GTM <code>GTM-TMHMZBL</code>, Google Ads <code>AW-974622154</code>, gtag <code>G-3GJ0D5M8ZR</code> — כולם לפני LCP.</li>
+      <li><b>ווידג'ט נגישות acsbapp</b> — 217KB בסך הכל, 114KB לא בשימוש, טעון בראש הדף. <span class="cost">114KB</span></li>
+      <li><b>Redirect בטעינה ראשונית</b> — מבזבז 1,050ms בסלולר ו-510ms בדסקטופ לפני שה-HTML מתחיל להגיע. <span class="cost">1,050ms</span></li>
       <li><b>LCP 10.4s בסלולר</b> — המשתמש רואה את הפריט הראשי רק אחרי 10 שניות. חורג פי 4+ מהיעד.</li>
     </ul>
 
@@ -277,10 +278,10 @@
       <li><b>בטלו את Cloudflare JS Challenge בעמודי תוכן ציבוריים</b>. השאירו אותו רק באזורי הרשמה/קורות-חיים. זה לבדו יוריד ~4 שניות ב-LCP ו-Main Thread בסלולר. <span class="cost">−4,000ms</span></li>
       <li><b>העבירו את HubSpot Tracking Code ל-<code>async</code> טעינה לאחר LCP</b>. ניתן לעשות זאת דרך HubSpot's <code>sendEvent</code> בצד לקוח + טעינה עצלה של <code>hs-analytics.js</code> דרך <code>IntersectionObserver</code> או <code>requestIdleCallback</code>. <span class="cost">−2,000ms</span></li>
       <li><b>Route-based code-splitting עם <code>next/dynamic</code></b> — חובה לוודא שה-Homepage bundle לא מכיל את <code>service/[slug]</code>, <code>careers</code>, <code>our-services/[slug]</code>. הריצו <code>next build --profile</code> וניתוח bundle. <span class="cost">~500KB</span></li>
-      <li><b>איחוד ודחייה של תגי שיווק</b> — GTM + Google Ads + Meta/TikTok ייטענו כולם דרך GTM ב-<code>requestIdleCallback</code> לאחר אירוע LCP, עם Consent Mode v2.</li>
-      <li><b>Lazy-load לווידג'ט acsbapp</b> — באינטראקציה ראשונה בלבד, או לאחר <code>load</code>.</li>
-      <li><b>Preload ל-LCP element</b> — זהו את התמונה/הטקסט הראשון (hero banner) והוסיפו <code>&lt;link rel="preload" as="image"&gt;</code> לתמונה הראשית. שלבו עם <code>fetchpriority="high"</code>.</li>
-      <li><b>Self-host של הפונט הראשי</b> במקום Google Fonts CDN, להפחתת RTT.</li>
+      <li><b>איחוד ודחייה של תגי שיווק</b> — GTM + Google Ads + Meta Pixel ייטענו כולם דרך GTM ב-<code>requestIdleCallback</code> לאחר אירוע LCP, עם Consent Mode v2.</li>
+      <li><b>Lazy-load לווידג'ט acsbapp</b> — טעינה רק באינטראקציה ראשונה או לאחר <code>load</code>. 114KB שלא בשימוש חוסכים מ-Main Thread.</li>
+      <li><b>Preload ל-LCP element</b> — זהו את התמונה/הטקסט הראשון מעל הקפל והוסיפו <code>&lt;link rel="preload" as="image"&gt;</code> עם <code>fetchpriority="high"</code>.</li>
+      <li><b>בטלו את ה-redirect בטעינה ראשונית</b> — הפנו ישירות לכתובת הקנונית (<code>https://experis.co.il/</code>) כדי לחסוך עד 1,050ms בסלולר. <span class="cost">−1,050ms</span></li>
     </ul>
   </section>
 
