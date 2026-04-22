@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>FSG · Derecho Inmobiliario</title>
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="site.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="components/Header.jsx"></script>
+<script type="text/babel" src="components/Hero.jsx"></script>
+<script type="text/babel" src="components/Services.jsx"></script>
+<script type="text/babel" src="components/About.jsx"></script>
+<script type="text/babel" src="components/Process.jsx"></script>
+<script type="text/babel" src="components/FooterParts.jsx"></script>
+<script type="text/babel" src="components/ContactModal.jsx"></script>
+<script type="text/babel" src="components/ServiceDetail.jsx"></script>
+
+<script type="text/babel">
+function App() {
+  const [route, setRoute] = React.useState("home");
+  const [service, setService] = React.useState("contratos");
+  const [modal, setModal] = React.useState(false);
+
+  React.useEffect(() => { window.scrollTo(0, 0); }, [route]);
+
+  const openModal = () => setModal(true);
+  const closeModal = () => setModal(false);
+
+  return (
+    <div className="site">
+      <Header route={route} setRoute={setRoute} onOpenModal={openModal} />
+      {route === "home" && (
+        <>
+          <Hero onOpenModal={openModal} setRoute={setRoute} />
+          <Services setRoute={setRoute} setService={setService} />
+          <About />
+          <Process />
+          <CtaBand onOpenModal={openModal} />
+        </>
+      )}
+      {route === "services" && (
+        <>
+          <Services setRoute={setRoute} setService={setService} />
+          <Process />
+          <CtaBand onOpenModal={openModal} />
+        </>
+      )}
+      {route === "service" && (
+        <ServiceDetail id={service} setRoute={setRoute} onOpenModal={openModal} />
+      )}
+      {route === "about" && (
+        <>
+          <About />
+          <Process />
+        </>
+      )}
+      {route === "contact" && (
+        <section className="section">
+          <div className="section-head">
+            <div>
+              <div className="section-eyebrow">Contacto</div>
+              <h2 className="section-title">Agendar <em>reunión.</em></h2>
+            </div>
+            <p className="section-lede">Responderé dentro de 24 horas hábiles. Las reuniones se realizan de manera presencial en Providencia o por videollamada.</p>
+          </div>
+          <button className="btn solid" onClick={openModal}>Abrir formulario</button>
+        </section>
+      )}
+      <Footer />
+      {modal && <ContactModal onClose={closeModal} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
