@@ -33,7 +33,7 @@ function Header({ route, setRoute, onOpenModal }) {
           ))}
         </nav>
         <a className="nav-cta" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
-          Agendar
+          Conversemos
         </a>
         <button
           className={"nav-burger" + (menuOpen ? " open" : "")}
@@ -63,7 +63,7 @@ function Header({ route, setRoute, onOpenModal }) {
             className="nav-mobile-cta"
             onClick={(e) => { e.preventDefault(); setMenuOpen(false); onOpenModal(); }}
           >
-            Agendar reunión
+            Tomémonos un café
           </a>
         </div>
       )}

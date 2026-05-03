@@ -5,19 +5,19 @@ function Hero({ onOpenModal, setRoute }) {
         <div>
           <div className="hero-eyebrow">Derecho Inmobiliario · Santiago</div>
           <h1>
-            Atendido<br />
-            <em>personalmente.</em>
+            Conversemos antes<br />
+            <em>de firmar.</em>
           </h1>
           <div className="hero-rule" />
           <p className="hero-lede">
-            Contratos, promesas, estudios de título y escrituras. Una asesoría boutique para quienes esperan el mismo cuidado que una operación inmobiliaria merece.
+            Soy la abogada cercana que te maneja la parte legal de tu próxima operación inmobiliaria. Sin papeleo intimidante, sin abogados inalcanzables. Tómate un café conmigo — te respondo dentro de 24 horas hábiles.
           </p>
           <div className="hero-row">
             <a className="btn primary" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
-              Agendar reunión
+              Tomémonos un café
             </a>
             <a className="btn ghost-light" href="#" onClick={(e) => { e.preventDefault(); setRoute("services"); }}>
-              Ver servicios
+              Cómo trabajo
             </a>
           </div>
         </div>

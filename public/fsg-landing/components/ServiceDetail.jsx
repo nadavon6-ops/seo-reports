@@ -5,7 +5,7 @@ function ServiceDetail({ id, setRoute, onOpenModal }) {
   const content = {
     alcance: (
       <p style={{ fontSize: 16, lineHeight: 1.8, color: "var(--stone-700)", fontWeight: 300 }}>
-        {service.body} Cada encargo se atiende personalmente y se entrega con un informe escrito que resume las observaciones y las recomendaciones concretas para su operación.
+        {service.body} Cada encargo se atiende personalmente y se entrega con un informe escrito que resume las observaciones y las recomendaciones concretas para tu operación.
       </p>
     ),
     entregables: (
@@ -48,7 +48,7 @@ function ServiceDetail({ id, setRoute, onOpenModal }) {
         </div>
         <div style={{ maxWidth: 640, marginBottom: 48 }}>{content[tab]}</div>
 
-        <button className="btn solid" onClick={onOpenModal}>Solicitar evaluación</button>
+        <button className="btn solid" onClick={onOpenModal}>Tomémonos un café</button>
       </section>
     </>
   );

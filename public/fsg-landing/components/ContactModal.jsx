@@ -8,8 +8,8 @@ function ContactModal({ onClose }) {
         <button className="close" onClick={onClose}>×</button>
         {!sent ? (
           <>
-            <h2>Agendar reunión</h2>
-            <p className="modal-lede">Le responderé dentro de 24 horas hábiles para coordinar día y hora.</p>
+            <h2>Tomémonos un café</h2>
+            <p className="modal-lede">Sin compromiso. Sin formularios largos. Cuéntame brevemente de tu operación y coordino contigo dentro de 24 horas hábiles.</p>
             <div className="field">
               <label>Nombre completo</label>
               <input value={form.nombre} onChange={update("nombre")} placeholder="Juan Pérez" />
@@ -33,14 +33,14 @@ function ContactModal({ onClose }) {
               <textarea value={form.mensaje} onChange={update("mensaje")} placeholder="Resumen de la operación..." />
             </div>
             <button className="btn solid" style={{ width: "100%", justifyContent: "center" }} onClick={() => setSent(true)}>
-              Enviar solicitud
+              Enviar
             </button>
           </>
         ) : (
           <div className="modal-success">
             <div className="ok">✓</div>
-            <h3>Solicitud recibida</h3>
-            <p>Le responderé dentro de 24 horas hábiles al correo indicado.</p>
+            <h3>Recibido</h3>
+            <p>Te respondo dentro de 24 horas hábiles al correo indicado para coordinar el café.</p>
             <div style={{ height: 24 }} />
             <button className="btn ghost-dark" onClick={onClose} style={{ justifyContent: "center" }}>
               Cerrar

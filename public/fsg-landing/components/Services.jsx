@@ -2,26 +2,26 @@ const SERVICES = [
   {
     id: "contratos",
     num: "i.",
-    title: "Contratos",
-    body: "Redacto y reviso contratos de compraventa, arrendamiento y comodato, con cláusulas adaptadas a cada operación y al perfil de mi cliente.",
+    title: "Reviso lo que vas a firmar",
+    body: "Antes de que firmes nada — promesa, contrato, escritura — lo leo en detalle y te aviso lo que tenga que aclararse. Si hay que negociar una cláusula, lo hago yo.",
   },
   {
     id: "promesas",
     num: "ii.",
-    title: "Promesas",
-    body: "Estructuro promesas de compraventa con condiciones suspensivas, arras y plazos calibrados para proteger su posición en la operación.",
+    title: "Estructuro la operación contigo",
+    body: "Promesas, condiciones suspensivas, arras, plazos. Te explico qué conviene en tu caso y por qué — sin tecnicismos. Tú decides; yo lo dejo por escrito.",
   },
   {
     id: "titulo",
     num: "iii.",
-    title: "Estudios de título",
-    body: "Revisión exhaustiva de la historia dominical de los últimos diez años, con informe escrito, observaciones y recomendaciones concretas.",
+    title: "Estudio el título de la propiedad",
+    body: "Reviso la historia de la propiedad de los últimos diez años. Si aparece algo — una hipoteca, una servidumbre, un problema de inscripción — te lo digo antes, no después.",
   },
   {
     id: "escrituras",
     num: "iv.",
-    title: "Escrituras",
-    body: "Redacción y acompañamiento en firma notarial: escrituras de compraventa, hipoteca, cancelación y modificaciones.",
+    title: "Te acompaño hasta la notaría",
+    body: "Coordino con la corredora, con el banco, con el notario. El día de la firma estoy ahí. Después reviso que la inscripción en el Conservador quede bien hecha.",
   },
 ];
 
@@ -30,14 +30,14 @@ function Services({ setRoute, setService }) {
     <section className="section services">
       <div className="section-head">
         <div>
-          <div className="section-eyebrow">Áreas de práctica</div>
+          <div className="section-eyebrow">Cómo trabajo</div>
           <h2 className="section-title">
-            <em>Cuatro disciplinas,</em><br />
-            un solo criterio.
+            <em>Tú te enfocas en tu operación.</em><br />
+            Yo me encargo de lo legal.
           </h2>
         </div>
         <p className="section-lede">
-          Mi práctica se concentra en derecho inmobiliario. Eso significa que cada operación se atiende personalmente, desde la primera revisión hasta la firma en notaría.
+          No soy la abogada que aparece solo a firmar. Trabajo contigo desde antes — reviso, te aviso, coordino con el corredor y el notario, y respondo cuando me escribes. Así se ve la relación.
         </p>
       </div>
       <div className="services-grid">
@@ -50,7 +50,7 @@ function Services({ setRoute, setService }) {
             <div className="num">{s.num}</div>
             <h3>{s.title}</h3>
             <p>{s.body}</p>
-            <div className="arrow">Conocer más</div>
+            <div className="arrow">Cómo funciona</div>
           </div>
         ))}
       </div>

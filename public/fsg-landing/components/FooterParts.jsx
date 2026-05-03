@@ -3,10 +3,10 @@ function CtaBand({ onOpenModal }) {
     <section className="cta-band">
       <div className="cta-band-inner">
         <h2>
-          ¿Tiene una operación <em>en curso?</em>
+          ¿Tienes una operación <em>en curso?</em>
         </h2>
         <a className="btn" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
-          Solicitar evaluación
+          Tomémonos un café
         </a>
       </div>
     </section>
@@ -34,7 +34,6 @@ function Footer() {
           <h5>Estudio</h5>
           <a href="#">Sobre mí</a>
           <a href="#">Proceso</a>
-          <a href="#">Honorarios</a>
           <a href="#">Contacto</a>
         </div>
         <div className="footer-col">
