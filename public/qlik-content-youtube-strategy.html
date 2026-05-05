@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>אסטרטגיית תוכן + יוטיוב | Qlik | sp.data</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: #f5f6fa;
+            color: #2d3436;
+            line-height: 1.8;
+            direction: rtl;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0c2461 0%, #1e3799 50%, #4a69bd 100%);
+            padding: 60px 20px 50px;
+            text-align: center;
+            color: #fff;
+        }
+        .hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 8px; }
+        .hero .subtitle { font-size: 1.1rem; color: rgba(255,255,255,.75); }
+        .hero .date-badge {
+            display: inline-block;
+            background: rgba(255,255,255,.15);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 14px;
+            color: rgba(255,255,255,.85);
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px 60px; }
+
+        .section { margin-bottom: 60px; }
+        .section-banner {
+            border-radius: 16px 16px 0 0;
+            padding: 24px 30px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
+        }
+        .section-banner h2 { font-size: 1.5rem; font-weight: 800; color: #fff; }
+        .section-banner .section-num {
+            background: rgba(255,255,255,.25);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .section-intro {
+            background: #f8f9fa;
+            border-radius: 0 0 16px 16px;
+            padding: 18px 30px;
+            font-size: 0.9rem;
+            color: #636e72;
+            border-top: 1px solid #eee;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 30px;
+            margin-top: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0c2461;
+            margin-bottom: 14px;
+        }
+
+        /* Cluster grid */
+        .cluster-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+        .cluster-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            border-top: 4px solid #0891b2;
+        }
+        .cluster-card.integration { border-top-color: #0891b2; }
+        .cluster-card.analytics { border-top-color: #1e3799; }
+        .cluster-card.solutions { border-top-color: #7b1fa2; }
+        .cluster-card.education { border-top-color: #e65100; }
+        .cluster-card h3 { font-size: 1.05rem; font-weight: 800; color: #0c2461; margin-bottom: 4px; }
+        .cluster-card .cluster-en { font-size: 0.78rem; color: #888; margin-bottom: 12px; }
+        .cluster-card ul { list-style: none; padding: 0; }
+        .cluster-card li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #eef0f2;
+            font-size: 0.88rem;
+            color: #2d3436;
+        }
+        .cluster-card li:last-child { border-bottom: none; }
+        .cluster-card li .kw {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+        .data-table th {
+            background: #0c2461;
+            color: #fff;
+            padding: 14px 16px;
+            text-align: right;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eef0f2;
+            font-size: 0.86rem;
+            vertical-align: top;
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: #f8f9fa; }
+
+        .pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .pill-tofu { background: #e3f2fd; color: #1565c0; }
+        .pill-mofu { background: #fff3e0; color: #e65100; }
+        .pill-bofu { background: #e8f5e9; color: #2e7d32; }
+        .pill-priority-high { background: #ffebee; color: #c62828; }
+        .pill-priority-medium { background: #fff3e0; color: #e65100; }
+        .pill-priority-low { background: #e3f2fd; color: #1565c0; }
+
+        /* Stats cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .stat {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+        .stat-number { font-size: 2rem; font-weight: 800; color: #0891b2; }
+        .stat-label { font-size: 0.82rem; color: #636e72; margin-top: 4px; }
+
+        /* Video brief card */
+        .video-brief {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 30px;
+            margin-top: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+            position: relative;
+            border-right: 4px solid #0891b2;
+        }
+        .video-brief.priority-high { border-right-color: #c62828; }
+        .video-brief.priority-medium { border-right-color: #e65100; }
+        .video-brief.priority-low { border-right-color: #1565c0; }
+
+        .video-num {
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            background: #0c2461;
+            color: #fff;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .video-brief h3 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #0c2461;
+            margin-bottom: 4px;
+            padding-left: 50px;
+        }
+        .video-brief .title-en {
+            font-size: 0.9rem;
+            color: #636e72;
+            margin-bottom: 14px;
+            font-style: italic;
+        }
+        .video-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .meta-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+        .tag-type { background: #e8f5e9; color: #2e7d32; }
+        .tag-cluster { background: #f3e5f5; color: #7b1fa2; }
+        .tag-keyword { background: #e3f2fd; color: #1565c0; }
+        .tag-intent { background: #fff3e0; color: #e65100; }
+
+        .brief-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .brief-block {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 18px;
+            font-size: 0.86rem;
+        }
+        .brief-block.full { grid-column: 1 / -1; }
+        .brief-block strong {
+            color: #0c2461;
+            display: block;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .brief-block ul { padding-right: 18px; margin-top: 4px; }
+        .brief-block li { margin-bottom: 3px; font-size: 0.84rem; }
+
+        /* Future ideas card */
+        .future-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-top: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+            border-right: 3px solid #06b6d4;
+        }
+        .future-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0c2461;
+            margin-bottom: 6px;
+        }
+        .future-card .meta { font-size: 0.78rem; color: #636e72; margin-bottom: 8px; }
+        .future-card p { font-size: 0.85rem; color: #2d3436; }
+
+        /* Priority table */
+        .priority-table th {
+            background: linear-gradient(135deg, #0c2461, #1e3799);
+        }
+
+        /* Comparison */
+        .compare-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 18px;
+        }
+        .compare-col {
+            background: #fff;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+        .compare-col.local { border-top: 4px solid #0891b2; }
+        .compare-col.global { border-top: 4px solid #1e3799; }
+        .compare-col h3 { color: #0c2461; margin-bottom: 12px; font-size: 1.05rem; }
+        .compare-col ul { list-style: none; padding: 0; }
+        .compare-col li {
+            padding: 7px 0;
+            border-bottom: 1px solid #f5f5f5;
+            font-size: 0.86rem;
+        }
+        .compare-col li:last-child { border-bottom: none; }
+        .compare-col li strong { color: #0891b2; }
+
+        /* Gaps list */
+        .gap-card {
+            background: #fff8e1;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-top: 14px;
+            border-right: 3px solid #f9a825;
+        }
+        .gap-card h4 { color: #6d4c00; font-size: 0.95rem; margin-bottom: 6px; }
+        .gap-card p { font-size: 0.85rem; color: #5d4037; }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #b2bec3;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .brief-grid { grid-template-columns: 1fr; }
+            .compare-grid { grid-template-columns: 1fr; }
+            .data-table { font-size: 0.78rem; }
+            .data-table th, .data-table td { padding: 10px 8px; }
+        }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.7rem; }
+            .video-brief h3 { font-size: 1.05rem; padding-left: 0; padding-right: 50px; }
+            .section-banner { flex-direction: column; gap: 8px; text-align: center; }
+            .video-meta { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>אסטרטגיית תוכן ויוטיוב מאוחדת</h1>
+    <div class="subtitle">Qlik | sp.data — מערך SEO + GEO + YouTube</div>
+    <div class="date-badge">מאי 2026</div>
+</div>
+
+<div class="container">
+
+<!-- ============ SECTION 1 ============ -->
+<div class="section" id="section-1">
+    <div class="section-banner">
+        <h2>חלק 1 — מיפוי תוכן לעץ האתר</h2>
+        <span class="section-num">5 קבוצות, 33 עמודי יכולות</span>
+    </div>
+    <div class="section-intro">
+        כל יכולת ממופה למילת מפתח מרכזית, לעמוד יעד ולתפקיד במשפך. הקבוצות מבוססות על עץ האתר של Qlik | sp.data.
+    </div>
+
+    <div class="cluster-grid">
+
+        <div class="cluster-card integration">
+            <h3>אינטגרציה ואיכות נתונים</h3>
+            <div class="cluster-en">Data Integration &amp; Quality · 9 עמודים</div>
+            <ul>
+                <li><strong>Data Streaming</strong> / סטרימינג בזמן אמת<span class="kw">cdc · real time data · qlik replicate</span></li>
+                <li><strong>Data Transformation</strong> / טרנספורמציית נתונים<span class="kw">etl 210 · elt · etl tools 90</span></li>
+                <li><strong>Data Warehouse Modernization</strong><span class="kw">data warehouses 320 · data warehouse vs data lake</span></li>
+                <li><strong>Open Lakehouse</strong><span class="kw">data lakehouse · data fabric</span></li>
+                <li><strong>Data Quality &amp; Governance</strong><span class="kw">data quality · data governance · טיוב נתונים 210</span></li>
+                <li><strong>Application &amp; API Integration</strong><span class="kw">api integration · qlik talend</span></li>
+                <li><strong>Application Automation</strong><span class="kw">automation · ai-powered automation 20</span></li>
+                <li><strong>SAP Solutions</strong><span class="kw">sap analytics · qlik replicate sap</span></li>
+                <li><strong>Integrations &amp; Connectors</strong><span class="kw">connectors · data integration platform</span></li>
+            </ul>
+        </div>
+
+        <div class="cluster-card analytics">
+            <h3>Analytics</h3>
+            <div class="cluster-en">12 עמודים</div>
+            <ul>
+                <li><strong>Visualization &amp; Dashboards</strong><span class="kw">dashboard 2400 · דשבורד 880 · לוח בקרה 390 · kpi 2400</span></li>
+                <li><strong>Embedded Analytics</strong><span class="kw">qlik oem · embedded bi · white label</span></li>
+                <li><strong>Reporting + Alerting</strong><span class="kw">bi reporting · qlik nprinting · alerting</span></li>
+                <li><strong>Agentic AI</strong><span class="kw">agentic ai 290 · בינה מלאכותית 40,500 · qlik answers</span></li>
+                <li><strong>Automation &amp; Orchestration</strong><span class="kw">data orchestration · workflow automation</span></li>
+                <li><strong>Predictive AI / AutoML</strong><span class="kw">predictive analytics · למידת מכונה 320 · automl</span></li>
+                <li><strong>Data Preparation</strong><span class="kw">data preparation · ניקוי נתונים · self-service prep</span></li>
+                <li><strong>Qlik MCP</strong><span class="kw">qlik mcp · model context protocol · llm integration</span></li>
+                <li><strong>Self-Service Analytics</strong><span class="kw">self service bi · אנליטיקה עצמאית</span></li>
+                <li><strong>Data Discovery</strong><span class="kw">data discovery · associative analytics</span></li>
+                <li><strong>Data Products</strong><span class="kw">data products · data mesh · datasets</span></li>
+                <li><strong>Associative Agent</strong><span class="kw">associative engine · qlik engine</span></li>
+            </ul>
+        </div>
+
+        <div class="cluster-card solutions">
+            <h3>פתרונות לפי סקטור</h3>
+            <div class="cluster-en">Solutions · 7 ענפים</div>
+            <ul>
+                <li><strong>פיננסים / Finance</strong><span class="kw">פיננסי analytics · risk · fraud · regulatory</span></li>
+                <li><strong>ייצור / Manufacturing</strong><span class="kw">manufacturing analytics · iot · supply chain</span></li>
+                <li><strong>קמעונאות / Retail</strong><span class="kw">retail analytics · inventory · customer 360</span></li>
+                <li><strong>שירות / Service</strong><span class="kw">service analytics · customer success 270</span></li>
+                <li><strong>ציבורי / Public Sector</strong><span class="kw">government bi · רגולציה</span></li>
+                <li><strong>הייטק / Tech</strong><span class="kw">tech analytics · saas analytics</span></li>
+                <li><strong>הייטק ו-ISV</strong><span class="kw">qlik oem · embedded analytics for saas</span></li>
+            </ul>
+        </div>
+
+        <div class="cluster-card education">
+            <h3>למידה ומותג</h3>
+            <div class="cluster-en">Why Qlik · קורסים והכשרות</div>
+            <ul>
+                <li><strong>קורסי BI / Bootcamp</strong><span class="kw">bootcamp 610 · קורס bi 210 · קורסים bi 210</span></li>
+                <li><strong>אוריינות דאטה</strong><span class="kw">אוריינות 660 · data literacy · אוריינות דאטה</span></li>
+                <li><strong>Customer Stories</strong><span class="kw">customer success 270 · case studies</span></li>
+                <li><strong>למה Qlik | sp.data</strong><span class="kw">11 שנים #1 · 1,400 לקוחות · ייעוץ והטמעה</span></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="card" style="margin-top:24px">
+        <div class="card-title">מיפוי נושא · עמוד · מילה · תפקיד במשפך</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>נושא</th>
+                    <th>סוג עמוד</th>
+                    <th>מילות מפתח (HE / EN)</th>
+                    <th>תפקיד במשפך</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>מה זה BI</td><td>בלוג / מאמר עוגן</td><td>מה זה bi (260) · bi (2,900) · what is bi (140) · bi business intelligence (260)</td><td><span class="pill pill-tofu">TOFU</span></td></tr>
+                <tr><td>דשבורדים בעברית</td><td>עמוד יכולת</td><td>דשבורד (880) · לוח בקרה (390) · dashboard (2,400) · kpi (2,400)</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+                <tr><td>בינה מלאכותית לארגון</td><td>בלוג / עוגן + עמוד Agentic AI</td><td>בינה מלאכותית (40,500) · agentic ai (290) · ai לעסקים</td><td><span class="pill pill-tofu">TOFU</span></td></tr>
+                <tr><td>ETL מול ELT</td><td>עמוד יכולת + בלוג</td><td>etl (210) · elt · etl vs elt · data transformation</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+                <tr><td>דאטה אנליסט - מקצוע</td><td>בלוג עוגן · קורסים</td><td>דאטה אנליסט (540) · אנליסט מה זה (210) · דרושים bi (140)</td><td><span class="pill pill-tofu">TOFU</span></td></tr>
+                <tr><td>למידת מכונה</td><td>עמוד Predictive AI</td><td>למידת מכונה (320) · machine learning · automl · predictive analytics</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+                <tr><td>מחסני נתונים</td><td>עמוד יכולת</td><td>data warehouses (320) · מסד נתונים (320) · מחסן נתונים</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+                <tr><td>אוריינות דאטה</td><td>בלוג עוגן + Why Qlik</td><td>אוריינות (660) · אוריינות דאטה · data literacy</td><td><span class="pill pill-tofu">TOFU</span></td></tr>
+                <tr><td>Qlik MCP</td><td>עמוד יכולת</td><td>qlik mcp · model context protocol · llm integration</td><td><span class="pill pill-bofu">BOFU</span></td></tr>
+                <tr><td>קורסי BI / Bootcamp</td><td>עמוד קורסים</td><td>bootcamp (610) · קורס bi (210) · בוטקאמפ (260)</td><td><span class="pill pill-tofu">TOFU</span></td></tr>
+                <tr><td>Self-Service Analytics</td><td>עמוד יכולת</td><td>self service bi · אנליטיקה עצמאית · data discovery</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+                <tr><td>השוואה: Qlik / Power BI / Tableau</td><td>בלוג השוואה · BOFU</td><td>microsoft bi (140) · bi tools (140) · bi software tools (140)</td><td><span class="pill pill-bofu">BOFU</span></td></tr>
+                <tr><td>סיפור לקוח</td><td>עמוד Case Study</td><td>customer success (270) · case study · qlik success</td><td><span class="pill pill-bofu">BOFU</span></td></tr>
+                <tr><td>Embedded Analytics</td><td>עמוד יכולת</td><td>qlik oem · embedded analytics · white label bi</td><td><span class="pill pill-bofu">BOFU</span></td></tr>
+                <tr><td>Pixel-Perfect Reports</td><td>עמוד יכולת</td><td>bi reporting · qlik nprinting · דוחות bi</td><td><span class="pill pill-mofu">MOFU</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ============ SECTION 2 ============ -->
+<div class="section" id="section-2">
+    <div class="section-banner">
+        <h2>חלק 2 — ניתוח ערוצי YouTube</h2>
+        <span class="section-num">Qlik Israel + Qlik Official</span>
+    </div>
+    <div class="section-intro">
+        השוואה בין הערוץ המקומי לערוץ הגלובלי, זיהוי פערים והזדמנויות לתוכן עברי שמתחבר למחקר המילים.
+    </div>
+
+    <div class="stats-row">
+        <div class="stat"><div class="stat-number">29</div><div class="stat-label">סרטונים אחרונים בערוץ Qlik Israel</div></div>
+        <div class="stat"><div class="stat-number">1-3 דק'</div><div class="stat-label">משך ממוצע (סרטוני מוצר)</div></div>
+        <div class="stat"><div class="stat-number">5-25</div><div class="stat-label">צפיות חציוניות</div></div>
+        <div class="stat"><div class="stat-number">254K</div><div class="stat-label">צפיות בסרטון "What is Data Integration" (פוטנציאל מקבילה בעברית)</div></div>
+    </div>
+
+    <div class="compare-grid">
+        <div class="compare-col local">
+            <h3>Qlik Israel — מצב נוכחי</h3>
+            <ul>
+                <li><strong>סרטוני מוצר קצרים:</strong> Qlik Answers, Qlik Automate, Qlik Predict, Discovery Agent (חודש אחרון)</li>
+                <li><strong>וובינרים ארוכים:</strong> 35-70 דק' על Data Integration, AI, Qlik Cloud</li>
+                <li><strong>תוכן בעברית:</strong> רוב הוובינרים בעברית, סרטונים קצרים מעורבים</li>
+                <li><strong>סיפורי לקוח:</strong> מפעל הפיס, BriefCam, Champignon (קצרים, באנגלית)</li>
+                <li><strong>חולשה: כותרות SEO:</strong> אין כותרות מבוססות שאילתה ("מה זה...", "איך...")</li>
+                <li><strong>חולשה: סדרות:</strong> אין סדרת "Qlik in 60", אין סדרת "מה זה...", אין סדרת השוואות</li>
+            </ul>
+        </div>
+        <div class="compare-col global">
+            <h3>Qlik Official — לקח להעתיק</h3>
+            <ul>
+                <li><strong>סדרות תוכן:</strong> "Do More with Qlik", "SaaS in 60", "Data Products", "Data Impact Awards"</li>
+                <li><strong>סרטוני MCP ו-AI:</strong> 1-7 דק', 600-1500 צפיות לסרטון</li>
+                <li><strong>סיפורי לקוחות מובנים:</strong> Hapag-Lloyd, NKT, HelloFresh, UPS, Schneider — סרטוני 1-3 דק'</li>
+                <li><strong>הדגמות טכניות:</strong> "Qlik MCP + Claude Quick Setup", "Snowflake Cortex + Qlik"</li>
+                <li><strong>תוכן השוואתי:</strong> Qlik Answers, Discovery Agent — explainers</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+        <div class="card-title">פערים מרכזיים — מה חסר בערוץ הישראלי</div>
+
+        <div class="gap-card">
+            <h4>1. אין תוכן explainer בעברית למילים בעלות נפח גבוה</h4>
+            <p>"בינה מלאכותית" (40,500), "דשבורד" (880), "BI" (2,900), "דאטה אנליסט" (540) — אף סרטון בערוץ לא מכוון לשאילתות אלה. כל סרטון explainer קצר על אחת מהן יכול לייצר תנועת SEO + צפיות.</p>
+        </div>
+
+        <div class="gap-card">
+            <h4>2. אין סדרת "Qlik in 60" בעברית</h4>
+            <p>הערוץ הגלובלי מריץ "SaaS in 60" — סרטוני 60 שניות פר פיצ'ר. לערוץ המקומי יש סרטונים בודדים מסוג זה (Qlik Sense in 60: Master Items) אבל לא סדרה מובנית. סדרה כזאת בעברית פותרת את בעיית "מהירות הפקה" ויוצרת ספריית תוכן ל-30 פיצ'רים.</p>
+        </div>
+
+        <div class="gap-card">
+            <h4>3. אין סרטוני השוואה</h4>
+            <p>"Qlik vs Power BI", "Qlik vs Tableau" — שאילתות פעילות בישראל. אין כיסוי. סרטון השוואה אחד יכול לתפוס את כל ה-BOFU של מחפשי כלי BI.</p>
+        </div>
+
+        <div class="gap-card">
+            <h4>4. וובינרים לא מנוצלים שוב</h4>
+            <p>וובינר של 35 דק' מקבל 50-200 צפיות. אותו תוכן יכול להיחתך ל-5-7 קליפים קצרים של 60-90 שניות, כל אחד עם כותרת SEO ייעודית. הכפלה של נכסים בלי הפקה נוספת.</p>
+        </div>
+
+        <div class="gap-card">
+            <h4>5. אין סיפורי לקוח מובנים בעברית</h4>
+            <p>Qlik Israel מציגה 1,400 לקוחות, אבל בערוץ יש רק 3 קליפים קצרים בנושא — וגם הם באנגלית (Mifal HaPais, BriefCam, Champignon). סדרת "סיפורי הצלחה" עברית עם פורמט קבוע (אתגר → פתרון → תוצאה) חסרה לחלוטין.</p>
+        </div>
+
+        <div class="gap-card">
+            <h4>6. אין כיסוי לקטגוריית AI Search / GEO</h4>
+            <p>ChatGPT, Claude ו-Perplexity מצטטים בעיקר תוכן explainer קצר עם מבנה ברור (שאלה → תשובה ב-2-3 שורות). אין סרטון בערוץ שמתאים לפרופיל הזה. תוסף ל-GEO: לכלול תקציר שאלה+תשובה ב-30 שניות הראשונות של כל סרטון.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SECTION 3 ============ -->
+<div class="section" id="section-3">
+    <div class="section-banner">
+        <h2>חלק 3 — אסטרטגיית YouTube</h2>
+        <span class="section-num">3 סדרות, 14 סרטונים מוצעים</span>
+    </div>
+    <div class="section-intro">
+        מבנה תוכן אחיד שמיישר את הערוץ עם עץ האתר ומחקר המילים. כל סדרה משרתת תפקיד שונה במשפך.
+    </div>
+
+    <div class="card">
+        <div class="card-title">3 סדרות תוכן — מה נכלל</div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>סדרה</th>
+                    <th>אורך</th>
+                    <th>פורמט</th>
+                    <th>תפקיד</th>
+                    <th>קלאסטר ראשי</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>"מה זה?" / "What Is?"</strong></td>
+                    <td>2-4 דק'</td>
+                    <td>Explainer בעברית, מבנה Q&amp;A ברור (Hook → Definition → Example → CTA)</td>
+                    <td><span class="pill pill-tofu">TOFU · SEO + GEO</span></td>
+                    <td>Analytics + AI</td>
+                </tr>
+                <tr>
+                    <td><strong>"Qlik ב-60"</strong></td>
+                    <td>60-90 ש'</td>
+                    <td>הדגמת פיצ'ר אחת בלבד, מסך + voice over</td>
+                    <td><span class="pill pill-mofu">MOFU · Product Discovery</span></td>
+                    <td>Analytics + Data Integration</td>
+                </tr>
+                <tr>
+                    <td><strong>"מהאתגר לתוצאה"</strong></td>
+                    <td>3-5 דק'</td>
+                    <td>סיפור לקוח: אתגר → פתרון Qlik → תוצאה במספרים</td>
+                    <td><span class="pill pill-bofu">BOFU · Sales Enablement</span></td>
+                    <td>Solutions לפי סקטור</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">סטנדרט הפקה — חובה לכל סרטון</div>
+        <ul style="padding-right:20px; font-size:0.92rem">
+            <li><strong>Hook ב-7 שניות הראשונות:</strong> שאלה ישירה ("מה זה דשבורד?") או הבטחה מספרית ("3 שגיאות שמייקרות לכם BI")</li>
+            <li><strong>פסקת תקציר ב-30 ש' הראשונות:</strong> תשובה תמציתית של 2-3 משפטים (לציטוט ב-AI Search)</li>
+            <li><strong>כותרת:</strong> מתחילה במילת מפתח ראשית בעברית · עד 60 תווים · כוללת מותג Qlik אחרי השאלה</li>
+            <li><strong>תיאור:</strong> 150-300 מילים · פסקת פתיחה תמציתית · קישורים לעמוד מוצר/יכולת רלוונטי באתר · 3-5 #hashtags</li>
+            <li><strong>תגיות:</strong> 8-12 תגיות, מערבב עברית ואנגלית, כולל מותג + נושא + סקטור</li>
+            <li><strong>Chapters:</strong> חובה מעל 90 שניות</li>
+            <li><strong>כתוביות:</strong> עברית מלאה (לא אוטומטי) — חיוני ל-GEO ולנגישות</li>
+            <li><strong>Thumbnail:</strong> טקסט בעברית גדול + פרצוף או יד · ניגודיות גבוהה · בלי לוגו דומיננטי</li>
+            <li><strong>End screen:</strong> סרטון הבא באותה סדרה + CTA לטופס דמו באתר</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============ SECTION 4 ============ -->
+<div class="section" id="section-4">
+    <div class="section-banner">
+        <h2>חלק 4 — בריפים לסרטונים</h2>
+        <span class="section-num">14 סרטונים מוצעים</span>
+    </div>
+    <div class="section-intro">
+        כל בריף כולל כותרת בעברית ואנגלית, מילות מפתח, מבנה תסריט, נקודות מפתח, ו-SEO על-עמודי (כותרת · תיאור · תגיות).
+    </div>
+
+    <!-- VIDEO 1 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">01</div>
+        <h3>מה זה BI? בינה עסקית בארגון, ב-3 דקות</h3>
+        <div class="title-en">EN: What Is BI? Business Intelligence Explained in 3 Minutes</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Explainer</span>
+            <span class="meta-tag tag-cluster">Analytics</span>
+            <span class="meta-tag tag-keyword">מה זה bi (260) · bi (2,900)</span>
+            <span class="meta-tag tag-intent">TOFU · אינפורמטיבית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>מה זה bi · bi · business intelligence</div>
+            <div class="brief-block"><strong>Secondary</strong>בינה עסקית · מערכת bi · bi מה זה · what is bi · bi tools</div>
+            <div class="brief-block full"><strong>Hook (0-7 ש')</strong>"לפני 5 שנים שאלה כזאת קיבלה 5 תשובות שונות. היום יש תשובה אחת ברורה." מסך שחור עם הטקסט "מה זה BI?" באמצע.</div>
+            <div class="brief-block"><strong>מבנה (Main Sections)</strong>
+                <ul>
+                    <li>הגדרה ב-2 משפטים (לציטוט ב-AI)</li>
+                    <li>3 שכבות: דאטה גולמית → ויזואליזציה → החלטה</li>
+                    <li>דוגמה: דשבורד מכירות פתוח באקסל מול דשבורד אינטראקטיבי</li>
+                    <li>איפה Qlik משתלב — מנוע אסוציאטיבי בעברית</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לראות איך נראה BI אמיתי בעברית? לחצו על הקישור — דמו של 10 דקות, חינם."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>BI ≠ דוחות. BI הוא יכולת לחקור ולשאול שאלות חופשיות על הדאטה</li>
+                    <li>הזכרת ההבדל בין Self-Service BI ל-Traditional BI (קישור פנימי)</li>
+                    <li>Qlik = 11 שנים מובילה בישראל (כריכה לסמכות)</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title (60 תווים):</strong> מה זה BI? בינה עסקית בארגון, מוסבר ב-3 דקות | Qlik</li>
+                    <li><strong>Description:</strong> סקירה תמציתית של 150 מילים. פסקת פתיחה: "BI (Business Intelligence / בינה עסקית) הוא תהליך שבו ארגון הופך דאטה גולמית לתובנות שמובילות להחלטות. בסרטון הזה נסביר את 3 השכבות, מתי משתמשים ב-Self-Service BI, ואיך Qlik תומכת בעברית מלאה."</li>
+                    <li><strong>Tags:</strong> מה זה bi · בינה עסקית · bi · business intelligence · qlik · qlik sense · bi בעברית · bi tools · self service bi · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 2 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">02</div>
+        <h3>בינה מלאכותית בארגון - איך מתחילים ב-2026</h3>
+        <div class="title-en">EN: Enterprise AI in 2026 — Where to Start</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Thought Leadership</span>
+            <span class="meta-tag tag-cluster">Analytics · Agentic AI</span>
+            <span class="meta-tag tag-keyword">בינה מלאכותית (40,500) · agentic ai (290)</span>
+            <span class="meta-tag tag-intent">TOFU · אסטרטגית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>בינה מלאכותית · agentic ai · ai לעסקים</div>
+            <div class="brief-block"><strong>Secondary</strong>אינטליגנציה מלאכותית · machine learning · ai טכנולוגיה · מערכות ai · בינה מלאכותית הגדרה</div>
+            <div class="brief-block full"><strong>Hook (0-7 ש')</strong>"רוב הארגונים בישראל מתחילים את ה-AI במקום הלא נכון. הנה מה שעובד בפועל." (קאט מהיר לדשבורד עם תובנת AI על המסך)</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>3 רמות AI: Generative · Predictive · Agentic — מה ההבדל</li>
+                    <li>למה ארגונים נתקעים: דאטה לא איכותית, אין ממשל</li>
+                    <li>נקודת ההתחלה: Data Quality + סוכן AI אחד על שאלה עסקית מוגדרת</li>
+                    <li>הצגת Qlik Answers + Qlik Discovery Agent כדוגמה מעשית</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים מפת דרכים מותאמת לארגון שלכם? צרו קשר עם הצוות שלנו."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>"בינה מלאכותית" כקטגוריה רחבה — נדרש למקד ל-Agentic AI</li>
+                    <li>הסכנה של AI בלי ממשל (hallucinations, חשיפת דאטה)</li>
+                    <li>איך MCP פותר את בעיית ה-context האירגוני (קישור לסרטון Qlik MCP)</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> בינה מלאכותית בארגון - איך מתחילים ב-2026 | Qlik Israel</li>
+                    <li><strong>Description:</strong> פתיחה תמציתית: "בינה מלאכותית בארגון לא מתחילה במודל - היא מתחילה בדאטה. בסרטון הזה נחלק את ה-AI הארגוני ל-3 שכבות, נראה איפה הרוב נתקעים, ונציג את הצעד הראשון שעובד בפועל."</li>
+                    <li><strong>Tags:</strong> בינה מלאכותית · ai לעסקים · agentic ai · qlik answers · ai לארגונים · machine learning · qlik · קליק ישראל · ai בישראל · enterprise ai</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 3 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">03</div>
+        <h3>איך בונים דשבורד בעברית ב-Qlik Sense - מ-0 ל-KPI</h3>
+        <div class="title-en">EN: Build a Hebrew RTL Dashboard in Qlik Sense — Zero to KPI</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo</span>
+            <span class="meta-tag tag-cluster">Visualization &amp; Dashboards</span>
+            <span class="meta-tag tag-keyword">דשבורד (880) · לוח בקרה (390) · kpi (2,400)</span>
+            <span class="meta-tag tag-intent">MOFU · השוואתית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>דשבורד · לוח בקרה · kpi dashboard</div>
+            <div class="brief-block"><strong>Secondary</strong>דשבורד בעברית · דשבורד מנהלים · דשבורד ניהולי · בניית דשבורד · qlik sense דשבורד · dashboard בעברית · לוח מחוונים</div>
+            <div class="brief-block full"><strong>Hook</strong>"יש המון מערכות BI. רק חלק מהן עובדות נכון בעברית. אני אראה לכם איך בונים דשבורד RTL מלא ב-3 דקות."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>חיבור מקור נתונים (אקסל / SAP / Priority)</li>
+                    <li>גרירת KPI ראשון - מכירות חודשיות</li>
+                    <li>הוספת פילטר תאריך + פילטר אזור</li>
+                    <li>החלפת הויזואליזציה ב-AI Insight Suggestions</li>
+                    <li>שיתוף עם הצוות + הרשאות</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים להתנסות בעצמכם? לחצו על Qlik Sense Free Trial - 30 יום ללא כרטיס אשראי."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>RTL מלא — טקסט מימין, גרפים מותאמים</li>
+                    <li>פונט עברי מקצועי (לא ברירת מחדל)</li>
+                    <li>מנוע אסוציאטיבי — איך זה שונה מ-Power BI</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> דשבורד בעברית ב-Qlik Sense - מ-0 ל-KPI ב-3 דקות | Qlik Israel</li>
+                    <li><strong>Description:</strong> פתיחה: "מדריך מעשי לבניית דשבורד RTL מלא בעברית עם Qlik Sense. מחיבור הנתונים, דרך KPI ראשון, ועד שיתוף עם הצוות. בלי קוד, בלי הגדרות מורכבות."</li>
+                    <li><strong>Tags:</strong> דשבורד · דשבורד בעברית · qlik sense · kpi dashboard · לוח בקרה · בניית דשבורד · dashboard עברית · רטל · בי איי · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 4 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">04</div>
+        <h3>Qlik מול Power BI מול Tableau - איך בוחרים ב-2026</h3>
+        <div class="title-en">EN: Qlik vs Power BI vs Tableau — How to Choose in 2026</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Comparison</span>
+            <span class="meta-tag tag-cluster">Why Qlik | sp.data</span>
+            <span class="meta-tag tag-keyword">microsoft bi (140) · bi tools (140) · bi software (10)</span>
+            <span class="meta-tag tag-intent">BOFU · השוואתית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>qlik vs power bi · bi tools · bi software tools</div>
+            <div class="brief-block"><strong>Secondary</strong>qlik vs tableau · power bi · microsoft bi · bi tool · business intelligence tools · bi software · השוואת bi · כלי bi · qlik מול</div>
+            <div class="brief-block full"><strong>Hook</strong>"3 פלטפורמות. אותו קהל יעד. הנה ההבדל האמיתי - לא מה שהשיווק מספר לכם."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>טבלת השוואה בולטת - 5 קטגוריות (מנוע, AI, RTL, מודל מחירים, פריסה)</li>
+                    <li>Power BI - מתי כן ומתי לא</li>
+                    <li>Tableau - חוזק וויזואליזציה, חולשה במחיר</li>
+                    <li>Qlik - מנוע אסוציאטיבי + עברית מלאה + Agentic AI מובנה</li>
+                    <li>איך לבחור: 3 שאלות שצריך לשאול</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לראות את ההבדל בעיניים שלכם? בקשו השוואת POC מול הסביבה הנוכחית שלכם."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>הוגנות - לא להשמיץ את המתחרים, להציג עובדות</li>
+                    <li>מנוע אסוציאטיבי = הבדל ארכיטקטוני אמיתי, לא slogan</li>
+                    <li>RTL ועברית מלאה = יתרון מובהק לקהל הישראלי</li>
+                    <li>Agentic AI מובנה (Qlik Answers + Discovery Agent) - לא תוסף</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Qlik vs Power BI vs Tableau - מי מנצח ב-2026? | השוואה מלאה</li>
+                    <li><strong>Description:</strong> פתיחה: "השוואה ישירה בין 3 פלטפורמות BI מובילות. מה ההבדל בין מנוע אסוציאטיבי למודל סמנטי? למי מתאים Power BI ולמי לא? איפה Tableau חזקה ואיפה היא יקרה? התשובות בסרטון."</li>
+                    <li><strong>Tags:</strong> qlik vs power bi · qlik vs tableau · השוואת bi · bi tools · bi software · power bi · tableau · qlik · best bi tool · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 5 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">05</div>
+        <h3>דאטה אנליסט - מה הוא עושה בפועל ביום עבודה</h3>
+        <div class="title-en">EN: What Does a Data Analyst Actually Do Day-to-Day</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Thought Leadership · Career</span>
+            <span class="meta-tag tag-cluster">למידה · Why Qlik</span>
+            <span class="meta-tag tag-keyword">דאטה אנליסט (540) · אנליסט מה זה (210)</span>
+            <span class="meta-tag tag-intent">TOFU · אינפורמטיבית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>דאטה אנליסט · אנליסט נתונים · data analyst</div>
+            <div class="brief-block"><strong>Secondary</strong>דאטה אנליסט מה זה · אנליסטית מה זה · ניתוח נתונים · אנליסט bi · דרושים bi · דאטה אנליסט שכר · דאטה אנליסט צבא</div>
+            <div class="brief-block full"><strong>Hook</strong>"דאטה אנליסט בישראל מרוויח בממוצע 22 אלף ש"ח. אבל מה הוא עושה בפועל? הנה יום עבודה מלא, בלי מילים יפות."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>בוקר: בקשה ממנהל המכירות - "למה הירידה השבוע?"</li>
+                    <li>חיבור מקורות: CRM + ERP + אקסל - דרך Qlik</li>
+                    <li>בניית 3 ויזואליזציות - מה משאיר ומה זורק</li>
+                    <li>הצגה למנהל - איך מתרגמים לקבלת החלטה</li>
+                    <li>הכלים שדאטה אנליסט באמת צריך - SQL, BI, ועוד 2</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים להפוך לדאטה אנליסט? צפו בסרטון של הקורסים והבוטקאמפ של Qlik | sp.data."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>ההבדל בין דאטה אנליסט ל-BI Developer ול-Data Scientist</li>
+                    <li>שכר ממוצע (לפי מחקר עדכני) - בכוונה לציין</li>
+                    <li>טעות נפוצה: לחשוב שהתפקיד הוא רק SQL ואקסל</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> דאטה אנליסט - מה הוא באמת עושה ביום עבודה? | Qlik Israel</li>
+                    <li><strong>Description:</strong> "כל מי ששואל 'מה זה דאטה אנליסט' מקבל תשובות תיאורטיות. אנחנו לקחנו אנליסט אמיתי בארגון ישראלי וצילמנו לו יום עבודה. מבקשת המנהל ועד הצגת התוצאות. כולל הכלים, השכר, וההבדל מ-BI Developer."</li>
+                    <li><strong>Tags:</strong> דאטה אנליסט · data analyst · אנליסט נתונים · אנליסט bi · דאטה אנליסט שכר · ניתוח נתונים · קריירה bi · qlik · בוטקאמפ · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 6 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">06</div>
+        <h3>ETL מול ELT - ההבדל ב-2 דקות</h3>
+        <div class="title-en">EN: ETL vs ELT — The Difference in 2 Minutes</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Explainer</span>
+            <span class="meta-tag tag-cluster">Data Integration</span>
+            <span class="meta-tag tag-keyword">etl (210) · elt</span>
+            <span class="meta-tag tag-intent">TOFU/MOFU · אינפורמטיבית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>etl · elt · etl vs elt</div>
+            <div class="brief-block"><strong>Secondary</strong>etl מה זה · what is etl · etl tools · etl process · data transformation · data pipeline · תהליכי etl · etl elt difference</div>
+            <div class="brief-block full"><strong>Hook</strong>"סדר 3 אותיות. שינוי שלם בארכיטקטורה. ETL מול ELT - מה ההבדל ולמה זה משנה לארגון שלכם."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>ETL - Extract Transform Load (מסורתי)</li>
+                    <li>ELT - Extract Load Transform (מודרני, ענן)</li>
+                    <li>הדגמה ויזואלית - אותם נתונים, 2 ארכיטקטורות</li>
+                    <li>מתי לבחור בכל אחד - 4 שאלות מנחות</li>
+                    <li>איפה Qlik Talend Cloud עוזרת - בשניהם</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לראות איך בונים pipeline ELT ב-Qlik ללא קוד? לסרטון הבא בסדרה."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>ELT מתאים לפלטפורמות ענן (Snowflake, BigQuery, Databricks)</li>
+                    <li>ETL עדיין רלוונטי כשיש דרישות רגולציה / שינוי לפני אחסון</li>
+                    <li>Qlik Talend Cloud תומכת בשניהם בלי קוד</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> ETL מול ELT - ההבדל הפשוט וכיצד לבחור | Qlik Talend</li>
+                    <li><strong>Description:</strong> "ETL ו-ELT נשמעים כמעט אותו דבר אבל בונים ארכיטקטורה אחרת לחלוטין. בסרטון הזה: ההגדרה הפשוטה, מתי כל גישה מתאימה, ואיך Qlik Talend Cloud מאפשרת את שתיהן ללא קוד."</li>
+                    <li><strong>Tags:</strong> etl · elt · etl vs elt · etl מה זה · data transformation · qlik talend · data pipeline · etl tools · אינטגרציית נתונים · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 7 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">07</div>
+        <h3>Agentic AI - מה זה ולמה צריך אותו ב-Qlik</h3>
+        <div class="title-en">EN: Agentic AI Explained — Why It Matters Inside Qlik</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Explainer + Demo</span>
+            <span class="meta-tag tag-cluster">Analytics · Agentic AI</span>
+            <span class="meta-tag tag-keyword">agentic ai (290) · qlik answers · qlik discovery agent</span>
+            <span class="meta-tag tag-intent">MOFU · השוואתית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>agentic ai · ai agents · qlik agentic ai</div>
+            <div class="brief-block"><strong>Secondary</strong>qlik answers · qlik discovery agent · ai for data analytics · ai-powered automation · ai לעסקים · בינה מלאכותית · ai agents</div>
+            <div class="brief-block full"><strong>Hook</strong>"Generative AI עונה לשאלות. Agentic AI לוקח פעולה. הנה ההבדל בעבודה אמיתית."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>הגדרה של Agentic AI ב-2 משפטים (לציטוט)</li>
+                    <li>טבלת השוואה: Generative vs Agentic - מטרה, פעולה, ממשק</li>
+                    <li>הדגמת Qlik Answers - שאלה בשפה טבעית בעברית</li>
+                    <li>הדגמת Qlik Discovery Agent - איתור אנומליה אוטומטית</li>
+                    <li>ממשל: Row-Level Security על סוכני AI</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים להפעיל את Qlik Answers על הדאטה שלכם? בקשו דמו עם מקור נתונים אמיתי."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>סוכן AI לא = chatbot. הוא יוזם פעולה.</li>
+                    <li>Discovery Agent עובד 24/7 גם כשאף אחד לא שואל</li>
+                    <li>הסוכנים מכבדים הרשאות ברמת המשתמש - לא רואים יותר ממה שמותר</li>
+                    <li>Qlik MCP מאפשר חיבור Claude/ChatGPT אל Qlik</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Agentic AI לאנליטיקה - הבדל מ-Generative AI | Qlik Answers</li>
+                    <li><strong>Description:</strong> "Generative AI עונה לשאלות. Agentic AI לוקח פעולה. בסרטון: ההבדל הברור, איך עובד Qlik Answers בעברית, ואיך Discovery Agent מזהה אנומליות עוד לפני שמישהו שואל."</li>
+                    <li><strong>Tags:</strong> agentic ai · qlik answers · qlik discovery agent · ai agents · בינה מלאכותית · ai לעסקים · generative ai · enterprise ai · qlik · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 8 -->
+    <div class="video-brief priority-high">
+        <div class="video-num">08</div>
+        <h3>חיבור Claude ל-Qlik עם MCP - דמו מלא</h3>
+        <div class="title-en">EN: Connecting Claude to Qlik with MCP — Full Demo</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo · Technical</span>
+            <span class="meta-tag tag-cluster">Analytics · MCP</span>
+            <span class="meta-tag tag-keyword">qlik mcp · model context protocol · llm integration</span>
+            <span class="meta-tag tag-intent">BOFU · טכנית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>qlik mcp · qlik mcp server · model context protocol</div>
+            <div class="brief-block"><strong>Secondary</strong>claude integration · chatgpt integration · ai data access · llm integration · ai context · qlik claude · mcp server · ai חיבור לדאטה</div>
+            <div class="brief-block full"><strong>Hook</strong>"Claude מעולה. אבל הוא לא יודע כלום על הדאטה הארגונית שלכם. עד עכשיו." (קאט לטרמינל פתוח עם MCP)</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>מה זה MCP - Model Context Protocol (הגדרה ב-15 שניות)</li>
+                    <li>הצגת ארכיטקטורה - LLM ↔ MCP Server ↔ Qlik Tenant</li>
+                    <li>התקנת MCP Server (60 שניות)</li>
+                    <li>הגדרת חיבור ב-Claude Desktop</li>
+                    <li>שאילתה אמיתית - "מה היו 3 הלקוחות הגדולים ברבעון האחרון?" - תשובה עם ציטוט מקור</li>
+                    <li>Row-Level Security עובדת - הסוכן לא יראה דאטה לא מורשה</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לחבר את Claude / ChatGPT שלכם לדאטה הארגונית? בקשו פגישת ייעוץ MCP."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>הדאטה לא יוצאת מ-Qlik - LLM ניגש דרך protocol מאובטח</li>
+                    <li>זה עובד גם ב-On-Prem (Qlik Sense Client Managed)</li>
+                    <li>תאימות גם ל-ChatGPT, Cursor, ואחרים שתומכים ב-MCP</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> חיבור Claude ל-Qlik עם MCP Server - הדגמה מלאה | Qlik Israel</li>
+                    <li><strong>Description:</strong> "MCP (Model Context Protocol) הוא הסטנדרט החדש לחיבור LLMs לדאטה ארגונית. בסרטון: התקנה צעד-צעד של Qlik MCP Server, חיבור ל-Claude Desktop, שאילתה אמיתית, וכיצד Row-Level Security ממשיכה לעבוד."</li>
+                    <li><strong>Tags:</strong> qlik mcp · model context protocol · claude qlik · llm integration · qlik mcp server · ai data · agentic ai · qlik · claude desktop · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 9 -->
+    <div class="video-brief priority-medium">
+        <div class="video-num">09</div>
+        <h3>KPI Dashboard - מ-0 לתובנה ב-5 דקות</h3>
+        <div class="title-en">EN: KPI Dashboard from Zero to Insight in 5 Minutes</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo</span>
+            <span class="meta-tag tag-cluster">Visualization &amp; Dashboards</span>
+            <span class="meta-tag tag-keyword">kpi (2,400) · kpi dashboard (70)</span>
+            <span class="meta-tag tag-intent">MOFU · השוואתית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>kpi dashboard · kpi · בניית kpi</div>
+            <div class="brief-block"><strong>Secondary</strong>דשבורד מנהלים · דשבורד ניהולי · business intelligence dashboard · bi dashboard · מדדי kpi · kpi עסקי</div>
+            <div class="brief-block full"><strong>Hook</strong>"רוב ה-KPIs שאני רואה בארגונים - לא נמדדים נכון. הנה איך בונים KPI Dashboard שמייצר החלטה."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>מה הופך מספר ל-KPI - 4 קריטריונים</li>
+                    <li>בחירת KPI ראשי + 3 משניים (מכירות, מרווח, NPS, retention)</li>
+                    <li>בניית דשבורד עם הירארכיה ויזואלית - מה גדול ומה קטן</li>
+                    <li>הוספת התראה אוטומטית ב-Qlik Alerting (חציית סף)</li>
+                    <li>שיתוף לוח עם מנכ"ל ב-Slack/Teams</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים תבנית KPI Dashboard מוכנה? לחצו לקבלת קובץ qvf לדוגמה."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>KPI = Key Performance Indicator - לא כל מספר הוא KPI</li>
+                    <li>תפקיד התראה: מנהל לא צריך לפתוח את הדשבורד כדי לדעת שיש חריגה</li>
+                    <li>Qlik תומך ב-RTL ועברית מלאה גם ב-KPIs</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> בניית KPI Dashboard ב-Qlik Sense - מ-0 לתובנה | Qlik Israel</li>
+                    <li><strong>Description:</strong> "מדריך מעשי לבניית KPI Dashboard שמייצר החלטה - לא רק דוח. נראה איך לבחור KPIs נכון, איך להציג ויזואלית, ואיך להגדיר התראה אוטומטית בחציית סף."</li>
+                    <li><strong>Tags:</strong> kpi dashboard · kpi · דשבורד מנהלים · qlik sense · qlik alerting · bi dashboard · דשבורד ניהולי · בניית דשבורד · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 10 -->
+    <div class="video-brief priority-medium">
+        <div class="video-num">10</div>
+        <h3>למידת מכונה ללא Data Scientist - Qlik AutoML</h3>
+        <div class="title-en">EN: Machine Learning Without a Data Scientist — Qlik AutoML</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo + Explainer</span>
+            <span class="meta-tag tag-cluster">Predictive AI</span>
+            <span class="meta-tag tag-keyword">למידת מכונה (320) · machine learning · automl</span>
+            <span class="meta-tag tag-intent">MOFU · אינפורמטיבית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>למידת מכונה · automl · predictive analytics · qlik predict</div>
+            <div class="brief-block"><strong>Secondary</strong>machine learning מה זה · ai for data analytics · data mining · אנליטיקה חזויה · ניתוח חזוי · מודלים חזויים · ml ללא קוד</div>
+            <div class="brief-block full"><strong>Hook</strong>"רוב הארגונים בישראל לא יכולים להעסיק Data Scientist. רובם גם לא צריכים - רק AutoML."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>מה זה AutoML - הסבר קצר</li>
+                    <li>4 תרחישים שמתאימים: churn, demand, credit risk, predictive maintenance</li>
+                    <li>הדגמה: העלאת קובץ → Qlik Predict בונה מודל אוטומטית</li>
+                    <li>פירוש (Explainability) - SHAP values בעברית</li>
+                    <li>שילוב המודל בדשבורד חי</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לראות AutoML על הדאטה שלכם? בקשו POC של 14 יום עם דאטה אמיתי."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>AutoML = Automated Machine Learning - אוטומציה של בחירת אלגוריתם, אימון, ולידציה</li>
+                    <li>שקיפות - ב-Qlik לא מקבלים "קופסה שחורה"</li>
+                    <li>שילוב ישיר עם דשבורד = מודל שעובד בפועל, לא בנייר</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Qlik AutoML - בניית מודל למידת מכונה ללא Data Scientist</li>
+                    <li><strong>Description:</strong> "AutoML מאפשר לאנליסטים בארגון לבנות מודלים חזויים בלי צורך בצוות Data Science. בסרטון: 4 תרחישים נפוצים, הדגמה מלאה ב-Qlik Predict, וכיצד שילוב המודל בדשבורד הופך אותו לכלי החלטה."</li>
+                    <li><strong>Tags:</strong> automl · qlik predict · machine learning · למידת מכונה · predictive analytics · ml ללא קוד · אנליטיקה חזויה · data science · qlik · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 11 -->
+    <div class="video-brief priority-medium">
+        <div class="video-num">11</div>
+        <h3>Self-Service Analytics - אנליסט בלי לחכות ל-IT</h3>
+        <div class="title-en">EN: Self-Service Analytics — Analyst Without Waiting for IT</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo</span>
+            <span class="meta-tag tag-cluster">Analytics · Self-Service</span>
+            <span class="meta-tag tag-keyword">self service bi · self service analytics</span>
+            <span class="meta-tag tag-intent">MOFU · תפעולית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>self service bi · self service analytics · אנליטיקה עצמאית</div>
+            <div class="brief-block"><strong>Secondary</strong>data discovery · associative analytics · qlik sense · self service data prep · אנליסט עצמאי · בי איי עצמאי</div>
+            <div class="brief-block full"><strong>Hook</strong>"שעה שאלה. שעה שעלתה לכם. הכל בגלל שצריך לחכות ל-IT לחיבור נתונים. זה לא חייב להיות ככה."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>הגדרת Self-Service - מה כן ומה לא</li>
+                    <li>הדגמה: אנליסט מתחבר ל-CRM + מחסן + אקסל בלי IT</li>
+                    <li>חקירה חופשית עם המנוע האסוציאטיבי</li>
+                    <li>ממשל - איך IT שומר על השליטה גם ב-Self-Service</li>
+                    <li>איפה המגבלה - מתי כן צריך IT</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים להעביר את הצוות שלכם ל-Self-Service? בקשו סדנת מבוא של 90 דקות."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>Self-Service ≠ Shadow IT. עם ממשל מובנה, IT שולט בלי לחנוק</li>
+                    <li>המנוע האסוציאטיבי הוא היתרון של Qlik ל-Self-Service - אין שאילתות מוגדרות מראש</li>
+                    <li>הזמן הממוצע לדשבורד ראשון - 30 דקות, לא 3 שבועות</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Self-Service Analytics ב-Qlik Sense - אנליסט עצמאי בלי IT</li>
+                    <li><strong>Description:</strong> "Self-Service BI מאפשר לאנליסטים להתחבר לדאטה, לחקור ולשתף בלי לחכות ל-IT. בסרטון: איך עובד Qlik Sense, היתרון של מנוע אסוציאטיבי, וכיצד IT שומר על ממשל גם בלי לחנוק את הצוות."</li>
+                    <li><strong>Tags:</strong> self service bi · self service analytics · qlik sense · אנליטיקה עצמאית · data discovery · associative · אנליסט עצמאי · qlik · bi · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 12 -->
+    <div class="video-brief priority-medium">
+        <div class="video-num">12</div>
+        <h3>Pixel-Perfect Reports - דוחות PDF בעיצוב מדויק עם Qlik NPrinting</h3>
+        <div class="title-en">EN: Pixel-Perfect Reports with Qlik NPrinting</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo</span>
+            <span class="meta-tag tag-cluster">Reporting + Alerting</span>
+            <span class="meta-tag tag-keyword">bi reporting · qlik nprinting · דוחות bi</span>
+            <span class="meta-tag tag-intent">BOFU · תפעולית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>bi reporting · qlik nprinting · דוחות bi · pixel perfect reports</div>
+            <div class="brief-block"><strong>Secondary</strong>bi and reporting · scheduled reports · pdf reports · qlik reporting service · מחולל דוחות · דוחות אוטומטיים · דוחות לרגולציה</div>
+            <div class="brief-block full"><strong>Hook</strong>"יש דשבורד אינטראקטיבי ויש דוח שמודפס במשרד הראשי של חברת הביטוח. שניהם דרושים. שניהם ב-Qlik."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>ההבדל בין דשבורד לדוח Pixel-Perfect</li>
+                    <li>תרחישי שימוש: רגולציה, פיננסים, דוחות הנהלה</li>
+                    <li>הדגמה: בניית דוח PDF ב-Qlik NPrinting</li>
+                    <li>תזמון אוטומטי + שליחה למייל / Slack</li>
+                    <li>Row-Level Security בדוחות - כל מקבל את שלו</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים אוטומציה של הדוחות החודשיים? בקשו דמו NPrinting על דוח רגולטורי אמיתי."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>"Pixel-Perfect" = פורמט מדויק לכל מקבל - חשוב לרגולציה</li>
+                    <li>פורמטים נתמכים: PDF, Word, Excel, PowerPoint, HTML</li>
+                    <li>RTL + עברית מלאה גם ב-NPrinting</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> דוחות Pixel-Perfect עם Qlik NPrinting - תזמון אוטומטי</li>
+                    <li><strong>Description:</strong> "Qlik NPrinting מייצר דוחות PDF/Excel/Word בפורמט מדויק - מתאים לרגולציה, פיננסים והנהלה. בסרטון: בניית דוח, תזמון אוטומטי, שליחה ל-Slack וכיצד Row-Level Security מבטיחה שכל מקבל יראה את הנתונים שלו בלבד."</li>
+                    <li><strong>Tags:</strong> qlik nprinting · bi reporting · דוחות bi · pixel perfect · scheduled reports · pdf reports · מחולל דוחות · qlik · רגולציה · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 13 -->
+    <div class="video-brief priority-low">
+        <div class="video-num">13</div>
+        <h3>Open Lakehouse - בחירה בין Data Warehouse, Data Lake ו-Lakehouse</h3>
+        <div class="title-en">EN: Open Lakehouse — Data Warehouse vs Lake vs Lakehouse</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Explainer · Architecture</span>
+            <span class="meta-tag tag-cluster">Data Integration · Open Lakehouse</span>
+            <span class="meta-tag tag-keyword">data lakehouse · data lake vs data warehouse · data warehouses (320)</span>
+            <span class="meta-tag tag-intent">MOFU · אסטרטגית</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>data lakehouse · data lake vs data warehouse</div>
+            <div class="brief-block"><strong>Secondary</strong>aws data lake vs data warehouse · data warehouses · data fabric · open lakehouse · iceberg · delta · architecture · ארכיטקטורת דאטה</div>
+            <div class="brief-block full"><strong>Hook</strong>"3 ארכיטקטורות. אותם נתונים. החלטה ארכיטקטונית של 5 שנים. הנה איך לבחור."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>Data Warehouse - מתי כן (Schema, רגולציה)</li>
+                    <li>Data Lake - מתי כן (אנליטיקה גמישה, ML)</li>
+                    <li>Lakehouse - השילוב, מתי הוא הבחירה הנכונה</li>
+                    <li>Open Lakehouse - מה ההבדל מ-Closed (Iceberg, Delta)</li>
+                    <li>היכן Qlik Talend Cloud משתלבת בכל ארכיטקטורה</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים סקירה ארכיטקטונית לארגון? צרו קשר לפגישת ייעוץ עם הצוות."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>אין "תשובה אחת נכונה" - תלוי בקייס</li>
+                    <li>Open Lakehouse = vendor-agnostic, פורמטים פתוחים</li>
+                    <li>Qlik תומכת בכל הארכיטקטורות - לא חייבים לבחור פעם אחת לתמיד</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Data Warehouse / Data Lake / Lakehouse - איך בוחרים</li>
+                    <li><strong>Description:</strong> "3 ארכיטקטורות דאטה - מה ההבדל ומתי לבחור בכל אחת. בסרטון: השוואה ישירה, מתי Data Warehouse נכונה, מתי Lakehouse, ומה יתרון של Open Lakehouse עם פורמטים פתוחים כמו Iceberg ו-Delta."</li>
+                    <li><strong>Tags:</strong> data lakehouse · data warehouse · data lake · open lakehouse · iceberg · delta · qlik talend · data architecture · ארכיטקטורת דאטה · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIDEO 14 -->
+    <div class="video-brief priority-low">
+        <div class="video-num">14</div>
+        <h3>Embedded Analytics - שילוב BI במוצר SaaS שלכם</h3>
+        <div class="title-en">EN: Embedded Analytics — BI Inside Your SaaS Product</div>
+        <div class="video-meta">
+            <span class="meta-tag tag-type">Demo · OEM</span>
+            <span class="meta-tag tag-cluster">Embedded Analytics</span>
+            <span class="meta-tag tag-keyword">qlik oem · embedded analytics · white label bi</span>
+            <span class="meta-tag tag-intent">BOFU · נישתי</span>
+        </div>
+        <div class="brief-grid">
+            <div class="brief-block"><strong>Primary</strong>embedded analytics · qlik oem · white label bi</div>
+            <div class="brief-block"><strong>Secondary</strong>qlikview oem · oem analytics · qlik sense embedded · analytics api · sdk analytics · embedded dashboard · isv analytics · saas bi</div>
+            <div class="brief-block full"><strong>Hook</strong>"לבנות BI מאפס לקח לארגונים שנים. ל-ISVs - גם פעם נוסף. אבל יש קיצור דרך - ושמו Embedded Analytics."</div>
+            <div class="brief-block"><strong>מבנה</strong>
+                <ul>
+                    <li>מה זה Embedded Analytics - הגדרה</li>
+                    <li>תרחישי שימוש: ISV, SaaS, פורטלי לקוחות</li>
+                    <li>הדגמת iframe + REST API + Web Components</li>
+                    <li>White Label - התאמת מראה ומיתוג</li>
+                    <li>Multi-Tenancy + Single Sign-On</li>
+                </ul>
+            </div>
+            <div class="brief-block"><strong>CTA</strong>"רוצים לשלב Qlik במוצר שלכם? בקשו פגישה עם צוות OEM."</div>
+            <div class="brief-block full"><strong>נקודות שחובה להגיד</strong>
+                <ul>
+                    <li>Qlik OEM - מודל שעובד עם 100+ ISVs בעולם</li>
+                    <li>White Label מלא - לקוח הקצה לא רואה לוגו Qlik</li>
+                    <li>תמחור OEM גמיש - לפי שימוש</li>
+                </ul>
+            </div>
+            <div class="brief-block full"><strong>SEO על-עמודי</strong>
+                <ul>
+                    <li><strong>Title:</strong> Embedded Analytics ב-Qlik - שילוב BI במוצר SaaS שלכם</li>
+                    <li><strong>Description:</strong> "Embedded Analytics מאפשר ל-ISVs ול-SaaS Vendors לשלב BI מלא בתוך המוצר שלהם. בסרטון: ההבדל מ-BI עצמאי, אופציות שילוב (iframe / API / Web Components), White Labeling, ומודל ה-OEM של Qlik."</li>
+                    <li><strong>Tags:</strong> embedded analytics · qlik oem · white label bi · saas bi · isv analytics · qlik sense embedded · analytics api · embedded dashboard · קליק ישראל</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============ SECTION 5 ============ -->
+<div class="section" id="section-5">
+    <div class="section-banner">
+        <h2>חלק 5 — רעיונות לתוכן עתידי</h2>
+        <span class="section-num">10 רעיונות לפייפליין</span>
+    </div>
+    <div class="section-intro">
+        רעיונות נוספים לפייפליין ה-12 חודשים הבאים. מבוססים על פערי מילים, תוכן מתחרים ומבנה המוצר.
+    </div>
+
+    <div class="future-card">
+        <h4>1. אוריינות דאטה לכל הארגון - לא רק לאנליסטים</h4>
+        <div class="meta">מילות מפתח: אוריינות (660) · אוריינות דאטה · data literacy · בינה עסקית · קלאסטר: למידה</div>
+        <p>פילאר עוגן לעמוד "למה Qlik | sp.data". המילה "אוריינות" יחידה היא בנפח 660. אין כיסוי ממוקד באתר. תוכן מתאים לקהל מנהלי משאבי אנוש ו-COO.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>2. סדרת "סיפור הצלחה" בעברית - 6 קליפים, סקטור פר אחד</h4>
+        <div class="meta">קלאסטר: Solutions · קלאסטר: Why Qlik · פורמט: 3-4 דק' פר סרטון</div>
+        <p>פיננסים, ייצור, קמעונאות, הייטק, ציבורי, שירות. כל סרטון: אתגר → פתרון Qlik → תוצאה במספרים. שימוש בלקוחות קיימים (1,400 ארגונים).</p>
+    </div>
+
+    <div class="future-card">
+        <h4>3. מה זה Data Quality ולמה זה תנאי הכרחי ל-AI</h4>
+        <div class="meta">מילות מפתח: טיוב נתונים (210) · data quality · data governance · data cleaning · קלאסטר: Data Integration</div>
+        <p>נושא הקריטי בעידן AI - מודל טוב על דאטה גרועה לא יעבוד. תוכן הוא Pillar לכל ה-Data Integration & Quality. גם בריף קיים.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>4. SAP Analytics - איך מוציאים BI מ-SAP בלי לפגוע בביצועים</h4>
+        <div class="meta">מילות מפתח: sap analytics · qlik replicate sap · קלאסטר: SAP Solutions</div>
+        <p>נושא ייחודי ל-Qlik (יתרון תחרותי - SAP CDC). קהל יעד מצומצם אבל בעל ערך גבוה (CIO, מנהלי ERP). תוכן BOFU מצוין.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>5. בוטקאמפ BI - מה לומדים, ולמי זה מתאים</h4>
+        <div class="meta">מילות מפתח: bootcamp (610) · בוטקאמפ (260) · קורס bi (210) · קורסים bi (210) · קלאסטר: למידה</div>
+        <p>נפח חיפוש גבוה. אין סרטון ייעודי בערוץ על האקדמיה של Qlik. תוכן TOFU שמייצר לידים לקורסים. צריך להוביל לעמוד "קורסים והכשרות".</p>
+    </div>
+
+    <div class="future-card">
+        <h4>6. סטרימינג נתונים בזמן אמת - איך זה עובד עם Qlik Replicate</h4>
+        <div class="meta">מילות מפתח: cdc · real time data · data replication · qlik replicate · קלאסטר: Data Streaming</div>
+        <p>קהל יעד טכני (CIO, אדריכלי דאטה). הצגת CDC של Qlik כיתרון תחרותי (agentless, log-based). הדגמה של On-Prem ↔ ענן.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>7. Data Products - מה זה ולמה זה מחליף את ה-Data Mart הישן</h4>
+        <div class="meta">מילות מפתח: data products · data mesh · datasets · קלאסטר: Data Products</div>
+        <p>קטגוריה חדשה. Qlik Official מריץ סדרה. הזדמנות להיות הראשונים בעברית עם תרגום מקצועי של המושג.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>8. אוטומציה של תהליכי דאטה - 4 תרחישים שכל ארגון צריך</h4>
+        <div class="meta">מילות מפתח: ai-powered automation · automation · workflow · קלאסטר: Application Automation</div>
+        <p>סרטון use-case: רענון דשבורד, התראה על אנומליה, שליחת דוח, פתיחת ticket אוטומטית. מתאים ל-DataOps ול-IT.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>9. Qlik Talend Cloud - הפלטפורמה המאוחדת לאינטגרציה</h4>
+        <div class="meta">מילות מפתח: qlik talend cloud · data integration platform · קלאסטר: עמודי מוצר</div>
+        <p>עמוד מוצר חשוב באתר. הסרטון יקשור את כל הקלאסטר Data Integration & Quality למוצר אחד. תוכן BOFU.</p>
+    </div>
+
+    <div class="future-card">
+        <h4>10. סקטור הפיננסים - 3 תרחישי BI שמשנים החלטות</h4>
+        <div class="meta">מילות מפתח: financial analytics · risk · fraud detection · קלאסטר: Solutions / Finance</div>
+        <p>תוכן ייעודי לסקטור (קהל החזק של Qlik בישראל). 3 תרחישים: זיהוי הונאה בזמן אמת, ניהול סיכונים, דוחות רגולטוריים.</p>
+    </div>
+
+</div>
+
+<!-- ============ PRIORITY TABLE ============ -->
+<div class="section" id="priority">
+    <div class="section-banner" style="background:linear-gradient(135deg, #0c2461, #1e3799);">
+        <h2>טבלת תיעדוף — סדר ביצוע מומלץ</h2>
+        <span class="section-num">14 סרטונים + 10 רעיונות</span>
+    </div>
+    <div class="section-intro">
+        סדר ביצוע מומלץ. עדיפות גבוהה = רבעון ראשון. עדיפות בינונית = רבעון שני. עדיפות נמוכה = רבעון שלישי-רביעי.
+    </div>
+
+    <div class="card">
+        <table class="data-table priority-table">
+            <thead>
+                <tr>
+                    <th>נושא</th>
+                    <th>מילות מפתח עיקריות</th>
+                    <th>קלאסטר</th>
+                    <th>עדיפות</th>
+                    <th>סיבה</th>
+                    <th>תזמון</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>01. מה זה BI?</strong></td>
+                    <td>מה זה bi (260) · bi (2,900)</td>
+                    <td>Analytics</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>נפח חיפוש גבוה · TOFU · אין כיסוי בערוץ · בסיס ל-GEO</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>02. בינה מלאכותית בארגון</strong></td>
+                    <td>בינה מלאכותית (40,500) · agentic ai (290)</td>
+                    <td>Agentic AI</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>נפח חיפוש עצום · קטגוריה אסטרטגית · GEO ערך גבוה</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>03. דשבורד בעברית - מ-0 ל-KPI</strong></td>
+                    <td>דשבורד (880) · לוח בקרה (390) · kpi (2,400)</td>
+                    <td>Visualization &amp; Dashboards</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>מילים מובילות בעברית · יתרון Qlik (RTL) · המרה גבוהה</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>04. Qlik vs Power BI vs Tableau</strong></td>
+                    <td>microsoft bi (140) · bi tools (140)</td>
+                    <td>Why Qlik | sp.data</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>BOFU · Sales Enablement · אין כיסוי · המרה ישירה</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>05. דאטה אנליסט - יום עבודה</strong></td>
+                    <td>דאטה אנליסט (540) · אנליסט מה זה (210)</td>
+                    <td>למידה · קורסים</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>נפח קריירה · מייצר לידים לבוטקאמפ · GEO Q&amp;A</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>06. ETL מול ELT</strong></td>
+                    <td>etl (210) · elt</td>
+                    <td>Data Transformation</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>שאלה נפוצה · TOFU/MOFU · קושר לעמוד יכולת קיים</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>07. Agentic AI - הסבר ודמו</strong></td>
+                    <td>agentic ai (290) · qlik answers</td>
+                    <td>Agentic AI</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>קטגוריה חמה · יתרון Qlik (סוכנים מובנים) · בידול</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>08. Qlik MCP + Claude</strong></td>
+                    <td>qlik mcp · model context protocol</td>
+                    <td>Analytics · MCP</td>
+                    <td><span class="pill pill-priority-high">גבוהה</span></td>
+                    <td>טרנד GEO · יתרון תחרותי · קהל מפתחים מתעניין</td>
+                    <td>מיידי</td>
+                </tr>
+                <tr>
+                    <td><strong>09. KPI Dashboard מ-0</strong></td>
+                    <td>kpi (2,400) · kpi dashboard (70)</td>
+                    <td>Visualization &amp; Dashboards</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>נפח גבוה · משלים את סרטון 03 · מתעמק</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td><strong>10. למידת מכונה ב-AutoML</strong></td>
+                    <td>למידת מכונה (320) · automl</td>
+                    <td>Predictive AI</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>נפח טוב · נושא חדשני · מצריך הסבר עמוק יותר</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td><strong>11. Self-Service Analytics</strong></td>
+                    <td>self service bi · self service analytics</td>
+                    <td>Self-Service</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>קטגוריה תומכת · יתרון מנוע אסוציאטיבי · MOFU</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td><strong>12. Qlik NPrinting Reports</strong></td>
+                    <td>bi reporting · qlik nprinting · דוחות bi</td>
+                    <td>Reporting + Alerting</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>תרחיש BOFU · קהל פיננסים/רגולציה · נישתי אבל ערך גבוה</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td><strong>13. Open Lakehouse</strong></td>
+                    <td>data lakehouse · data lake vs warehouse</td>
+                    <td>Data Integration · Open Lakehouse</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>טכני יותר · קהל מצומצם · דורש הקשר אסטרטגי</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td><strong>14. Embedded Analytics</strong></td>
+                    <td>qlik oem · embedded analytics</td>
+                    <td>Embedded Analytics</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>קהל ISV/SaaS מצומצם אבל בעל ערך · נישתי</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="background:#f5f6fa; font-weight:600; color:#0c2461; padding:14px 16px;">רעיונות לפייפליין (פוסט סרטוני ליבה)</td>
+                </tr>
+                <tr>
+                    <td>אוריינות דאטה לכל הארגון</td>
+                    <td>אוריינות (660) · data literacy</td>
+                    <td>למידה · Why Qlik</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>נפח חיפוש בודד גבוה · עוגן Why Qlik</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td>סדרת סיפורי הצלחה (6 סקטורים)</td>
+                    <td>customer success (270) · case study</td>
+                    <td>Solutions</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>BOFU · Sales Enablement · ממנף את 1,400 לקוחות קיימים</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td>Data Quality ל-AI</td>
+                    <td>טיוב נתונים (210) · data quality</td>
+                    <td>Data Quality &amp; Governance</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>נושא קריטי לעידן AI · קושר Data Integration ל-AI</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td>SAP Analytics</td>
+                    <td>sap analytics · qlik replicate sap</td>
+                    <td>SAP Solutions</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>נישתי אבל בידול חזק של Qlik · קהל ERP</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td>בוטקאמפ BI</td>
+                    <td>bootcamp (610) · קורס bi (210)</td>
+                    <td>למידה</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>נפח גבוה · מייצר לידים ישירים לאקדמיה</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td>Real-Time Streaming + CDC</td>
+                    <td>cdc · qlik replicate · real time data</td>
+                    <td>Data Streaming</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>טכני · קהל מצומצם · יתרון תחרותי של Qlik</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td>Data Products</td>
+                    <td>data products · data mesh</td>
+                    <td>Data Products</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>קטגוריה חדשה · נפח חיפוש נמוך · GEO Future</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td>אוטומציית תהליכי דאטה</td>
+                    <td>workflow automation · ai-powered automation</td>
+                    <td>Application Automation</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>תרחישי שימוש · קהל DataOps · MOFU</td>
+                    <td>בהמשך</td>
+                </tr>
+                <tr>
+                    <td>Qlik Talend Cloud Overview</td>
+                    <td>qlik talend cloud · data integration platform</td>
+                    <td>עמוד מוצר</td>
+                    <td><span class="pill pill-priority-medium">בינונית</span></td>
+                    <td>סרטון מוצר ליבה · קושר Data Integration לעמוד מוצר</td>
+                    <td>שלב הבא</td>
+                </tr>
+                <tr>
+                    <td>Finance Analytics - 3 תרחישים</td>
+                    <td>financial analytics · risk · fraud</td>
+                    <td>Solutions · Finance</td>
+                    <td><span class="pill pill-priority-low">נמוכה</span></td>
+                    <td>סקטור חזק של Qlik · BOFU · ממנף ייעוד תעשייתי</td>
+                    <td>בהמשך</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+
+<footer>NC Digital | מאי 2026</footer>
+
+</body>
+</html>
