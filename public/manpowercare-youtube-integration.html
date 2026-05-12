@@ -972,6 +972,81 @@ footer { text-align: center; padding: 30px 20px; color: #b2bec3; font-size: 0.8r
     </div>
 </div>
 
+<!-- ============ SECTION 6 ============ -->
+<div class="section">
+    <div class="section-banner">
+        <h2>חלק 6 · יישום, תיעדוף ומדידה</h2>
+        <span class="section-num">סדר ביצוע, כתוביות, hreflang, GA4</span>
+    </div>
+
+    <div class="card">
+        <div class="card-title">סדר ביצוע מומלץ</div>
+        <table class="data-table">
+            <thead><tr><th>שלב</th><th>סרטונים</th><th>למה אלו ראשונים</th></tr></thead>
+            <tbody>
+                <tr><td>שבוע 1</td><td>7, 10, 11</td><td>שלושת הסרטונים עם הצפיות הגבוהות בערוץ (1,800 + 258 + 908). שילוב שלהם נותן את הערך המהיר ביותר.</td></tr>
+                <tr><td>שבוע 2</td><td>1, 13, 14</td><td>תוכן עברי לעמודי שירות מרכזיים: בחירת חברת סיעוד, שילוב מטפלת זרה, המלצת לקוחה.</td></tr>
+                <tr><td>שבוע 3</td><td>2, 12</td><td>השלמת התוכן העברי: מאמר דמנציה ועוד המלצת לקוחה.</td></tr>
+                <tr><td>שבוע 4</td><td>3, 4, 5, 6, 8, 9</td><td>גרסאות בערבית וברוסית בעמודי ה-/ar/ ו-/ru/.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">כתוביות וקובץ Caption בקישור Embed</div>
+        <p style="font-size:0.9rem; margin-bottom:10px">
+            הסרטונים בערוץ כוללים כתוביות בעברית בלבד שהועלו ידנית. הכתוביות האוטומטיות של YouTube כבויות בערוץ ולא זמינות.
+        </p>
+        <ul style="padding-right:20px; font-size:0.88rem; line-height:1.8">
+            <li><strong>סרטונים בעברית (1, 2, 7, 10, 11, 12, 13, 14):</strong> להוסיף לקישור ה-Embed את הפרמטרים <code>cc_lang_pref=he&cc_load_policy=1</code> כדי שהכתוביות בעברית יוצגו אוטומטית. דוגמה: <code>https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0&cc_lang_pref=he&cc_load_policy=1</code></li>
+            <li><strong>סרטונים בערבית (4, 5, 9) וברוסית (3, 6, 8):</strong> אין כתוביות זמינות. בקאפשן מתחת לסרטון לציין: "הסרטון בערבית/רוסית, ללא כתוביות".</li>
+            <li><strong>השלכה ל-AI Search:</strong> סרטונים בלי כתוביות פחות citable במנועי AI. הוספת קובץ subtitle ידני ב-YouTube Studio לסרטוני AR/RU תפתור את זה. עלות הפקה נמוכה (~20-30 דקות לסרטון).</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Hreflang לעמודי סיפורים רב-לשוניים</div>
+        <p style="font-size:0.9rem; margin-bottom:10px">
+            שני סיפורים קיימים ב-3 שפות: <strong>שושי-עדנה</strong> (סרטונים 5, 6, 12) ו-<strong>רוסי-שרה</strong> (סרטונים 8, 9, 11). כל עמוד שמטמיע אחד מהסרטונים צריך לקשר ל-2 הגרסאות האחרות.
+        </p>
+        <button class="copy-btn" onclick="copyCode('hreflang-code')">העתק</button>
+        <pre class="code-block" id="hreflang-code">&lt;!-- ב-&lt;head&gt; של העמוד העברי /customers-recommend/ --&gt;
+&lt;link rel="alternate" hreflang="he-IL" href="https://manpowercare.co.il/customers-recommend/"&gt;
+&lt;link rel="alternate" hreflang="ar-IL" href="https://manpowercare.co.il/ar/customers-recommend/"&gt;
+&lt;link rel="alternate" hreflang="ru-IL" href="https://manpowercare.co.il/ru/customers-recommend/"&gt;
+&lt;link rel="alternate" hreflang="x-default" href="https://manpowercare.co.il/customers-recommend/"&gt;</pre>
+        <ul style="padding-right:20px; font-size:0.88rem; line-height:1.8; margin-top:10px">
+            <li>חובה reciprocal: כל גרסה צריכה לקשר חזרה לכל השאר. בעמוד /ar/ אותה רביעיית קישורים, וכך גם ב-/ru/.</li>
+            <li>ה-hreflang ב-<code>&lt;head&gt;</code> של העמוד שמטמיע את הסרטון, לא ב-iframe.</li>
+            <li>אם משלבים את אותו סיפור גם בעמוד הבית, מומלץ להגדיר את עמוד ה-/customers-recommend/ כקנוני (canonical) לאותו תוכן.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <div class="card-title">מדידת צפיות ב-GA4 דרך GTM</div>
+        <ol style="padding-right:20px; font-size:0.9rem; line-height:1.9">
+            <li>ב-Google Tag Manager לפתוח טריגר חדש מסוג <strong>YouTube Video</strong>. ב-Capture: לסמן Start, Complete, ו-Progress thresholds 25, 50, 75.</li>
+            <li>לחבר את הטריגר ל-tag חדש מסוג GA4 Event. שם האירוע: <code>video_progress</code>.</li>
+            <li>פרמטרים שנשלחים ל-GA4: <code>video_title</code> ({{Video Title}}), <code>video_url</code> ({{Video URL}}), <code>video_percent</code> ({{Video Percent}}), <code>video_provider</code> = "youtube".</li>
+            <li>ב-GA4 ליצור Custom Dimension עבור כל פרמטר חדש כדי שיופיע בדוחות. אחרת הפרמטרים נשלחים אבל לא נצברים בדוחות.</li>
+            <li>אחרי שבועיים-שלושה לבדוק בדוח Engagement של GA4 כמה צופים מתחילים, מסיימים ונוטשים אחרי 25%. סרטון שכולם נוטשים בו אחרי 25% צריך עריכה מחדש.</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <div class="card-title">חלופה ל-Schema ידני: פלאגין WordPress</div>
+        <p style="font-size:0.9rem">
+            אם הצוות מעדיף לא לתחזק 14 בלוקי JSON-LD ידנית, יש פלאגינים שמייצרים VideoObject schema אוטומטית מכל iframe של YouTube בעמוד:
+        </p>
+        <ul style="padding-right:20px; font-size:0.88rem; line-height:1.8; margin-top:8px">
+            <li><strong>Rank Math (חינמי):</strong> בהגדרות Schema → Video Schema. מזהה אוטומטית iframes ומייצר schema. תומך בשפות.</li>
+            <li><strong>Yoast Video SEO (פרמיום, ~$70/שנה):</strong> אותו דבר, כולל יצירת video sitemap נפרד שמומלץ ע"י Google.</li>
+            <li><strong>החיסרון:</strong> פחות שליטה על שדות מדויקים (description, inLanguage). השדות נגזרים מ-YouTube API, לא מהטקסט בעמוד.</li>
+            <li><strong>המלצה:</strong> להתחיל עם הסכמות הידניות מחלק 4, ולעבור לפלאגין רק אם התחזוקה הופכת לבעיה. הסכמות הידניות מדויקות יותר ומותאמות לכל עמוד.</li>
+        </ul>
+    </div>
+</div>
+
 </div>
 
 <footer>NC Digital · מאי 2026</footer>
