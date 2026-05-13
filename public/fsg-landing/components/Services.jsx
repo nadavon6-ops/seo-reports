@@ -38,8 +38,8 @@ function Services() {
         <div>
           <div className="section-eyebrow">Cómo trabajo</div>
           <h2 className="section-title">
-            ¿Necesitas algo que <em>no está aquí?</em><br />
-            Para eso también estoy.
+            <em>¿Necesitas algo que<br />no está aquí?</em>
+            <span className="section-subtitle">Para eso estoy yo.</span>
           </h2>
         </div>
         <p className="section-lede">
