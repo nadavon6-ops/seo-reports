@@ -41,11 +41,6 @@ function Process() {
             <span className="process-step" aria-hidden="true">{b.step}</span>
             <h4>{b.title}</h4>
             <p>{b.body}</p>
-            <span className="process-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
-            </span>
           </div>
         ))}
       </div>
