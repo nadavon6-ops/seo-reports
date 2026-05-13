@@ -26,6 +26,8 @@
 
 <script type="text/babel">
 function App() {
+  const progressRef = React.useRef(null);
+
   React.useEffect(() => {
     const els = document.querySelectorAll("[data-reveal]");
     const io = new IntersectionObserver(
@@ -43,8 +45,28 @@ function App() {
     return () => io.disconnect();
   }, []);
 
+  React.useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
+      if (progressRef.current) progressRef.current.style.width = pct + "%";
+      raf = 0;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", update);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <div className="site">
+      <div className="scroll-progress" ref={progressRef} aria-hidden="true" />
       <Header />
       <Hero />
       <Services />
