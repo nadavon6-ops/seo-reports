@@ -1,5 +1,5 @@
 /* Header component */
-function Header({ route, setRoute }) {
+function Header() {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   const links = [
@@ -8,23 +8,14 @@ function Header({ route, setRoute }) {
     { id: "sobre-mi", label: "Sobre mí" },
   ];
 
-  const scrollTo = (anchor) => {
+  const go = (anchor) => {
+    setMenuOpen(false);
     if (anchor === "top") {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     const el = document.getElementById(anchor);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const go = (anchor) => {
-    setMenuOpen(false);
-    if (route !== "home") {
-      setRoute("home");
-      requestAnimationFrame(() => requestAnimationFrame(() => scrollTo(anchor)));
-    } else {
-      scrollTo(anchor);
-    }
   };
 
   return (

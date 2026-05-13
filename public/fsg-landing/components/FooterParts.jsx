@@ -14,15 +14,15 @@ function CtaBand() {
   );
 }
 
-function Footer({ setRoute }) {
-  const scrollOrGo = (anchor) => (e) => {
+function Footer() {
+  const scrollTo = (anchor) => (e) => {
     e.preventDefault();
-    const doScroll = () => {
-      const el = document.getElementById(anchor);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    setRoute("home");
-    requestAnimationFrame(() => requestAnimationFrame(doScroll));
+    if (anchor === "top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const el = document.getElementById(anchor);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
@@ -35,17 +35,17 @@ function Footer({ setRoute }) {
         </div>
         <div className="footer-col">
           <h5>Servicios</h5>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Contrato de arriendo</a>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Promesa de compraventa</a>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Escritura de compraventa</a>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Estudio de títulos</a>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Saneamiento y alzamiento</a>
-          <a href="#servicios" onClick={scrollOrGo("servicios")}>Reglamentos de copropiedad</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Contrato de arriendo</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Promesa de compraventa</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Escritura de compraventa</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Estudio de títulos</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Saneamiento y alzamiento</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Reglamentos de copropiedad</a>
         </div>
         <div className="footer-col">
           <h5>Estudio</h5>
-          <a href="#sobre-mi" onClick={scrollOrGo("sobre-mi")}>Sobre mí</a>
-          <a href="#sobre-mi" onClick={scrollOrGo("sobre-mi")}>Cómo trabajo</a>
+          <a href="#sobre-mi" onClick={scrollTo("sobre-mi")}>Sobre mí</a>
+          <a href="#sobre-mi" onClick={scrollTo("sobre-mi")}>Cómo trabajo</a>
           <a href={window.WA_URL} target="_blank" rel="noopener noreferrer">Contacto</a>
         </div>
         <div className="footer-col">

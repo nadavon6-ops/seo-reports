@@ -1,6 +1,11 @@
 const WA_URL = "https://wa.me/56968787934?text=" + encodeURIComponent("Hola Fernanda, me gustaría conversar sobre una operación inmobiliaria.");
 
-function Hero({ setRoute }) {
+function scrollToAnchor(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function Hero() {
   return (
     <section className="hero">
       <div className="hero-inner">
@@ -18,7 +23,7 @@ function Hero({ setRoute }) {
             <a className="btn primary" href={WA_URL} target="_blank" rel="noopener noreferrer">
               Conversemos →
             </a>
-            <a className="btn ghost-light" href="#" onClick={(e) => { e.preventDefault(); setRoute("services"); }}>
+            <a className="btn ghost-light" href="#servicios" onClick={(e) => { e.preventDefault(); scrollToAnchor("servicios"); }}>
               Cómo trabajo
             </a>
           </div>
@@ -34,3 +39,4 @@ function Hero({ setRoute }) {
 
 window.Hero = Hero;
 window.WA_URL = WA_URL;
+window.scrollToAnchor = scrollToAnchor;
