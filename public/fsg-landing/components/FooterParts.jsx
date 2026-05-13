@@ -1,3 +1,4 @@
+/* v2 */
 function CtaBand() {
   return (
     <section className="cta-band">
