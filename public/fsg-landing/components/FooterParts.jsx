@@ -1,49 +1,49 @@
-function CtaBand({ onOpenModal }) {
+function CtaBand() {
   return (
     <section className="cta-band">
       <div className="cta-band-inner">
         <h2>
-          ¿Tienes una operación <em>en curso?</em>
+          No solo el contrato. <em>Todo lo inmobiliario.</em><br />
+          Cuéntame.
         </h2>
-        <a className="btn" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
-          Tomémonos un café
+        <a className="btn" href={window.WA_URL} target="_blank" rel="noopener noreferrer">
+          Conversemos →
         </a>
       </div>
     </section>
   );
 }
 
-function Footer() {
+function Footer({ setRoute }) {
+  const goto = (id) => (e) => { e.preventDefault(); setRoute(id); };
   return (
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <div className="brand-logo" />
           <div className="name">Fernanda Sepúlveda Grasins</div>
           <div className="tag">Derecho Inmobiliario</div>
-          <p>Asesoría boutique en contratos, promesas, estudios de título y escrituras. Atención personal a cada operación.</p>
+          <p>Tranquilidad inmobiliaria. Arriendos, promesas, compraventas, escrituras y todo lo que necesites.</p>
         </div>
         <div className="footer-col">
           <h5>Servicios</h5>
-          <a href="#">Contratos</a>
-          <a href="#">Promesas</a>
-          <a href="#">Estudios de título</a>
-          <a href="#">Escrituras</a>
+          <a href="#" onClick={goto("services")}>Contrato de arriendo</a>
+          <a href="#" onClick={goto("services")}>Promesa de compraventa</a>
+          <a href="#" onClick={goto("services")}>Escritura de compraventa</a>
+          <a href="#" onClick={goto("services")}>Estudio de títulos</a>
+          <a href="#" onClick={goto("services")}>Saneamiento y alzamiento</a>
+          <a href="#" onClick={goto("services")}>Reglamentos de copropiedad</a>
         </div>
         <div className="footer-col">
           <h5>Estudio</h5>
-          <a href="#">Sobre mí</a>
-          <a href="#">Proceso</a>
-          <a href="#">Contacto</a>
+          <a href="#" onClick={goto("about")}>Sobre mí</a>
+          <a href="#" onClick={goto("about")}>Cómo trabajo</a>
+          <a href={window.WA_URL} target="_blank" rel="noopener noreferrer">Contacto</a>
         </div>
         <div className="footer-col">
-          <h5>Contacto</h5>
+          <h5>Conversemos</h5>
           <div className="info">
-            Av. Providencia 1234<br />
-            Oficina 802 · Providencia<br />
-            Santiago, Chile<br /><br />
-            +56 2 2000 0000<br />
-            contacto@fsg.cl
+            <a href={window.WA_URL} target="_blank" rel="noopener noreferrer">WhatsApp · +56 9 6878 7934</a>
+            <a href="mailto:fernanda@fernandasepulveda.cl">fernanda@fernandasepulveda.cl</a>
           </div>
         </div>
       </div>

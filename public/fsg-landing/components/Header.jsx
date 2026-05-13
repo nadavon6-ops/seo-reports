@@ -1,12 +1,11 @@
 /* Header component */
-function Header({ route, setRoute, onOpenModal }) {
+function Header({ route, setRoute }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   const links = [
     { id: "home", label: "Inicio" },
     { id: "services", label: "Servicios" },
     { id: "about", label: "Sobre mí" },
-    { id: "contact", label: "Contacto" },
   ];
 
   const go = (id) => {
@@ -32,7 +31,7 @@ function Header({ route, setRoute, onOpenModal }) {
             </a>
           ))}
         </nav>
-        <a className="nav-cta" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
+        <a className="nav-cta" href={window.WA_URL} target="_blank" rel="noopener noreferrer">
           Conversemos
         </a>
         <button
@@ -59,11 +58,13 @@ function Header({ route, setRoute, onOpenModal }) {
             </a>
           ))}
           <a
-            href="#"
+            href={window.WA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="nav-mobile-cta"
-            onClick={(e) => { e.preventDefault(); setMenuOpen(false); onOpenModal(); }}
+            onClick={() => setMenuOpen(false)}
           >
-            Tomémonos un café
+            Conversemos por WhatsApp
           </a>
         </div>
       )}

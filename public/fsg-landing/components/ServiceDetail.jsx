@@ -1,4 +1,4 @@
-function ServiceDetail({ id, setRoute, onOpenModal }) {
+function ServiceDetail({ id, setRoute }) {
   const service = window.SERVICES.find((s) => s.id === id) || window.SERVICES[0];
   const [tab, setTab] = React.useState("alcance");
 
@@ -48,7 +48,7 @@ function ServiceDetail({ id, setRoute, onOpenModal }) {
         </div>
         <div style={{ maxWidth: 640, marginBottom: 48 }}>{content[tab]}</div>
 
-        <button className="btn solid" onClick={onOpenModal}>Tomémonos un café</button>
+        <a className="btn solid" href={window.WA_URL} target="_blank" rel="noopener noreferrer">Conversemos →</a>
       </section>
     </>
   );

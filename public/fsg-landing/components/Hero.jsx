@@ -1,20 +1,22 @@
-function Hero({ onOpenModal, setRoute }) {
+const WA_URL = "https://wa.me/56968787934?text=" + encodeURIComponent("Hola Fernanda, me gustaría conversar sobre una operación inmobiliaria.");
+
+function Hero({ setRoute }) {
   return (
     <section className="hero">
       <div className="hero-inner">
         <div>
-          <div className="hero-eyebrow">Derecho Inmobiliario · Santiago</div>
+          <div className="hero-eyebrow">Derecho Inmobiliario</div>
           <h1>
-            Conversemos antes<br />
-            <em>de firmar.</em>
+            Tranquilidad inmobiliaria.<br />
+            <em>Lo legal lo manejo yo.</em>
           </h1>
           <div className="hero-rule" />
           <p className="hero-lede">
-            Soy la abogada cercana que te maneja la parte legal de tu próxima operación inmobiliaria. Sin papeleo intimidante, sin abogados inalcanzables. Tómate un café conmigo — te respondo dentro de 24 horas hábiles.
+            Compraventas, arriendos, regularizaciones, conflictos de dominio y asesoría integral. No importa en qué etapa estés. Trabajo contigo en esta operación y en las que vienen.
           </p>
           <div className="hero-row">
-            <a className="btn primary" href="#" onClick={(e) => { e.preventDefault(); onOpenModal(); }}>
-              Tomémonos un café
+            <a className="btn primary" href={WA_URL} target="_blank" rel="noopener noreferrer">
+              Conversemos →
             </a>
             <a className="btn ghost-light" href="#" onClick={(e) => { e.preventDefault(); setRoute("services"); }}>
               Cómo trabajo
@@ -26,13 +28,9 @@ function Hero({ onOpenModal, setRoute }) {
           <div className="frame-line" />
         </div>
       </div>
-      <div className="hero-meta">
-        <span>Providencia</span>
-        <span>+56 2 2000 0000</span>
-        <span>contacto@fsg.cl</span>
-      </div>
     </section>
   );
 }
 
 window.Hero = Hero;
+window.WA_URL = WA_URL;

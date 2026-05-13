@@ -1,27 +1,39 @@
 const SERVICES = [
   {
-    id: "contratos",
-    num: "i.",
-    title: "Reviso lo que vas a firmar",
-    body: "Antes de que firmes nada — promesa, contrato, escritura — lo leo en detalle y te aviso lo que tenga que aclararse. Si hay que negociar una cláusula, lo hago yo.",
+    id: "arriendo",
+    num: "I.",
+    title: "Contrato de arriendo",
+    body: "Lo redacto yo. Antes de que lo firmen, lo reviso contigo. Si algo no está claro o no te convence, lo cambiamos.",
   },
   {
-    id: "promesas",
-    num: "ii.",
-    title: "Estructuro la operación contigo",
-    body: "Promesas, condiciones suspensivas, arras, plazos. Te explico qué conviene en tu caso y por qué — sin tecnicismos. Tú decides; yo lo dejo por escrito.",
+    id: "promesa",
+    num: "II.",
+    title: "Promesa de compraventa",
+    body: "La redacto yo o la reviso si ya te mandaron una. Antes de que tu cliente firme algo, me lo mandas. Si hay que ajustar una cláusula o negociar un plazo, lo hago antes de que se comprometan en algo que no está bien redactado.",
+  },
+  {
+    id: "escritura",
+    num: "III.",
+    title: "Escritura de compraventa",
+    body: "Cuando la compraventa es al contado, redacto la escritura y coordino con el notario y el Conservador. Si hay un banco o institución financiera de por medio, me encargo de recopilar todos los documentos y enviárselos a ellos. El día de la firma estoy ahí de todas formas.",
   },
   {
     id: "titulo",
-    num: "iii.",
-    title: "Estudio el título de la propiedad",
-    body: "Reviso la historia de la propiedad de los últimos diez años. Si aparece algo — una hipoteca, una servidumbre, un problema de inscripción — te lo digo antes, no después.",
+    num: "IV.",
+    title: "Estudio de títulos",
+    body: "Reviso la historia de la propiedad. Si hay algo que no cuadra — una hipoteca, un embargo, un problema de inscripción — te aviso antes de que tu cliente firme, no después.",
   },
   {
-    id: "escrituras",
-    num: "iv.",
-    title: "Te acompaño hasta la notaría",
-    body: "Coordino con la corredora, con el banco, con el notario. El día de la firma estoy ahí. Después reviso que la inscripción en el Conservador quede bien hecha.",
+    id: "saneamiento",
+    num: "V.",
+    title: "Saneamiento y alzamiento",
+    body: "Cuando una propiedad tiene un problema en sus antecedentes, lo resuelvo. Regularizaciones, alzamiento de hipotecas, correcciones en el Conservador.",
+  },
+  {
+    id: "reglamentos",
+    num: "VI.",
+    title: "Reglamentos de copropiedad",
+    body: "Los redacto, los reviso o los modifico según lo que necesite el edificio o condominio. Si el reglamento actual ya no refleja cómo funciona la comunidad, lo actualizamos.",
   },
 ];
 
@@ -32,8 +44,8 @@ function Services({ setRoute, setService }) {
         <div>
           <div className="section-eyebrow">Cómo trabajo</div>
           <h2 className="section-title">
-            <em>Tú te enfocas en tu operación.</em><br />
-            Yo me encargo de lo legal.
+            ¿Necesitas algo que <em>no está aquí?</em><br />
+            Para eso también estoy.
           </h2>
         </div>
         <p className="section-lede">
