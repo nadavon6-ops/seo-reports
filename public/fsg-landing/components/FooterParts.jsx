@@ -31,7 +31,6 @@ function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <img className="footer-mark" src="assets/fsg-logo-footer.png" alt="FSG · Derecho Inmobiliario" />
-          <div className="name">Fernanda Sepúlveda Grasins</div>
           <p>Tranquilidad inmobiliaria. Arriendos, promesas, compraventas, escrituras y todo lo que necesites.</p>
         </div>
         <div className="footer-col">
