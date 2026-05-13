@@ -20,20 +20,8 @@ function Testimonials() {
   const AUTO_MS = 5500;
   const [index, setIndex] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
-  const [perView, setPerView] = React.useState(1);
+  const perView = 1;
   const trackRef = React.useRef(null);
-
-  React.useEffect(() => {
-    const onResize = () => {
-      const w = window.innerWidth;
-      if (w >= 1024) setPerView(Math.min(3, items.length));
-      else if (w >= 640) setPerView(Math.min(2, items.length));
-      else setPerView(1);
-    };
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [items.length]);
 
   const maxIndex = Math.max(0, items.length - perView);
 
