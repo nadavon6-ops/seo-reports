@@ -3,7 +3,8 @@ function CtaBand() {
     <section className="cta-band">
       <div className="cta-band-inner">
         <h2>
-          No solo el contrato. <em>Todo lo inmobiliario.</em><br />
+          No solo el contrato.<br />
+          <em>Todo lo inmobiliario.</em><br />
           Cuéntame.
         </h2>
         <a className="btn" href={window.WA_URL} target="_blank" rel="noopener noreferrer">
