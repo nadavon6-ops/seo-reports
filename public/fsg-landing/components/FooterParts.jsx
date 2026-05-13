@@ -46,7 +46,7 @@ function Footer() {
         <div className="footer-col">
           <h5>Estudio</h5>
           <a href="#sobre-mi" onClick={scrollTo("sobre-mi")}>Sobre mí</a>
-          <a href="#sobre-mi" onClick={scrollTo("sobre-mi")}>Cómo trabajo</a>
+          <a href="#servicios" onClick={scrollTo("servicios")}>Cómo trabajo</a>
           <a href={window.WA_URL} target="_blank" rel="noopener noreferrer">Contacto</a>
         </div>
         <div className="footer-col">
