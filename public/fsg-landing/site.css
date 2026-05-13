@@ -362,11 +362,21 @@
   color: rgba(255,255,255,.78); margin: 0;
 }
 
-/* --------- Testimonials --------- */
+/* --------- Testimonials carousel --------- */
 .testimonials { background: var(--paper); }
-.testimonials-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+.carousel { position: relative; }
+.testimonials-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-bottom: 4px;
 }
+.testimonials-track::-webkit-scrollbar { display: none; }
 .testimonial {
   position: relative;
   background: var(--bone);
@@ -374,6 +384,50 @@
   border-top: 2px solid var(--gold-500);
   padding: 56px 32px 32px;
   display: flex; flex-direction: column;
+  flex: 0 0 min(620px, 88%);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+.testimonials-track::before,
+.testimonials-track::after {
+  content: ""; flex: 0 0 6%; min-width: 0;
+}
+
+.carousel-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 22px; margin-top: 36px;
+}
+.carousel-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(184,148,95,.45);
+  background: transparent; color: var(--gold-700);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 180ms, border-color 180ms, color 180ms;
+}
+.carousel-btn:hover {
+  background: var(--gold-500); border-color: var(--gold-500);
+  color: var(--navy-950);
+}
+.carousel-btn:disabled {
+  opacity: 0.3; cursor: default;
+}
+.carousel-btn:disabled:hover {
+  background: transparent; border-color: rgba(184,148,95,.45); color: var(--gold-700);
+}
+.carousel-dots {
+  display: flex; gap: 10px; align-items: center;
+}
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(184,148,95,.3);
+  border: 0; cursor: pointer;
+  transition: background 200ms, transform 200ms;
+}
+.dot:hover { background: rgba(184,148,95,.55); }
+.dot.active {
+  background: var(--gold-500);
+  transform: scale(1.35);
 }
 .testimonial .t-mark {
   position: absolute; top: 14px; left: 28px;
@@ -551,8 +605,8 @@
   .process-block { padding: 32px 28px; }
   .process-block::before { left: 28px; }
 
-  .testimonials-grid { grid-template-columns: 1fr; gap: 20px; }
   .testimonial { padding: 48px 28px 28px; }
+  .carousel-controls { margin-top: 28px; gap: 18px; }
 }
 
 /* --------- Phone (≤ 640px) --------- */

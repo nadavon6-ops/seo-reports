@@ -58,7 +58,6 @@ function Footer() {
       </div>
       <div className="footer-bottom">
         <div>© 2026 FSG<span className="sep">·</span>Todos los derechos reservados</div>
-        <div>Privacidad<span className="sep">·</span>Términos</div>
       </div>
     </footer>
   );
