@@ -10,7 +10,7 @@ function About() {
           <div className="quote">
             "Conozco el mundo inmobiliario desde adentro. Cuando me llamas, ya sé cómo funciona lo que estás viviendo."
           </div>
-          <div className="quote-author">— Fernanda Sepúlveda Grasins</div>
+          <div className="quote-author">Fernanda Sepúlveda Grasins</div>
           <p className="about-body">
             Llevo 10 años en el mundo inmobiliario. Antes de tener mi propia práctica trabajé en corretaje de propiedades, donde aprendí cómo funciona una operación de verdad. Los tiempos, las presiones, lo que le preocupa al corredor, lo que le preocupa al cliente.
           </p>

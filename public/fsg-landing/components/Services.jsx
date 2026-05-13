@@ -21,7 +21,7 @@ const SERVICES = [
     id: "titulo",
     num: "IV.",
     title: "Estudio de títulos",
-    body: "Reviso la historia de la propiedad. Si hay algo que no cuadra — una hipoteca, un embargo, un problema de inscripción — te aviso antes de que tu cliente firme, no después.",
+    body: "Reviso la historia de la propiedad. Si hay algo que no cuadra (una hipoteca, un embargo, un problema de inscripción), te aviso antes de que tu cliente firme, no después.",
   },
   {
     id: "saneamiento",
@@ -49,7 +49,7 @@ function Services({ setRoute, setService }) {
           </h2>
         </div>
         <p className="section-lede">
-          No soy la abogada que aparece solo a firmar. Trabajo contigo desde antes — reviso, te aviso, coordino con el corredor y el notario, y respondo cuando me escribes. Así se ve la relación.
+          No soy la abogada que aparece solo a firmar. Trabajo contigo desde antes. Reviso, te aviso, coordino con el corredor y el notario, y respondo cuando me escribes. Así se ve la relación.
         </p>
       </div>
       <div className="services-grid">
