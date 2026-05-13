@@ -15,7 +15,16 @@ function CtaBand() {
 }
 
 function Footer({ setRoute }) {
-  const goto = (id) => (e) => { e.preventDefault(); setRoute(id); };
+  const scrollOrGo = (anchor) => (e) => {
+    e.preventDefault();
+    const doScroll = () => {
+      const el = document.getElementById(anchor);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    setRoute("home");
+    requestAnimationFrame(() => requestAnimationFrame(doScroll));
+  };
+
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -26,17 +35,17 @@ function Footer({ setRoute }) {
         </div>
         <div className="footer-col">
           <h5>Servicios</h5>
-          <a href="#" onClick={goto("services")}>Contrato de arriendo</a>
-          <a href="#" onClick={goto("services")}>Promesa de compraventa</a>
-          <a href="#" onClick={goto("services")}>Escritura de compraventa</a>
-          <a href="#" onClick={goto("services")}>Estudio de títulos</a>
-          <a href="#" onClick={goto("services")}>Saneamiento y alzamiento</a>
-          <a href="#" onClick={goto("services")}>Reglamentos de copropiedad</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Contrato de arriendo</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Promesa de compraventa</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Escritura de compraventa</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Estudio de títulos</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Saneamiento y alzamiento</a>
+          <a href="#servicios" onClick={scrollOrGo("servicios")}>Reglamentos de copropiedad</a>
         </div>
         <div className="footer-col">
           <h5>Estudio</h5>
-          <a href="#" onClick={goto("about")}>Sobre mí</a>
-          <a href="#" onClick={goto("about")}>Cómo trabajo</a>
+          <a href="#sobre-mi" onClick={scrollOrGo("sobre-mi")}>Sobre mí</a>
+          <a href="#sobre-mi" onClick={scrollOrGo("sobre-mi")}>Cómo trabajo</a>
           <a href={window.WA_URL} target="_blank" rel="noopener noreferrer">Contacto</a>
         </div>
         <div className="footer-col">

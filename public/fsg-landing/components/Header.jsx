@@ -3,28 +3,41 @@ function Header({ route, setRoute }) {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   const links = [
-    { id: "home", label: "Inicio" },
-    { id: "services", label: "Servicios" },
-    { id: "about", label: "Sobre mí" },
+    { id: "top", label: "Inicio" },
+    { id: "servicios", label: "Servicios" },
+    { id: "sobre-mi", label: "Sobre mí" },
   ];
 
-  const go = (id) => {
-    setRoute(id);
+  const scrollTo = (anchor) => {
+    if (anchor === "top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const el = document.getElementById(anchor);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const go = (anchor) => {
     setMenuOpen(false);
+    if (route !== "home") {
+      setRoute("home");
+      requestAnimationFrame(() => requestAnimationFrame(() => scrollTo(anchor)));
+    } else {
+      scrollTo(anchor);
+    }
   };
 
   return (
     <header className="nav">
       <div className="nav-inner">
-        <div className="brand" onClick={() => go("home")}>
+        <div className="brand" onClick={() => go("top")}>
           <img className="brand-logo-wide" src="assets/fsg-logo-wide.png" alt="FSG Derecho Inmobiliario" />
         </div>
         <nav className="nav-links">
           {links.map((l) => (
             <a
               key={l.id}
-              href="#"
-              className={route === l.id ? "active" : ""}
+              href={l.id === "top" ? "#" : "#" + l.id}
               onClick={(e) => { e.preventDefault(); go(l.id); }}
             >
               {l.label}
@@ -50,8 +63,7 @@ function Header({ route, setRoute }) {
           {links.map((l) => (
             <a
               key={l.id}
-              href="#"
-              className={route === l.id ? "active" : ""}
+              href={l.id === "top" ? "#" : "#" + l.id}
               onClick={(e) => { e.preventDefault(); go(l.id); }}
             >
               {l.label}

@@ -39,7 +39,7 @@ const SERVICES = [
 
 function Services({ setRoute, setService }) {
   return (
-    <section className="section services">
+    <section id="servicios" className="section services">
       <div className="section-head">
         <div>
           <div className="section-eyebrow">Cómo trabajo</div>
