@@ -19,7 +19,7 @@ function Process() {
   ];
   return (
     <section className="section process">
-      <div className="section-head">
+      <div className="section-head" data-reveal>
         <div>
           <div className="section-eyebrow">Así avanzamos</div>
           <h2 className="section-title">Una relación,<br /><em>no una transacción.</em></h2>
@@ -29,8 +29,8 @@ function Process() {
         </p>
       </div>
       <div className="process-blocks">
-        {blocks.map((b) => (
-          <div key={b.title} className="process-block">
+        {blocks.map((b, i) => (
+          <div key={b.title} className="process-block" data-reveal data-delay={(i % 2) * 100}>
             <h4>{b.title}</h4>
             <p>{b.body}</p>
           </div>

@@ -2,10 +2,10 @@ function About() {
   return (
     <section id="sobre-mi" className="section about">
       <div className="about-grid">
-        <div className="about-portrait">
+        <div className="about-portrait" data-reveal>
           <img src="assets/fernanda-portrait-2.jpeg" alt="Fernanda Sepúlveda Grasins" />
         </div>
-        <div>
+        <div data-reveal data-delay="120">
           <div className="section-eyebrow">Sobre mí</div>
           <div className="quote">
             "Conozco el mundo inmobiliario desde adentro. Cuando me llamas, ya sé cómo funciona lo que estás viviendo."

@@ -17,25 +17,53 @@ function Testimonials() {
     },
   ];
 
-  const AUTO_MS = 6000;
+  const AUTO_MS = 5500;
   const [index, setIndex] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
+  const [perView, setPerView] = React.useState(1);
+  const trackRef = React.useRef(null);
 
   React.useEffect(() => {
-    if (paused) return;
+    const onResize = () => {
+      const w = window.innerWidth;
+      if (w >= 1024) setPerView(Math.min(3, items.length));
+      else if (w >= 640) setPerView(Math.min(2, items.length));
+      else setPerView(1);
+    };
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [items.length]);
+
+  const maxIndex = Math.max(0, items.length - perView);
+
+  React.useEffect(() => {
+    if (index > maxIndex) setIndex(maxIndex);
+  }, [maxIndex, index]);
+
+  React.useEffect(() => {
+    if (paused || maxIndex === 0) return;
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % items.length);
+      setIndex((i) => (i >= maxIndex ? 0 : i + 1));
     }, AUTO_MS);
     return () => clearInterval(id);
-  }, [paused, items.length]);
+  }, [paused, maxIndex]);
 
-  const goTo = (i) => setIndex((i + items.length) % items.length);
-  const prev = () => goTo(index - 1);
-  const next = () => goTo(index + 1);
+  const goTo = (i) => setIndex(Math.max(0, Math.min(maxIndex, i)));
+  const prev = () => setIndex((i) => (i <= 0 ? maxIndex : i - 1));
+  const next = () => setIndex((i) => (i >= maxIndex ? 0 : i + 1));
+
+  const initials = (name) =>
+    name
+      .split(/\s+/)
+      .map((w) => w[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
 
   return (
     <section className="section testimonials">
-      <div className="section-head">
+      <div className="section-head" data-reveal>
         <div>
           <div className="section-eyebrow">Testimonios</div>
           <h2 className="section-title">Corredoras<br /><em>que ya trabajan conmigo.</em></h2>
@@ -44,51 +72,60 @@ function Testimonials() {
 
       <div
         className="carousel"
+        data-reveal data-delay="120"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onTouchStart={() => setPaused(true)}
         onTouchEnd={() => setPaused(false)}
+        style={{ "--per-view": perView }}
       >
-        <div className="testimonials-stage">
-          {items.map((t, i) => (
-            <article
-              key={i}
-              className={"testimonial" + (i === index ? " active" : "")}
-              aria-hidden={i !== index}
-            >
-              <div className="t-mark">"</div>
-              <p className="t-quote">{t.quote}</p>
-              <div className="t-meta">
-                <div className="t-author">{t.author}</div>
-                <div className="t-role">{t.role}</div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <div className="carousel-controls">
-          <button className="carousel-btn" onClick={prev} aria-label="Anterior">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <div className="carousel-dots" role="tablist">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                className={"dot" + (i === index ? " active" : "")}
-                onClick={() => goTo(i)}
-                aria-label={"Testimonio " + (i + 1)}
-                aria-selected={i === index}
-              />
+        <div className="testimonials-viewport">
+          <div
+            className="testimonials-track"
+            ref={trackRef}
+            style={{ transform: `translateX(calc(-1 * var(--slide-step) * ${index}))` }}
+          >
+            {items.map((t, i) => (
+              <article key={i} className="testimonial">
+                <div className="t-mark">"</div>
+                <p className="t-quote">{t.quote}</p>
+                <div className="t-meta">
+                  <div className="t-avatar" aria-hidden="true">{initials(t.author)}</div>
+                  <div>
+                    <div className="t-author">{t.author}</div>
+                    <div className="t-role">{t.role}</div>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
-          <button className="carousel-btn" onClick={next} aria-label="Siguiente">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
         </div>
+
+        {maxIndex > 0 && (
+          <div className="carousel-controls">
+            <button className="carousel-btn" onClick={prev} aria-label="Anterior">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </button>
+            <div className="carousel-dots" role="tablist">
+              {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  className={"dot" + (i === index ? " active" : "")}
+                  onClick={() => goTo(i)}
+                  aria-label={"Slide " + (i + 1)}
+                  aria-selected={i === index}
+                />
+              ))}
+            </div>
+            <button className="carousel-btn" onClick={next} aria-label="Siguiente">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );
