@@ -17,50 +17,45 @@ function Testimonials() {
     },
   ];
 
-  const trackRef = React.useRef(null);
+  const AUTO_MS = 6000;
   const [index, setIndex] = React.useState(0);
+  const [paused, setPaused] = React.useState(false);
 
-  const scrollToIndex = (i) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const slide = track.children[i];
-    if (!slide) return;
-    track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
-  };
+  React.useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % items.length);
+    }, AUTO_MS);
+    return () => clearInterval(id);
+  }, [paused, items.length]);
 
-  const onScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-    const slides = Array.from(track.children);
-    const trackLeft = track.scrollLeft;
-    let nearest = 0;
-    let bestDist = Infinity;
-    slides.forEach((s, i) => {
-      const dist = Math.abs(s.offsetLeft - track.offsetLeft - trackLeft);
-      if (dist < bestDist) { bestDist = dist; nearest = i; }
-    });
-    if (nearest !== index) setIndex(nearest);
-  };
-
-  const prev = () => scrollToIndex(Math.max(0, index - 1));
-  const next = () => scrollToIndex(Math.min(items.length - 1, index + 1));
+  const goTo = (i) => setIndex((i + items.length) % items.length);
+  const prev = () => goTo(index - 1);
+  const next = () => goTo(index + 1);
 
   return (
     <section className="section testimonials">
       <div className="section-head">
         <div>
           <div className="section-eyebrow">Testimonios</div>
-          <h2 className="section-title">Corredoras que <em>ya trabajan conmigo.</em></h2>
+          <h2 className="section-title">Corredoras<br /><em>que ya trabajan conmigo.</em></h2>
         </div>
-        <p className="section-lede">
-          Tres voces del rubro inmobiliario que mejor explican cómo es trabajar juntas.
-        </p>
       </div>
 
-      <div className="carousel">
-        <div className="testimonials-track" ref={trackRef} onScroll={onScroll}>
+      <div
+        className="carousel"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+      >
+        <div className="testimonials-stage">
           {items.map((t, i) => (
-            <article key={i} className="testimonial">
+            <article
+              key={i}
+              className={"testimonial" + (i === index ? " active" : "")}
+              aria-hidden={i !== index}
+            >
               <div className="t-mark">"</div>
               <p className="t-quote">{t.quote}</p>
               <div className="t-meta">
@@ -72,12 +67,7 @@ function Testimonials() {
         </div>
 
         <div className="carousel-controls">
-          <button
-            className="carousel-btn"
-            onClick={prev}
-            aria-label="Anterior"
-            disabled={index === 0}
-          >
+          <button className="carousel-btn" onClick={prev} aria-label="Anterior">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M15 18l-6-6 6-6" />
             </svg>
@@ -87,18 +77,13 @@ function Testimonials() {
               <button
                 key={i}
                 className={"dot" + (i === index ? " active" : "")}
-                onClick={() => scrollToIndex(i)}
+                onClick={() => goTo(i)}
                 aria-label={"Testimonio " + (i + 1)}
                 aria-selected={i === index}
               />
             ))}
           </div>
-          <button
-            className="carousel-btn"
-            onClick={next}
-            aria-label="Siguiente"
-            disabled={index === items.length - 1}
-          >
+          <button className="carousel-btn" onClick={next} aria-label="Siguiente">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" />
             </svg>
