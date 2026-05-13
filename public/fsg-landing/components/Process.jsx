@@ -22,7 +22,7 @@ function Process() {
       <div className="section-head">
         <div>
           <div className="section-eyebrow">Así avanzamos</div>
-          <h2 className="section-title">Una relación, <em>no una transacción.</em></h2>
+          <h2 className="section-title">Una relación,<br /><em>no una transacción.</em></h2>
         </div>
         <p className="section-lede">
           No es una lista de entregables. Es la forma en que trabajo cada operación. Te mantengo al tanto en cada paso, con plazos claros, todo por escrito, y disponible cuando me escribes.
