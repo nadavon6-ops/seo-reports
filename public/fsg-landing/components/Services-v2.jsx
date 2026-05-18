@@ -39,22 +39,8 @@ const SERVICES = [
 
 function Services() {
   const [openIndex, setOpenIndex] = React.useState(0);
-  const [isMobile, setIsMobile] = React.useState(false);
-
-  React.useEffect(() => {
-    const mq = window.matchMedia("(max-width: 960px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    if (mq.addEventListener) mq.addEventListener("change", update);
-    else mq.addListener(update);
-    return () => {
-      if (mq.removeEventListener) mq.removeEventListener("change", update);
-      else mq.removeListener(update);
-    };
-  }, []);
 
   const toggle = (i) => {
-    if (!isMobile) return;
     setOpenIndex((curr) => (curr === i ? -1 : i));
   };
 
@@ -74,11 +60,11 @@ function Services() {
       </div>
       <div className="services-grid">
         {SERVICES.map((s, i) => {
-          const isOpen = isMobile ? openIndex === i : true;
+          const isOpen = openIndex === i;
           return (
             <div
               key={s.title}
-              className={"service" + (isMobile ? " service--accordion" : "") + (isOpen ? " is-open" : "")}
+              className={"service service--accordion" + (isOpen ? " is-open" : "")}
             >
               <span className="service-watermark" aria-hidden="true">{s.big}</span>
               <button
@@ -101,7 +87,6 @@ function Services() {
               <div
                 id={"service-body-" + i}
                 className="service-body"
-                aria-hidden={!isOpen}
               >
                 <p>{s.body}</p>
               </div>
