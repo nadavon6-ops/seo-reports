@@ -38,6 +38,26 @@ const SERVICES = [
 ];
 
 function Services() {
+  const [openIndex, setOpenIndex] = React.useState(0);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const mq = window.matchMedia("(max-width: 960px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    if (mq.addEventListener) mq.addEventListener("change", update);
+    else mq.addListener(update);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", update);
+      else mq.removeListener(update);
+    };
+  }, []);
+
+  const toggle = (i) => {
+    if (!isMobile) return;
+    setOpenIndex((curr) => (curr === i ? -1 : i));
+  };
+
   return (
     <section id="servicios" className="section services">
       <div className="section-head" data-reveal>
@@ -53,14 +73,43 @@ function Services() {
         </p>
       </div>
       <div className="services-grid">
-        {SERVICES.map((s, i) => (
-          <div key={s.title} className="service" data-reveal data-delay={(i % 3) * 80}>
-            <span className="service-watermark" aria-hidden="true">{s.big}</span>
-            <div className="num">{s.num}</div>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
-          </div>
-        ))}
+        {SERVICES.map((s, i) => {
+          const isOpen = isMobile ? openIndex === i : true;
+          return (
+            <div
+              key={s.title}
+              className={"service" + (isMobile ? " service--accordion" : "") + (isOpen ? " is-open" : "")}
+              data-reveal
+              data-delay={(i % 3) * 80}
+            >
+              <span className="service-watermark" aria-hidden="true">{s.big}</span>
+              <button
+                type="button"
+                className="service-toggle"
+                aria-expanded={isOpen}
+                aria-controls={"service-body-" + i}
+                onClick={() => toggle(i)}
+              >
+                <div className="service-toggle-text">
+                  <div className="num">{s.num}</div>
+                  <h3>{s.title}</h3>
+                </div>
+                <span className="service-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </span>
+              </button>
+              <div
+                id={"service-body-" + i}
+                className="service-body"
+                aria-hidden={!isOpen}
+              >
+                <p>{s.body}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
