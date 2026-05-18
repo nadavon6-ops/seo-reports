@@ -37,7 +37,7 @@ function Process() {
       </div>
       <div className="process-blocks">
         {blocks.map((b, i) => (
-          <div key={b.title} className="process-block" data-reveal data-delay={delays[i]}>
+          <div key={b.title} className="process-block">
             <span className="process-step" aria-hidden="true">{b.step}</span>
             <h4>{b.title}</h4>
             <p>{b.body}</p>

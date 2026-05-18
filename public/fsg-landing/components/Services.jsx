@@ -79,8 +79,6 @@ function Services() {
             <div
               key={s.title}
               className={"service" + (isMobile ? " service--accordion" : "") + (isOpen ? " is-open" : "")}
-              data-reveal
-              data-delay={(i % 3) * 80}
             >
               <span className="service-watermark" aria-hidden="true">{s.big}</span>
               <button
