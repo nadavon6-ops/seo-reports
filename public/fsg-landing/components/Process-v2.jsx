@@ -22,7 +22,29 @@ function Process() {
     },
   ];
 
-  const delays = [0, 120, 240, 360];
+  const refs = React.useRef([]);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 640px)");
+    if (!mq.matches) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            const idx = Number(e.target.dataset.index);
+            if (!Number.isNaN(idx)) setActiveIndex(idx);
+          }
+        });
+      },
+      { rootMargin: "-38% 0px -38% 0px", threshold: 0 }
+    );
+
+    refs.current.forEach((el) => { if (el) io.observe(el); });
+    return () => io.disconnect();
+  }, []);
 
   return (
     <section className="section process">
@@ -37,7 +59,12 @@ function Process() {
       </div>
       <div className="process-blocks">
         {blocks.map((b, i) => (
-          <div key={b.title} className="process-block">
+          <div
+            key={b.title}
+            ref={(el) => (refs.current[i] = el)}
+            data-index={i}
+            className={"process-block" + (i === activeIndex ? " is-active" : "")}
+          >
             <span className="process-step" aria-hidden="true">{b.step}</span>
             <h4>{b.title}</h4>
             <p>{b.body}</p>
