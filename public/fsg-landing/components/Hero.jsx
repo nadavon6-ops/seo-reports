@@ -29,7 +29,14 @@ function Hero() {
           </div>
         </div>
         <div className="hero-portrait" data-reveal data-delay="160">
-          <img src="assets/fernanda-portrait.jpeg" alt="Fernanda Sepúlveda Grasins" />
+          <img
+            src="assets/fernanda-portrait.jpeg"
+            alt="Fernanda Sepúlveda Grasins, abogada de derecho inmobiliario en Santiago de Chile"
+            width="640"
+            height="853"
+            decoding="async"
+            fetchpriority="high"
+          />
           <div className="frame-line" />
         </div>
       </div>

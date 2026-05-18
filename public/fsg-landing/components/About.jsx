@@ -3,7 +3,14 @@ function About() {
     <section id="sobre-mi" className="section about">
       <div className="about-grid">
         <div className="about-portrait" data-reveal>
-          <img src="assets/fernanda-portrait-2.jpeg" alt="Fernanda Sepúlveda Grasins" />
+          <img
+            src="assets/fernanda-portrait-2.jpeg"
+            alt="Fernanda Sepúlveda Grasins, abogada especializada en derecho inmobiliario, Región Metropolitana de Chile"
+            width="640"
+            height="800"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div data-reveal data-delay="120">
           <div className="section-eyebrow">Sobre mí</div>
