@@ -3,7 +3,7 @@ function Process() {
     {
       step: "01",
       title: "Conversemos primero",
-      body: "Me cuentas qué operación tienes en curso. Si eres corredora, me pones en contexto. Si eres el cliente, me cuentas qué estás comprando, vendiendo o arrendando. De ahí vemos cómo lo trabajamos.",
+      body: "Me cuentas qué operación tienes en curso. Si eres corredora, me pones en contexto. Si eres el cliente, me cuentas qué estás comprando, vendiendo o arrendando. Definimos juntos la forma de trabajar.",
     },
     {
       step: "02",
