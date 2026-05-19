@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>לאומית – מבנה טיוטת ויקיפדיה V3 | NC Digital</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --surface: #111a2e;
+    --surface-2: #182441;
+    --border: #1f2d4d;
+    --text: #e8edf7;
+    --muted: #9aa6c2;
+    --accent: #0891b2;
+    --accent-2: #22d3ee;
+    --good: #10b981;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Heebo', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 24px 80px; }
+  header { margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .badge {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    background: rgba(8, 145, 178, 0.15); color: var(--accent-2);
+    font-size: 13px; font-weight: 500; margin-bottom: 16px;
+  }
+  h1 { font-size: 32px; margin: 0 0 12px; font-weight: 700; }
+  .lead { color: var(--muted); font-size: 17px; max-width: 760px; }
+  h2 {
+    font-size: 22px; margin: 56px 0 20px; padding-bottom: 12px;
+    border-bottom: 1px solid var(--border); color: var(--accent-2);
+  }
+  h3 { font-size: 18px; margin: 28px 0 10px; color: var(--text); }
+  p { margin: 0 0 14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .card.accent { border-right: 4px solid var(--accent); padding-right: 22px; }
+  .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .pill {
+    display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 999px;
+    background: rgba(34, 211, 238, 0.12); color: var(--accent-2); margin-left: 6px;
+  }
+  .pill.warn { background: rgba(245, 158, 11, 0.18); color: var(--warn); }
+  .pill.bad  { background: rgba(239, 68, 68, 0.18);  color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 15px; }
+  th, td { padding: 12px 14px; text-align: right; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--accent-2); font-weight: 600; background: var(--surface-2); }
+  td { color: var(--text); }
+  ul.checks { list-style: none; padding: 0; margin: 12px 0; }
+  ul.checks li { padding: 8px 0 8px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 10px; align-items: flex-start; }
+  ul.checks li:last-child { border-bottom: none; }
+  ul.checks .dot { flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--good); margin-top: 9px; }
+  ul.checks .dot.warn { background: var(--warn); }
+  ul.checks .dot.bad { background: var(--bad); }
+  .section-explain {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .section-explain .num {
+    display: inline-block; min-width: 32px; color: var(--accent-2); font-weight: 700; font-size: 15px;
+  }
+  .section-explain .title-row { font-weight: 600; font-size: 17px; margin-bottom: 6px; }
+  .section-explain .why { color: var(--muted); font-size: 14px; margin: 4px 0 0; }
+  .sub-explain {
+    margin: 10px 0 6px 0; padding: 10px 14px;
+    background: var(--surface-2); border-radius: 8px;
+    border-right: 3px solid var(--border);
+  }
+  .sub-explain .sub-num { color: var(--accent-2); font-weight: 600; font-size: 13px; margin-left: 6px; }
+  .sub-explain .sub-title { font-weight: 500; font-size: 14px; }
+  .sub-explain .sub-desc { color: var(--muted); font-size: 13px; margin-top: 2px; line-height: 1.55; }
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin: 14px 0;
+  }
+  .stat {
+    background: var(--surface-2); padding: 14px; border-radius: 10px;
+    border: 1px solid var(--border); text-align: center;
+  }
+  .stat .num { font-size: 26px; font-weight: 700; color: var(--accent-2); }
+  .stat .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .change-list { list-style: none; padding: 0; margin: 0; }
+  .change-list li {
+    padding: 12px 14px; margin: 8px 0; border-radius: 8px;
+    background: var(--surface-2); border-right: 3px solid var(--accent);
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .change-list .tag {
+    flex-shrink: 0; font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    background: rgba(16, 185, 129, 0.15); color: var(--good);
+    font-weight: 600; min-width: 60px; text-align: center;
+  }
+  .change-list .tag.removed { background: rgba(239, 68, 68, 0.15); color: var(--bad); }
+  .change-list .tag.added { background: rgba(16, 185, 129, 0.15); color: var(--good); }
+  .change-list .tag.moved { background: rgba(245, 158, 11, 0.15); color: var(--warn); }
+  .change-list .tag.kept  { background: rgba(34, 211, 238, 0.12); color: var(--accent-2); }
+  .change-list .desc { color: var(--text); font-size: 14px; line-height: 1.55; }
+  footer {
+    margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; text-align: center;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="badge">NC Digital · אפריל 2026 · V3</span>
+  <h1>לאומית שירותי בריאות — מבנה טיוטת ויקיפדיה V3</h1>
+  <p class="lead">מסמך זה מסביר את גרסה V3 של טיוטת הערך, על פי הפידבק האחרון של הלקוח. המבנה הצטמצם, הפתיח התמקד בחוזקות הקופה, ההיסטוריה התכווצה לפסקה אחת עם המיתוגים בתוכה, וסעיף החדשנות הצטמצם ללאומית סטארט בלבד.</p>
+</header>
+
+<h2>1. מבט-על</h2>
+<div class="stats">
+  <div class="stat"><div class="num">8</div><div class="label">כותרות ראשיות</div></div>
+  <div class="stat"><div class="num">10</div><div class="label">תת-כותרות</div></div>
+  <div class="stat"><div class="num">889</div><div class="label">מילים</div></div>
+  <div class="stat"><div class="num">21</div><div class="label">הפניות [n]</div></div>
+  <div class="stat"><div class="num">10</div><div class="label">מקורות</div></div>
+  <div class="stat"><div class="num">0</div><div class="label">קווים מפרידים (—)</div></div>
+</div>
+<div class="card">
+  <p>הערך החדש קצר משמעותית מקודמו (פחות מחצי האורך). הפתיח מתרכז בהכרה החיצונית של משרד הבריאות ובחוזקות הקופה, ללא השוואות גודל ובלי פירוט היסטורי. ההיסטוריה נכנסת לפסקה אחת בלבד, ובה גם רצף שינויי המיתוג של הקופה. סעיף הארגון כולל את החזון, המשימה והערכים שצוינו על ידי הלקוח, ואת רשימת המנכ"לים כתת-סעיף. בריאות האישה הועברה לתוך השירותים הרפואיים. דירוגים והכרה כסעיף עצמאי הוסר; הקביעות העובדתיות נכללות בפתיח עם ייחוס מפורש. סעיף חדשנות מתרכז כעת בלאומית סטארט בלבד.</p>
+</div>
+
+<h2>2. הסבר מפורט לכל סעיף</h2>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">פתיח.</span>פתיח</div>
+  <p class="why">ארבע פסקאות קצרות. אין השוואה לגודל הקופה, אין פירוט היסטורי, אין תיאור היקף פעילות. תוכן הפתיח: שירות אישי, ליווי רפואי רציף, בריאות האישה, זמני המתנה קצרים על פי דו"ח משרד הבריאות, שיעור תלונות נמוך בין הקופות, מערך מרפאות נשים ייעודי, מכון מחקר וזרוע לאומית סטארט. כל קביעת הכרה מצוטטת למקור באמצעות הפניה [n].</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">1.</span>היסטוריה</div>
+  <p class="why">פסקה אחת בלבד, ארבעה משפטים. ההיסטוריה כוללת את ההקמה בשנת 1933, רישום הקופה ב-1934, חוק ביטוח בריאות ממלכתי 1995, ואת רצף שינויי המיתוג: סמל החסידה ההיסטורי, יוזמת "קודם כל את" בבריאות האישה, רענון הסמל ב-2010, וגווני הסגול בשינוי 2026. הוסר: כל אזכור של הפרדה מההסתדרות הלאומית, מאזן מעברי החברים, ושינוי המיתוג כסעיף עצמאי.</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">2.</span>ארגון ומבנה</div>
+  <p class="why">סעיף ניהולי שמרכז את כל המידע על ארגון הקופה. הוסר ממנו: כוח אדם ופריסה, ומיצוב בשוק קופות החולים, על פי פידבק הלקוח. הסעיף כולל שלוש תת-כותרות:</p>
+  <div class="sub-explain">
+    <span class="sub-num">2.1</span><span class="sub-title">הנהלה ומועצה</span>
+    <p class="sub-desc">יו"ר המועצה, המנכ"ל המכהן, מיקום המטה, והפניה לתקנון הקופה כמסמך השולט בסדרי הניהול ובסמכויות.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">2.2</span><span class="sub-title">חזון, משימה וערכים</span>
+    <p class="sub-desc">תת-סעיף חדש שהתבקש על ידי הלקוח. כולל את משפט החזון "להעניק שירותי בריאות איכותיים יותר בדרך האנושית ביותר", את ניסוח המשימה, ואת חמשת ערכי הליבה של הקופה (האדם במרכז, מצוינות מתוך יצירתיות, חדשנות שרואה לקוח, יושרה ושקיפות, טובים יותר ביחד). מנוסח כפרזנטציה של עמדת הקופה, לא כקביעת עובדה.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">2.3</span><span class="sub-title">מנכ"לים</span>
+    <p class="sub-desc">טבלה כרונולוגית של ארבעה מנכ"לים מאז ההקמה. בעבר הופיע כסעיף ראשי עצמאי; הועבר לתוך סעיף הארגון על פי הפידבק.</p>
+  </div>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">3.</span>שירותים רפואיים</div>
+  <p class="why">הסעיף הגדול ביותר בערך, מחולק לשבע תת-כותרות. הסדר עוקב אחרי לוגיקה פנימית: מרפאות קהילה כנקודת מפגש ראשונה, בריאות האישה כתחום דגל בתוך השירותים, מעבדה מרכזית כתשתית, לאחר מכן שירותי הפארם והאופטיקה והרפואה המשלימה, האשפוז (בתי חולים), והביטוחים המשלימים כסיכום.</p>
+  <div class="sub-explain">
+    <span class="sub-num">3.1</span><span class="sub-title">רפואה ראשונית ומרפאות קהילה</span>
+    <p class="sub-desc">מרפאות הקהילה הפרוסות ברחבי הארץ, רופאי המשפחה ורופאי הילדים כעוגן הרפואי, וההפניה לרופאים מומחים, לבדיקות ולטיפולים.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.2</span><span class="sub-title">בריאות האישה</span>
+    <p class="sub-desc">בריאות האישה הועברה מסעיף עצמאי לתת-סעיף בתוך השירותים. המעבר עונה על בקשת הלקוח. התוכן כולל מרכזים ייעודיים, רופאות נשים בקהילה, מעקב הריון, ייעוץ גנטי, בדיקות סקירה ואולטרסאונד גינקולוגי, ליווי הנקה ושירותים לאחר לידה. נשמרה ההפניה לדו"ח משרד הבריאות 2024 על זמני ההמתנה הקצרים בתחום.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.3</span><span class="sub-title">מעבדה מרכזית</span>
+    <p class="sub-desc">תפקיד המעבדה, השילוב עם מערכת המידע הקלינית, והתמיכה ברפואת הקהילה ובמחקר.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.4</span><span class="sub-title">לאומית פארם, לאומית אופטיק ולאומית דנט</span>
+    <p class="sub-desc">שלוש זרועות שירות שאינן רפואה ראשונית: רשת בתי המרקחת, מערך האופטומטריה ומערך רפואת השיניים, מתואר בכלי הקופה ובהיקפו.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.5</span><span class="sub-title">רפואה משלימה</span>
+    <p class="sub-desc">דיקור, רפלקסולוגיה, רפואה סינית וכירופרקטיקה במסגרת תוכניות הביטוח המשלים.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.6</span><span class="sub-title">בתי חולים</span>
+    <p class="sub-desc">רכישת אחזקות ברשת מדיקה ב-2024, השותפות בפרויקט בית החולים על שם שמעון פרס, וההסכמים עם בתי חולים ציבוריים.</p>
+  </div>
+  <div class="sub-explain">
+    <span class="sub-num">3.7</span><span class="sub-title">ביטוחים משלימים</span>
+    <p class="sub-desc">תוכניות לאומית כסף ולאומית זהב מוצגות יחד בסעיף אחד, על פי בקשת הלקוח: מי שמחפש מידע על הביטוחים המשלימים מקבל את כל המידע במקום אחד.</p>
+  </div>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">4.</span>מחקר</div>
+  <p class="why">סעיף יחיד, פסקה אחת. בעבר היה בנוי משתי תת-כותרות; אוחד לסעיף אחד על פי בקשת הלקוח. הסעיף מתאר את מכון המחקר משנת 2019, את שיתופי הפעולה עם מוסדות אקדמיים, את תחומי ההתמקדות (אפידמיולוגיה קלינית, בריאות הציבור, רפואה מותאמת אישית), ואת הפרסומים בכתבי עת בינלאומיים.</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">5.</span>חדשנות</div>
+  <p class="why">סעיף יחיד שמתרכז בלאומית סטארט בלבד. הוסרו על פי בקשת הלקוח: תיאור מערכת התיק הרפואי האלקטרוני (תמר), תקני בריאות וממשקים (FHIR/InterSystems), האפליקציה, ושירות משלוח התרופות. נשמר: זרוע החדשנות, הגשר לסטארטאפים, פיילוטים קליניים, ליווי לחברות.</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">6.</span>לקריאה נוספת</div>
+  <p class="why">רשימת מקורות עומק על מערכת הבריאות בישראל: דין וחשבון שנתי של משרד הבריאות וניירות עמדה של מרכז טאוב. רשימה תמציתית, כפי שמופיע בערכים מקבילים בוויקיפדיה העברית.</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">7.</span>קישורים חיצוניים</div>
+  <p class="why">אתר רשמי של לאומית, אתר לאומית סטארט, ואתר משרד הבריאות לדוחות פעילות קופות החולים.</p>
+</div>
+
+<div class="section-explain">
+  <div class="title-row"><span class="num">8.</span>הערות שוליים <span class="pill">10 מקורות</span></div>
+  <p class="why">רשימת ההפניות הממוספרות שמופיעות לאורך הערך כסימן [n]. המקורות מתחלקים לשלוש קבוצות: רשמי (משרד הבריאות, ספר החוקים, תקנון הקופה), אקדמי (טאוב, PubMed, ScienceDirect, PMC), ועיתונות עצמאית (גלובס). אין הסתמכות על הודעות לעיתונות.</p>
+</div>
+
+<h2>3. שינויים מרכזיים ביחס לגרסה הקודמת (V2)</h2>
+
+<ul class="change-list">
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>השוואה לגודל הקופה בפתיח:</b> בוטל כל אזכור של "קופה רביעית בגודלה", "תשעה אחוזי שוק" וכדומה. הפתיח מציג את הקופה בלי לשפוט את גודלה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>פירוט היסטורי בפתיח:</b> בוטל. הפתיח לא כולל יותר תאריכי הקמה ושינויים ארגוניים. אלו מופיעים רק בסעיף ההיסטוריה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>תיאור היקף פעילות בפתיח:</b> בוטל. מספרי מרפאות וחברים אינם מופיעים בפתיח.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>הפרדה מההסתדרות הלאומית:</b> הוסר לחלוטין מסעיף ההיסטוריה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>מאזן מעברי חברים:</b> הוסר לחלוטין.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>חלוקה היסטורית לשלוש תקופות:</b> אוחד לפסקה אחת קצרה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>סעיף שינוי מיתוג נפרד:</b> בוטל. כל המיתוגים (חסידה, "קודם כל את", 2010, 2026) נמצאים כעת בתוך פסקת ההיסטוריה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>כוח אדם ופריסה:</b> בוטל מסעיף הארגון.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>מיצוב בשוק קופות החולים:</b> בוטל מסעיף הארגון.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>סעיף "דירוגים והכרה" עצמאי:</b> בוטל. הסיבה: הלקוח ציין שתוכן הסעיף לא נכון. הקביעות העובדתיות (משרד הבריאות 2024 על תלונות וזמני המתנה) הועברו לפתיח עם ייחוס מפורש. דירוגים שלא ניתנים לאימות נוקדן ומדויק (כגון BDI/TheMarker) הוסרו.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>סעיף סמל ומיתוג עצמאי:</b> בוטל. הוטמע בפסקת ההיסטוריה.</div></li>
+  <li><span class="tag removed">הוסר</span><div class="desc"><b>תיאור מורחב של חדשנות:</b> הוסרו תת-סעיפים על תיק רפואי אלקטרוני (תמר), תקני FHIR/InterSystems, האפליקציה ומשלוח התרופות. נשארה רק לאומית סטארט.</div></li>
+  <li><span class="tag moved">הועבר</span><div class="desc"><b>סעיף מנכ"לים:</b> מסעיף ראשי עצמאי לתת-סעיף בתוך "ארגון ומבנה".</div></li>
+  <li><span class="tag moved">הועבר</span><div class="desc"><b>בריאות האישה:</b> מסעיף ראשי עצמאי לתת-סעיף בתוך "שירותים רפואיים", על פי מבנה הערכים של כללית ומכבי בוויקיפדיה.</div></li>
+  <li><span class="tag moved">הועבר</span><div class="desc"><b>הכרה חיצונית:</b> מסעיף עצמאי אל פסקה שנייה בפתיח, עם ייחוס מפורש לדו"ח משרד הבריאות 2024.</div></li>
+  <li><span class="tag added">נוסף</span><div class="desc"><b>תת-סעיף חזון, משימה וערכים:</b> חדש בערך. כולל את משפט החזון, ניסוח המשימה, וחמשת ערכי הליבה (האדם במרכז, מצוינות מתוך יצירתיות, חדשנות שרואה לקוח, יושרה ושקיפות, טובים יותר ביחד), כפי שהקופה מציגה אותם.</div></li>
+  <li><span class="tag added">נוסף</span><div class="desc"><b>הפניה לתקנון:</b> סעיף הנהלה ומועצה כולל הפניה ישירה לתקנון הקופה כמסמך השולט בסדרי הניהול.</div></li>
+  <li><span class="tag added">נוסף</span><div class="desc"><b>תת-סעיף ביטוחים משלימים מאוחד:</b> שתי תוכניות הביטוח (כסף וזהב) מוצגות בסעיף אחד, על פי בקשת הלקוח.</div></li>
+  <li><span class="tag kept">נשמר</span><div class="desc"><b>טבלת מנכ"לים:</b> ארבע השורות נשמרו ללא שינוי תוכן, רק שינוי מיקום (תוך סעיף הארגון).</div></li>
+  <li><span class="tag kept">נשמר</span><div class="desc"><b>הפניות [n] בגוף הערך:</b> שיטת הציטוט נשמרה. כעת 21 הפניות במקום 33, מאחר שתוכן הערך התקצר.</div></li>
+</ul>
+
+<h2>4. מבנה V3 בהשוואה לקופות החולים האחרות</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>סעיף</th>
+      <th>כללית</th>
+      <th>מכבי</th>
+      <th>לאומית V3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>פתיח</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>היסטוריה</td><td>✓</td><td>✓</td><td>✓ (פסקה אחת)</td></tr>
+    <tr><td>ארגון ומוסדות</td><td>—</td><td>✓</td><td>✓ (3 תת-סעיפים)</td></tr>
+    <tr><td>חזון ומשימה</td><td>—</td><td>—</td><td>✓ (תת-סעיף)</td></tr>
+    <tr><td>שירותים</td><td>פזור</td><td>✓</td><td>✓ (7 תת-סעיפים)</td></tr>
+    <tr><td>בריאות האישה</td><td>—</td><td>—</td><td>תת-סעיף בשירותים</td></tr>
+    <tr><td>מחקר</td><td>סעיף עצמאי</td><td>תת-סעיף</td><td>סעיף עצמאי</td></tr>
+    <tr><td>חדשנות</td><td>סעיף עצמאי</td><td>—</td><td>סעיף עצמאי</td></tr>
+    <tr><td>טבלת מנכ"לים</td><td>סעיף ראשי</td><td>—</td><td>תת-סעיף בארגון</td></tr>
+    <tr><td>סמל ומיתוג</td><td>סעיף ראשי</td><td>תת-סעיף בהיסטוריה</td><td>בתוך פסקת ההיסטוריה</td></tr>
+    <tr><td>לקריאה נוספת</td><td>✓</td><td>—</td><td>✓</td></tr>
+    <tr><td>קישורים חיצוניים</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    <tr><td>הערות שוליים</td><td>✓</td><td>✓</td><td>✓ (10 מקורות)</td></tr>
+  </tbody>
+</table>
+
+<p>גרסה V3 קרובה יותר במבנה לערך של מכבי (קומפקטי, ארגון ושירותים כסעיפים מרכזיים) מאשר לערך של כללית (פירוט רחב לכל סעיף). היא חורגת ממבנה הסטנדרט הוויקיפדי בשני מקומות: תת-סעיף "חזון, משימה וערכים" (לא קיים בקופות האחרות, נכלל על פי בקשת הלקוח), ופרטי מיתוג בתוך פסקת ההיסטוריה (במקום סעיף עצמאי).</p>
+
+<h2>5. כיצד טופלו דרישות הפידבק</h2>
+
+<ul class="checks">
+  <li><span class="dot"></span><div><b>"פתיח בלי השוואת גודל, בלי פירוט היסטורי, בלי היקף פעילות, עם הכרה חיצונית וחוזקות":</b> בוצע. הפתיח כולל ארבע פסקאות שמתמקדות בשירות אישי, בליווי רפואי רציף, בבריאות האישה, בהכרת משרד הבריאות, ובמכון המחקר ובלאומית סטארט.</div></li>
+  <li><span class="dot"></span><div><b>"דגש על בריאות האישה ושירות אישי":</b> בוצע. שני הנושאים מופיעים בפסקה הראשונה של הפתיח, ובריאות האישה מקבלת גם פסקה משלה.</div></li>
+  <li><span class="dot"></span><div><b>"היסטוריה הרבה יותר קצרה, מקסימום 5 שורות":</b> בוצע. ההיסטוריה אוחדה לפסקה אחת בלבד.</div></li>
+  <li><span class="dot"></span><div><b>"להוריד הפרדה מההסתדרות הלאומית ומאזן מעברי חברים":</b> בוצע. הוסר לחלוטין.</div></li>
+  <li><span class="dot"></span><div><b>"להוריד שינוי מיתוג":</b> בוצע. שינויי המיתוג כלולים בתוך פסקת ההיסטוריה ולא בסעיף עצמאי.</div></li>
+  <li><span class="dot"></span><div><b>"הנהלה ומועצה להוביל ללינק לתקנון":</b> בוצע. הסעיף מסתיים בהפניה לתקנון הקופה.</div></li>
+  <li><span class="dot"></span><div><b>"כוח אדם ופריסה להוריד; מיצוב בשוק להוריד":</b> בוצע. שני התת-סעיפים הוסרו.</div></li>
+  <li><span class="dot"></span><div><b>"חזון של לאומית עם הניסוח שצוטט":</b> בוצע מילולית. החזון, המשימה וכל חמשת הערכים כלולים בתת-סעיף ייעודי.</div></li>
+  <li><span class="dot"></span><div><b>"בריאות האישה צריך להיכנס לתוך השירותים הרפואיים":</b> בוצע. סעיף ראשי עצמאי הפך לתת-סעיף בתוך "שירותים רפואיים".</div></li>
+  <li><span class="dot"></span><div><b>"מכון מחקר כסעיף אחד":</b> בוצע. שתי תת-כותרות (מכון המחקר; תחומי מחקר) אוחדו לסעיף יחיד.</div></li>
+  <li><span class="dot"></span><div><b>"חדשנות — לאומית סטארט בלבד":</b> בוצע. הוסרו תיאורי תמר, FHIR, האפליקציה ומשלוח התרופות.</div></li>
+  <li><span class="dot"></span><div><b>"דירוגים והכרה — תוכן לא נכון":</b> טופל בהסרת הסעיף העצמאי. הקביעות העובדתיות של משרד הבריאות 2024 (תלונות, זמני המתנה) נשמרו בפתיח עם ייחוס מפורש. דירוגים שלא ניתן לאמת במדויק (כגון TheMarker BDI) הוסרו לחלוטין.</div></li>
+  <li><span class="dot"></span><div><b>"סמל ומיתוג צריך להיות בחלק של ההיסטוריה ולסרוק את כל המיתוגים":</b> בוצע. סעיף עצמאי בוטל. כל המיתוגים (חסידה, "קודם כל את", 2010, 2026) מופיעים בפסקת ההיסטוריה.</div></li>
+  <li><span class="dot"></span><div><b>"מנכ"לים צריך להיכנס לתוך סעיף הארגון":</b> בוצע. הטבלה הועברה מסעיף ראשי לתת-סעיף בתוך "ארגון ומבנה".</div></li>
+</ul>
+
+<h2>6. הערה לקליינט</h2>
+<div class="card">
+  <p><b>על דירוגים והכרה:</b> כיוון שצוין שהתוכן הקודם של הסעיף לא היה נכון, הסרנו את הסעיף העצמאי לחלוטין. שתי קביעות שהושארו בפתיח (שיעור התלונות הנמוך, זמני ההמתנה הקצרים) מסתמכות על דוחות משרד הבריאות 2024 וכוללות הפניות מפורשות [1], [2]. אם גם הקביעות הללו אינן מדויקות, יש להעביר מקור עדכני או לציין באיזה דירוג ספציפי מדובר, ונעדכן בהתאם.</p>
+  <p><b>על שמות אישיים בסעיף הארגון:</b> השמות שצוינו (יו"ר המועצה פרופ' שלמה מור-יוסף, המנכ"ל המכהן חיים פרננדס) מבוססים על מידע פתוח ידוע. אם חל שינוי בתפקידים, יש לעדכן.</p>
+  <p><b>על מיתוגים נוספים:</b> המיתוגים הנזכרים בהיסטוריה (חסידה, "קודם כל את", 2010, 2026) נכללים כפי שצוינו. אם קיימים שמות מותגים נוספים שצריך לכלול, יש לציין ונוסיף.</p>
+</div>
+
+<footer>
+  NC Digital · לאומית שירותי בריאות · גרסה V3 · אפריל 2026
+</footer>
+
+</div>
+</body>
+</html>
