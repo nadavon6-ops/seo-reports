@@ -90,9 +90,14 @@ footer{margin-top:44px;display:flex;justify-content:space-between;color:#41506a;
 .dsec .li b{direction:ltr;color:var(--txt)}
 .dsec .li.warn,.dsec .li.warn b{color:var(--warn)}
 .dlink{display:inline-block;margin-top:14px;color:#0c111c;background:var(--h1);padding:12px 26px;font-weight:800;font-size:15px;text-decoration:none;border-radius:10px}
+#ekgline{stroke-dasharray:46 210;animation:beat 2.1s linear infinite;filter:drop-shadow(0 0 5px currentColor)}
+@keyframes beat{from{stroke-dashoffset:256}to{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body><main>
-<div class="top"><div><div class="wordmark">NC DIGITAL</div><div style="font-size:26px;font-weight:900">Client Pulse</div></div><div style="text-align:left"><div id="clock" class="num" style="font-size:22px;font-weight:800"></div><time id="ts" style="color:var(--dim);font-size:14px"></time></div></div>
+<div class="top"><div><div class="wordmark">NC DIGITAL</div><div style="display:flex;align-items:center;gap:14px"><div style="font-size:26px;font-weight:900">Client Pulse</div>
+<svg id="ekg" width="120" height="34" viewBox="0 0 120 34" aria-hidden="true">
+ <polyline id="ekgline" points="0,17 22,17 30,17 36,6 42,28 48,17 60,17 78,17 84,10 90,24 96,17 120,17"
+  fill="none" stroke="#3fd68c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/></svg></div></div><div style="text-align:left"><div id="clock" class="num" style="font-size:22px;font-weight:800"></div><time id="ts" style="color:var(--dim);font-size:14px"></time></div></div>
 <div class="verdict" id="verdict"><div class="big">טוען נתונים…</div></div>
 <div class="kpis" id="kpis"></div>
 <div class="digest">
@@ -176,6 +181,7 @@ function counts(){
  tick();setInterval(tick,1000);
  $('kpis').innerHTML=[['b',DATA.clients.length,'לקוחות במעקב'],['g',ok,'תקינים'],['w',fl,'דורשים בדיקה'],['',kw.toLocaleString(),'מילות מפתח'],['',t10.toLocaleString(),'דירוגים ב-Top 10']]
   .map(x=>`<div class="kpi glass ${x[0]}"><div class="n num">${x[1]}</div><div class="l">${x[2]}</div></div>`).join('');
+ const ek=document.getElementById('ekgline');if(ek)ek.setAttribute('stroke',fl?'#ffb257':'#3fd68c');
  $('verdict').innerHTML= fl
   ? `<div class="big">${greet()} <em class="w">${fl} לקוחות</em> דורשים את תשומת הלב שלך</div><div class="sub">הפרטים בעמודת ההתראות ובכרטיסים המסומנים. שאר <b>${ok}</b> הלקוחות תקינים.</div>`
   : `<div class="big">${greet()} <em>כל ${DATA.clients.length} הלקוחות תקינים.</em></div>
