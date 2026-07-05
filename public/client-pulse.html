@@ -1,848 +1,216 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="Content-Language" content="he">
+<!DOCTYPE html><html lang="he" dir="rtl"><head>
+<meta charset="utf-8"><meta http-equiv="Content-Language" content="he">
 <script>document.documentElement.lang = 'he';</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2740%27 fill=%27none%27 stroke=%27%2322d3ee%27 stroke-width=%2710%27/%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2712%27 fill=%27%2322d3ee%27/%3E%3C/svg%3E">
 <title>NC Digital · Client Pulse</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
- --bg:#040914;
- --bg2:#07111f;
- --panel:#0a1424;
- --panel2:#0d1c31;
- --panel3:#10243d;
- --line:#17304c;
- --line2:#25506a;
- --cyan:#22d3ee;
- --cyan2:#06b6d4;
- --cyan3:#67e8f9;
- --amber:#fbbf24;
- --amber2:#f59e0b;
- --green:#34d399;
- --red:#fb7185;
- --txt:#e5f4ff;
- --muted:#8aa4bd;
- --dim:#5f7892;
- --shadow:0 24px 70px rgba(0,0,0,.38);
- --radius:14px;
- color-scheme:dark;
-}
-*{box-sizing:border-box}
-html{min-height:100%;background:var(--bg)}
-body{
- margin:0;
- min-height:100vh;
- padding:28px clamp(16px,3vw,42px) 56px;
- font-family:'Heebo',Arial,sans-serif;
- color:var(--txt);
- background:
-  radial-gradient(900px 420px at 50% -12%,rgba(34,211,238,.16),transparent 62%),
-  radial-gradient(620px 360px at 8% 12%,rgba(6,182,212,.09),transparent 68%),
-  linear-gradient(180deg,#06101e 0%,var(--bg) 44%,#030711 100%);
- overflow-x:hidden;
-}
-body:before{
- content:"";
- position:fixed;
- inset:0;
- pointer-events:none;
- background:
-  linear-gradient(rgba(34,211,238,.035) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(34,211,238,.032) 1px,transparent 1px);
- background-size:48px 48px;
- mask-image:linear-gradient(to bottom,rgba(0,0,0,.85),rgba(0,0,0,.35) 58%,transparent);
-}
-button,input{font:inherit}
-button{cursor:pointer}
-a{color:inherit}
-.shell{position:relative;z-index:1;max-width:1540px;margin:0 auto}
-.scan{
- position:fixed;
- left:0;
- right:0;
- top:0;
- height:2px;
- pointer-events:none;
- opacity:.42;
- background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan3),transparent);
- box-shadow:0 0 18px rgba(34,211,238,.6);
- animation:scan 7s linear infinite;
-}
-@keyframes scan{0%{transform:translateY(0)}100%{transform:translateY(100vh)}}
-header{
- display:grid;
- grid-template-columns:minmax(0,1fr) auto;
- align-items:center;
- gap:18px;
- margin-bottom:22px;
-}
-.brand{
- min-width:0;
- padding:18px 20px;
- border:1px solid rgba(34,211,238,.16);
- border-radius:var(--radius);
- background:linear-gradient(135deg,rgba(10,20,36,.88),rgba(13,28,49,.62));
- box-shadow:var(--shadow),inset 0 1px 0 rgba(255,255,255,.045);
-}
-.brand .eyebrow{
- display:flex;
- align-items:center;
- gap:8px;
- margin-bottom:8px;
- color:var(--cyan3);
- font-size:12px;
- font-weight:700;
- letter-spacing:.08em;
- text-transform:uppercase;
-}
-.brand .eyebrow:before{
- content:"";
- width:34px;
- height:1px;
- background:linear-gradient(90deg,transparent,var(--cyan));
-}
-.brand h1{
- margin:0;
- font-size:clamp(27px,4vw,52px);
- line-height:1;
- font-weight:800;
- letter-spacing:0;
- color:#f4fbff;
-}
-.brand h1 b{
- color:var(--cyan);
- text-shadow:0 0 22px rgba(34,211,238,.58),0 0 48px rgba(6,182,212,.24);
-}
-.brand .ts{
- margin-top:10px;
- color:var(--muted);
- font-size:13px;
-}
-.ring{
- position:relative;
- width:112px;
- height:112px;
- border-radius:50%;
- display:grid;
- place-items:center;
- background:radial-gradient(circle at 50% 48%,rgba(34,211,238,.1),rgba(10,20,36,.88) 58%,rgba(4,9,20,.95));
- border:1px solid rgba(34,211,238,.22);
- box-shadow:0 0 0 8px rgba(34,211,238,.025),0 18px 44px rgba(0,0,0,.4),inset 0 0 26px rgba(34,211,238,.08);
-}
-.ring svg{display:block;transform:rotate(-90deg)}
-.ring .pct{
- position:absolute;
- inset:0;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- gap:2px;
- color:var(--muted);
- font-size:12px;
- font-weight:500;
-}
-.ring .pct b{font-size:24px;line-height:1;color:var(--green)}
-.kpis{
- display:grid;
- grid-template-columns:repeat(5,minmax(140px,1fr));
- gap:12px;
- margin-bottom:18px;
-}
-.kpi{
- position:relative;
- min-height:104px;
- overflow:hidden;
- border:1px solid rgba(34,211,238,.14);
- border-radius:var(--radius);
- padding:16px;
- background:
-  linear-gradient(145deg,rgba(16,36,61,.82),rgba(7,17,31,.9)),
-  linear-gradient(90deg,rgba(34,211,238,.18),transparent);
- box-shadow:0 16px 40px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.04);
-}
-.kpi:before{
- content:"";
- position:absolute;
- inset-inline-start:0;
- top:0;
- bottom:0;
- width:3px;
- background:var(--cyan);
- box-shadow:0 0 18px var(--cyan);
-}
-.kpi:after{
- content:"";
- position:absolute;
- inset:0;
- background:linear-gradient(115deg,transparent 0 54%,rgba(255,255,255,.045) 54.5%,transparent 55.5%);
- opacity:.65;
- pointer-events:none;
-}
-.kpi.warn{border-color:rgba(251,191,36,.28)}
-.kpi.warn:before{background:var(--amber);box-shadow:0 0 18px var(--amber)}
-.kpi .n{
- position:relative;
- z-index:1;
- font-size:clamp(25px,3vw,36px);
- line-height:1.05;
- font-weight:800;
- letter-spacing:0;
- color:#f8fdff;
-}
-.kpi .t{
- position:relative;
- z-index:1;
- margin-top:9px;
- color:var(--muted);
- font-size:12px;
- font-weight:600;
-}
-.controls{
- display:grid;
- grid-template-columns:minmax(220px,1fr) auto;
- gap:12px;
- align-items:center;
- margin-bottom:18px;
-}
-.searchbox{position:relative;min-width:0}
-.searchbox:before{
- content:"/";
- position:absolute;
- inset-inline-start:14px;
- top:50%;
- transform:translateY(-50%);
- display:grid;
- place-items:center;
- width:24px;
- height:24px;
- border:1px solid rgba(34,211,238,.28);
- border-radius:7px;
- color:var(--cyan3);
- font-size:14px;
- font-weight:800;
- background:rgba(34,211,238,.06);
-}
-.controls input{
- width:100%;
- min-width:0;
- height:48px;
- border:1px solid rgba(34,211,238,.18);
- border-radius:12px;
- color:var(--txt);
- background:rgba(10,20,36,.88);
- padding:0 48px 0 16px;
- outline:none;
- box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-.controls input::placeholder{color:var(--dim)}
-.controls input:focus-visible{
- border-color:var(--cyan);
- box-shadow:0 0 0 4px rgba(34,211,238,.14),0 0 26px rgba(34,211,238,.08);
-}
-.control-actions{
- display:flex;
- gap:8px;
- flex-wrap:wrap;
- justify-content:flex-end;
-}
-.controls button{
- min-height:42px;
- border:1px solid rgba(34,211,238,.16);
- border-radius:10px;
- color:var(--muted);
- background:linear-gradient(180deg,rgba(13,28,49,.92),rgba(7,17,31,.92));
- padding:9px 13px;
- font-size:13px;
- font-weight:700;
- transition:border-color .18s ease,color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease;
-}
-.controls button:hover{
- color:var(--cyan3);
- border-color:rgba(34,211,238,.48);
- box-shadow:0 10px 26px rgba(6,182,212,.1);
- transform:translateY(-1px);
-}
-.controls button:focus-visible,.card:focus-visible,.site-link:focus-visible{
- outline:2px solid var(--cyan);
- outline-offset:3px;
-}
-.controls button.on,.controls button[aria-pressed="true"]{
- color:#03131a;
- border-color:var(--cyan);
- background:linear-gradient(180deg,var(--cyan3),var(--cyan2));
- box-shadow:0 0 0 1px rgba(34,211,238,.24),0 0 30px rgba(34,211,238,.18);
-}
-.controls .audit-only[aria-pressed="true"]{
- border-color:var(--amber);
- background:linear-gradient(180deg,#fde68a,var(--amber2));
- color:#1f1300;
-}
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fill,minmax(292px,1fr));
- gap:14px;
- align-items:start;
-}
-.card{
- position:relative;
- overflow:hidden;
- min-height:210px;
- border:1px solid rgba(34,211,238,.16);
- border-radius:var(--radius);
- padding:16px;
- color:var(--txt);
- background:
-  linear-gradient(180deg,rgba(13,28,49,.93),rgba(7,17,31,.96)),
-  radial-gradient(360px 160px at 50% 0%,rgba(34,211,238,.12),transparent 72%);
- box-shadow:0 14px 36px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04);
- transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease,background .2s ease;
- animation:cardIn .42s ease both;
- animation-delay:calc(var(--i,0) * 34ms);
-}
-.card:before{
- content:"";
- position:absolute;
- inset:0;
- pointer-events:none;
- opacity:.62;
- background:
-  linear-gradient(90deg,rgba(34,211,238,.08),transparent 22%,transparent 78%,rgba(34,211,238,.04)),
-  linear-gradient(180deg,rgba(255,255,255,.035),transparent 34%);
-}
-.card:hover,.card.expanded{
- transform:translateY(-3px);
- border-color:rgba(34,211,238,.58);
- box-shadow:0 22px 58px rgba(0,0,0,.36),0 0 32px rgba(34,211,238,.13),inset 0 1px 0 rgba(255,255,255,.06);
-}
-.card.flag{
- border-color:rgba(251,191,36,.34);
- background:
-  linear-gradient(180deg,rgba(20,27,35,.96),rgba(9,17,28,.98)),
-  radial-gradient(320px 160px at 50% 0%,rgba(251,191,36,.13),transparent 75%);
-}
-.card.flag:hover,.card.flag.expanded{
- border-color:rgba(251,191,36,.72);
- box-shadow:0 22px 58px rgba(0,0,0,.36),0 0 30px rgba(251,191,36,.12);
-}
-@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.chead{
- position:relative;
- z-index:1;
- display:flex;
- justify-content:space-between;
- align-items:flex-start;
- gap:12px;
- margin-bottom:14px;
-}
-.client-title{min-width:0}
-.cname{
- font-size:16px;
- line-height:1.25;
- font-weight:800;
- color:#f4fbff;
- overflow-wrap:anywhere;
-}
-.cdom{
- margin-top:4px;
- color:var(--muted);
- font-size:12px;
- direction:ltr;
- text-align:right;
- overflow-wrap:anywhere;
-}
-.dot{
- flex:0 0 auto;
- width:11px;
- height:11px;
- margin-top:5px;
- border-radius:50%;
- background:var(--green);
- box-shadow:0 0 0 5px rgba(52,211,153,.08),0 0 18px var(--green);
-}
-.flag .dot{
- background:var(--amber);
- box-shadow:0 0 0 5px rgba(251,191,36,.09),0 0 18px var(--amber);
- animation:pulse 1.35s ease-in-out infinite;
-}
-@keyframes pulse{50%{opacity:.48;transform:scale(.86)}}
-.stats{
- position:relative;
- z-index:1;
- display:grid;
- grid-template-columns:repeat(3,minmax(0,1fr));
- gap:8px;
- margin-bottom:12px;
- text-align:center;
-}
-.stat{
- min-width:0;
- border:1px solid rgba(34,211,238,.08);
- border-radius:10px;
- padding:9px 5px 8px;
- background:rgba(8,18,32,.72);
-}
-.stat .v{
- min-height:24px;
- font-size:18px;
- line-height:1.15;
- font-weight:800;
- color:#f8fdff;
- overflow-wrap:anywhere;
-}
-.stat .l{
- margin-top:3px;
- color:var(--dim);
- font-size:10px;
- font-weight:700;
-}
-.bar{
- position:relative;
- z-index:1;
- height:7px;
- overflow:hidden;
- border-radius:999px;
- background:#07111f;
- box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);
-}
-.bar i{
- display:block;
- height:100%;
- width:0;
- border-radius:999px;
- background:linear-gradient(90deg,var(--cyan2),var(--cyan3));
- box-shadow:0 0 14px rgba(34,211,238,.58);
- transition:width .55s ease;
-}
-.fl{
- position:relative;
- z-index:1;
- margin-top:12px;
- min-height:36px;
- border:1px solid rgba(251,191,36,.28);
- border-radius:10px;
- padding:8px 10px;
- color:#fde68a;
- background:rgba(251,191,36,.09);
- font-size:12px;
- line-height:1.35;
-}
-.status-line{
- position:relative;
- z-index:1;
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:10px;
- margin-top:12px;
- color:var(--dim);
- font-size:12px;
- font-weight:700;
-}
-.status-line span:last-child{color:var(--cyan3)}
-.detail{
- position:relative;
- z-index:1;
- display:grid;
- gap:12px;
- margin-top:14px;
- padding-top:14px;
- border-top:1px solid rgba(34,211,238,.14);
- animation:detailIn .18s ease both;
-}
-@keyframes detailIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.detail-grid{
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:8px;
-}
-.detail-item{
- min-width:0;
- border:1px solid rgba(34,211,238,.08);
- border-radius:10px;
- padding:9px 10px;
- background:rgba(4,9,20,.44);
-}
-.detail-item dt{
- color:var(--dim);
- font-size:10.5px;
- font-weight:800;
- margin:0 0 2px;
-}
-.detail-item dd{
- margin:0;
- color:var(--txt);
- font-size:13px;
- font-weight:700;
- overflow-wrap:anywhere;
-}
-.flag-list{
- display:flex;
- flex-wrap:wrap;
- gap:6px;
- margin:0;
- padding:0;
- list-style:none;
-}
-.flag-list li{
- border:1px solid rgba(251,191,36,.28);
- border-radius:999px;
- padding:4px 9px;
- color:#fde68a;
- background:rgba(251,191,36,.08);
- font-size:12px;
- font-weight:700;
-}
-.flag-list .none{
- color:var(--muted);
- border-color:rgba(34,211,238,.12);
- background:rgba(34,211,238,.04);
-}
-.site-link{
- display:inline-flex;
- align-items:center;
- justify-content:center;
- min-height:38px;
- border:1px solid rgba(34,211,238,.3);
- border-radius:10px;
- color:var(--cyan3);
- text-decoration:none;
- font-size:13px;
- font-weight:800;
- background:rgba(34,211,238,.07);
- transition:border-color .18s ease,background .18s ease,box-shadow .18s ease;
-}
-.site-link:hover{
- border-color:var(--cyan);
- background:rgba(34,211,238,.12);
- box-shadow:0 0 24px rgba(34,211,238,.1);
-}
-#empty{
- display:none;
- margin:28px auto 0;
- max-width:520px;
- border:1px solid rgba(34,211,238,.18);
- border-radius:var(--radius);
- padding:26px;
- color:var(--muted);
- text-align:center;
- background:rgba(10,20,36,.72);
- box-shadow:var(--shadow);
-}
-footer{
- margin-top:38px;
- text-align:center;
- color:#4f6882;
- font-size:12px;
-}
-@media (max-width:1040px){
- .kpis{grid-template-columns:repeat(3,minmax(140px,1fr))}
- .controls{grid-template-columns:1fr}
- .control-actions{justify-content:flex-start}
-}
-@media (max-width:720px){
- body{padding:16px 12px 42px}
- header{grid-template-columns:1fr}
- .ring{width:104px;height:104px;justify-self:start}
- .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
- .kpi{min-height:94px;padding:14px}
- .grid{grid-template-columns:1fr}
- .control-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
- .controls button{width:100%;padding-inline:9px}
- .detail-grid{grid-template-columns:1fr}
-}
-@media (max-width:440px){
- .kpis{grid-template-columns:1fr}
- .control-actions{grid-template-columns:1fr}
- .brand{padding:16px}
- .stats{gap:6px}
- .stat .v{font-size:16px}
-}
-@media (prefers-reduced-motion:reduce){
- *,*::before,*::after{
-  animation-duration:.001ms!important;
-  animation-iteration-count:1!important;
-  scroll-behavior:auto!important;
-  transition-duration:.001ms!important;
- }
- .scan{display:none}
-}
-</style>
-</head>
-<body>
-<div class="scan" aria-hidden="true"></div>
-<main class="shell">
- <header>
-  <section class="brand" aria-label="כותרת הדשבורד">
-   <div class="eyebrow">NC Digital Command Center</div>
-   <h1>CLIENT <b>PULSE</b></h1>
-   <div class="ts" id="ts">טוען נתונים...</div>
-  </section>
-  <aside class="ring" aria-label="אחוז לקוחות תקינים">
-   <svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
-    <circle cx="48" cy="48" r="40" fill="none" stroke="#07111f" stroke-width="8"/>
-    <circle id="ringc" cx="48" cy="48" r="40" fill="none" stroke="#34d399" stroke-width="8" stroke-linecap="round" stroke-dasharray="251.327" stroke-dashoffset="251.327"/>
-   </svg>
-   <div class="pct"><b id="okpct">0%</b>תקינים</div>
-  </aside>
- </header>
-
- <section class="kpis" aria-label="מדדי לקוחות">
-  <article class="kpi"><div class="n" id="k_total">0</div><div class="t">לקוחות במעקב</div></article>
-  <article class="kpi"><div class="n" id="k_ok">0</div><div class="t">תקינים</div></article>
-  <article class="kpi warn"><div class="n" id="k_flag">0</div><div class="t">דורשים בדיקה</div></article>
-  <article class="kpi"><div class="n" id="k_kw">0</div><div class="t">מילות מפתח במעקב</div></article>
-  <article class="kpi"><div class="n" id="k_top10">0</div><div class="t">מילים ב-Top 10</div></article>
- </section>
-
- <section class="controls" aria-label="סינון ומיון לקוחות">
-  <label class="searchbox" for="q">
-   <input id="q" type="search" placeholder="חיפוש לקוח או דומיין..." autocomplete="off" aria-label="חיפוש לקוח או דומיין">
-  </label>
-  <div class="control-actions" role="group" aria-label="פקדי מיון וסינון">
-   <button type="button" data-filter="flagged" class="audit-only" aria-pressed="false" aria-label="הצג רק לקוחות שדורשים בדיקה">רק דורשים בדיקה</button>
-   <button type="button" data-s="flags" class="on" aria-pressed="true" aria-label="מיין לפי סטטוס">לפי סטטוס</button>
-   <button type="button" data-s="kw" aria-pressed="false" aria-label="מיין לפי מילות מפתח">לפי מילות מפתח</button>
-   <button type="button" data-s="visibility" aria-pressed="false" aria-label="מיין לפי Visibility">לפי Visibility</button>
-   <button type="button" data-s="name" aria-pressed="false" aria-label="מיין לפי שם">לפי שם</button>
-  </div>
- </section>
-
- <section class="grid" id="grid" aria-live="polite" aria-label="רשימת לקוחות"></section>
- <div id="empty" role="status">לא נמצאו לקוחות תואמים</div>
- <footer>NC Digital · Client Pulse · <span id="ts2"></span></footer>
+:root{--bg:#04070f;--panel:rgba(13,23,42,.72);--line:rgba(56,110,180,.22);--cyan:#22d3ee;--cyan2:#0891b2;
+--amber:#fbbf24;--green:#34d399;--red:#f87171;--txt:#e6eef9;--dim:#64809f;--glow:rgba(34,211,238,.55)}
+*{margin:0;box-sizing:border-box;font-family:'Heebo',Arial,sans-serif}
+html,body{width:100%}
+body{background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden;position:relative}
+/* cinematic background */
+body:before{content:'';position:fixed;inset:0;z-index:-2;
+ background:radial-gradient(1000px 500px at 85% -5%,rgba(8,145,178,.22),transparent 60%),
+            radial-gradient(900px 600px at 10% 110%,rgba(34,211,238,.10),transparent 60%),
+            radial-gradient(600px 300px at 50% 40%,rgba(56,110,180,.08),transparent 70%)}
+body:after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(rgba(34,80,140,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(34,80,140,.13) 1px,transparent 1px);
+ background-size:52px 52px;mask-image:radial-gradient(ellipse 90% 80% at 50% 20%,#000 30%,transparent 100%)}
+.scan{position:fixed;left:0;right:0;top:-2px;height:2px;z-index:5;pointer-events:none;opacity:.45;
+ background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 7s linear infinite}
+@keyframes scan{to{transform:translateY(100vh)}}
+main{padding:clamp(18px,2.2vw,44px);width:100%}
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;margin-bottom:26px;
+ background:linear-gradient(120deg,rgba(13,23,42,.85),rgba(9,16,32,.6));border:1px solid var(--line);border-radius:20px;
+ padding:22px clamp(20px,2.4vw,40px);backdrop-filter:blur(8px);position:relative;overflow:hidden}
+header:before{content:'';position:absolute;inset:0;background:
+ radial-gradient(400px 120px at 20% 0%,rgba(34,211,238,.12),transparent);pointer-events:none}
+.brand .tag{font-size:11px;letter-spacing:3px;color:var(--cyan);opacity:.85}
+.brand h1{font-size:clamp(28px,3vw,44px);font-weight:900;letter-spacing:1px;line-height:1.05}
+.brand h1 b{color:var(--cyan);text-shadow:0 0 26px var(--glow)}
+.brand .ts{color:var(--dim);font-size:13px;margin-top:4px}
+.hud{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+.ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.ring .radar{position:absolute;inset:8px;border-radius:50%;overflow:hidden;opacity:.5;
+ background:conic-gradient(from 0deg,rgba(34,211,238,.5),transparent 22%);animation:spin 4.5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ring svg{position:relative;transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:var(--dim)}
+.ring .pct b{font-size:29px;color:var(--green);text-shadow:0 0 16px rgba(52,211,153,.6)}
+/* KPI band */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:26px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 22px;position:relative;overflow:hidden;backdrop-filter:blur(6px)}
+.kpi:before{content:'';position:absolute;inset-inline-start:0;top:14%;bottom:14%;width:3px;border-radius:2px;background:var(--cyan);box-shadow:0 0 16px var(--cyan)}
+.kpi.warn:before{background:var(--amber);box-shadow:0 0 16px var(--amber)}
+.kpi.good:before{background:var(--green);box-shadow:0 0 16px var(--green)}
+.kpi .n{font-size:clamp(30px,2.6vw,42px);font-weight:900;letter-spacing:1px;line-height:1}
+.kpi .t{font-size:12.5px;color:var(--dim);margin-top:6px}
+/* leaderboard */
+.panelbox{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px clamp(18px,2vw,32px);margin-bottom:26px;backdrop-filter:blur(6px)}
+.panelbox h2{font-size:15px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.panelbox h2:after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+.lb{display:grid;gap:9px}
+.lbrow{display:grid;grid-template-columns:minmax(140px,220px) 1fr 90px;align-items:center;gap:14px;font-size:13px}
+.lbname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbtrack{height:12px;border-radius:7px;background:rgba(16,29,51,.9);overflow:hidden;position:relative}
+.lbfill{height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,#0e7490,var(--cyan));
+ box-shadow:0 0 14px rgba(34,211,238,.45);transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.lbrow:nth-child(1) .lbfill{background:linear-gradient(90deg,#0e7490,#67e8f9)}
+.lbval{color:var(--cyan);font-weight:800;text-align:left;direction:ltr;font-variant-numeric:tabular-nums}
+/* status banner */
+.banner{display:flex;align-items:center;gap:14px;border-radius:16px;padding:16px 24px;margin-bottom:26px;font-weight:600}
+.banner.ok{background:rgba(6,60,40,.35);border:1px solid rgba(52,211,153,.35);color:var(--green)}
+.banner.bad{background:rgba(80,55,8,.3);border:1px solid rgba(251,191,36,.4);color:var(--amber)}
+.pulse-dot{width:12px;height:12px;border-radius:50%;background:currentColor;position:relative;flex-shrink:0}
+.pulse-dot:after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid currentColor;opacity:.6;animation:ripple 1.6s ease-out infinite}
+@keyframes ripple{to{transform:scale(1.9);opacity:0}}
+/* controls */
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+.controls input{flex:1;min-width:260px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--txt);
+ padding:13px 18px;font-size:14.5px;outline:none;backdrop-filter:blur(6px);transition:.2s}
+.controls input:focus{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(34,211,238,.12)}
+.controls button{background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--dim);
+ padding:12px 20px;font-size:13.5px;cursor:pointer;transition:.18s;backdrop-filter:blur(6px)}
+.controls button:hover{color:var(--txt);border-color:var(--cyan2)}
+.controls button.on{color:#04121a;background:linear-gradient(120deg,var(--cyan),#67e8f9);border-color:transparent;font-weight:800;box-shadow:0 0 20px rgba(34,211,238,.35)}
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(305px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;
+ backdrop-filter:blur(6px);transition:transform .2s,border-color .2s,box-shadow .2s;position:relative;overflow:hidden;
+ animation:enter .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes enter{from{opacity:0;transform:translateY(16px)}}
+.card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--cyan2);box-shadow:0 14px 40px rgba(8,145,178,.22);outline:none}
+.card.flag{border-color:rgba(146,96,10,.6)}
+.card.flag:hover{border-color:var(--amber);box-shadow:0 14px 40px rgba(251,191,36,.15)}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px}
+.cname{font-weight:800;font-size:16px;line-height:1.2}
+.cdom{color:var(--dim);font-size:11.5px;direction:ltr;text-align:right;margin-top:2px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);flex-shrink:0;margin-top:6px}
+.flag .dot{background:var(--amber);box-shadow:0 0 12px var(--amber);animation:blink 1.1s ease-in-out infinite}
+@keyframes blink{50%{opacity:.3}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:12px}
+.stat{background:rgba(16,29,51,.55);border-radius:11px;padding:9px 3px;border:1px solid rgba(56,110,180,.12)}
+.stat .v{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}
+.stat .l{font-size:10px;color:var(--dim);margin-top:1px}
+.bar{height:6px;border-radius:4px;background:rgba(16,29,51,.9);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan2),var(--cyan));border-radius:4px;
+ box-shadow:0 0 10px rgba(34,211,238,.5);transition:width 1s cubic-bezier(.22,1,.36,1)}
+.fl{margin-top:12px;font-size:12px;color:var(--amber);background:rgba(122,90,18,.14);border:1px solid rgba(122,90,18,.4);border-radius:10px;padding:8px 12px}
+.detail{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.card.open .detail{max-height:260px}
+.detail .inner{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--dim);display:grid;gap:6px}
+.detail a{color:var(--cyan);text-decoration:none;font-weight:600}
+.detail a:hover{text-shadow:0 0 12px var(--glow)}
+#empty{color:var(--dim);text-align:center;padding:50px;display:none;font-size:15px}
+footer{margin-top:44px;text-align:center;color:#2b3d55;font-size:12px}
+@media (max-width:640px){.lbrow{grid-template-columns:110px 1fr 64px}.hud{width:100%;justify-content:center}}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style></head><body>
+<div class="scan"></div>
+<main>
+<header>
+ <div class="brand"><div class="tag">NC DIGITAL COMMAND CENTER</div><h1>CLIENT <b>PULSE</b></h1><div class="ts" id="ts"></div></div>
+ <div class="hud"><div class="ring"><div class="radar"></div>
+  <svg width="120" height="120"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(16,29,51,.9)" stroke-width="8"/>
+  <circle id="ringc" cx="60" cy="60" r="52" fill="none" stroke="#34d399" stroke-width="8" stroke-linecap="round"
+   stroke-dasharray="327" stroke-dashoffset="327" style="transition:stroke-dashoffset 1.4s cubic-bezier(.22,1,.36,1)"/></svg>
+  <div class="pct"><b id="okpct">0%</b>תקינים</div></div></div>
+</header>
+<div class="kpis">
+ <div class="kpi"><div class="n" id="k_total">0</div><div class="t">לקוחות במעקב</div></div>
+ <div class="kpi good"><div class="n" id="k_ok">0</div><div class="t">תקינים</div></div>
+ <div class="kpi warn"><div class="n" id="k_flag">0</div><div class="t">דורשים בדיקה</div></div>
+ <div class="kpi"><div class="n" id="k_kw">0</div><div class="t">מילות מפתח במעקב</div></div>
+ <div class="kpi"><div class="n" id="k_top10">0</div><div class="t">מילים ב-Top 10</div></div>
+</div>
+<div id="banner"></div>
+<div class="panelbox"><h2>VISIBILITY LEADERBOARD</h2><div class="lb" id="lb"></div></div>
+<div class="controls">
+ <input id="q" placeholder="חיפוש לקוח או דומיין... ( / )" aria-label="חיפוש לקוח">
+ <button data-s="flags" class="on">לפי סטטוס</button>
+ <button data-s="kw">לפי מילות מפתח</button>
+ <button data-s="visibility">לפי Visibility</button>
+ <button data-s="name">לפי שם</button>
+ <button id="onlyflag" aria-pressed="false">רק דורשים בדיקה</button>
+</div>
+<div class="grid" id="grid" role="list"></div>
+<div id="empty">לא נמצאו לקוחות תואמים</div>
+<footer>NC Digital · Client Pulse · <span id="ts2"></span></footer>
 </main>
-
 <script>
-const state={data:null,sortBy:'flags',q:'',flaggedOnly:false,expanded:null,error:''};
-const ids=['ts','ts2','k_total','k_ok','k_flag','k_kw','k_top10','okpct','ringc','grid','empty','q'];
-const el=Object.fromEntries(ids.map(id=>[id,document.getElementById(id)]));
-const controls=document.querySelector('.controls');
-const sortButtons=[...document.querySelectorAll('[data-s]')];
-const flaggedButton=document.querySelector('[data-filter="flagged"]');
-const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fmt=new Intl.NumberFormat('he-IL');
-const dash='·';
-
-function esc(value){
- return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-}
-function numberOrDash(value){
- return value===null||value===undefined||value===''?dash:fmt.format(Number(value));
-}
-function rawNumber(value){
- const n=Number(value);
- return Number.isFinite(n)?n:0;
-}
-function flagList(client){
- return Array.isArray(client.flags)?client.flags:[];
-}
-function clientKey(client,index){
- return `${client.domain||client.name||'client'}-${index}`;
-}
-function siteUrl(domain){
- const raw=String(domain||'').trim();
- if(!raw) return '';
- return /^https?:\/\//i.test(raw)?raw:`https://${raw}`;
-}
-function setText(id,value){
- el[id].textContent=String(value);
-}
-function animateNumber(id,to){
- const target=rawNumber(to);
- if(reduceMotion){
-  setText(id,fmt.format(target));
-  return;
- }
- const start=performance.now();
- const duration=720;
- const step=now=>{
-  const progress=Math.min(1,(now-start)/duration);
-  const eased=1-Math.pow(1-progress,3);
-  setText(id,fmt.format(Math.round(target*eased)));
-  if(progress<1) requestAnimationFrame(step);
- };
- requestAnimationFrame(step);
-}
-function updateSortButtons(){
- sortButtons.forEach(button=>{
-  const active=button.dataset.s===state.sortBy;
-  button.classList.toggle('on',active);
-  button.setAttribute('aria-pressed',String(active));
- });
- flaggedButton.setAttribute('aria-pressed',String(state.flaggedOnly));
- flaggedButton.classList.toggle('on',state.flaggedOnly);
-}
-function updateStats(clients){
- const ok=clients.filter(client=>flagList(client).length===0).length;
- const flagged=clients.length-ok;
- const totalKw=clients.reduce((sum,client)=>sum+rawNumber(client.kw),0);
- const totalTop10=clients.reduce((sum,client)=>sum+rawNumber(client.top10),0);
- const pct=clients.length?Math.round(100*ok/clients.length):0;
- animateNumber('k_total',clients.length);
- animateNumber('k_ok',ok);
- animateNumber('k_flag',flagged);
- animateNumber('k_kw',totalKw);
- animateNumber('k_top10',totalTop10);
- setText('okpct',`${pct}%`);
- el.ringc.style.strokeDashoffset=String(251.327*(1-pct/100));
-}
-function getVisibleClients(){
- if(!state.data) return [];
- const query=state.q;
- const clients=Array.isArray(state.data.clients)?state.data.clients:[];
- return clients
-  .map((client,index)=>({client,index,key:clientKey(client,index)}))
-  .filter(item=>{
-   const flags=flagList(item.client);
-   const matchesQuery=!query||
-    String(item.client.name||'').toLowerCase().includes(query)||
-    String(item.client.domain||'').toLowerCase().includes(query);
-   return matchesQuery&&(!state.flaggedOnly||flags.length>0);
-  })
-  .sort((a,b)=>{
-   if(state.sortBy==='flags') return (flagList(b.client).length-flagList(a.client).length)||(rawNumber(b.client.kw)-rawNumber(a.client.kw))||String(a.client.name||'').localeCompare(String(b.client.name||''),'he');
-   if(state.sortBy==='name') return String(a.client.name||'').localeCompare(String(b.client.name||''),'he');
-   return rawNumber(b.client[state.sortBy])-rawNumber(a.client[state.sortBy]);
-  });
-}
-function renderDetail(client){
- const flags=flagList(client);
- const href=siteUrl(client.domain);
- const flagsHtml=flags.length
-  ? flags.map(flag=>`<li>${esc(flag)}</li>`).join('')
-  : '<li class="none">אין דגלים פעילים</li>';
- return `<div class="detail">
-  <dl class="detail-grid">
-   <div class="detail-item"><dt>שם</dt><dd>${esc(client.name||dash)}</dd></div>
-   <div class="detail-item"><dt>דומיין</dt><dd dir="ltr">${esc(client.domain||dash)}</dd></div>
-   <div class="detail-item"><dt>מילות מפתח</dt><dd>${numberOrDash(client.kw)}</dd></div>
-   <div class="detail-item"><dt>Visibility</dt><dd>${numberOrDash(client.visibility)}</dd></div>
-   <div class="detail-item"><dt>Top 10</dt><dd>${numberOrDash(client.top10)}</dd></div>
-   <div class="detail-item"><dt>HTTP</dt><dd>${numberOrDash(client.http)}</dd></div>
-  </dl>
-  <ul class="flag-list" aria-label="דגלים">${flagsHtml}</ul>
-  ${href?`<a class="site-link" href="${esc(href)}" target="_blank" rel="noopener" aria-label="פתיחת אתר הלקוח בחלון חדש">פתיחת אתר הלקוח</a>`:''}
- </div>`;
-}
-function renderCard(item,maxVis,position){
- const client=item.client;
- const flags=flagList(client);
- const visible=client.visibility!==null&&client.visibility!==undefined;
- const pct=visible&&maxVis?Math.max(0,Math.min(100,Math.round(100*rawNumber(client.visibility)/maxVis))):0;
- const expanded=state.expanded===item.key;
- const flagText=flags.length?flags.map(esc).join(' · '):'אין דגלים פעילים';
- return `<article class="card ${flags.length?'flag':''} ${expanded?'expanded':''}" style="--i:${position}" tabindex="0" role="button" aria-expanded="${expanded}" aria-label="פרטי לקוח ${esc(client.name||client.domain||'')}" data-key="${esc(item.key)}">
-  <div class="chead">
-   <div class="client-title">
-    <div class="cname">${esc(client.name||dash)}</div>
-    <div class="cdom">${esc(client.domain||dash)}</div>
-   </div>
-   <div class="dot" aria-hidden="true"></div>
-  </div>
-  <div class="stats">
-   <div class="stat"><div class="v">${numberOrDash(client.kw)}</div><div class="l">מילות מפתח</div></div>
-   <div class="stat"><div class="v">${numberOrDash(client.visibility)}</div><div class="l">Visibility</div></div>
-   <div class="stat"><div class="v">${numberOrDash(client.top10)}</div><div class="l">Top 10</div></div>
-  </div>
-  <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
-  <div class="fl">${flagText}</div>
-  <div class="status-line"><span>HTTP ${numberOrDash(client.http)}</span><span>${expanded?'סגירת פרטים':'פתיחת פרטים'}</span></div>
-  ${expanded?renderDetail(client):''}
- </article>`;
-}
+'use strict';
+let DATA=null,sortBy='flags',q='',flagOnly=false,expanded=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>(n??null)===null?'·':Number(n).toLocaleString();
 function render(){
- updateSortButtons();
- if(state.error){
-  el.grid.innerHTML='';
-  el.empty.textContent=state.error;
-  el.empty.style.display='block';
-  return;
- }
- if(!state.data) return;
- const clients=Array.isArray(state.data.clients)?state.data.clients:[];
- const list=getVisibleClients();
- const maxVis=Math.max(1,...clients.map(client=>rawNumber(client.visibility)));
- el.grid.innerHTML=list.map((item,index)=>renderCard(item,maxVis,index)).join('');
- el.empty.textContent='לא נמצאו לקוחות תואמים';
- el.empty.style.display=list.length?'none':'block';
- if(state.expanded&&!list.some(item=>item.key===state.expanded)) state.expanded=null;
+ if(!DATA)return;
+ const maxVis=Math.max(1,...DATA.clients.map(c=>Math.sqrt(c.visibility||0)));
+ let list=DATA.clients.filter(c=>(!q||c.name.toLowerCase().includes(q)||String(c.domain||'').toLowerCase().includes(q))&&(!flagOnly||c.flags.length));
+ list.sort((a,b)=>sortBy==='flags'?(b.flags.length-a.flags.length)||((b.visibility||0)-(a.visibility||0))
+  :sortBy==='name'?a.name.localeCompare(b.name,'he')
+  :(b[sortBy]||0)-(a[sortBy]||0));
+ $('grid').innerHTML=list.map((c,i)=>{
+  const pct=Math.round(100*Math.sqrt(c.visibility||0)/maxVis);
+  const key=esc(c.name);
+  return `<div class="card ${c.flags.length?'flag':''} ${expanded===c.name?'open':''}" data-k="${key}" role="listitem" tabindex="0"
+    aria-label="${key}" style="animation-delay:${Math.min(i*28,500)}ms">
+   <div class="chead"><div><div class="cname">${key}</div><div class="cdom">${esc(c.domain||'')}</div></div><div class="dot"></div></div>
+   <div class="stats">
+    <div class="stat"><div class="v">${fmt(c.kw)}</div><div class="l">מילות מפתח</div></div>
+    <div class="stat"><div class="v">${fmt(c.visibility)}</div><div class="l">Visibility</div></div>
+    <div class="stat"><div class="v">${fmt(c.top10)}</div><div class="l">Top 10</div></div>
+   </div>
+   <div class="bar"><i data-w="${pct}"></i></div>
+   ${c.flags.length?`<div class="fl">${c.flags.map(esc).join(' · ')}</div>`:''}
+   <div class="detail"><div class="inner">
+     <span>סטטוס אתר: HTTP ${esc(c.http)}</span>
+     <span>${c.flags.length?'ממצאים: '+c.flags.map(esc).join(' · '):'אין ממצאים פעילים'}</span>
+     ${c.domain?`<a href="https://${esc(c.domain)}" target="_blank" rel="noopener">פתיחת האתר בלשונית חדשה</a>`:''}
+   </div></div>
+  </div>`;}).join('');
+ requestAnimationFrame(()=>document.querySelectorAll('.bar i').forEach(el=>{el.style.width=el.dataset.w+'%'}));
+ $('empty').style.display=list.length?'none':'block';
 }
-
-fetch('pulse-data.json')
- .then(response=>{
-  if(!response.ok) throw new Error('load failed');
-  return response.json();
- })
- .then(data=>{
-  state.data=data;
-  const generated=data.generated||dash;
-  setText('ts',`סריקה אחרונה: ${generated}`);
-  setText('ts2',generated);
-  updateStats(Array.isArray(data.clients)?data.clients:[]);
-  render();
- })
- .catch(()=>{
-  state.error='שגיאה בטעינת הנתונים';
-  setText('ts','שגיאה בטעינת הנתונים');
-  setText('ts2',dash);
-  render();
- });
-
-el.q.addEventListener('input',event=>{
- state.q=event.target.value.trim().toLowerCase();
- render();
-});
-controls.addEventListener('click',event=>{
- const button=event.target.closest('button');
- if(!button) return;
- if(button.dataset.s){
-  state.sortBy=button.dataset.s;
-  render();
-  return;
- }
- if(button.dataset.filter==='flagged'){
-  state.flaggedOnly=!state.flaggedOnly;
-  render();
- }
-});
-el.grid.addEventListener('click',event=>{
- if(event.target.closest('a')) return;
- const card=event.target.closest('.card');
- if(!card) return;
- const key=card.dataset.key;
- state.expanded=state.expanded===key?null:key;
- render();
-});
-el.grid.addEventListener('keydown',event=>{
- const card=event.target.closest('.card');
- if(!card) return;
- if(event.key==='Enter'||event.key===' '){
-  event.preventDefault();
-  const key=card.dataset.key;
-  state.expanded=state.expanded===key?null:key;
-  render();
- }
-});
-document.addEventListener('keydown',event=>{
- if(event.key==='/'&&document.activeElement!==el.q&&!event.metaKey&&!event.ctrlKey&&!event.altKey){
-  event.preventDefault();
-  el.q.focus();
-  return;
- }
- if(event.key==='Escape'){
-  const changed=el.q.value.length>0||state.expanded!==null;
-  el.q.value='';
-  state.q='';
-  state.expanded=null;
-  if(changed) render();
-  if(document.activeElement===el.q) el.q.blur();
- }
-});
-</script>
-</body>
-</html>
+function leaderboard(){
+ const top=[...DATA.clients].sort((a,b)=>(b.visibility||0)-(a.visibility||0)).slice(0,10);
+ const max=Math.max(1,...top.map(c=>c.visibility||0));
+ $('lb').innerHTML=top.map(c=>`<div class="lbrow"><div class="lbname">${esc(c.name)}</div>
+  <div class="lbtrack"><div class="lbfill" data-w="${Math.max(2,Math.round(100*(c.visibility||0)/max))}"></div></div>
+  <div class="lbval">${fmt(c.visibility)}</div></div>`).join('');
+ requestAnimationFrame(()=>setTimeout(()=>document.querySelectorAll('.lbfill').forEach(el=>{el.style.width=el.dataset.w+'%'}),80));
+}
+function animate(id,to){const el=$(id),t0=performance.now();
+ const step=t=>{const p=Math.min(1,(t-t0)/1100);el.textContent=Math.round(to*(1-Math.pow(1-p,3))).toLocaleString();if(p<1)requestAnimationFrame(step)};
+ requestAnimationFrame(step);}
+fetch('pulse-data.json?v='+Date.now()).then(r=>{if(!r.ok)throw 0;return r.json()}).then(d=>{
+ DATA=d;
+ const ok=d.clients.filter(c=>!c.flags.length).length,flag=d.clients.length-ok;
+ $('ts').textContent='סריקה אחרונה: '+d.generated; $('ts2').textContent=d.generated;
+ animate('k_total',d.clients.length);animate('k_ok',ok);animate('k_flag',flag);
+ animate('k_kw',d.clients.reduce((s,c)=>s+(c.kw||0),0));
+ animate('k_top10',d.clients.reduce((s,c)=>s+(c.top10||0),0));
+ const p=d.clients.length?Math.round(100*ok/d.clients.length):0;
+ $('okpct').textContent=p+'%';
+ setTimeout(()=>{$('ringc').style.strokeDashoffset=String(327*(1-p/100))},150);
+ $('banner').innerHTML=flag
+  ?`<div class="banner bad"><span class="pulse-dot"></span>${flag} לקוחות דורשים בדיקה השבוע. הכרטיסים הכתומים מרוכזים בראש הרשימה.</div>`
+  :`<div class="banner ok"><span class="pulse-dot"></span>כל המערכות תקינות. ${d.clients.length} לקוחות נסרקו, אפס ממצאים פעילים.</div>`;
+ leaderboard();render();
+}).catch(()=>{$('grid').innerHTML='';$('empty').style.display='block';$('empty').textContent='שגיאה בטעינת הנתונים';});
+$('q').addEventListener('input',e=>{q=e.target.value.trim().toLowerCase();render()});
+$('onlyflag').addEventListener('click',()=>{flagOnly=!flagOnly;$('onlyflag').classList.toggle('on',flagOnly);$('onlyflag').setAttribute('aria-pressed',String(flagOnly));render()});
+document.querySelectorAll('.controls button[data-s]').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.controls button[data-s]').forEach(x=>x.classList.remove('on'));
+ b.classList.add('on');sortBy=b.dataset.s;render();}));
+$('grid').addEventListener('click',e=>{const c=e.target.closest('.card');if(!c||e.target.closest('a'))return;
+ expanded=expanded===c.dataset.k?null:c.dataset.k;render();});
+$('grid').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const c=e.target.closest('.card');if(c){e.preventDefault();expanded=expanded===c.dataset.k?null:c.dataset.k;render();}}});
+document.addEventListener('keydown',e=>{
+ if(e.key==='/'&&document.activeElement!==$('q')){e.preventDefault();$('q').focus();}
+ if(e.key==='Escape'){q='';$('q').value='';expanded=null;render();}});
+</script></body></html>
