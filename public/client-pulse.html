@@ -54,7 +54,7 @@ main{padding:30px clamp(18px,3vw,52px) 70px}
 .card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22)}
 .chead{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
 .hue{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.nm{font-weight:800;font-size:17.5px;line-height:1.2}
+.nm{font-weight:800;font-size:17.5px;line-height:1.25;overflow-wrap:anywhere}
 .dm{font-size:13px;color:var(--dim);direction:ltr;text-align:right}
 .pill{margin-inline-start:auto;font-size:12.5px;padding:4px 13px;border-radius:99px;white-space:nowrap}
 .pill.ok{background:rgba(63,214,140,.12);color:var(--good);border:1px solid rgba(63,214,140,.3)}
@@ -143,7 +143,7 @@ function render(){
   const d=delta(c),sp=spark(c,300,46);
   return `<div class="card glass" data-k="${esc(key(c))}" style="animation-delay:${Math.min(i*22,400)}ms" tabindex="0">
    <div class="chead"><span class="hue" style="background:${hue(c)}"></span>
-    <div><div class="nm">${esc(c.name)}</div><div class="dm">${esc(c.domain||'')}</div></div>
+    <div style="flex:1;min-width:0"><div class="nm" style="${c.name.length>24?'font-size:14.5px':''}">${esc(c.name)}</div>${c.domain&&c.domain!==c.name?`<div class="dm">${esc(c.domain)}</div>`:''}</div>
     ${c.flags.length?'<span class="pill al">דורש בדיקה</span>':'<span class="pill ok">תקין</span>'}</div>
    <div class="bigv num" style="color:${hue(c)}">${fmt(c.visibility)}${d!==null?`<span class="d ${d>=0?'up':'down'}">${d>0?'+':''}${d}%</span>`:''}</div><div class="bglabel">Visibility</div>
    ${sp||'<div class="sp-wait">גרף מגמה נבנה מנתוני הסריקות היומיות</div>'}
@@ -199,7 +199,7 @@ function drawer(k){
  const c=DATA.clients.find(x=>key(x)===k);if(!c)return;
  const d=delta(c),sp=spark(c,368,56);
  $('drawer').innerHTML=`<button class="dclose" id="dclose" aria-label="סגירה">✕</button>
-  <h2>${esc(c.name)}</h2><div class="ddom">${esc(c.domain||'')}</div>
+  <h2 style="overflow-wrap:anywhere">${esc(c.name)}</h2>${c.domain&&c.domain!==c.name?`<div class="ddom">${esc(c.domain)}</div>`:'<div style="height:18px"></div>'}
   <div class="dgrid">
    <div><div class="v num" style="color:${hue(c)}">${fmt(c.visibility)}${d!==null?`<span style="color:${d>=0?'var(--good)':'var(--warn)'}">${d>0?'+':''}${d}%</span>`:''}</div><div class="l">Visibility</div></div>
    <div><div class="v num">${fmt(c.top10)}</div><div class="l">דירוגים ב-Top 10</div></div>
