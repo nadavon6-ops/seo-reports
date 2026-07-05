@@ -48,7 +48,7 @@ main{padding:30px clamp(18px,3vw,52px) 70px}
  font-size:15px;cursor:pointer;backdrop-filter:blur(10px);transition:.15s}
 .tools button:hover{color:var(--txt)}
 .tools button.on{color:#0c111c;background:var(--h1);border-color:transparent;font-weight:800}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));gap:18px}
 .card{padding:24px;cursor:pointer;transition:transform .16s,border-color .16s;animation:in .4s cubic-bezier(.22,1,.36,1) both}
 @keyframes in{from{opacity:0;transform:translateY(10px)}}
 .card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.22)}
@@ -93,6 +93,23 @@ footer{margin-top:44px;display:flex;justify-content:space-between;color:#41506a;
 .dlink{display:inline-block;margin-top:14px;color:#0c111c;background:var(--h1);padding:12px 26px;font-weight:800;font-size:15px;text-decoration:none;border-radius:10px}
 #ekgline{stroke-dasharray:46 210;animation:beat 2.1s linear infinite;filter:drop-shadow(0 0 5px currentColor)}
 @keyframes beat{from{stroke-dashoffset:256}to{stroke-dashoffset:0}}
+@media(max-width:640px){
+ main{padding:20px 16px 50px}
+ .top{margin-bottom:18px}
+ .verdict .big{font-size:29px;letter-spacing:-.4px}
+ .verdict .sub{font-size:15px}
+ .kpis{grid-template-columns:repeat(2,1fr);gap:10px}
+ .kpi{padding:13px 15px}.kpi .n{font-size:26px}.kpi .l{font-size:12px}
+ .digest{gap:10px}
+ .tools{gap:8px}
+ .tools input{min-width:100%;order:-1}
+ .tools button,.tools a{padding:9px 13px!important;font-size:13.5px!important}
+ .card{padding:18px}
+ .bigv{font-size:29px}
+ #clock{font-size:17px!important}
+ #ekg{width:84px}
+ .drawer{padding:26px 20px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body><main>
 <div class="top"><div><div class="wordmark">NC DIGITAL</div><div style="display:flex;align-items:center;gap:14px"><div style="font-size:26px;font-weight:900">Client Pulse</div>
@@ -123,12 +140,12 @@ footer{margin-top:44px;display:flex;justify-content:space-between;color:#41506a;
 <script>
 'use strict';
 let DATA=null,HIST={},sortBy='flags',q='',flagOnly=false;
-const HUES=['#57d0ff','#b287ff','#ff7a6b','#ffb257','#3fd68c'];
+
 const $=i=>document.getElementById(i);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>(n??null)===null?'·':Number(n).toLocaleString();
 const key=c=>c.domain||c.name;
-const hue=c=>HUES[DATA.clients.indexOf(c)%HUES.length];
+const hue=c=>c.flags.length?'#ffb257':'#57d0ff';
 function series(c){return (HIST[key(c)]||[]).map(p=>p.v).filter(v=>v!=null)}
 function delta(c){const s=series(c);if(s.length<2)return null;const a=s[s.length-2],b=s[s.length-1];return a?Math.round(100*(b-a)/a):null}
 function spark(c,w,h){const s=series(c);if(s.length<2)return null;
@@ -142,7 +159,7 @@ function render(){
  $('grid').innerHTML=list.map((c,i)=>{
   const d=delta(c),sp=spark(c,300,46);
   return `<div class="card glass" data-k="${esc(key(c))}" style="animation-delay:${Math.min(i*22,400)}ms" tabindex="0">
-   <div class="chead"><span class="hue" style="background:${hue(c)}"></span>
+   <div class="chead"><span class="hue" style="background:${c.flags.length?'#ffb257':'#3fd68c'}"></span>
     <div style="flex:1;min-width:0"><div class="nm" style="${c.name.length>24?'font-size:14.5px':''}">${esc(c.name)}</div>${c.domain&&c.domain!==c.name?`<div class="dm">${esc(c.domain)}</div>`:''}</div>
     ${c.flags.length?'<span class="pill al">דורש בדיקה</span>':'<span class="pill ok">תקין</span>'}</div>
    <div class="bigv num" style="color:${hue(c)}">${fmt(c.visibility)}${d!==null?`<span class="d ${d>=0?'up':'down'}">${d>0?'+':''}${d}%</span>`:''}</div><div class="bglabel">Visibility</div>
