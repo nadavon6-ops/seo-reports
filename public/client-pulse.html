@@ -166,8 +166,13 @@ function digest(){
  $('alerts').innerHTML=al.length?al.map(a=>`<div class="item" data-k="${esc(a.k)}"><span class="t"><b>${esc(a.n)}</b> · ${esc(a.t)}</span><span class="m ${a.w?'warn':''}">${a.w?'לטיפול':'במעקב'}</span></div>`).join('')
   :'<div class="none">אין התראות פעילות.</div>';
 }
-function greet(){const h=new Date().getHours();
- return h>=5&&h<12?'בוקר טוב.':h<15?'צהריים טובים.':h<18?'אחר צהריים טובים.':h<23?'ערב טוב.':'לילה טוב.';}
+function ilTime(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Jerusalem'}))}
+function greet(){const h=ilTime().getHours();
+ if(h>=5&&h<12)return 'בוקר טוב.';
+ if(h>=12&&h<15)return 'צהריים טובים.';
+ if(h>=15&&h<18)return 'אחר צהריים טובים.';
+ if(h>=18&&h<23)return 'ערב טוב.';
+ return 'לילה טוב.';}
 function counts(){
  const ok=DATA.clients.filter(c=>!c.flags.length).length,fl=DATA.clients.length-ok;
  const kw=DATA.clients.reduce((s,c)=>s+(c.kw||0),0),t10=DATA.clients.reduce((s,c)=>s+(c.top10||0),0);
@@ -177,7 +182,7 @@ function counts(){
   const t=new Date(+m[3],+m[2]-1,+m[1],+m[4],+m[5]);const mins=Math.max(0,Math.round((Date.now()-t)/60000));
   $('ts').textContent='עודכן לפני '+(mins<60?mins+' דקות':mins<2880?Math.round(mins/60)+' שעות':Math.round(mins/1440)+' ימים');}catch(e){$('ts').textContent='עודכן '+DATA.generated}}
  freshness();setInterval(freshness,60000);
- function tick(){const n=new Date();$('clock').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')}
+ function tick(){const n=ilTime();$('clock').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')}
  tick();setInterval(tick,1000);
  $('kpis').innerHTML=[['b',DATA.clients.length,'לקוחות במעקב'],['g',ok,'תקינים'],['w',fl,'דורשים בדיקה'],['',kw.toLocaleString(),'מילות מפתח'],['',t10.toLocaleString(),'דירוגים ב-Top 10']]
   .map(x=>`<div class="kpi glass ${x[0]}"><div class="n num">${x[1]}</div><div class="l">${x[2]}</div></div>`).join('');
