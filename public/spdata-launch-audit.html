@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sp.data — ביקורת יישום Title / Meta לאחר עליית האתר</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Heebo','Segoe UI',Arial,sans-serif;background:#0f1620;color:#e8eef5;line-height:1.6;padding-bottom:60px}
+.wrap{max-width:1550px;margin:0 auto;padding:0 18px}
+header{background:linear-gradient(135deg,#0b3a4a,#0891b2);padding:34px 18px 26px;text-align:center;border-bottom:3px solid #06b6d4}
+header h1{font-size:27px;font-weight:800;margin-bottom:5px}
+header p{font-size:15px;opacity:.92}
+.stats{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:9px 16px;min-width:104px}
+.stat .v{font-size:23px;font-weight:800;color:#fff} .stat .k{font-size:12px;opacity:.85}
+.stat.bad .v{color:#fca5a5} .stat.ok .v{color:#86efac}
+h2.sect{margin:26px 0 10px;font-size:19px;color:#5fe0f5}
+.crit{background:#1b1113;border:1px solid #7f1d1d;border-right:4px solid #ef4444;border-radius:9px;padding:14px 16px;margin-bottom:10px}
+.crit h3{font-size:15px;color:#fca5a5;margin-bottom:4px}
+.crit p{font-size:13.5px;color:#e2c9c9}
+.crit .fix{margin-top:6px;font-size:13px;color:#9fe6b8}
+table{width:100%;border-collapse:collapse;margin-top:12px;background:#131c27;border-radius:12px;overflow:hidden}
+th{background:#0b1722;color:#7fd9ec;font-size:13px;padding:10px;text-align:right;border-bottom:2px solid #24323f}
+td{padding:12px 10px;border-bottom:1px solid #1d2937;vertical-align:top;font-size:13px}
+tr.sec td{font-weight:800;font-size:15px;padding:11px 14px;border-top:2px solid #06b6d4}
+tr.sec.bad td{background:#2a1214;color:#fca5a5;border-top-color:#ef4444}
+tr.sec.warn td{background:#2a2110;color:#fcd34d;border-top-color:#f59e0b}
+tr.sec.diff td{background:#2a2510;color:#fde68a;border-top-color:#eab308}
+tr.sec.mod td{background:#0e2436;color:#7dd3fc;border-top-color:#0ea5e9}
+tr.sec.ok td{background:#0d2a1a;color:#86efac;border-top-color:#22c55e}
+td.pg{width:250px}
+.pname{font-weight:700;color:#fff;font-size:14px;margin-bottom:3px}
+.ppath{font-size:11px;color:#8aa0b3;direction:ltr;text-align:left;word-break:break-all;margin-bottom:6px}
+.badge{font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;display:inline-block}
+.badge.ok{background:rgba(34,197,94,.18);color:#86efac;border:1px solid #22c55e}
+.badge.mod{background:rgba(14,165,233,.18);color:#7dd3fc;border:1px solid #0ea5e9}
+.badge.diff{background:rgba(234,179,8,.18);color:#fde68a;border:1px solid #eab308}
+.badge.warn{background:rgba(245,158,11,.2);color:#fcd34d;border:1px solid #f59e0b}
+.badge.bad{background:rgba(239,68,68,.2);color:#fca5a5;border:1px solid #ef4444}
+.sim{font-size:11px;color:#6b8296;margin-top:6px}
+.col{width:auto}
+.fl{margin-bottom:8px}
+.lb{display:inline-block;font-size:10px;font-weight:700;color:#6b8296;background:#0b1722;border-radius:4px;padding:2px 6px;margin-left:6px}
+.vl{color:#dce8f2}
+.vl.miss{color:#fca5a5;font-weight:700}
+td.rec{background:rgba(8,145,178,.05)}
+td.liv{background:rgba(239,68,68,.03)}
+.tag{display:block;margin-top:4px;font-size:11px;color:#fcd34d}
+footer{text-align:center;margin-top:34px;padding-top:18px;color:#6b8296;font-size:13px}
+@media(max-width:900px){td.pg{width:auto}table,tbody,tr,td{display:block;width:100%}th{display:none}}
+</style></head>
+<body>
+<header>
+<h1>sp.data — ביקורת יישום Title / Meta לאחר עליית האתר</h1>
+<p>בדיקת 33 עמודי הצ'ק-ליסט מול האתר החי (www.spdata.co.il)</p>
+<div class="stats">
+<div class="stat"><div class="v">33</div><div class="k">עמודים נבדקו</div></div>
+<div class="stat ok"><div class="v">4</div><div class="k">יושם במלואו</div></div>
+<div class="stat"><div class="v">5</div><div class="k">יושם בשינויים</div></div>
+<div class="stat bad"><div class="v">24</div><div class="k">ללא תיאור מטא</div></div>
+<div class="stat bad"><div class="v">58/71</div><div class="k">עמודי האתר ללא Meta</div></div>
+</div></header>
+<div class="wrap">
+<h2 class="sect">ממצאים קריטיים</h2>
+
+<div class="crit">
+<h3>1. חסר תיאור מטא (Meta Description) ב-58 מתוך 71 עמודי האתר</h3>
+<p>מתוך 33 עמודי הצ'ק-ליסט, ל-24 עמודים אין תגית <code>meta name="description"</code> כלל. במקומה קיים רק <code>og:description</code> שנוצר אוטומטית מהתוכן, וגוגל אינו משתמש בו כתיאור בתוצאות החיפוש. המשמעות: גוגל מייצר את התיאור בעצמו, וההמלצות שסופקו לא נכנסו למערכת.</p>
+<p class="fix">תיקון: להזין את שדה ה-Meta Description ב-Yoast עבור כל עמוד, לפי העמודה "Meta מומלץ" בטבלה למטה.</p>
+</div>
+
+<div class="crit">
+<h3>2. סיומת Title ברירת מחדל: "- Qlik | sp.data" ב-58 עמודים</h3>
+<p>ב-58 עמודים לא הוגדר Title ייעודי, ו-Yoast מייצר אותו אוטומטית מכותרת העמוד בתוספת התבנית <code>- Qlik | sp.data</code>. הסיומת עדיין כוללת את המותג הישן "Qlik", בניגוד למיתוג החדש, ומאריכה את ה-Title מעבר לגבול התצוגה בגוגל.</p>
+<p class="fix">תיקון: לעדכן את תבנית ה-Title הגלובלית ב-Yoast ל-<code>%%title%% | sp.data</code>, ולהזין Title ייעודי בעמודים המרכזיים.</p>
+</div>
+
+<div class="crit">
+<h3>3. העמוד /en/ מחזיר 404 אך מופיע ב-Sitemap</h3>
+<p>הכתובת <code>https://www.spdata.co.il/en/</code> מחזירה שגיאת 404 (וגם noindex), אך היא כלולה ב-<code>page-sitemap.xml</code>. עמוד שגיאה ב-Sitemap פוגע באמון הסריקה של גוגל. בנוסף, אין כרגע גרסה אנגלית פעילה באתר, ולכן המלצות ה-Title/Meta באנגלית שסופקו אינן בשימוש.</p>
+<p class="fix">תיקון: להסיר את /en/ מה-Sitemap, או להעלות את הגרסה האנגלית בפועל.</p>
+</div>
+
+<div class="crit">
+<h3>4. עמוד ללא כותרת H1</h3>
+<p>לעמוד <code dir="ltr">/חיבור-למערכות/</code> אין תגית H1. H1 הוא אות דירוג בסיסי ונדרש בכל עמוד.</p>
+<p class="fix">תיקון: להוסיף H1 יחיד לעמוד, הכולל את מילת המפתח הראשית.</p>
+</div>
+
+<h2 class="sect">פירוט לפי עמוד — מומלץ מול בפועל</h2>
+<table>
+<thead><tr><th>עמוד + סטטוס</th><th>מומלץ (מהצ'ק-ליסט)</th><th>בפועל (באתר החי)</th></tr></thead>
+<tbody>
+<tr class="sec bad"><td colspan="3">לא יושם · 16 עמודים</td></tr><tr>
+      <td class="pg">
+        <div class="pname">כל המוצרים (All Products)</div>
+        <div class="ppath" dir="ltr">/all-products/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 31% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">כל המוצרים של sp.data | אנליטיקה, BI ואינטגרציית נתונים</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">מגוון פתרונות sp.data לארגונים במקום אחד: אנליטיקה, BI, דשבורדים, אינטגרציית נתונים, איכות נתונים ובינה מלאכותית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">כל המוצרים - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">ויזואליזציה ודשבורדים (Visualization and Dashboards)</div>
+        <div class="ppath" dir="ltr">/ויזואליציה-ודשבורדים-אינטראקטיביים/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 65% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">דשבורדים ולוחות בקרה אינטראקטיביים | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data מאפשרת בניית דשבורדים ולוחות בקרה אינטראקטיביים בעברית, עם ויזואליזציה חכמה, KPIs בזמן אמת ושיתוף ארגוני מאובטח.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">ויזואליציה ודשבורדים אינטראקטיביים - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אנליטיקה משובצת (Embedded Analytics)</div>
+        <div class="ppath" dir="ltr">/אנליטיקה-מוטמעת/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 47% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אנליטיקה משובצת (Embedded Analytics) | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מאפשרת שילוב של אנליטיקה ודשבורדים בתוך מוצרים, פורטלים ויישומים: עם API, SDK, מיתוג מותאם והרשאות ברמת המשתמש.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אנליטיקה מוטמעת - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">דוחות והתראות (Reporting + Alerting)</div>
+        <div class="ppath" dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 75% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">דוחות BI והתראות חכמות | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת פתרון מלא ליצירת דוחות BI, דוחות Pixel-Perfect ו-PDF, יחד עם התראות חכמות מבוססות נתונים: אוטומטי, מאובטח ובכל תדירות.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">דוחות BI והתראות חכמות מבוססות נתונים - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Agentic AI (Agentic AI)</div>
+        <div class="ppath" dir="ltr">/agentic-ai/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 40% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Agentic AI לאנליטיקה | סוכני AI ארגוניים | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת Agentic AI לאנליטיקה ארגונית: סוכני AI שמבינים שאלות עסקיות, חוקרים נתונים באופן עצמאי ומגישים תובנות פעילות, עם ממשל ואבטחה ארגוניים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">AGENTIC AI - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אוטומציה ותזמור (Automation and Orchestration)</div>
+        <div class="ppath" dir="ltr">/אוטומציה-והפעלת-תהליכים-מבוססי-דאטה/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 74% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אוטומציה ותזמור תהליכי דאטה | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מאפשרת אוטומציה ותזמור של תהליכי דאטה ואנליטיקה: טריגרים מבוססי נתונים, תזמון, תלויות וניטור: ללא קוד ובקנה מידה ארגוני.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אוטומציה והפעלת תהליכים מבוססי דאטה - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אנליטיקה חזויה (Predictive AI)</div>
+        <div class="ppath" dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 48% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אנליטיקה חזויה (Predictive AI) | AutoML | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik AutoML מאפשרת בניית מודלים חזויים על בסיס למידת מכונה ללא צורך ב-Data Scientist: שילוב מודלים בדשבורדים והפעלת תחזיות בזמן אמת.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אנליטיקה חזויה ולמידת מכונה - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">הכנת נתונים (Data Preparation)</div>
+        <div class="ppath" dir="ltr">/טעינת-נתונים-etl-מתקדם/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 34% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">הכנת נתונים לאנליטיקה | Data Preparation | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת הכנת נתונים בשירות עצמי: ניקוי, איחוד, העשרה ומידול נתונים: בסיס איכותי לכל יוזמת BI, אנליטיקה ו-AI בארגון.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">טעינת נתונים ו-ETL מתקדם - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Qlik MCP: Model Context Protocol (MCP)</div>
+        <div class="ppath" dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 9% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Qlik MCP Server | Model Context Protocol | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik MCP מאפשרת ל-LLMs ולסוכני AI לגשת לדאטה הארגונית באופן מאובטח, עם משילות מובנית, הרשאות ברמת המשתמש וביצועים גבוהים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">חיבור AI ו-LLM לדאטה הארגונית - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אנליטיקה בשירות עצמי (Self Service)</div>
+        <div class="ppath" dir="ltr">/אנליטיקה-בשירות-עצמי/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 73% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אנליטיקה בשירות עצמי (Self-Service) | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מעבירה את כוח הנתונים ישירות למשתמשים העסקיים: בניית דשבורדים, חקר נתונים ושאלות בשפה טבעית, ללא תלות ב-IT, עם ממשל ובקרה מלאים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אנליטיקה בשירות עצמי - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">חקר נתונים (Discovery)</div>
+        <div class="ppath" dir="ltr">/זיהוי-אנומליות/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 15% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">חקר נתונים (Data Discovery) | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת חקר נתונים אסוציאטיבי: חקירה חופשית של הדאטה ללא מסלולים מוגדרים מראש, עם סוכן Discovery מבוסס AI שמאתר תובנות באופן עצמאי.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">זיהוי אנומליות - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">מוצרי דאטה (Data Products)</div>
+        <div class="ppath" dir="ltr">/מוצרי-דאטה/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 36% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">מוצרי דאטה (Data Products) | Data as a Product | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מאפשרת לבנות, לפרסם ולצרוך מוצרי דאטה ארגוניים: Data Products עם חוזה, ממשל, הרשאות וגרסאות, חלק מארכיטקטורת Data Mesh ארגונית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">מוצרי דאטה - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Associative Agent (Associative Agent)</div>
+        <div class="ppath" dir="ltr">/מנוע-אסוציאטיבי-מבוסס-ai/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 51% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Associative Agent | מנוע אסוציאטיבי | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Associative Agent של sp.data משלב מנוע אסוציאטיבי ייחודי עם AI: חקר חופשי של נתונים, שאילתות בשפה טבעית, ותובנות שכלים מסורתיים מפספסים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">מנוע אסוציאטיבי מבוסס AI - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">איכות נתונים ומשילות נתונים (Data Quality and Governance)</div>
+        <div class="ppath" dir="ltr">/איכות-נתונים-ומשילות-נתונים/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 75% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">איכות נתונים ומשילות נתונים (Data Governance) | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data משלבת איכות נתונים, משילות נתונים, קטלוג נתונים וניהול נתוני אב: בסיס אמין לכל יוזמת אנליטיקה ו-AI בארגון.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">איכות נתונים ומשילות נתונים - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אודות (About)</div>
+        <div class="ppath" dir="ltr">/אודות-sp-data/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 45% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אודות sp.data (לשעבר חברת קליק / Qlik Israel)</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data, לשעבר חברת קליק (Qlik Israel), מיישמת פתרונות BI, אנליטיקה ונתונים לארגונים מאז 2003, עם ייעוץ, יישום ותמיכה בעברית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אודות sp.data - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">מרכז הידע (Knowledge Center)</div>
+        <div class="ppath" dir="ltr">/מרכז-הידע/</div>
+        <span class="badge bad">לא יושם</span>
+        <div class="sim">התאמת Title: 30% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">מרכז הידע של sp.data | מדריכים ומאמרים על BI ונתונים</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">מרכז הידע של sp.data מרכז מדריכים ומאמרים על בינה עסקית, ניתוח נתונים, דשבורדים, ETL, big data ולמידת מכונה, בעברית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">מרכז הידע - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr class="sec warn"><td colspan="3">חסר תיאור מטא · 8 עמודים</td></tr><tr>
+      <td class="pg">
+        <div class="pname">סטרימינג נתונים בזמן אמת (Data Streaming)</div>
+        <div class="ppath" dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 93% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">סטרימינג נתונים בזמן אמת | CDC | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data מאפשרת סטרימינג נתונים בזמן אמת ממאות מקורות, סנכרון מערכות והעברת שינויים (CDC) עם השפעה מינימלית על הסביבה הקיימת.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">סטרימינג נתונים בזמן אמת ו-CDC - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">טרנספורמציית נתונים (Data Transformation)</div>
+        <div class="ppath" dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 100% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">טרנספורמציית נתונים | תהליכי ETL ו-ELT | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data בונה Data Pipelines ללא קוד לתהליכי ETL ו-ELT, מעבדת ומעשירה נתונים ומספקת דאטה איכותית מוכנה ל-BI, אנליטיקה ו-AI.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">טרנספורמציית נתונים | תהליכי ETL ו-ELT - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">מודרניזציה של מחסני נתונים (Data Warehouse Modernization)</div>
+        <div class="ppath" dir="ltr">/מודרניזציה-של-מחסני-נתונים-בענן/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 100% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">מודרניזציה של מחסני נתונים בענן | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data מאיצה את המעבר ממחסני נתונים On-Premises לענן, ובונה מחסני נתונים מודרניים על Snowflake, Databricks, BigQuery ו-Synapse באופן אוטומטי.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">מודרניזציה של מחסני נתונים בענן - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Open Lakehouse (Open Lakehouses)</div>
+        <div class="ppath" dir="ltr">/open-lakehouse/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 91% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Open Lakehouse | Apache Iceberg | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data בונה Open Lakehouse מבוסס Apache Iceberg, פתרון פתוח שמשלב את היתרונות של Data Lake ו-Data Warehouse עם פורמט טבלאות פתוח וסטנדרטי.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">Open Lakehouse מבוסס Apache Iceberg - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אינטגרציה בין אפליקציות וממשקי API (Application and API Integration)</div>
+        <div class="ppath" dir="ltr">/אינטגרציה-בין-אפליקציות-וממשקי-api/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 89% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אינטגרציה בין אפליקציות וממשקי API | iPaaS | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת פלטפורמת iPaaS לחיבור מערכות, אפליקציות SaaS וממשקי API ללא קוד, עם אינטגרציה מאובטחת ויעילה בין סביבות ענן וארגון.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אינטגרציה בין אפליקציות וממשקי API - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אוטומציה של תהליכים עסקיים (Application Automation)</div>
+        <div class="ppath" dir="ltr">/אוטומציה-של-תהליכים-עסקיים/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 100% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אוטומציה של תהליכים עסקיים מבוססת נתונים | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פלטפורמת sp.data מפעילה אוטומציה של תהליכים עסקיים על בסיס נתונים: התראות, החלטות ופעולות ללא קוד, בחיבור ישיר לכל המערכות בארגון.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אוטומציה של תהליכים עסקיים מבוססת נתונים - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">פתרונות אינטגרציית SAP (SAP Solutions)</div>
+        <div class="ppath" dir="ltr">/פתרונות-אינטגרציית-sap-חילוץ-נתוני-sap-בזמן/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 100% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">פתרונות אינטגרציית SAP | חילוץ נתוני SAP בזמן אמת | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מאפשרת חילוץ והעברה של נתוני SAP בזמן אמת: אינטגרציה מתקדמת ל-S/4HANA, ECC ו-HANA, עם השפעה מינימלית על המערכות הקיימות.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">פתרונות אינטגרציית SAP | חילוץ נתוני SAP בזמן אמת - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">מחברים ואינטגרציות (Integrations and Connectors)</div>
+        <div class="ppath" dir="ltr">/מחברים-ואינטגרציות-למקורות-דאטה/</div>
+        <span class="badge warn">חסר תיאור מטא</span>
+        <div class="sim">התאמת Title: 83% · Meta: 0%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">מחברים ואינטגרציות למקורות דאטה | Connectors | sp.data.</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data מספקת מאות מחברים אוניברסליים לחילוץ וטעינת דאטה ממסדי נתונים, אפליקציות SaaS, קבצים, ענן ו-On-Premises: ללא צורך בכתיבת קוד.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">מחברים ואינטגרציות למקורות דאטה - Qlik | sp.data</span><span class="tag">סיומת ברירת מחדל: "- Qlik | sp.data"</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl miss">— חסר תיאור מטא —</span></div>
+      </td></tr><tr class="sec diff"><td colspan="3">שונה מההמלצה · 2 עמודים</td></tr><tr>
+      <td class="pg">
+        <div class="pname">אנליטיקה (Analytics lobby)</div>
+        <div class="ppath" dir="ltr">/פתרונות-אנליטיקה-בענן-קליק-סנס/</div>
+        <span class="badge diff">שונה מההמלצה</span>
+        <div class="sim">התאמת Title: 41% · Meta: 25%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אנליטיקה, Qlik Sense ודשבורדים ניהוליים | sp.data</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פתרונות האנליטיקה של sp.data, Qlik Sense ו-QlikView, לבניית דשבורדים ניהוליים ו-BI, מעקב KPI וניתוח נתונים בזמן אמת לארגונים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">פתרונות אנליטיקה בענן, BI וניתוח נתונים | Qlik | sp.data</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">sp.data מספקת פתרונות BI ואנליטיקה מבוססי AI, עם דשבורדים, חיזוי עסקי ותובנות בזמן אמת באמצעות Qlik Cloud Analytics ו-Qlik Sense.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">אינטגרציה ואיכות נתונים (Data Integration lobby)</div>
+        <div class="ppath" dir="ltr">/אינטגרציית-נתונים-ואיכות-נתונים/</div>
+        <span class="badge diff">שונה מההמלצה</span>
+        <div class="sim">התאמת Title: 62% · Meta: 56%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">אינטגרציית נתונים, ETL ו-Data Lake | sp.data</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">פתרונות sp.data לאינטגרציית נתונים: תהליכי ETL, סטרימינג ו-CDC, מחסני נתונים ו-Data Lake, לאיחוד נתונים אמינים ממקורות שונים בארגון.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">אינטגרציית נתונים ואיכות נתונים | Qlik | sp.data</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">פתרונות sp.data לאינטגרציית נתונים ואיכות נתונים, כולל ETL, סטרימינג, CDC ו-Data Pipelines להכנת נתונים לאנליטיקה, AI וסביבות ענן.</span></div>
+      </td></tr><tr class="sec mod"><td colspan="3">יושם בשינויים · 3 עמודים</td></tr><tr>
+      <td class="pg">
+        <div class="pname">דף הבית (Homepage)</div>
+        <div class="ppath" dir="ltr">/</div>
+        <span class="badge mod">יושם בשינויים</span>
+        <div class="sim">התאמת Title: 94% · Meta: 78%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">sp.data (Qlik Israel לשעבר) | פתרונות BI ואנליטיקה</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">sp.data, לשעבר Qlik Israel (קליק ישראל), מיישמת פתרונות BI, אנליטיקה ודשבורדים לארגונים, כולל Qlik Sense, עם ייעוץ ותמיכה בעברית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">sp.data (Qlik Israel לשעבר) | פתרונות BI, דאטה ואנליטיקה</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">sp.data, לשעבר Qlik Israel, מספקת פתרונות BI, דאטה ואנליטיקה לארגונים, כולל Qlik Sense, אינטגרציית נתונים, AI, ייעוץ ותמיכה בעברית.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Qlik Sense (On-Prem)</div>
+        <div class="ppath" dir="ltr">/qlik-sense-clinet-manage/</div>
+        <span class="badge mod">יושם בשינויים</span>
+        <div class="sim">התאמת Title: 87% · Meta: 77%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Qlik Sense - פתרון אנליטיקה לסביבה מקומית</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik Sense הוא פתרון אנליטיקה לסביבה מקומית, המאפשר לארגונים לנתח נתונים, ליצור דשבורדים ולהפיק תובנות מבוססות AI.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">Qlik Sense On-Premises - פתרון אנליטיקה לסביבה מקומית</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">Qlik Sense On-Premises הוא פתרון אנליטיקה לסביבה מקומית, המאפשר שליטה מלאה בנתונים, אבטחה מתקדמת, דשבורדים ותובנות מבוססות AI.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">למה sp.data (Why sp.data)</div>
+        <div class="ppath" dir="ltr">/למה-qlik-spdata/</div>
+        <span class="badge mod">יושם בשינויים</span>
+        <div class="sim">התאמת Title: 84% · Meta: 77%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">למה לבחור ב-sp.data | יתרונות הפלטפורמה לארגונים</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">למה ארגונים בוחרים ב-sp.data: מנוע אסוציאטיבי ייחודי, בינה מלאכותית מובנית, ביצועים בקנה מידה ארגוני, ותמיכה וייעוץ מקומי בעברית.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">למה לבחור ב-sp.data | פלטפורמת BI לארגונים</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">למה ארגונים בוחרים ב-sp.data: פלטפורמת BI ואנליטיקה עם מנוע אסוציאטיבי, AI מובנה, ביצועים בקנה מידה ארגוני ותמיכה מקומית בעברית.</span></div>
+      </td></tr><tr class="sec ok"><td colspan="3">יושם · 4 עמודים</td></tr><tr>
+      <td class="pg">
+        <div class="pname">Qlik Cloud Analytics</div>
+        <div class="ppath" dir="ltr">/פתרונות-אנליטיקה-בענן-וניתוח-נתונים/</div>
+        <span class="badge ok">יושם</span>
+        <div class="sim">התאמת Title: 99% · Meta: 100%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Qlik Cloud Analytics - פתרונות אנליטיקה בענן וניתוח נתונים</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik Cloud Analytics מאפשרת לארגונים לנתח נתונים בענן, להפיק תובנות עסקיות, לזהות שינויים חשובים ולהפעיל תהליכים מבוססי AI ואוטומציה.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">®Qlik Cloud Analytics - פתרונות אנליטיקה בענן וניתוח נתונים</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">Qlik Cloud Analytics מאפשרת לארגונים לנתח נתונים בענן, להפיק תובנות עסקיות, לזהות שינויים חשובים ולהפעיל תהליכים מבוססי AI ואוטומציה.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Qlik Talend Cloud</div>
+        <div class="ppath" dir="ltr">/qlik-talend-cloud/</div>
+        <span class="badge ok">יושם</span>
+        <div class="sim">התאמת Title: 100% · Meta: 100%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Qlik Talend Cloud - אינטגרציה ואיכות נתונים בענן</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik Talend Cloud מאפשרת לארגונים לבצע אינטגרציית נתונים בענן, לשפר את איכות הנתונים ולהכין דאטה אמינה ל־AI ולצרכים עסקיים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">Qlik Talend Cloud - אינטגרציה ואיכות נתונים בענן</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">Qlik Talend Cloud מאפשרת לארגונים לבצע אינטגרציית נתונים בענן, לשפר את איכות הנתונים ולהכין דאטה אמינה ל־AI ולצרכים עסקיים.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Talend Data Fabric</div>
+        <div class="ppath" dir="ltr">/talend-data-fabric/</div>
+        <span class="badge ok">יושם</span>
+        <div class="sim">התאמת Title: 100% · Meta: 90%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Talend Data Fabric - פלטפורמת אינטגרציה ומשילות נתונים</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Talend Data Fabric מסייעת לארגונים לשלב, לנהל ולהנגיש נתונים אמינים באמצעות פלטפורמת Data Fabric לאינטגרציה ומשילות נתונים.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">Talend Data Fabric - פלטפורמת אינטגרציה ומשילות נתונים</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">sp.data מסייעת לארגונים לשלב, לנהל ולהנגיש נתונים אמינים באמצעות פלטפורמת Data Fabric לאינטגרציה, איכות ומשילות נתונים.</span></div>
+      </td></tr><tr>
+      <td class="pg">
+        <div class="pname">Qlik College</div>
+        <div class="ppath" dir="ltr">/qlik-college/</div>
+        <span class="badge ok">יושם</span>
+        <div class="sim">התאמת Title: 100% · Meta: 100%</div>
+      </td>
+      <td class="col rec" dir="rtl">
+        <div class="fl"><span class="lb">Title מומלץ</span><span class="vl">Qlik College | קורסים Qlik Sense, BI, SaaS ו-Bootcamp</span></div>
+        <div class="fl"><span class="lb">Meta מומלץ</span><span class="vl">Qlik College (Qlik Academy) מציעה קורסים והדרכות Qlik Sense, QlikView ו-SaaS, קורס BI, Bootcamp ואוריינות נתונים, להעמקת השימוש בפלטפורמה.</span></div>
+      </td>
+      <td class="col liv" dir="rtl">
+        <div class="fl"><span class="lb">Title בפועל</span><span class="vl">Qlik College | קורסים Qlik Sense, BI, SaaS ו-Bootcamp</span></div>
+        <div class="fl"><span class="lb">Meta בפועל</span><span class="vl ">Qlik College (Qlik Academy) מציעה קורסים והדרכות Qlik Sense, QlikView ו-SaaS, קורס BI, Bootcamp ואוריינות נתונים, להעמקת השימוש בפלטפורמה.</span></div>
+      </td></tr>
+</tbody></table>
+<footer>NC Digital · ביקורת יישום Title / Meta — sp.data · 13.07.2026</footer>
+</div></body></html>
