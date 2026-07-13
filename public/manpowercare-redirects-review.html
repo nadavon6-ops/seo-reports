@@ -22,11 +22,21 @@ h3{font-size:1rem;font-weight:650;flex:1}
 .card-label{color:#8b949e;font-size:.77rem;margin-bottom:5px}
 .card-value{font-size:1.7rem;font-weight:700;color:#58a6ff}
 .card-sub{color:#6e7681;font-size:.73rem}
-.issue{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:17px 19px;margin-bottom:15px}
+.issue{background:#161b22;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;overflow:hidden}
 .issue.bad{border-right:3px solid #f85149}
 .issue.warn{border-right:3px solid #d29922}
 .issue.mid{border-right:3px solid #58a6ff}
-.issue-h{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.issue[open]{border-color:#30363d}
+.issue-h{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:15px 19px;user-select:none}
+.issue-h::-webkit-details-marker{display:none}
+.issue-h:hover{background:#1a2028}
+.issue[open] .issue-h{border-bottom:1px solid #21262d}
+.issue-body{padding:16px 19px 18px}
+.chev{flex-shrink:0;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid #8b949e;transition:transform .15s}
+.issue[open] .chev{transform:rotate(-90deg)}
+.acc-ctl{display:flex;gap:8px;margin-bottom:14px}
+.acc-btn{background:#161b22;border:1px solid #30363d;color:#c9d1d9;border-radius:6px;padding:6px 14px;font-size:.8rem;cursor:pointer;font-family:inherit}
+.acc-btn:hover{background:#1f2630;color:#e6edf3}
 .num{width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;color:#fff;background:#6e7681}
 .issue.bad .num{background:#f85149} .issue.warn .num{background:#d29922} .issue.mid .num{background:#58a6ff}
 .issue-b p{color:#c9d1d9;font-size:.89rem;margin-bottom:8px}
@@ -65,17 +75,34 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <div class="card"><div class="card-label">סעיפים לתיקון</div><div class="card-value">10</div><div class="card-sub">3 קריטיים</div></div></div>
 
 <h2>מה צריך לתקן</h2>
-<div class="issue bad">
-  <div class="issue-h"><span class="num">1</span><h3>כללי ה-Regex מוחקים את כל האתר הרב-לשוני</h3><span class="pill bad">קריטי</span></div>
-  <div class="issue-b"><p>שלושת הכללים <code dir="ltr">^/en/.* → /</code> , <code dir="ltr">^/ar/.* → /</code> , <code dir="ltr">^/ru/.* → /</code> מפנים <strong>206 כתובות</strong> אל דף הבית בעברית.</p>
+<div class="acc-ctl">
+  <button class="acc-btn" onclick="document.querySelectorAll('details.issue').forEach(d=&gt;d.open=true)">פתח הכל</button>
+  <button class="acc-btn" onclick="document.querySelectorAll('details.issue').forEach(d=&gt;d.open=false)">סגור הכל</button>
+</div>
+<details class="issue bad">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">1</span>
+    <h3>כללי ה-Regex מוחקים את כל האתר הרב-לשוני</h3>
+    <span class="pill bad">קריטי</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p>שלושת הכללים <code dir="ltr">^/en/.* → /</code> , <code dir="ltr">^/ar/.* → /</code> , <code dir="ltr">^/ru/.* → /</code> מפנים <strong>206 כתובות</strong> אל דף הבית בעברית.</p>
 <p>הכתובות האלה ייצרו <strong>2,108 קליקים ו-110,368 חשיפות</strong> ב-12 החודשים האחרונים, כלומר <strong>20% מכלל התנועה האורגנית</strong>. הבולטות: <span dir="ltr">/en/ (493 קליקים)</span>, <span dir="ltr">/en/the-management-copy/ (194)</span>, <span dir="ltr">/ar/ (187)</span>, <span dir="ltr">/ru/ (148)</span>, <span dir="ltr">/en/branches/ (58)</span>, <span dir="ltr">/en/contact/ (45)</span>.</p>
 <p>גוגל מפרש הפניה של עמוד תוכן אל דף הבית כ-<strong>soft 404</strong>. ההפניה אינה מעבירה דירוגים והעמודים נושרים מהאינדקס. זו מחיקה של הערך, לא שימור שלו.</p>
 <div class="conflict"><strong>הכללים האלה סותרים את מסמך המיגרציה שאושר.</strong> במסמך <span dir="ltr">ניתוח מיגרציה SEO</span> מ-18.05.2026 מופיעות כל 74 הכתובות באנגלית, ברוסית ובערבית (31 + 28 + 15) תחת הפעולה <strong>"ללא שינוי"</strong>, כלומר להעביר את התוכן לאותו נתיב בדיוק ללא הפניה. אף כתובת רב-לשונית לא סומנה שם למחיקה או להפניה לדף הבית. גם ההפניות הבודדות שכן הוגדרו נשארו בתוך השפה, למשל <span dir="ltr">/en/the-management-copy/ → /en/the-management/</span> ו-<span dir="ltr">/ar/about/ → /ar/</span>.</div></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> שחזרו את הגרסאות באנגלית, ערבית ורוסית והפנו כל כתובת לעמוד המקביל בשפתה.
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> שחזרו את הגרסאות באנגלית, ערבית ורוסית והפנו כל כתובת לעמוד המקביל בשפתה.
 <br>אם הוחלט לוותר על הרב-לשוניות, מפו כל כתובת אל <strong>העמוד העברי המקביל בתוכן</strong>, למשל <span dir="ltr">/en/branches/ → /branches/</span> ו-<span dir="ltr">/en/contact/ → /contact/</span>. הפניה גורפת לדף הבית היא התרחיש הגרוע ביותר.</div>
-</div><div class="issue bad">
-  <div class="issue-h"><span class="num">2</span><h3>שני עמודי סניפים מופנים לעיר הלא נכונה</h3><span class="pill bad">קריטי</span></div>
-  <div class="issue-b"><div class="conflict"><strong>הבהרה: מקור השגיאה הוא במסמך שלנו.</strong> היעד <span dir="ltr">/branch/סניף-חדרה/</span> לשני העמודים האלה נקבע במסמך המיגרציה שלנו מ-18.05.2026, והצוות הטכני יישם אותו במדויק. הם אף סימנו את הסעיף בגיליון <span dir="ltr">Needs Review</span> וביקשו אישור. הבדיקה הנוכחית, שכללה קריאה של תוכן העמודים עצמם, מגלה שההנחיה המקורית הייתה שגויה. להלן התיקון.</div>
+  </div>
+</details><details class="issue bad">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">2</span>
+    <h3>שני עמודי סניפים מופנים לעיר הלא נכונה</h3>
+    <span class="pill bad">קריטי</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><div class="conflict"><strong>הבהרה: מקור השגיאה הוא במסמך שלנו.</strong> היעד <span dir="ltr">/branch/סניף-חדרה/</span> לשני העמודים האלה נקבע במסמך המיגרציה שלנו מ-18.05.2026, והצוות הטכני יישם אותו במדויק. הם אף סימנו את הסעיף בגיליון <span dir="ltr">Needs Review</span> וביקשו אישור. הבדיקה הנוכחית, שכללה קריאה של תוכן העמודים עצמם, מגלה שההנחיה המקורית הייתה שגויה. להלן התיקון.</div>
 <p><strong>שני העמודים אינם עמודי חדרה. ה-slug בלבד מטעה.</strong></p>
 <table class="mini">
 <thead><tr><th>כתובת ישנה</th><th>ה-Title וה-H1 שלה בפועל</th><th>יעד בקובץ</th><th>היעד הנכון</th></tr></thead>
@@ -91,13 +118,20 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 </tbody></table>
 <p>ה-slug מטעה. שני העמודים נוצרו כעותקים של עמוד חדרה, אבל תגית ה-Title, ה-H1 והדירוגים שלהם שייכים לחולון בת ים ולפתח תקווה. עמוד חדרה האמיתי, <span dir="ltr">/branch/סניף-חדרה/</span>, מדורג על מנפאואר חדרה ונשאר בכתובתו. שני עמודי היעד הנכונים כבר קיימים באתר החדש ומחזירים 200.</p>
 <p class="muted small">ספירת הקליקים לפי שאילתה מתייחסת לשאילתות שגוגל חושף. סך הקליקים ברמת העמוד גבוה יותר (196 ו-115), משום שגוגל מסתיר שאילתות נדירות. בשאילתות שכן נחשפו, אפס קליקים מגיעים מחדרה.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> שנו את שני הכללים:
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> שנו את שני הכללים:
 <br><span dir="ltr">/branch/סניף-חדרה-copy/ → /branch/סניף-חולון-בת-ים/</span>
 <br><span dir="ltr">/branch/סניף-חדרה-copy-copy/ → /branch/סניף-פתח-תקווה/</span>
 <br>כרגע 311 קליקים ו-3,385 חשיפות מנותבים לעיר שגויה, ויאבדו את הדירוג המקומי בחולון ובפתח תקווה.</div>
-</div><div class="issue bad">
-  <div class="issue-h"><span class="num">3</span><h3>שני מאמרי דמנציה מופנים לעמודים מסחריים במקום לעמוד הדמנציה</h3><span class="pill bad">קריטי</span></div>
-  <div class="issue-b"><div class="conflict"><strong>אותה שגיאה כמו בסעיף 2, ומאותו מקור.</strong> גם כאן היעד נקבע במסמך שלנו לפי שם הכתובת, בלי לפתוח את העמוד. בדיקה של כל 22 שינויי הכתובת שהוגדרו במסמך העלתה שני מקרים נוספים.</div>
+  </div>
+</details><details class="issue bad">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">3</span>
+    <h3>שני מאמרי דמנציה מופנים לעמודים מסחריים במקום לעמוד הדמנציה</h3>
+    <span class="pill bad">קריטי</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><div class="conflict"><strong>אותה שגיאה כמו בסעיף 2, ומאותו מקור.</strong> גם כאן היעד נקבע במסמך שלנו לפי שם הכתובת, בלי לפתוח את העמוד. בדיקה של כל 22 שינויי הכתובת שהוגדרו במסמך העלתה שני מקרים נוספים.</div>
 <table class="mini">
 <thead><tr><th>כתובת ישנה</th><th>מה העמוד באמת</th><th>מדורג על</th><th>יעד בקובץ</th><th>היעד הנכון</th></tr></thead>
 <tbody>
@@ -114,13 +148,20 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 </tbody></table>
 <p>שני העמודים מדורגים על שאילתות מידע בנושא דמנציה, ומופנים לעמודי שירות מסחריים. מעבר לאובדן הרלוונטיות, זו גם אי-התאמת כוונת חיפוש: גולש שחיפש "דמנציה שלבים" ונוחת בעמוד מכירתי של טיפולי סיעוד יחזור לגוגל.</p>
 <p>עמוד היעד הנכון, <span dir="ltr">/דמנציה-מידע/</span>, כבר קיים באתר החדש ומקבל ממילא את המאמר המקביל <span dir="ltr">/happy-employees-good-employees-16/</span> (71 קליקים). איחוד שלושת מאמרי הדמנציה לעמוד אחד הוא המהלך הנכון.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> שנו את שני הכללים:
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> שנו את שני הכללים:
 <br><span dir="ltr">/happy-employees-good-employees-13/ → /דמנציה-מידע/</span>
 <br><span dir="ltr">/happy-employees-good-employees-15/ → /דמנציה-מידע/</span>
 <br>סך הכל 150 קליקים ו-7,206 חשיפות מנותבים כרגע לעמוד שאינו תואם את כוונת החיפוש.</div>
-</div><div class="issue warn">
-  <div class="issue-h"><span class="num">4</span><h3>שני עמודים מכוונים לאותו ביטוי ראש, וההפניות מחזקות את עמוד האודות</h3><span class="pill warn">גבוה</span></div>
-  <div class="issue-b"><p>הקובץ מפנה <strong>10 כתובות ו-460 קליקים</strong> אל <span dir="ltr">/חברת-סיעוד/</span>, ובהן <span dir="ltr">/הנהלת-החברה/</span> (339 קליקים), <span dir="ltr">/manpowergroup-ישראל/</span> (55) ו-<span dir="ltr">/testimonials/</span> (25). ההפניות עצמן רלוונטיות מבחינת תוכן, אבל עמוד היעד בעייתי.</p>
+  </div>
+</details><details class="issue warn">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">4</span>
+    <h3>שני עמודים מכוונים לאותו ביטוי ראש, וההפניות מחזקות את עמוד האודות</h3>
+    <span class="pill warn">גבוה</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p>הקובץ מפנה <strong>10 כתובות ו-460 קליקים</strong> אל <span dir="ltr">/חברת-סיעוד/</span>, ובהן <span dir="ltr">/הנהלת-החברה/</span> (339 קליקים), <span dir="ltr">/manpowergroup-ישראל/</span> (55) ו-<span dir="ltr">/testimonials/</span> (25). ההפניות עצמן רלוונטיות מבחינת תוכן, אבל עמוד היעד בעייתי.</p>
 <p><strong>שני העמודים מכוונים לאותו ביטוי ראש באתר החדש:</strong></p>
 <table class="mini">
 <thead><tr><th>עמוד</th><th>"חברת סיעוד" ב-Title</th><th>"חברת סיעוד" ב-H1</th></tr></thead>
@@ -130,13 +171,20 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 </tbody></table>
 <p>דף הבית הוא שמדורג היום על <strong>חברת סיעוד</strong> (43 קליקים, 5,993 חשיפות, מיקום 6.8). אף עמוד אודות אינו מדורג על הביטוי הזה. אבל באתר החדש עמוד האודות מכוון אליו ב-Title, ב-H1 וב-slug, ומקבל בנוסף 460 קליקים של סמכות מההפניות. דף הבית, לעומתו, איבד את הביטוי מתגית ה-Title.</p>
 <p>זו קניבליזציה: שני עמודים באותו אתר מכוונים לאותה שאילתה. גוגל יבחר אחד מהם, ולא בהכרח את זה שאתם מעדיפים. איננו טוענים שעמוד האודות בהכרח יעקוף את דף הבית, אלא שהמצב הזה מחייב הכרעה לפני ההשקה.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> ההפניות עצמן תקינות. יש להכריע איזה עמוד מחזיק בביטוי, ואז ליישר את השני:
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> ההפניות עצמן תקינות. יש להכריע איזה עמוד מחזיק בביטוי, ואז ליישר את השני:
 <br><strong>מומלץ:</strong> דף הבית מחזיק ב-חברת סיעוד. העבירו את עמוד האודות ל-slug אחר, למשל <span dir="ltr">/about-us/</span>, עדכנו את 10 הכללים בהתאם, הסירו את הביטוי מה-Title ומה-H1 שלו, והחזירו אותו לתגית ה-Title של דף הבית.
 <br><strong>חלופה:</strong> עמוד האודות מחזיק בביטוי, ואז יש להסיר אותו מה-H1 של דף הבית ולמקד את דף הבית במותג.
 <br>הפתרון היחיד שאינו קביל הוא להשאיר את המצב הנוכחי, שבו שני העמודים מתחרים.</div>
-</div><div class="issue warn">
-  <div class="issue-h"><span class="num">5</span><h3>שרשראות הפניה: היעד עצמו מפנה הלאה</h3><span class="pill warn">גבוה</span></div>
-  <div class="issue-b"><p>בששה כללים היעד המוגדר אינו העמוד הסופי. כל קפיצה נוספת מאבדת ערך ומאטה את הסריקה. חמישה מהם כבר סומנו על ידי הצוות הטכני בגיליון <span dir="ltr">Needs Review</span>.</p>
+  </div>
+</details><details class="issue warn">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">5</span>
+    <h3>שרשראות הפניה: היעד עצמו מפנה הלאה</h3>
+    <span class="pill warn">גבוה</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p>בששה כללים היעד המוגדר אינו העמוד הסופי. כל קפיצה נוספת מאבדת ערך ומאטה את הסריקה. חמישה מהם כבר סומנו על ידי הצוות הטכני בגיליון <span dir="ltr">Needs Review</span>.</p>
 <table class="mini">
 <thead><tr><th>מקור</th><th>יעד בקובץ</th><th>נוחת בפועל</th></tr></thead>
 <tbody>
@@ -148,11 +196,18 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/branch/סניף-נתניה-דרום/</span> <span class="muted small">(3 קליקים, 155 חשיפות)</span></td><td><span dir="ltr">/branch/סניף-המשולש/</span></td><td><span class="pill bad">/branches/</span></td></tr>
 </tbody></table>
 <p>השורה האחרונה חמורה מהאחרות: סניף נתניה דרום נוחת בעמוד ריכוז הסניפים הכללי ולא בעמוד סניף.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> הצביעו ישירות על היעד הסופי בכל ששת הכללים, כלומר <span dir="ltr">/חברת-סיעוד/</span> בחמשת הראשונים (או ה-slug החדש לפי סעיף 4).
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> הצביעו ישירות על היעד הסופי בכל ששת הכללים, כלומר <span dir="ltr">/חברת-סיעוד/</span> בחמשת הראשונים (או ה-slug החדש לפי סעיף 4).
 <br>את <span dir="ltr">/branch/סניף-נתניה-דרום/</span> הפנו אל <span dir="ltr">/branch/סניף-נתניה/</span>, העמוד שמאחד את שני סניפי נתניה, ולא אל <span dir="ltr">/branches/</span>.</div>
-</div><div class="issue warn">
-  <div class="issue-h"><span class="num">6</span><h3>קבצים ועמוד עם 7,610 חשיפות מחזירים 404 ואינם בקובץ</h3><span class="pill warn">גבוה</span></div>
-  <div class="issue-b"><table class="mini">
+  </div>
+</details><details class="issue warn">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">6</span>
+    <h3>קבצים ועמוד עם 7,610 חשיפות מחזירים 404 ואינם בקובץ</h3>
+    <span class="pill warn">גבוה</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><table class="mini">
 <thead><tr><th>כתובת</th><th>חשיפות</th></tr></thead>
 <tbody>
 <tr><td><span dir="ltr">/wp-content/uploads/2017/04/אינפו1.pdf</span></td><td class="num">6,142</td></tr>
@@ -160,12 +215,19 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/wp-content/uploads/2017/07/אינפו2_En.pdf</span></td><td class="num">242</td></tr>
 <tr><td><span dir="ltr">/שירותי-השגחה-וטיפול-פרטיים/</span> <span class="muted small">(עמוד תוכן)</span></td><td class="num">114</td></tr>
 </tbody></table></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> העלו את שלושת קבצי ה-PDF מחדש <strong>באותן כתובות בדיוק</strong>, או הפנו אותם ל-<span dir="ltr">/מידע-וזכויות/</span>.
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> העלו את שלושת קבצי ה-PDF מחדש <strong>באותן כתובות בדיוק</strong>, או הפנו אותם ל-<span dir="ltr">/מידע-וזכויות/</span>.
 <br>את <span dir="ltr">/שירותי-השגחה-וטיפול-פרטיים/</span> הפנו אל <span dir="ltr">/סל-השירותים-שלנו/</span>.
 <br><strong>שימו לב:</strong> הקובץ <span dir="ltr">MGScare-איפיון-אתר-1.docx</span> (136 חשיפות) הוא מסמך אפיון פנימי של האתר. <strong>אין להחזיר אותו.</strong> השאירו אותו 404.</div>
-</div><div class="issue mid">
-  <div class="issue-h"><span class="num">7</span><h3>פיצול גמלת סיעוד לשלושה עמודים נשמר במקום להיפתר</h3><span class="pill mid">בינוני</span></div>
-  <div class="issue-b"><p>שלושה עמודים באתר החדש מתחרים על אותה כוונת חיפוש. לשניים מהם תגית Title <strong>זהה לחלוטין</strong>.</p>
+  </div>
+</details><details class="issue mid">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">7</span>
+    <h3>פיצול גמלת סיעוד לשלושה עמודים נשמר במקום להיפתר</h3>
+    <span class="pill mid">בינוני</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p>שלושה עמודים באתר החדש מתחרים על אותה כוונת חיפוש. לשניים מהם תגית Title <strong>זהה לחלוטין</strong>.</p>
 <table class="mini">
 <thead><tr><th>עמוד</th><th>תגית Title</th></tr></thead>
 <tbody>
@@ -174,10 +236,17 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/nursing-benefit/</span></td><td>גמלת סיעוד | תביעה לגמלת סיעוד - מדריך | מנפאואר</td></tr>
 </tbody></table>
 <p>הקובץ אף <strong>מזין את <span dir="ltr">/nursing-benefit/</span> בשתי הפניות נוספות</strong>, <span dir="ltr">/תביעה-לגמלת-סיעוד/</span> ו-<span dir="ltr">/איך-מגישים-תביעה-לגמלת-סיעוד/</span>, ובכך מקבע את הפיצול.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> בחרו עמוד קנוני אחד, ככל הנראה <span dir="ltr">/גמלת-סיעוד/</span>. הפנו אליו את <span dir="ltr">/nursing-benefit/</span> ב-301 במקום להזין אותו, ותנו noindex לעמוד הקטגוריה.</div>
-</div><div class="issue mid">
-  <div class="issue-h"><span class="num">8</span><h3>שישה כללים מפנים לדף הבית במקום לעמוד רלוונטי</h3><span class="pill mid">בינוני</span></div>
-  <div class="issue-b"><table class="mini">
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> בחרו עמוד קנוני אחד, ככל הנראה <span dir="ltr">/גמלת-סיעוד/</span>. הפנו אליו את <span dir="ltr">/nursing-benefit/</span> ב-301 במקום להזין אותו, ותנו noindex לעמוד הקטגוריה.</div>
+  </div>
+</details><details class="issue mid">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">8</span>
+    <h3>שישה כללים מפנים לדף הבית במקום לעמוד רלוונטי</h3>
+    <span class="pill mid">בינוני</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><table class="mini">
 <thead><tr><th>כתובת</th><th>קליקים</th><th>חשיפות</th><th>יעד מוצע</th></tr></thead>
 <tbody>
 <tr><td><span dir="ltr">/manpower-care-copy-2/</span></td><td class="num">3</td><td class="num">721</td><td><span dir="ltr">/חברת-סיעוד/</span></td></tr>
@@ -185,16 +254,30 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/התמחויות/</span></td><td class="num">0</td><td class="num">120</td><td><span dir="ltr">/סל-השירותים-שלנו/</span></td></tr>
 <tr><td colspan="4" class="muted small"><span dir="ltr">/thank_you/</span> (47 חשיפות), <span dir="ltr">/skill/</span> ו-<span dir="ltr">/skill/תרגילים-לדוגמא/</span> חסרי ערך אורגני, אפשר להשאירם כפי שהם.</td></tr>
 </tbody></table></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> הפנו את שלושת הראשונים ליעד תוכן מקביל. עבור <span dir="ltr">/privacy/</span> כבר קיים <span dir="ltr">/privacy-policy/</span> באתר החדש.</div>
-</div><div class="issue mid">
-  <div class="issue-h"><span class="num">9</span><h3>שתי כתובות שלא טופלו: ארכיון הסניפים ועמודי מבחן תלות</h3><span class="pill mid">בינוני</span></div>
-  <div class="issue-b"><p><strong>ארכיון הסניפים:</strong> הכתובת <span dir="ltr">/branch/</span> (9 קליקים, <strong>1,456 חשיפות</strong>) אינה בקובץ. לפי ההנחה שהוגדרה היא אמורה להישאר ללא שינוי, אבל באתר החדש היא מופנית ל-<span dir="ltr">/branches/</span> ברמת ה-CMS. התנהגות זו לא בהכרח תשוחזר בשרת.</p>
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> הפנו את שלושת הראשונים ליעד תוכן מקביל. עבור <span dir="ltr">/privacy/</span> כבר קיים <span dir="ltr">/privacy-policy/</span> באתר החדש.</div>
+  </div>
+</details><details class="issue mid">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">9</span>
+    <h3>שתי כתובות שלא טופלו: ארכיון הסניפים ועמודי מבחן תלות</h3>
+    <span class="pill mid">בינוני</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p><strong>ארכיון הסניפים:</strong> הכתובת <span dir="ltr">/branch/</span> (9 קליקים, <strong>1,456 חשיפות</strong>) אינה בקובץ. לפי ההנחה שהוגדרה היא אמורה להישאר ללא שינוי, אבל באתר החדש היא מופנית ל-<span dir="ltr">/branches/</span> ברמת ה-CMS. התנהגות זו לא בהכרח תשוחזר בשרת.</p>
 <p><strong>עמודי מבחן תלות:</strong> שני עמודים באתר החדש נושאים <strong>תגית Title זהה ו-H1 זהה</strong> ("איך להיערך למבחן תלות?"): <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span> ו-<span dir="ltr">/איך-להיערך-למבחן-תלות/</span>. אין להם אף כלל בקובץ, ושניהם יישארו חיים במקביל.</p></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> הוסיפו כלל מפורש <span dir="ltr">/branch/ → /branches/</span>. אל תסתמכו על התנהגות ה-CMS.
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> הוסיפו כלל מפורש <span dir="ltr">/branch/ → /branches/</span>. אל תסתמכו על התנהגות ה-CMS.
 <br>בחרו עמוד קנוני אחד ממבחן התלות והפנו אליו את השני ב-301.</div>
-</div><div class="issue mid">
-  <div class="issue-h"><span class="num">10</span><h3>כלל כפול ונתוני קליקים שגויים בגיליון</h3><span class="pill mid">נמוך</span></div>
-  <div class="issue-b"><p><strong>כלל כפול:</strong> <span dir="ltr">/מטפלים-לקשישים-בבית/</span> מופיע פעמיים עם אותו יעד. לא מזיק, אך יש לנקות.</p>
+  </div>
+</details><details class="issue mid">
+  <summary class="issue-h">
+    <span class="chev" aria-hidden="true"></span>
+    <span class="num">10</span>
+    <h3>כלל כפול ונתוני קליקים שגויים בגיליון</h3>
+    <span class="pill mid">נמוך</span>
+  </summary>
+  <div class="issue-body">
+    <div class="issue-b"><p><strong>כלל כפול:</strong> <span dir="ltr">/מטפלים-לקשישים-בבית/</span> מופיע פעמיים עם אותו יעד. לא מזיק, אך יש לנקות.</p>
 <p><strong>נתוני הקליקים בגיליון <span dir="ltr">SEO Request Mapping</span> אינם תואמים ל-GSC</strong>, לשני הכיוונים:</p>
 <table class="mini">
 <thead><tr><th>כתובת</th><th>בגיליון</th><th>ב-GSC בפועל</th></tr></thead>
@@ -206,8 +289,9 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/manpower-world/</span></td><td class="num">391</td><td class="num">16</td></tr>
 <tr><td><span dir="ltr">/חזון-וערכים/</span></td><td class="num">371</td><td class="num">2</td></tr>
 </tbody></table></div>
-  <div class="fix"><strong>הפעולה הנדרשת:</strong> הנתונים אינם משפיעים על ההפניות עצמן, אך אם שימשו לתעדוף, התעדוף שגוי. השתמשו בנתוני GSC ל-12 חודשים.</div>
-</div>
+    <div class="fix"><strong>הפעולה הנדרשת:</strong> הנתונים אינם משפיעים על ההפניות עצמן, אך אם שימשו לתעדוף, התעדוף שגוי. השתמשו בנתוני GSC ל-12 חודשים.</div>
+  </div>
+</details>
 
 <h2>מה נעשה נכון</h2>
 <div class="ok-box"><ul><li>כל 90 הכללים הם 301, וכל 35 היעדים המוגדרים בקובץ מגיעים לעמוד שמחזיר 200. אין אף הפניה לעמוד שבור.</li><li>כל העמודים בעלי הערך הגבוה שמשנים כתובת מכוסים: סניף נתניה צפון (291 קליקים), סניף תל אביב (88) וסניף יהוד (72).</li><li>העמודים החזקים ביותר נשארים בכתובתם ואינם זקוקים להפניה: דף הבית (1,768 קליקים), /branches/ (1,771 קליקים), /טיפול-בנכי-צהל/ ו-/branch/סניף-חיפה/.</li><li>האיחודים שהומלצו בדוח המיגרציה בוצעו: עמודי חדרה הכפולים, שני סניפי נתניה, סניף תל אביב לגוש דן וסניף יהוד לבקעת אונו.</li><li>הצוות הטכני תיקן שגיאה שלנו: המסמך שלנו הפנה את המאמר על סוכרת ופעילות גופנית אל /דמנציה-מידע/, והם זיהו זאת ובנו את ההפניה נכון אל /category/סוכרת/.</li></ul></div>
