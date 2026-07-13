@@ -36,7 +36,8 @@ tbody tr:nth-child(even){background:var(--panel2)}
 .task>summary{list-style:none;cursor:pointer;padding:15px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;user-select:none}
 .task>summary::-webkit-details-marker{display:none}
 .task>summary:hover{background:#132038}
-.task>summary::after{content:"BE";margin-inline-start:auto;color:var(--muted);font-size:15px;transition:transform .2s}
+.task>summary:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px}
+.task>summary::after{content:"▾";margin-inline-start:auto;color:var(--muted);font-size:15px;transition:transform .2s}
 .task[open]>summary::after{transform:rotate(180deg)}
 .task[open]>summary{border-bottom:1px solid var(--line)}
 .task .body{padding:4px 18px 18px}
@@ -97,7 +98,8 @@ footer{color:var(--muted);text-align:center;font-size:13.5px;margin-top:40px;pad
       <tr><td>12</td><td><span class="type">Physician</span></td><td class="no">חסום</td><td>0 היום</td><td>אין עמוד רופא</td></tr>
     </tbody>
   </table>
-  <div class="win">הטמעת משימות 5 עד 10 בתבניות מכסה <b>631 עמודים שונים</b> אוטומטית, בלי עבודה ידנית לכל עמוד.</div>
+  <div class="win">הטמעת משימות 5 עד 10 בתבניות מכסה <b>631 עמודים שונים</b> אוטומטית, בלי עבודה ידנית לכל עמוד. (631 = מספר העמודים הייחודיים אחרי קיזוז חפיפות: כל 19 עמודי הווידאו ו-29 מתוך 43 עמודי השאלות כלולים ממילא ב-535 עמודי התוכן.)</div>
+  <div class="note"><b>מוסכמה בקוד:</b> כל ערך בסוגריים מסולסלים, למשל <span class="type">{{page.url}}</span>, הוא ערך דינמי שיש לשלוף מרשומת העמוד. כל שאר הערכים הם ליטרלים שניתן להעתיק כמות שהם. אין להעתיק ערך דינמי כטקסט קבוע.</div>
 </section>
 
 <section>
@@ -178,20 +180,20 @@ footer{color:var(--muted);text-align:center;font-size:13.5px;margin-top:40px;pad
 {
   "@context": "https://schema.org",
   "@type": "MedicalWebPage",
-  "url": "https://www.leumit.co.il/diseases/diabetic-foot/",
-  "name": "כף רגל סוכרתית",
+  "url": "{{page.url}}",
+  "name": "{{page.title}}",
   "inLanguage": "he-IL",
   "author": { "@id": "https://www.leumit.co.il#organization" },
   "publisher": { "@id": "https://www.leumit.co.il#organization" },
 
   "about": {
     "@type": "MedicalCondition",
-    "name": "כף רגל סוכרתית",
-    "alternateName": "Diabetic Foot"
+    "name": "{{page.conditionName}}",
+    "alternateName": "{{page.conditionNameEn}}"
   }
 }
 &lt;/script&gt;</pre>
-    <p class="legend">url ו-name נשלפים מהעמוד. את about יש להוסיף רק במדור diseases, עם שם המחלה.</p></div>
+    <p class="legend">דוגמה מלאה לעמוד /diseases/diabetic-foot/: url = הכתובת, name = "כף רגל סוכרתית", about.name = "כף רגל סוכרתית", about.alternateName = "Diabetic Foot". את בלוק about יש להוסיף <b>רק</b> במדור diseases.</p></div>
   </details>
 
   <details class="task">
@@ -203,15 +205,15 @@ footer{color:var(--muted);text-align:center;font-size:13.5px;margin-top:40px;pad
 {
   "@context": "https://schema.org",
   "@type": "JobPosting",
-  "title": "רוקח.ת מחליפ.ה",
-  "description": "&lt;p&gt;ניפוק תרופות, עבודה בצוות ומתן שירות למבוטחים.&lt;/p&gt;&lt;p&gt;דרישות: רוקח.ת מוסמכ.ת. ניסיון קודם יתרון. נכונות לעבודה במשמרות.&lt;/p&gt;&lt;p&gt;היקף משרה: 50-100%.&lt;/p&gt;",
+  "title": "{{job.title}}",
+  "description": "{{job.fullDescriptionHtml}}",
   "identifier": {
     "@type": "PropertyValue",
     "name": "לאומית שירותי בריאות",
-    "value": "3853"
+    "value": "{{job.id}}"
   },
-  "datePosted": "2026-06-01",
-  "employmentType": ["FULL_TIME", "PART_TIME"],
+  "datePosted": "{{job.datePosted}}",
+  "employmentType": "{{job.employmentType}}",
   "hiringOrganization": {
     "@type": "Organization",
     "name": "לאומית שירותי בריאות",
@@ -221,13 +223,14 @@ footer{color:var(--muted);text-align:center;font-size:13.5px;margin-top:40px;pad
     "@type": "Place",
     "address": {
       "@type": "PostalAddress",
-      "addressRegion": "אזור נגב",
+      "streetAddress": "{{job.street}}",
+      "addressLocality": "{{job.city}}",
       "addressCountry": "IL"
     }
   }
 }
 &lt;/script&gt;</pre>
-    <div class="note"><b>שתי דרישות חובה של גוגל:</b> <span class="type">datePosted</span> חייב להיות תאריך ISO 8601 אמיתי (YYYY-MM-DD), לא טקסט. <span class="type">description</span> חייב להכיל את תיאור המשרה <b>המלא</b> כפי שמוצג בעמוד (תיאור, דרישות, היקף), ומותר בו HTML. משרה שנסגרה: להסיר מהאתר או להוסיף <span class="type">validThrough</span> עם תאריך אמיתי.</div></div>
+    <div class="note"><b>דרישות חובה של גוגל:</b> <span class="type">datePosted</span> חייב להיות תאריך ISO 8601 (YYYY-MM-DD), לא טקסט חופשי. <span class="type">description</span> חייב להכיל את תיאור המשרה <b>המלא</b> כפי שמוצג בעמוד (תיאור, דרישות, היקף), ומותר בו HTML. <span class="type">employmentType</span> מקבל ערכים מוגדרים: FULL_TIME, PART_TIME, CONTRACTOR, TEMPORARY. ב-<span class="type">jobLocation</span> יש למלא את המיקום הספציפי ביותר שקיים (עיר ורחוב); אזור רחב בלבד עלול להחליש את התוצאה. משרה שנסגרה: להסיר מהאתר, או להוסיף <span class="type">validThrough</span> עם תאריך אמיתי.</div></div>
   </details>
 
   <details class="task">
@@ -280,30 +283,31 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
 {
   "@context": "https://schema.org",
   "@type": "VideoObject",
-  "name": "תזונה בגיל המעבר",
-  "description": "סרטון מבית לאומית שירותי בריאות בנושא תזונה נכונה בגיל המעבר.",
-  "thumbnailUrl": "https://i.ytimg.com/vi/_p2LbovBQq0/maxresdefault.jpg",
-  "uploadDate": "2026-06-17",
-  "embedUrl": "https://www.youtube.com/embed/_p2LbovBQq0"
+  "name": "{{video.title}}",
+  "description": "{{video.description}}",
+  "thumbnailUrl": "https://i.ytimg.com/vi/{{video.id}}/maxresdefault.jpg",
+  "uploadDate": "{{video.uploadDate}}",
+  "embedUrl": "https://www.youtube.com/embed/{{video.id}}"
 }
 &lt;/script&gt;</pre>
-    <p class="legend">thumbnailUrl ו-embedUrl נבנים ממזהה הסרטון. אין להוסיף contentUrl עבור סרטוני יוטיוב. רשימת 19 העמודים בנספח.</p></div>
+    <p class="legend">דוגמה אמיתית: הסרטון "תזונה בגיל המעבר" (מזהה _p2LbovBQq0, הועלה ב-2026-06-17). אין להוסיף contentUrl עבור סרטוני יוטיוב. רשימת 19 העמודים בנספח.</p>
+    <div class="note"><b>שימו לב לתמונה הממוזערת:</b> maxresdefault.jpg אינו קיים עבור כל סרטון ביוטיוב. יש לוודא שהקובץ מחזיר 200, ואם לא, ליפול חזרה ל-hqdefault.jpg (שקיים תמיד), או לשלוף את התמונה מ-YouTube Data API. <span class="type">uploadDate</span> ו-<span class="type">name</span> יש לשלוף מנתוני הסרטון, לא להמציא.</div></div>
   </details>
 
   <details class="task">
     <summary><span class="num">9</span><span class="name">NewsArticle</span><span class="badge b-new">חדש</span><span class="type">6 עמודים</span></summary>
     <div class="body">
     <p class="kv"><b>מה חסר:</b> ל-6 עמודי החדשות אין סכמת כתבה.</p>
-    <p class="kv"><b>היכן:</b> רק בעמודים שכתובתם פותחת ב-<span class="type">/leumit-general/news-event</span>. שאר 23 העמודים תחת leumit-general הם עמודי מידע ותקנון ואינם מקבלים NewsArticle.</p>
+    <p class="kv"><b>היכן:</b> רק בעמודים שכתובתם פותחת ב-<span class="type">/leumit-general/news-event*</span> (כולל news-event וגם news-events). שאר 23 העמודים תחת leumit-general הם עמודי מידע ותקנון ואינם מקבלים NewsArticle.</p>
 <pre>&lt;script type="application/ld+json"&gt;
 {
   "@context": "https://schema.org",
   "@type": "NewsArticle",
-  "headline": "סקר גלובס קבע: לאומית במקום הראשון",
-  "url": "https://www.leumit.co.il/leumit-general/news-events-globes_service-1st-place/",
-  "image": ["https://www.leumit.co.il/media/xvwe2e2h/16.png"],
-  "datePublished": "2026-01-14",
-  "dateModified": "2026-01-14",
+  "headline": "{{page.title}}",
+  "url": "{{page.url}}",
+  "image": ["{{page.imageUrl}}"],
+  "datePublished": "{{page.datePublished}}",
+  "dateModified": "{{page.dateModified}}",
   "author": {
     "@type": "Organization",
     "name": "לאומית שירותי בריאות"
@@ -313,12 +317,14 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
     "name": "לאומית שירותי בריאות",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.leumit.co.il/[נכס-לוגו-חדש].png"
+      "url": "https://www.leumit.co.il/{{logo-112px}}.png",
+      "width": 250,
+      "height": 112
     }
   }
 }
 &lt;/script&gt;</pre>
-    <div class="note"><b>שתי הערות:</b> <span class="type">datePublished</span> ו-<span class="type">dateModified</span> חייבים להיות תאריכי ISO 8601 אמיתיים מתוך רשומת העמוד (הערך בדוגמה הוא ממלא מקום). <span class="type">publisher.logo</span> תלוי בהשלמת משימה 3.</div></div>
+    <div class="note"><b>הערות:</b> <span class="type">datePublished</span> ו-<span class="type">dateModified</span> חייבים להיות תאריכי ISO 8601 מתוך רשומת העמוד. <span class="type">image</span> חייבת להיות תמונת הכתבה האמיתית, סריקה וברוחב 1200px לפחות. <span class="type">publisher.logo</span> תלוי בהשלמת משימה 3. לדוגמה, בעמוד הזכייה בסקר גלובס הכותרת היא "סקר גלובס קבע: לאומית במקום הראשון".</div></div>
   </details>
 
   <details class="task">
@@ -330,7 +336,7 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
 {
   "@context": "https://schema.org",
   "@type": "Service",
-  "name": "ביטוח משלים לאומית",
+  "name": "{{page.serviceName}}",
   "serviceType": "ביטוח בריאות משלים",
   "provider": { "@id": "https://www.leumit.co.il#organization" },
   "areaServed": "IL"
@@ -354,21 +360,22 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
 2. רינדור בשרת (לא רינדור בצד לקוח בלבד)
 3. קישור פנימי שניתן לסריקה מעמוד האיתור
 4. תוכן גלוי אמיתי: שם, כתובת, טלפון, שעות פעילות, תחומי שירות</pre>
-    <p class="kv"><b>ואז</b> ניתן להטמיע, כשהערכים נשלפים מרשומת הסניף:</p>
+    <p class="kv"><b>ואז</b> ניתן להטמיע, כשהערכים נשלפים מרשומת הסניף. <b>בעמודי בתי מרקחת</b> יש להשתמש באותו מבנה בדיוק, אך עם <span class="type">"@type": "Pharmacy"</span> במקום MedicalClinic:</p>
 <pre>&lt;script type="application/ld+json"&gt;
 {
   "@context": "https://schema.org",
   "@type": "MedicalClinic",
-  "name": "מרפאת לאומית, שם הסניף",
+  "name": "{{branch.name}}",
+  "url": "{{branch.url}}",
   "parentOrganization": { "@id": "https://www.leumit.co.il#organization" },
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "רחוב ומספר",
-    "addressLocality": "עיר",
+    "streetAddress": "{{branch.street}}",
+    "addressLocality": "{{branch.city}}",
     "addressCountry": "IL"
   },
-  "geo": { "@type": "GeoCoordinates", "latitude": "קו רוחב", "longitude": "קו אורך" },
-  "telephone": "*507",
+  "geo": { "@type": "GeoCoordinates", "latitude": {{branch.lat}}, "longitude": {{branch.lng}} },
+  "telephone": "{{branch.phone}}",
   "openingHoursSpecification": [{
     "@type": "OpeningHoursSpecification",
     "dayOfWeek": ["Sunday","Monday","Tuesday","Wednesday","Thursday"],
@@ -387,10 +394,11 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
 {
   "@context": "https://schema.org",
   "@type": "Physician",
-  "name": "שם הרופא",
-  "medicalSpecialty": "תחום ההתמחות",
+  "name": "{{doctor.name}}",
+  "url": "{{doctor.url}}",
+  "medicalSpecialty": "{{doctor.specialty}}",
   "memberOf": { "@id": "https://www.leumit.co.il#medical-organization" },
-  "availableService": { "@type": "MedicalProcedure", "name": "סוג השירות" }
+  "worksFor": { "@id": "https://www.leumit.co.il#organization" }
 }
 &lt;/script&gt;</pre></div>
   </details>
@@ -398,7 +406,7 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
 
 <section>
   <h2>נספח: רשימת העמודים המלאה</h2>
-  <p class="h2sub">כל הכתובות שנסרקו וזוהו, לפי משימה.</p>
+  <p class="h2sub">הכתובות המדויקות לכל משימה מותנית. משימות 5 ו-6 חלות על מדורים שלמים ועל תבנית כתובת, ולכן מוצגות כפילוח וכתבנית ולא כרשימת כתובות.</p>
 
   <details><summary>משימה 7 · 43 עמודים ל-FAQPage (יש בהם שאלות ותשובות אמיתיות)</summary>
     <ul class="pagelist">
@@ -606,7 +614,7 @@ if (items.length &gt;= 2) emit FAQPage(items);   // פחות משניים: לא 
   <p><span class="type">WebSite</span> ו-<span class="type">Organization</span> / <span class="type">MedicalOrganization</span> מופיעות בעמוד הבית בלבד. כל שאר הסכמות הן פר-עמוד. בעמודים הפנימיים יש להשתמש ב-<span class="type">@id</span> שמפנה לישות הארגון בעמוד הבית, בלי לשכפל את כל פרטי הארגון.</p>
 
   <h3>לפני עלייה לאוויר</h3>
-  <p>לאמת כל בלוק מול דרישות התוצאות המועשרות של גוגל לכל סוג, ולוודא שכל התאריכים הם ISO 8601 אמיתיים ושכל התמונות והלוגו קיימים ועומדים בדרישות המימדים.</p>
+  <p>לאמת את הסכמה <b>אחרי הרינדור</b>, על העמוד החי, ולא רק את קטע התבנית: לוודא שכל המשתנים הדינמיים הוחלפו בערכים אמיתיים, שכל התאריכים הם ISO 8601, ושכל התמונות והלוגו מחזירים 200 ועומדים בדרישות המימדים. מומלץ להריץ מדגם עמודים מכל סוג ב-Rich Results Test של גוגל.</p>
 </section>
 
 <footer>
