@@ -54,7 +54,7 @@ ol li,ul li{margin:5px 0}
   <div class="meta">
     <span class="chip">אתר: <b>midot.co.il</b></span>
     <span class="chip">פלטפורמה: <b>WordPress · Elementor · Yoast · WooCommerce</b></span>
-    <span class="chip">DOM מרונדר: <b>39 עמודי מוצר ובלוג</b></span>
+    <span class="chip">נסרקו: <b>220 עמודים (DOM + קוד מקור)</b></span>
   </div>
 </header>
 
@@ -63,7 +63,7 @@ ol li,ul li{margin:5px 0}
   <table>
     <thead><tr><th>#</th><th>נושא</th><th>ממצא</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>סכמת FAQ דרך עורך התוכן</td><td class="no">לא ניתן להוסיף FAQPage תקין דרך העורך. אף עמוד באתר לא כולל FAQPage.</td></tr>
+      <tr><td>1</td><td>סכמת FAQ דרך עורך התוכן</td><td class="no">לא ניתן להוסיף FAQPage תקין דרך העורך. אף עמוד לא כולל FAQPage <b>תקין</b>; בעמוד אחד נמצא ניסיון שבור (ראו סעיף 1).</td></tr>
       <tr><td>2</td><td>עמודים עם שאלות ותשובות ללא סכמה</td><td class="par"><b>14</b> עמודים עם מקטע שו"ת אמיתי, ללא FAQPage.</td></tr>
       <tr><td>3</td><td>סכמת Product לא עקבית</td><td class="par"><b>2</b> מתוך 13 עמודי מוצר ללא סכמת Product.</td></tr>
       <tr><td>4</td><td>Organization ושאר סכמות הבסיס</td><td class="yes">כבר קיימות (Yoast). אין לגעת ואין לשכפל.</td></tr>
@@ -73,7 +73,18 @@ ol li,ul li{margin:5px 0}
 
 <section>
   <h2>1. בעיית הליבה: סכמת FAQ</h2>
-  <div class="bad"><b>הבעיה:</b> לא ניתן להוסיף סכמת FAQPage דרך עורך התוכן של האתר. לפי דיווח הלקוח, כאשר מנסים להוסיף את הסכמה דרך העורך, היא מוצגת כ<b>קוד גלוי בגוף העמוד</b> במקום כ-JSON-LD תקין. הבדיקה שלנו מאשרת את התוצאה: <b>באף אחד מ-173 העמודים שנסרקו אין FAQPage תקין</b>, ולא נמצא מקטע קוד סכמה שדלף כטקסט (סימן לכך שכרגע אין FAQ schema באתר כלל, לא תקין ולא שבור).</div>
+  <div class="bad"><b>הבעיה:</b> לא ניתן להוסיף סכמת FAQPage דרך עורך התוכן של האתר. לפי דיווח הלקוח, כאשר מנסים להוסיף את הסכמה דרך העורך, היא מוצגת כ<b>קוד גלוי בגוף העמוד</b> במקום כ-JSON-LD תקין. הבדיקה שלנו על כל 220 העמודים מאשרת את התוצאה ואף מאתרת דוגמה חיה: <b>אין באתר אף FAQPage תקין</b>, ובעמוד אחד, <span class="type" dir="ltr">/polygraph-concerns-and-how-to-handle-them/</span>, נמצא ניסיון FAQ <b>שבור</b>.</div>
+  <p class="kv"><b>הדוגמה החיה (העמוד היחיד עם ניסיון FAQ):</b> ה-JSON עצמו תקין וכולל 5 שאלות, אך הוא נכשל משתי סיבות: הוא מוגדר כ-<span class="type">type="application/json"</span> במקום <span class="type">application/ld+json</span> (גוגל מתעלמת ממנו לחלוטין), והוא יושב בתוך תגית <span class="type">&lt;p&gt;</span> בגוף התוכן. זה בדיוק מה שהלקוח דיווח עליו.</p>
+  <pre>&lt;!-- מה שקיים היום בעמוד /polygraph-concerns-and-how-to-handle-them/ --&gt;
+&lt;p&gt;
+  &lt;script id="data" type="application/json"&gt;
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [ { "@type": "Question", "name": "איך נראה מבחן אמינות?", ... } ]
+  }
+  &lt;/script&gt;
+&lt;/p&gt;</pre>
   <h3>סיבת השורש (מה באמת קורה)</h3>
   <div class="bad"><b>הבעיה הטכנית:</b> האתר בנוי על תבנית ייעודית (<span class="type">midot-th</span>), ללא Page Builder בעמודי התוכן. כשצוות התוכן מדביק קוד <span class="type">&lt;script type="application/ld+json"&gt;</span> לתוך שדה התוכן של וורדפרס, וורדפרס מתייחס אליו כתוכן עריכה <b>לא מהימן</b>: מנגנון הסינון (<span class="type">wp_kses</span>) מסיר את תגית ה-<span class="type">&lt;script&gt;</span> בעת השמירה (למשתמשים ללא הרשאת <span class="type">unfiltered_html</span>), או ש-TinyMCE ממיר אותה לישויות. מה שנשאר, גוף ה-JSON, מודפס על ידי התבנית כ<b>טקסט גלוי</b> בעמוד. זו אינה תקלה נקודתית אלא אי-התאמה מבנית: קוד סכמה לא יכול לחיות בשדה תוכן עריכה.</div>
   <p class="kv"><b>למה אי אפשר לתקן דרך העורך:</b> אין להעניק הרשאת <span class="type">unfiltered_html</span> (סיכון XSS מאוחסן), מעבר בין מצבי עריכה מקודד את הקוד מחדש, ותחזוקה כפולה של טקסט גלוי + JSON נפרד מתפצלת עם הזמן. בנוסף, <span class="type">&lt;script&gt;</span> ידני יוצר גרף שני שמתנגש עם הגרף של Yoast. <b>הפתרון חייב להיות ברמת התבנית/הקוד, לא בעורך.</b></p>
@@ -85,7 +96,7 @@ ol li,ul li{margin:5px 0}
     <li><b>רק כשיש תוכן:</b> להפיק FAQPage רק כאשר קיים לפחות זוג שאלה+תשובה מלא. שדה ריק לא מפיק סכמה.</li>
     <li><b>מיקום הקוד:</b> מומלץ למקם את לוגיקת הסכמה בתוסף פונקציונליות קטן ולא בתבנית עצמה, כדי שתשרוד החלפת/עדכון תבנית.</li>
   </ol>
-  <p class="kv legend">הערה: הבאג לא ניתן לשחזור מהאתר החי כרגע, מכיוון שאין באתר סכמת FAQ כלל. לשחזור מדויק של הענף (KSES מול TinyMCE) יש לשמור עמוד ניסיון בסביבת Staging ולבדוק את הערך שנשמר ב-post_content.</p>
+  <p class="kv legend">הערה: הניסיון בעמוד הפוליגרף שרד כתגית script עם סוג שגוי (application/json). ניסיונות אחרים עשויים להתקודד כטקסט גלוי (כפי שהלקוח דיווח). שני המקרים הם אותה סיבת שורש: קוד סכמה לא יכול להתווסף נכון דרך העורך.</p>
   <p class="kv"><b>מבנה JSON-LD תקין</b> (דוגמה אמיתית מעמוד IntegriTEST):</p>
   <pre>&lt;script type="application/ld+json"&gt;
 {
@@ -137,7 +148,7 @@ ol li,ul li{margin:5px 0}
       <tr><td>10 טעויות נפוצות בתהליך גיוס עובדים</td><td class="legend" dir="ltr">/10-טעויות-נפוצות-בתהליך-גיוס-עובדים-וכי/</td><td style="text-align:center">6</td></tr>
     </tbody>
   </table>
-  <details><summary>10 עמודים נוספים לבדיקה ידנית (כותרות בצורת שאלה, ללא מקטע שו"ת מפורש)</summary>
+  <details><summary>9 עמודים נוספים לבדיקה ידנית (כותרות בצורת שאלה, ללא מקטע שו"ת מפורש)</summary>
     <p class="legend">בעמודים אלה יש כותרות בצורת שאלה בתוך גוף המאמר, אך לא מקטע שו"ת ייעודי. יש לוודא שלכל שאלה יש תשובה גלויה לפני סימונה כ-FAQ. הפתרון בסעיף 1 מסנן זאת אוטומטית (מפיק סכמה רק לזוג מלא).</p>
     <table><thead><tr><th>עמוד</th><th>כתובת</th></tr></thead><tbody>
       <tr><td>איך ניתן לחזות מראש מי יישאר ומי יתפטר? כל מה שצריך לדעת על מבחן חיזוי התפטרות</td><td class="legend" dir="ltr">/איך-ניתן-לחזות-מראש-מי-יישאר-ומי-יתפטר/</td></tr>
@@ -145,7 +156,6 @@ ol li,ul li{margin:5px 0}
       <tr><td>האם אפשר לסמוך על קורות חיים? איך לזהות מידע כוזב של מועמדים לעבודה</td><td class="legend" dir="ltr">/האם-אפשר-לסמוך-על-קורות-חיים-איך-לזהות/</td></tr>
       <tr><td>מה ההבדל בין תשאול מהימנות לבין ראיון עבודה?</td><td class="legend" dir="ltr">/תשאול-מהימנות-ראיון-עבודה/</td></tr>
       <tr><td>/איך-למנוע-מקרי-גניבה-והונאה-בארגון-דרכ/</td><td class="legend" dir="ltr">/איך-למנוע-מקרי-גניבה-והונאה-בארגון-דרכ/</td></tr>
-      <tr><td>"הפיל שבחדר": על החשש מבדיקות פוליגרף ואיך מתמודדים עם זה</td><td class="legend" dir="ltr">/polygraph-concerns-and-how-to-handle-them/</td></tr>
       <tr><td>מבחן אמינות ממוחשב (IntegriTEST)</td><td class="legend" dir="ltr">/product/integritest/</td></tr>
       <tr><td>בדיקת פוליגרף לעובד</td><td class="legend" dir="ltr">/product/בדיקת-פוליגרף/</td></tr>
       <tr><td>מבדק אמינות תקופתי לעובדים (TRUSTEE)</td><td class="legend" dir="ltr">/product/trustee/</td></tr>
@@ -224,7 +234,7 @@ ol li,ul li{margin:5px 0}
 
 <section class="bg">
   <h2>שיטת הבדיקה</h2>
-  <p>האתר משתמש ב-Google Tag Manager וב-JavaScript, ולכן חלק מהסכמות אינן מופיעות בקוד המקור שהשרת מחזיר. כל הממצאים אומתו על ה-<b>DOM המרונדר</b> בדפדפן אמיתי (Headless Chrome), בדיוק כפי שגוגל רואה את העמוד. 39 עמודי המוצר והבלוג, וכן עמודי מועמדי השו"ת, נבדקו על ה-DOM המרונדר (כולל אימות חוזר של עמודים שנטענו לאט). כל 173 העמודים באתר נסרקו בנוסף לאיתור דליפת קוד סכמה. לכל המלצה אומת בדפדפן שהסכמה באמת חסרה בעמוד היעד, כדי למנוע כפילות.</p>
+  <p>האתר משתמש ב-Google Tag Manager וב-JavaScript, ולכן חלק מהסכמות אינן מופיעות בקוד המקור שהשרת מחזיר. כל הממצאים אומתו על ה-<b>DOM המרונדר</b> בדפדפן אמיתי (Headless Chrome), בדיוק כפי שגוגל רואה את העמוד. עמודי המוצר והבלוג נבדקו על ה-DOM המרונדר (כולל אימות חוזר של עמודים שנטענו לאט). בנוסף, כל 220 עמודי התוכן נסרקו בקוד המקור, במספר מכשירים: FAQPage תקין (ld+json), FAQPage שבור (סוג script שגוי), וקוד סכמה שדלף כטקסט. הבדיקה במספר מכשירים היא שאיתרה את הניסיון השבור בעמוד הפוליגרף. לכל המלצה אומת בדפדפן שהסכמה באמת חסרה בעמוד היעד, כדי למנוע כפילות.</p>
 </section>
 
 <footer>NC Digital · דוח סכמות חסרות · מכון מידות · יולי 2026</footer>
