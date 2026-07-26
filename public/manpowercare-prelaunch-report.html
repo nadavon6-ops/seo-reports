@@ -88,13 +88,25 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">1</span><h3>אין תגית Canonical באף עמוד באתר</h3><span class="pill bad">חוסם השקה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>נבדקו כל <strong>128 הכתובות</strong> שמופיעות במפות האתר. באף אחת מהן אין תגית <code dir="ltr">rel="canonical"</code>.</p>
-<p>תגית Canonical אומרת לגוגל מהי הכתובת הרשמית של העמוד. בלעדיה, כל וריאציה של כתובת (עם או בלי סלאש, עם פרמטרים, עם אותיות גדולות) עלולה להיספר כעמוד נפרד, ועלולה להיווצר אי בהירות לגבי הכתובת המועדפת. באתר שבו קיימים עמודים דומים, הדבר מגביר את הסיכון שגוגל יבחר גרסה שאינה המועדפת עלינו.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להוסיף תגית Canonical עצמית לכל עמוד באתר, המצביעה על הכתובת המלאה של אותו עמוד. ב-Yoast SEO זה מתבצע אוטומטית ברגע שהתוסף פעיל ומוגדר נכון, ולכן כדאי לבדוק תחילה מדוע הוא אינו מפיק אותה כרגע.</div><div class="codewrap"><div class="codehead">functions.php — הוספת Canonical עצמי לכל עמוד (אם Yoast אינו מפיק אותה)</div><pre class="codeblock" dir="ltr">add_action(&#x27;wp_head&#x27;, function () {
-    if (is_singular() || is_page() || is_home() || is_archive()) {
-        $url = wp_get_canonical_url();
-        if (!$url) { $url = home_url(add_query_arg([], $GLOBALS[&#x27;wp&#x27;]-&gt;request)); }
+<p>תגית Canonical אומרת לגוגל מהי הכתובת הרשמית של העמוד. בלעדיה, כל וריאציה של כתובת (עם או בלי סלאש, עם פרמטרים, עם אותיות גדולות) עלולה להיספר כעמוד נפרד, ועלולה להיווצר אי בהירות לגבי הכתובת המועדפת. באתר שבו קיימים עמודים דומים, הדבר מגביר את הסיכון שגוגל יבחר גרסה שאינה המועדפת עלינו.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להוסיף תגית Canonical עצמית לכל עמוד באתר, המצביעה על הכתובת המלאה של אותו עמוד. ב-Yoast SEO זה מתבצע אוטומטית ברגע שהתוסף פעיל ומוגדר נכון, ולכן כדאי לבדוק תחילה מדוע הוא אינו מפיק אותה כרגע.</div><div class="codewrap"><div class="codehead">בדיקה ראשונה: מדוע Yoast אינו מפיק Canonical</div><pre class="codeblock" dir="ltr">1. ודאו ש-Yoast SEO פעיל ומעודכן.
+2. Yoast &gt; Settings &gt; Site features: ודאו ש-Crawl optimization אינו מסיר את התגית.
+3. Yoast &gt; Advanced &gt; Crawl settings: ודאו שלא הוגדרה הסרת canonical.
+4. בדקו שאין תוסף או קוד בתבנית שמסיר את הפלט של Yoast.
+
+Yoast מפיק canonical עצמי לכל עמוד כברירת מחדל.
+עדיף לתקן את המקור מאשר להוסיף תגית ידנית, שעלולה
+להתנגש עם Yoast וליצור שתי תגיות canonical באותו עמוד.
+
+רק אם Yoast אינו בשימוש, ולעמודים בודדים בלבד:
+
+add_action(&#x27;wp_head&#x27;, function () {
+    if (!is_singular()) { return; }
+    if (function_exists(&#x27;YoastSEO&#x27;)) { return; }
+    $url = wp_get_canonical_url();
+    if ($url) {
         echo &#x27;&lt;link rel=&quot;canonical&quot; href=&quot;&#x27; . esc_url($url) . &#x27;&quot; /&gt;&#x27; . &quot;\n&quot;;
     }
-}, 1);</pre></div></div>
+});</pre></div></div>
 </details><details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">2</span><h3>שמונה פריטים בפוטר אינם ניתנים ללחיצה</h3><span class="pill bad">חוסם השקה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>שמונה פריטים מופיעים בפוטר כטקסט רגיל, ללא תגית קישור. הם מוצגים לצד פריטים אחרים שכן מקושרים, אך לחיצה עליהם אינה מובילה לשום מקום. לשבעה מהם כבר קיים עמוד יעד באתר.</p>
@@ -141,8 +153,8 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/טפסים/</span></td><td>682 תווים</td><td>טפסים</td></tr>
 <tr><td><span dir="ltr">/טפסים-גמלת-סיעוד/</span></td><td>681 תווים</td><td>טפסים לגמלת סיעוד</td></tr>
 </tbody></table>
-<p>מדידת חפיפת אוצר המילים בין שני העמודים (יחס המילים המשותפות מתוך כלל המילים בשניהם) נתנה <strong>כ-86%</strong>. רוב התוכן בשניהם הוא אותו טופס יצירת קשר, וההבדל מסתכם בכותרת ובשתיים-שלוש שורות קישורים. שני העמודים מצומצמים מאוד, פחות מ-700 תווים כל אחד.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לאחד לעמוד טפסים אחד, מומלץ <span dir="ltr">/טפסים-גמלת-סיעוד/</span> בזכות הכתובת הברורה. להעביר אליו את הקישורים הייחודיים מהעמוד השני (המדריך להעסקת עובד זר, היתר להעסקת עובד זר), ולבצע הפניה 301 מהעמוד השני אליו.
-<br>לחלופין, אם רוצים לשמור שני עמודים נפרדים: להרחיב כל אחד מהם לתוכן ייחודי אמיתי, ולהסיר את הצירוף "גמלת סיעוד" מתגית ה-Title של <span dir="ltr">/טפסים/</span>.</div><div class="codewrap"><div class="codehead">.htaccess — איחוד עמודי הטפסים</div><pre class="codeblock" dir="ltr">Redirect 301 /טפסים/ /טפסים-גמלת-סיעוד/</pre></div></div>
+<p>מדידת חפיפת אוצר המילים בין שני העמודים (יחס המילים המשותפות מתוך כלל המילים בשניהם) נתנה <strong>כ-87%</strong>. רוב התוכן בשניהם הוא אותו טופס יצירת קשר, וההבדל מסתכם בכותרת ובשתיים-שלוש שורות קישורים. שני העמודים מצומצמים מאוד, פחות מ-700 תווים כל אחד.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לאחד לעמוד טפסים אחד, מומלץ <span dir="ltr">/טפסים-גמלת-סיעוד/</span> בזכות הכתובת הברורה. להעביר אליו את הקישורים הייחודיים מהעמוד השני (המדריך להעסקת עובד זר, היתר להעסקת עובד זר), ולבצע הפניה 301 מהעמוד השני אליו.
+<br>לחלופין, אם רוצים לשמור שני עמודים נפרדים: להרחיב כל אחד מהם לתוכן ייחודי אמיתי, ולהסיר את הצירוף "גמלת סיעוד" מתגית ה-Title של <span dir="ltr">/טפסים/</span>.</div><div class="codewrap"><div class="codehead">.htaccess: איחוד עמודי הטפסים</div><pre class="codeblock" dir="ltr">Redirect 301 /טפסים/ /טפסים-גמלת-סיעוד/</pre></div></div>
 </details><details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">5</span><h3>76 עמודים ללא תיאור מטא, ואין כפילויות בתיאורים הקיימים</h3><span class="pill bad">חוסם השקה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>מתוך 128 כתובות, ל-<strong>76</strong> אין תיאור מטא כלל. הפילוח:</p>
@@ -153,17 +165,18 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td>עמודי אזור ומחברים</td><td>4</td></tr>
 <tr><td>פוסטים בבלוג</td><td><span class="pill ok">0 מתוך 13, כולם תקינים</span></td></tr>
 </tbody></table>
-<div class="clarify"><strong>הבהרה לגבי ההערה על תיאורים כפולים בבלוג:</strong> נבדקו כל 128 הכתובות, ולא נמצא ולו תיאור מטא כפול אחד. כל 13 פוסטי הבלוג נושאים תיאור ייחודי ותקין באורך 121 עד 137 תווים. לא ניתן לקבוע מהי הסיבה לפער בלי לראות את הפלט של הכלי שביצע את הבדיקה. השערה סבירה היא ש-76 העמודים ללא תיאור סווגו יחד תחת "כפול או חסר", כפי שנהוג בכלים רבים, אך כדי לאמת זאת נדרשת רשימת הכתובות שהכלי סימן.</div></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשלים תיאורי מטא ל-4 עמודי התוכן הראשיים עד יום ראשון, כפי שסוכם בפגישה. עמודי מנהלי הסניפים אינם דורשים תיאור אם הם יקבלו noindex (ראו סעיף 12).</div><div class="codewrap"><div class="codehead">4 תיאורי המטא החסרים, מוכנים להעתקה</div><pre class="codeblock" dir="ltr">/תביעה-ייצוגית-גרוסו/
-תביעה ייצוגית גרוסו: מי זכאי לפיצוי, מה נקבע בהחלטת בית הדין ואיך בודקים זכאות. מנפאואר קר מלווה אתכם בתהליך. לייעוץ חינם *9055.
+<div class="clarify"><strong>הבהרה לגבי ההערה על תיאורים כפולים בבלוג:</strong> נבדקו כל 128 הכתובות, ולא נמצא ולו תיאור מטא כפול אחד. כל 13 פוסטי הבלוג נושאים תיאור ייחודי ותקין באורך 121 עד 137 תווים. לא ניתן לקבוע מהי הסיבה לפער בלי לראות את הפלט של הכלי שביצע את הבדיקה. השערה סבירה היא ש-76 העמודים ללא תיאור סווגו יחד תחת "כפול או חסר", כפי שנהוג בכלים רבים, אך כדי לאמת זאת נדרשת רשימת הכתובות שהכלי סימן.</div></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשלים תיאורי מטא ל-4 עמודי התוכן הראשיים עד יום ראשון, כפי שסוכם בפגישה. עמודי מנהלי הסניפים אינם דורשים תיאור אם הם יקבלו noindex (ראו סעיף 12).</div><div class="codewrap"><div class="codehead">3 תיאורי מטא לעמודי תוכן, מוכנים להעתקה</div><pre class="codeblock" dir="ltr">/תביעה-ייצוגית-גרוסו/
+תביעה ייצוגית גרוסו בענף הסיעוד: מי נכלל בהסדר, מה נקבע בהחלטת בית הדין, ואיך בודקים אם אתם זכאים לפיצוי. מנפאואר קר, ייעוץ ללא עלות בטלפון *9055.
 
 /איך-להיערך-למבחן-תלות/
-איך להיערך למבחן תלות של הביטוח הלאומי: מה בודקים, אילו מסמכים להכין ואיך להציג את המצב התפקודי נכון. ליווי מקצועי מנפאואר קר, *9055.
+מבחן תלות של הביטוח הלאומי קובע את הזכאות לגמלת סיעוד. מה בודקים בו, אילו מסמכים להכין ואיך להציג נכון את המצב התפקודי. ליווי מקצועי, מנפאואר קר *9055.
 
 /טיפולי-סיעוד/
-טיפולי סיעוד בבית: מטפלת סיעודית, ליווי מול הביטוח הלאומי והתאמה אישית לצורכי המטופל. מענה 24/7 ויעוץ ללא עלות. התקשרו *9055.
+טיפולי סיעוד בבית: מטפלת סיעודית בהתאמה אישית, ליווי מלא מול הביטוח הלאומי ומענה זמין 24 שעות ביממה. ייעוץ ראשוני ללא עלות. התקשרו *9055.
 
 /thanks/
-עמוד תודה. מומלץ להגדיר noindex ולא להשקיע בו תיאור מטא.</pre></div></div>
+עמוד תודה לאחר שליחת טופס. אינו מיועד לתנועה אורגנית.
+מומלץ להגדיר לו noindex ולא להשקיע בו תיאור מטא.</pre></div></div>
 </details>
 
 <h2>עדיפות שנייה, תוכן ועומק</h2>
@@ -201,7 +214,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/איך-להיערך-למבחן-תלות/</span></td><td>איך להיערך למבחן תלות? <span class="muted small">(זהה)</span></td><td>כ-4,700 תווים</td></tr>
 </tbody></table>
 <p>שני העמודים נושאים כותרת ראשית זהה מילה במילה, ואורך התוכן שלהם כמעט שווה (הפרש של פחות מ-2%). מדובר בשני עמודים העונים על אותה שאלה, ולכן גוגל נדרש לבחור ביניהם, ולא בהכרח יבחר את העמוד המועדף עלינו.</p>
-<p class="muted small">המספרים מעוגלים משום ששני העמודים כוללים מקטע "מאמרים נוספים" שמתחלף בין טעינות, ולכן ספירת התווים משתנה מעט בכל בדיקה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשמור עמוד אחד. מומלץ <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span>, שתגית ה-Title שלו טובה יותר. להעביר אליו כל פסקה ייחודית מהעמוד השני, ואז לבצע הפניה 301 מהעמוד השני אליו.</div><div class="codewrap"><div class="codehead">.htaccess — איחוד עמודי מבחן תלות</div><pre class="codeblock" dir="ltr">Redirect 301 /איך-להיערך-למבחן-תלות/ /מהו-מבחן-תלות-ואיך-להיערך/</pre></div></div>
+<p class="muted small">המספרים מעוגלים משום ששני העמודים כוללים מקטע "מאמרים נוספים" שמתחלף בין טעינות, ולכן ספירת התווים משתנה מעט בכל בדיקה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשמור עמוד אחד. מומלץ <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span>, שתגית ה-Title שלו טובה יותר. להעביר אליו כל פסקה ייחודית מהעמוד השני, ואז לבצע הפניה 301 מהעמוד השני אליו.</div><div class="codewrap"><div class="codehead">.htaccess: איחוד עמודי מבחן תלות</div><pre class="codeblock" dir="ltr">Redirect 301 /איך-להיערך-למבחן-תלות/ /מהו-מבחן-תלות-ואיך-להיערך/</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">8</span><h3>מדריך המטפלת הסיעודית יושב בעמוד הלא נכון</h3><span class="pill warn">תוכן</span></summary>
   <div class="issue-body"><div class="issue-b"><table class="mini"><thead><tr><th>עמוד</th><th>תפקידו המיועד</th><th>תוכן בפועל</th></tr></thead><tbody>
@@ -210,7 +223,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 </tbody></table>
 <p>בעמוד <span dir="ltr">/טיפולי-סיעוד/</span> קיימות 13 כותרות משנה, ותשע מהן עוסקות ישירות במטפלת סיעודית: מדריך להעסקה נכונה, מתי לשקול מטפלת, הכשרת המטפלות, השוואה בין מטפלת ישראלית לזרה, תהליך קבלה דרך ביטוח לאומי, התאמת מטפלת ותפקידיה. ארבע הנותרות הן כותרות מסגרת (הקדמה, עלויות, סיכום ושאלות ותשובות).</p>
 <p>התוצאה היא שהתוכן המקיף ביותר בנושא נמצא בכתובת שאינה מיועדת לו, בעוד עמוד השירות הראשי מצומצם יחסית להיקף הנושא.</p>
-<p class="muted small">העמוד <span dir="ltr">/מטפלת-סיעודית-זרה-24-7/</span> עוסק בנושא נבדל (מטפלת זרה עם לינה) ויש לשמור אותו כפי שהוא, עם קישור פנימי מעמוד השירות הראשי.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להעביר את תוכן מדריך המטפלת מ-<span dir="ltr">/טיפולי-סיעוד/</span> אל <span dir="ltr">/מטפלת-סיעודית/</span>, שיהפוך לעמוד עמוק ומקיף. רק לאחר שהתוכן הועבר בפועל, לבצע הפניה 301 מ-<span dir="ltr">/טיפולי-סיעוד/</span> אליו. <strong>אין לבצע את ההפניה לפני העברת התוכן.</strong></div><div class="codewrap"><div class="codehead">.htaccess — לביצוע רק אחרי העברת התוכן</div><pre class="codeblock" dir="ltr">Redirect 301 /טיפולי-סיעוד/ /מטפלת-סיעודית/</pre></div></div>
+<p class="muted small">העמוד <span dir="ltr">/מטפלת-סיעודית-זרה-24-7/</span> עוסק בנושא נבדל (מטפלת זרה עם לינה) ויש לשמור אותו כפי שהוא, עם קישור פנימי מעמוד השירות הראשי.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להעביר את תוכן מדריך המטפלת מ-<span dir="ltr">/טיפולי-סיעוד/</span> אל <span dir="ltr">/מטפלת-סיעודית/</span>, שיהפוך לעמוד עמוק ומקיף. רק לאחר שהתוכן הועבר בפועל, לבצע הפניה 301 מ-<span dir="ltr">/טיפולי-סיעוד/</span> אליו. <strong>אין לבצע את ההפניה לפני העברת התוכן.</strong></div><div class="codewrap"><div class="codehead">.htaccess: לביצוע רק אחרי העברת התוכן</div><pre class="codeblock" dir="ltr">Redirect 301 /טיפולי-סיעוד/ /מטפלת-סיעודית/</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">9</span><h3>ארבעה עמודים עוסקים בגמלת סיעוד</h3><span class="pill warn">תוכן</span></summary>
   <div class="issue-body"><div class="issue-b"><table class="mini"><thead><tr><th>עמוד</th><th>תפקיד מוצע</th></tr></thead><tbody>
@@ -220,7 +233,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/category/גמלת-סיעוד/</span> <span class="muted small">(ארכיון)</span></td><td>noindex</td></tr>
 </tbody></table>
 <p>ארבעת העמודים עוסקים באותו נושא מזוויות שונות. ריכוז התוכן העיקרי בעמוד אחד חזק, במקום פיזורו בין ארבעה, יסייע לגוגל לזהות איזה עמוד הוא המרכזי בנושא.</p>
-<p class="muted small">הבהרה: העמוד <span dir="ltr">/תביעה-ייצוגית-גרוסו/</span> שויך בטעות לקבוצה זו בבדיקה אוטומטית קודמת. הוא עוסק בתביעה ייצוגית, נושא אחר לגמרי, ואינו חלק מהקבוצה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להגדיר את <span dir="ltr">/גמלת-סיעוד/</span> כעמוד הראשי, להעביר אליו את התוכן הייחודי מ-<span dir="ltr">/nursing-benefit/</span> ואז להפנות 301, למקד את עמוד התהליך בשלבים בלבד, ולתת noindex לעמוד הקטגוריה.</div><div class="codewrap"><div class="codehead">.htaccess — איחוד אשכול גמלת סיעוד</div><pre class="codeblock" dir="ltr">Redirect 301 /nursing-benefit/ /גמלת-סיעוד/</pre></div></div>
+<p class="muted small">הבהרה: העמוד <span dir="ltr">/תביעה-ייצוגית-גרוסו/</span> שויך בטעות לקבוצה זו בבדיקה אוטומטית קודמת. הוא עוסק בתביעה ייצוגית, נושא אחר לגמרי, ואינו חלק מהקבוצה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להגדיר את <span dir="ltr">/גמלת-סיעוד/</span> כעמוד הראשי, להעביר אליו את התוכן הייחודי מ-<span dir="ltr">/nursing-benefit/</span> ואז להפנות 301, למקד את עמוד התהליך בשלבים בלבד, ולתת noindex לעמוד הקטגוריה.</div><div class="codewrap"><div class="codehead">.htaccess: איחוד אשכול גמלת סיעוד</div><pre class="codeblock" dir="ltr">Redirect 301 /nursing-benefit/ /גמלת-סיעוד/</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">10</span><h3>אלצהיימר ודמנציה, גבול לא ברור בין שני העמודים</h3><span class="pill warn">תוכן</span></summary>
   <div class="issue-body"><div class="issue-b"><p>הערה זו התקבלה מהצוות בבקשה להסבר ברור יותר. להלן ההסבר המלא.</p>
@@ -232,14 +245,13 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <p><strong>רקע חשוב:</strong> דמנציה היא מונח רפואי רחב, ומחלת אלצהיימר היא אחד הגורמים השכיחים לה. לכן חפיפה מסוימת בין שני העמודים היא טבעית ואף מתבקשת, ואין מדובר בכפילות שיש למחוק.</p>
 <p><strong>הנקודה לשיפור:</strong> בתוך עמוד המידע על דמנציה קיימת כותרת משנה בשם "הטיפול באלצהיימר". כלומר עמוד המידע עוסק גם בטיפול, שהוא הנושא המרכזי של עמוד השירות. כששני עמודים באותו אתר מציגים תוכן דומה על טיפול באלצהיימר, גוגל בוחר בעצמו איזה מהם להציג, ולא בהכרח את העמוד שנועד לקבל פניות.</p>
 <p><strong>מה כדאי:</strong> לשמור על תפקיד ברור לכל עמוד. עמוד הדמנציה יישאר עמוד הסבר ויקשר אל עמוד השירות, ועמוד האלצהיימר יתמקד במענה הטיפולי ובפנייה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לצמצם את כותרת המשנה "הטיפול באלצהיימר" בעמוד <span dir="ltr">/דמנציה-מידע/</span> לפסקה קצרה עם קישור אל <span dir="ltr">/alzheimer/</span>, כך שהפירוט הטיפולי יישאר בעמוד השירות.
-<br>לפני מתן noindex לעמוד הארכיון <span dir="ltr">/category/אלצהיימר-מאמרים-מקצועיים/</span>, מומלץ לבדוק ב-Search Console אילו חשיפות ושאילתות הוא מקבל בפועל, כדי לוודא שאינו מייצר תנועה.</div><div class="codewrap"><div class="codehead">טקסט חלופי לכותרת &quot;הטיפול באלצהיימר&quot; בעמוד /דמנציה-מידע/</div><pre class="codeblock" dir="ltr">מחלת אלצהיימר היא הגורם השכיח ביותר לדמנציה. הטיפול בה כולל מעקב
-רפואי, התאמת סביבת המגורים וליווי יומיומי של מטפל או מטפלת המכירים
-את מאפייני המחלה.
+<br>לפני מתן noindex לעמוד הארכיון <span dir="ltr">/category/אלצהיימר-מאמרים-מקצועיים/</span>, מומלץ לבדוק ב-Search Console אילו חשיפות ושאילתות הוא מקבל בפועל, כדי לוודא שאינו מייצר תנועה.</div><div class="codewrap"><div class="codehead">טקסט חלופי לכותרת &quot;הטיפול באלצהיימר&quot; בעמוד /דמנציה-מידע/</div><pre class="codeblock" dir="ltr">מחלת אלצהיימר היא הגורם השכיח ביותר לדמנציה.
 
-לפירוט מלא על שירותי הטיפול בחולי אלצהיימר, ראו את עמוד
-טיפול בחולי אלצהיימר: /alzheimer/
+לפירוט על שירותי הטיפול בחולי אלצהיימר שמציעה מנפאואר קר,
+ראו את עמוד טיפול בחולי אלצהיימר: /alzheimer/
 
-(להחליף את כותרת ה-H2 הקיימת בפסקה זו, עם קישור פנימי אל /alzheimer/)</pre></div></div>
+(להחליף את כותרת ה-H2 הקיימת בפסקה קצרה זו עם קישור פנימי,
+כך שהפירוט הטיפולי יישאר בעמוד השירות)</pre></div></div>
 </details>
 
 <h2>עדיפות שלישית, מבנה טכני</h2>
@@ -258,7 +270,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <p><strong>בעיה שנייה: כותרות שמופיעות פעמיים.</strong> Elementor בונה לעיתים מקטע נפרד לתצוגת דסקטופ ומקטע נפרד לתצוגת מובייל, כשכל אחד מהם מכיל את אותה כותרת.</p>
 <p>בבדיקה שביצענו בדפדפן אמיתי: בטעינה ברוחב מסך של דסקטופ נטענו <strong>13 כותרות</strong>, וארבע מהן מופיעות פעמיים. בטעינה ברוחב מסך של מובייל נטענו <strong>10 כותרות</strong>, ורק אחת מופיעה פעמיים. כלומר מבנה העמוד אינו זהה בשני גדלי המסך, וכלי בדיקה שסורק בתצוגת דסקטופ יראה את הכפילות. ארבע הכותרות הכפולות בתצוגת דסקטופ:</p>
 <ul class="rec"><li>מגיע לכם לדאוג פחות</li><li>מטפלת לקשישים</li><li>גמלת סיעוד</li><li>מעטפת שירותים מלאה</li></ul>
-<p>בדף הבית קיימים 29 אלמנטים המוגדרים להסתרה לפי גודל מסך, וזהו המקור לכפילות.</p>
+<p>בדף הבית קיימים 22 אלמנטים המוגדרים להסתרה לפי גודל מסך, וזהו המקור לכפילות.</p>
 <p class="muted small">חשוב לציין: הכפילות אינה שוברת את האתר ואינה נראית לגולש. היא מנפחת את קוד העמוד ומקשה על מנועי החיפוש לזהות את היררכיית הנושאים.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> <strong>לתיקון סדר הכותרות:</strong> להעביר את הכותרת הראשית (H1) למקטע העליון של העמוד, לפני שאר הכותרות. לחלופין, לשנות את שלוש הכותרות שמופיעות לפניה לטקסט רגיל או לכותרות מדרג נמוך יותר.
 <br><strong>לתיקון הכפילות:</strong> במקום שני מקטעים נפרדים לדסקטופ ולמובייל, להשתמש במקטע אחד עם הגדרות רספונסיביות. אם הפרדת המקטעים הכרחית מבחינת עיצוב, לוודא שרק אחת מהגרסאות מכילה כותרת אמיתית, והשנייה משתמשת בטקסט רגיל.
 <br>אין צורך לעצור את ההשקה בגלל סעיף זה, אך מומלץ לטפל בו.</div></div>
@@ -273,16 +285,31 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <tr><td><span dir="ltr">/branchmanager/רנה-דנילוב-2/</span></td><td>רנה דנילוב</td><td class="muted small">סניף גוש דן</td></tr>
 </tbody></table>
 <p>שני העמודים בעברית נושאים כותרת ראשית זהה, אך משייכים את אותה מנהלת לשני סניפים שונים ומציגים כתובות מייל שונות. נדרש לאשר מול החברה איזה שיוך עדכני, ואם מדובר בכפילות או בשני תפקידים נפרדים.</p>
-<p>כל 65 העמודים גם חסרים תיאור מטא.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשאיר עמוד אחד לכל מנהל.ת ולתת noindex לשאר, וכן לעמודי <span dir="ltr">/author/</span>. לגבי עמודי ה-"-2": לאשר מול החברה איזה שיוך סניף עדכני, ואז למחוק או להפנות את העמוד המיותר.</div><div class="codewrap"><div class="codehead">functions.php — noindex לעמודי מנהלי סניפים ומחברים</div><pre class="codeblock" dir="ltr">add_filter(&#x27;wpseo_robots&#x27;, function ($robots) {
-    if (is_singular(&#x27;branchmanager&#x27;) || is_post_type_archive(&#x27;branchmanager&#x27;) || is_author()) {
-        return &#x27;noindex, follow&#x27;;
+<p>כל 65 העמודים גם חסרים תיאור מטא.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשאיר עמוד אחד לכל מנהל.ת ולתת noindex לשאר, וכן לעמודי <span dir="ltr">/author/</span>. לגבי עמודי ה-"-2": לאשר מול החברה איזה שיוך סניף עדכני, ואז למחוק או להפנות את העמוד המיותר.</div><div class="codewrap"><div class="codehead">functions.php: noindex לעמודי הכפילות בלבד</div><pre class="codeblock" dir="ltr">// שלב 1: לאשר מול החברה איזה עמוד מכל זוג הוא העדכני.
+// שלב 2: להוסיף כאן רק את ה-slugs של העמודים שיוצאים משימוש.
+
+add_filter(&#x27;wpseo_robots_array&#x27;, function ($robots) {
+    $retire = [
+        &#x27;רנה-דנילוב-2&#x27;,
+        &#x27;נאהלה-מלחם-2&#x27;,
+        &#x27;meital-hilve-kimmel-2&#x27;,
+        &#x27;marina-gershengoren-2&#x27;,
+        // להשלים לפי ההחלטה
+    ];
+    if (is_singular(&#x27;branchmanager&#x27;) &amp;&amp; in_array(get_post_field(&#x27;post_name&#x27;), $retire, true)) {
+        $robots[&#x27;index&#x27;] = &#x27;noindex&#x27;;
+    }
+    if (is_author()) {
+        $robots[&#x27;index&#x27;] = &#x27;noindex&#x27;;
     }
     return $robots;
-});</pre></div></div>
+});
+
+// wpseo_robots_array הוא הפילטר הנוכחי ב-Yoast 14 ומעלה.</pre></div></div>
 </details><details class="issue mid">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">13</span><h3>אי התאמה בין כתובת העמוד לכותרת בסניף חיפה</h3><span class="pill mid">מבנה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>הכתובת <span dir="ltr">/branch/סניף-חיפה/</span> מציינת חיפה, וגם תגית ה-Title תקינה ומזכירה את חיפה והצפון. אך הכותרת הראשית בעמוד היא "סניף צפון" בלבד, ואינה מזכירה את חיפה.</p>
-<p>מאחר שהכתובת וה-Title כבר מציינים את חיפה, כדאי שגם הכותרת הראשית תהיה עקבית איתם ותכלול את שם העיר.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשנות את הכותרת הראשית ל"סניף חיפה" או "מנפאואר קר חיפה", כדי ליישר בין הכתובת, ה-Title והכותרת.</div><div class="codewrap"><div class="codehead">סניף חיפה — הכותרת הראשית לשינוי</div><pre class="codeblock" dir="ltr">H1 נוכחי:   סניף צפון
+<p>מאחר שהכתובת וה-Title כבר מציינים את חיפה, כדאי שגם הכותרת הראשית תהיה עקבית איתם ותכלול את שם העיר.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשנות את הכותרת הראשית ל"סניף חיפה" או "מנפאואר קר חיפה", כדי ליישר בין הכתובת, ה-Title והכותרת.</div><div class="codewrap"><div class="codehead">סניף חיפה: הכותרת הראשית לשינוי</div><pre class="codeblock" dir="ltr">H1 נוכחי:   סניף צפון
 H1 מומלץ:   סניף חיפה
 
 (תגית ה-Title תקינה ואינה דורשת שינוי)</pre></div></div>
@@ -326,11 +353,10 @@ H1 מומלץ:   סניף חיפה
 <tr><td><span dir="ltr">FAQPage</span></td><td>קיים ב-5 עמודים בלבד: טיפולי-סיעוד, גמלת-סיעוד, מטפלת-סיעודית, מטפלת-סיעודית-זרה, וטיפול פליאטיבי</td></tr>
 <tr><td><span dir="ltr">ContactPoint</span> ו-<span dir="ltr">PostalAddress</span></td><td><span class="pill bad">אינם קיימים באף עמוד</span></td></tr>
 </tbody></table>
-<p><strong>נתוני 14 הסניפים לבניית הבלוקים</strong>, כפי שהם מופיעים היום בעמודי הסניפים:</p><div class="tbl-wrap"><table class="mini"><thead><tr><th>סניף</th><th>רחוב</th><th>עיר</th><th>טלפון</th></tr></thead><tbody><tr><td>סניף בקעת אונו</td><td>ויצמן 43</td><td>יהוד</td><td dir="ltr">03-9322352</td></tr><tr><td>סניף גוש דן</td><td>יגאל אלון 110</td><td>תל אביב</td><td dir="ltr">03-5254450</td></tr><tr><td>סניף חדרה</td><td>הלל יפה 25</td><td>חדרה</td><td dir="ltr">04-6324622</td></tr><tr><td>סניף חולון-בת ים</td><td>סוקולוב 1</td><td>חולון</td><td dir="ltr">03-7507625</td></tr><tr><td>סניף טייבה</td><td>כביש מחמוד דרוויש 24</td><td>טייבה</td><td dir="ltr">09-8923520</td></tr><tr><td>סניף ירושלים</td><td>יפו 33</td><td>ירושלים</td><td dir="ltr">02-6233732</td></tr><tr><td>סניף כפר סבא</td><td>התע&quot;ש 23</td><td>כפר סבא</td><td dir="ltr">03-5496311</td></tr><tr><td>סניף מגזר</td><td>בניין אלעמאר</td><td>כפר קרע</td><td dir="ltr">04-6826249</td></tr><tr><td>סניף מזרח ירושלים</td><td>הנביאים 18</td><td>ירושלים</td><td dir="ltr">02-6262503</td></tr><tr><td>סניף נתניה</td><td>פינסקר 18</td><td>נתניה</td><td dir="ltr">09-8619345</td></tr><tr><td>סניף פתח תקווה</td><td>חובבי ציון 46</td><td>פתח תקווה</td><td dir="ltr">03-7501012</td></tr><tr><td>סניף צפון</td><td>שדרות בן גוריון 6</td><td>חיפה</td><td dir="ltr">04-8527676</td></tr><tr><td>סניף רמלוד</td><td>סוקולוב 21</td><td>רמלה</td><td dir="ltr">08-9152666</td></tr><tr><td>סניף שפלה</td><td>הרצל 30</td><td>ראשון לציון</td><td dir="ltr">03-9589888</td></tr></tbody></table></div><p class="muted small">הכתובות פוצלו לרחוב ועיר מתוך הטקסט החופשי שבעמודי הסניפים. מומלץ לוודא את הפיצול מול הנתונים הרשמיים לפני ההטמעה.</p>
+<p><strong>נתוני 14 הסניפים לבניית הבלוקים</strong>, כפי שהם מופיעים היום בעמודי הסניפים:</p><div class="tbl-wrap"><table class="mini"><thead><tr><th>סניף</th><th>רחוב</th><th>עיר</th><th>טלפון</th></tr></thead><tbody><tr><td>סניף בקעת אונו</td><td>ויצמן 43</td><td>יהוד</td><td dir="ltr">03-9322352</td></tr><tr><td>סניף גוש דן</td><td>יגאל אלון 110</td><td>תל אביב</td><td dir="ltr">03-5254450</td></tr><tr><td>סניף חדרה</td><td>הלל יפה 25, קומה 2</td><td>חדרה</td><td dir="ltr">04-6324622</td></tr><tr><td>סניף חולון-בת ים</td><td>סוקולוב 1</td><td>חולון</td><td dir="ltr">03-7507625</td></tr><tr><td>סניף טייבה</td><td>אמיר ג&#x27;בארה קומפלקס, כביש מחמוד דרוויש 24</td><td>טייבה</td><td dir="ltr">09-8923520</td></tr><tr><td>סניף ירושלים</td><td>יפו 33, בית יואל</td><td>ירושלים</td><td dir="ltr">02-6233732</td></tr><tr><td>סניף כפר סבא</td><td>התע&quot;ש 23</td><td>כפר סבא</td><td dir="ltr">03-5496311</td></tr><tr><td>סניף מגזר</td><td>בניין אלעמאר, מרפאה כללית מקצועית</td><td>כפר קרע</td><td dir="ltr">04-6826249</td></tr><tr><td>סניף מזרח ירושלים</td><td>הנביאים 18</td><td>ירושלים</td><td dir="ltr">02-6262503</td></tr><tr><td>סניף נתניה</td><td>פינסקר 18, בית חבה</td><td>נתניה</td><td dir="ltr">09-8619345</td></tr><tr><td>סניף פתח תקווה</td><td>קניון לב העיר, חובבי ציון 46</td><td>פתח תקווה</td><td dir="ltr">03-7501012</td></tr><tr><td>סניף צפון</td><td>שדרות בן גוריון 6, קומה 4</td><td>חיפה</td><td dir="ltr">04-8527676</td></tr><tr><td>סניף רמלוד</td><td>סוקולוב 21</td><td>רמלה</td><td dir="ltr">08-9152666</td></tr><tr><td>סניף שפלה</td><td>הרצל 30, קומה 4</td><td>ראשון לציון</td><td dir="ltr">03-9589888</td></tr></tbody></table></div><p class="muted small">הכתובות פוצלו לרחוב ועיר מתוך הטקסט החופשי שבעמודי הסניפים. מומלץ לוודא את הפיצול מול הנתונים הרשמיים לפני ההטמעה.</p>
 <p>היעדר <span dir="ltr">ContactPoint</span> ו-<span dir="ltr">PostalAddress</span> משמעותו שפרטי הטלפון והכתובת של החברה ושל הסניפים אינם נמסרים לגוגל בצורה מובנית. באתר קיימים 14 עמודי סניף, ולכן זהו חיסרון בחיפוש המקומי.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להוסיף <span dir="ltr">ContactPoint</span> לסכמת ה-Organization בכל האתר, ו-<span dir="ltr">PostalAddress</span> בעמודי הסניפים.
 <br>להוסיף <span dir="ltr">FAQPage</span> בעמודים שבהם קיים מקטע שאלות ותשובות ואין עדיין סכמה, כפי שסוכם בפגישה.
-<br>נכין מסמך נפרד עם קטעי הקוד המוכנים להטמעה.</div><div class="codewrap"><div class="codehead">1. Organization — הוספת ContactPoint וכתובת (מרחיב את הסכמה הקיימת, אינו מכפיל)</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
-{
+<br>נכין מסמך נפרד עם קטעי הקוד המוכנים להטמעה.</div><div class="codewrap"><div class="codehead">1. Organization: ContactPoint וכתובת המשרד הראשי</div><pre class="codeblock" dir="ltr">{
   &quot;@context&quot;: &quot;https://schema.org&quot;,
   &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;,
   &quot;@type&quot;: &quot;Organization&quot;,
@@ -339,33 +365,28 @@ H1 מומלץ:   סניף חיפה
     &quot;@type&quot;: &quot;ContactPoint&quot;,
     &quot;telephone&quot;: &quot;*9055&quot;,
     &quot;contactType&quot;: &quot;customer service&quot;,
-    &quot;areaServed&quot;: &quot;IL&quot;,
-    &quot;availableLanguage&quot;: [&quot;he&quot;,&quot;en&quot;,&quot;ru&quot;,&quot;ar&quot;]
+    &quot;areaServed&quot;: &quot;IL&quot;
   }],
   &quot;address&quot;: {
     &quot;@type&quot;: &quot;PostalAddress&quot;,
-    &quot;streetAddress&quot;: &quot;יגאל אלון 110&quot;,
-    &quot;addressLocality&quot;: &quot;תל אביב&quot;,
+    &quot;streetAddress&quot;: &quot;סוקולוב 62&quot;,
+    &quot;addressLocality&quot;: &quot;רמת השרון&quot;,
     &quot;addressCountry&quot;: &quot;IL&quot;
   }
-}
-&lt;/script&gt;</pre></div><div class="codewrap"><div class="codehead">2. LocalBusiness — דוגמה לעמוד סניף (סניף צפון). לשכפל לכל 14 הסניפים לפי הטבלה למטה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
-{
+}</pre></div><div class="codewrap"><div class="codehead">2. LocalBusiness: סניף צפון (חיפה). לשכפל ל-14 הסניפים לפי הטבלה</div><pre class="codeblock" dir="ltr">{
   &quot;@context&quot;: &quot;https://schema.org&quot;,
   &quot;@type&quot;: &quot;LocalBusiness&quot;,
-  &quot;name&quot;: &quot;Manpower Care סניף בקעת אונו&quot;,
-  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-בקעת-אונו/&quot;,
-  &quot;telephone&quot;: &quot;03-9322352&quot;,
+  &quot;name&quot;: &quot;Manpower Care סניף צפון&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-חיפה/&quot;,
+  &quot;telephone&quot;: &quot;04-8527676&quot;,
   &quot;parentOrganization&quot;: { &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot; },
   &quot;address&quot;: {
     &quot;@type&quot;: &quot;PostalAddress&quot;,
-    &quot;streetAddress&quot;: &quot;ויצמן 43&quot;,
-    &quot;addressLocality&quot;: &quot;יהוד&quot;,
+    &quot;streetAddress&quot;: &quot;שדרות בן גוריון 6, קומה 4&quot;,
+    &quot;addressLocality&quot;: &quot;חיפה&quot;,
     &quot;addressCountry&quot;: &quot;IL&quot;
   }
-}
-&lt;/script&gt;</pre></div><div class="codewrap"><div class="codehead">3. FAQPage — לעמוד /חוק-הסיעוד-כל-מה-שחשוב-לדעת/ (נבנה מהשאלות הקיימות בעמוד)</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
-{
+}</pre></div><div class="codewrap"><div class="codehead">3. FAQPage: לעמוד /חוק-הסיעוד-כל-מה-שחשוב-לדעת/</div><pre class="codeblock" dir="ltr">{
   &quot;@context&quot;: &quot;https://schema.org&quot;,
   &quot;@type&quot;: &quot;FAQPage&quot;,
   &quot;mainEntity&quot;: [
@@ -387,11 +408,10 @@ H1 מומלץ:   סניף חיפה
     {
       &quot;@type&quot;: &quot;Question&quot;,
       &quot;name&quot;: &quot;מה קורה במקרה של החמרה במצב?&quot;,
-      &quot;acceptedAnswer&quot;: { &quot;@type&quot;: &quot;Answer&quot;, &quot;text&quot;: &quot;ניתן להגיש בקשה לבדיקה מחדש. רמת הזכאות לא תופחת בעקבות בדיקה זו. אנו מספקים מטפלים ומטפלות בהתאמה אישית ומלווים אתכם במימוש הזכויות מול הביטוח הלאומי. פנו אלינו עם כל שאלה, נשמח לעזור.&quot; }
+      &quot;acceptedAnswer&quot;: { &quot;@type&quot;: &quot;Answer&quot;, &quot;text&quot;: &quot;ניתן להגיש בקשה לבדיקה מחדש. רמת הזכאות לא תופחת בעקבות בדיקה זו.&quot; }
     }
   ]
-}
-&lt;/script&gt;</pre></div></div>
+}</pre></div></div>
 </details>
 
 <h2>עמוד נחיתה באנגלית</h2>
