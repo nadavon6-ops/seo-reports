@@ -62,7 +62,7 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <header><div class="wrap"><h1>בדיקת אתר, ממצאים ותיקונים</h1></div></header>
 
 <div class="wrap">
-<div class="cards"><div class="card"><div class="card-label">עמודים ללא Canonical</div><div class="card-value">128</div><div class="card-sub">מתוך 128, כלומר כל האתר</div></div>
+<div class="cards"><div class="card"><div class="card-label">עמודים ללא Canonical</div><div class="card-value">129</div><div class="card-sub">מתוך 129, כלומר כל האתר</div></div>
 <div class="card"><div class="card-label">פוסטים עם תגית תיאור כפולה</div><div class="card-value">4</div><div class="card-sub">מתוך 13 פוסטי הבלוג</div></div>
 <div class="card"><div class="card-label">פריטי פוטר לתיקון</div><div class="card-value">13</div><div class="card-sub">8 לא לחיצים, 5 ליעד שגוי</div></div>
 <div class="card"><div class="card-label">עמודים כפולים לאיחוד</div><div class="card-value">9</div><div class="card-sub">כולל 65 עמודי מנהלי סניפים</div></div></div>
@@ -76,51 +76,69 @@ footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e76
 <div class="h2sub">לטיפול לפני שהאתר עולה לאוויר</div>
 <details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">1</span><h3>אין תגית Canonical באף עמוד באתר</h3><span class="pill bad">חוסם השקה</span></summary>
-  <div class="issue-body"><div class="issue-b"><p>נבדקו כל <strong>128 הכתובות</strong> שבמפות האתר. באף אחת מהן אין תגית <code dir="ltr">rel="canonical"</code>.</p>
+  <div class="issue-body"><div class="issue-b"><p>נבדקו כל <strong>129 הכתובות</strong> שבמפות האתר (128 עמודי תוכן ועוד רשומה טכנית אחת של Elementor). באף אחת מהן אין תגית <code dir="ltr">rel="canonical"</code>.</p>
 <p>תגית Canonical מציינת לגוגל מהי הכתובת הרשמית של העמוד. בלעדיה, כל וריאציה של כתובת (עם או בלי סלאש בסוף, עם פרמטרים, באותיות גדולות) עלולה להיספר כעמוד נפרד. באתר שבו קיימים עמודים דומים, הדבר מגדיל את הסיכון שגוגל יבחר גרסה שאינה המועדפת עלינו.</p>
-<p>Yoast SEO מפיק תגית Canonical עצמית לכל עמוד כברירת מחדל, ולכן כדאי לברר תחילה מדוע היא אינה מופיעה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לבדוק את הגדרות Yoast לפי הסדר שלמטה. אם Yoast אינו בשימוש, להוסיף את הקוד הידני לעמודים בודדים בלבד.</div><div class="codewrap"><div class="codehead">בדיקת המקור ב-Yoast, לפי הסדר</div><pre class="codeblock" dir="ltr">1. ודאו ש-Yoast SEO פעיל ומעודכן (בבדיקה: גרסה 28.1 מותקנת).
-2. Yoast &gt; Settings &gt; Site features: ודאו ש-Crawl optimization אינו מסיר את התגית.
-3. Yoast &gt; Advanced &gt; Crawl settings: ודאו שלא הוגדרה הסרת canonical.
-4. בדקו שאין תוסף או קוד בתבנית שמסנן את הפלט של Yoast.
+<p>Yoast SEO מפיק תגית Canonical עצמית לכל עמוד כברירת מחדל, ולכן כדאי לברר תחילה מדוע היא אינה מופיעה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לבדוק את הגדרות Yoast לפי הסדר שלמטה. אם Yoast אינו בשימוש, להוסיף את הקוד הידני לעמודים בודדים בלבד.</div><div class="codewrap"><div class="codehead">בדיקת המקור, לפי הסדר</div><pre class="codeblock" dir="ltr">Yoast SEO גרסה 28.1 מותקן ופעיל באתר, ובכל זאת התגית אינה מופיעה.
+לכן מדובר בסינון של הפלט, ולא בהיעדר התוסף. לבדוק לפי הסדר:
 
-עדיף לתקן את המקור מאשר להוסיף תגית ידנית, שעלולה
-להתנגש עם Yoast וליצור שתי תגיות canonical באותו עמוד.</pre></div><div class="codewrap"><div class="codehead">רק אם Yoast אינו בשימוש: קוד לעמודים בודדים</div><pre class="codeblock" dir="ltr">add_action(&#x27;wp_head&#x27;, function () {
-    if (!is_singular()) { return; }
-    if (function_exists(&#x27;YoastSEO&#x27;)) { return; }
-    $url = wp_get_canonical_url();
-    if ($url) {
-        echo &#x27;&lt;link rel=&quot;canonical&quot; href=&quot;&#x27; . esc_url($url) . &#x27;&quot; /&gt;&#x27; . &quot;\n&quot;;
-    }
-});</pre></div></div>
+1. חפשו בקוד התבנית ובתוספים את הפילטר:
+   wpseo_canonical
+   אם מוחזר false או מחרוזת ריקה, Yoast אינו מדפיס את התגית.
+
+2. בדקו אם קיים תוסף cache או optimization שמסיר תגיות מה-head.
+
+3. בדקו בתבנית הבת (hello-theme-child-master) קוד שמסיר פעולות מ-wp_head.
+
+לאיתור הפילטר, הריצו זמנית:
+
+add_action(&#x27;wp_head&#x27;, function () {
+    echo &#x27;&lt;!-- yoast canonical: &#x27; . esc_html(
+        apply_filters(&#x27;wpseo_canonical&#x27;, &#x27;NOT-FILTERED&#x27;)
+    ) . &#x27; --&gt;&#x27;;
+}, 999);
+
+אם הפלט אינו NOT-FILTERED, מישהו מסנן את התגית.
+
+אין להוסיף תגית canonical ידנית כל עוד Yoast פעיל,
+כדי לא ליצור שתי תגיות canonical באותו עמוד.</pre></div></div>
 </details><details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">2</span><h3>ארבעה פוסטים בבלוג נושאים שתי תגיות תיאור מטא</h3><span class="pill bad">חוסם השקה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>ההערה שהתקבלה מהצוות נבדקה ואומתה. בארבעה פוסטים קיימות <strong>שתי תגיות</strong> <code dir="ltr">meta name="description"</code> באותו עמוד.</p>
-<table class="mini"><thead><tr><th>העמוד</th><th>תגית 1, של Yoast</th><th>תגית 2, של התבנית</th></tr></thead><tbody>
+<table class="mini"><thead><tr><th>העמוד</th><th>תגית 1, של Yoast (מקוצר)</th><th>תגית 2, של התבנית (מקוצר)</th></tr></thead><tbody>
 <tr><td><span dir="ltr">/כשהגוף-מאותת-כדאי-לעצור/</span></td><td class="small">מהם הסימנים לסיבוכי סוכרת ואיך מונעים החמרה...</td><td class="small muted">הקשבה ותשומת לב לשינויים החלים בגוף...</td></tr>
 <tr><td><span dir="ltr">/רגעים-קטנים-של-חסד-60-דברים.../</span></td><td class="small">60 משחקים ופעילויות לחולי דמנציה ואלצהיימר...</td><td class="small muted">רוצים לעשות טוב? הנה כמה רעיונות שעובדים נהדר.</td></tr>
 <tr><td><span dir="ltr">/על-השיטות-והכלים-השונים.../</span></td><td class="small">כיצד פעילות גופנית, תנועה וריקוד מסייעים...</td><td class="small muted">כתבה שלישית בסדרה: טיפול באמצעות תנועה</td></tr>
 <tr><td><span dir="ltr">/טיפול-פליאטיבי-וליווי-סוף-חיים-בבית/</span></td><td class="small">טיפול פליאטיבי וליווי סוף חיים בבית, הכולל...</td><td class="small muted">כשאדם יקר לכם מתמודד עם מחלה קשה או מתקדמת...</td></tr>
 </tbody></table>
-<p><strong>מקור הבעיה, כפי שאותר:</strong> התגית הראשונה נמצאת בתוך בלוק Yoast בראש העמוד (מיקום 445 בקוד) והיא התגית הממוטבת. התגית השנייה מופיעה הרבה יותר למטה בקוד (מיקום 24,000 ומעלה), מחוץ לבלוק Yoast, והתוכן שלה זהה לתקציר הפוסט (excerpt). כלומר התבנית או Elementor מדפיסים את התקציר כתיאור מטא נוסף.</p>
+<p><strong>מקור הבעיה, כפי שאותר:</strong> התגית הראשונה נמצאת בתוך בלוק Yoast בראש העמוד (מיקום 445 בקוד) והיא התגית הממוטבת. התגית השנייה מופיעה הרבה יותר למטה (מיקום 24,000 ומעלה), מחוץ לבלוק Yoast, והתוכן שלה זהה לתקציר הפוסט (excerpt).</p>
+<p>התבנית המותקנת באתר היא <strong>Hello Elementor</strong> (עם תבנית בת <span dir="ltr">hello-theme-child-master</span>). לתבנית זו יש מנגנון שמדפיס את תקציר הפוסט כתיאור מטא, והוא פועל במקביל ל-Yoast.</p>
 <p>כשיש שתי תגיות, גוגל בוחר אחת מהן בעצמו, ולעיתים יבחר דווקא את התקציר הקצר והלא ממוטב.</p>
-<p class="muted small">נבדקו כל 128 עמודי האתר. אלה ארבעת המקרים היחידים. בשאר העמודים יש תגית אחת או אף אחת.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להסיר את פלט תיאור המטא של התבנית ולהשאיר את זה של Yoast בלבד. הקוד שלמטה מסיר את הפלט הכפול מבלי לגעת ב-Yoast.</div><div class="codewrap"><div class="codehead">functions.php: הסרת תיאור המטא הכפול של התבנית</div><pre class="codeblock" dir="ltr">// מסיר תיאור מטא שמודפס מחוץ ל-Yoast (בדרך כלל תקציר הפוסט).
-// יש לאתר בתבנית את הפונקציה שמדפיסה אותו ולנתק אותה מה-hook.
-// דוגמה, אם התבנית מחברת פונקציה בשם theme_meta_description:
+<p class="muted small">הטקסטים בטבלה מוצגים מקוצרים לצורך תצוגה. נבדקו כל 129 הכתובות באתר, ואלה ארבעת המקרים היחידים. בשאר העמודים יש תגית אחת או אף אחת.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להסיר את פלט תיאור המטא של התבנית ולהשאיר את זה של Yoast בלבד. הקוד שלמטה מסיר את הפלט הכפול מבלי לגעת ב-Yoast.</div><div class="codewrap"><div class="codehead">אפשרות א, מומלצת: כיבוי דרך הגדרות התבנית</div><pre class="codeblock" dir="ltr">Hello Elementor כולל הגדרה לכיבוי תגית התיאור.
 
-remove_action(&#x27;wp_head&#x27;, &#x27;theme_meta_description&#x27;);
+WordPress Admin &gt; Appearance &gt; Hello Elementor Settings
+ובתוכה החלק של Head, סמנו כיבוי של
+Description meta tag / Disable description meta tag
 
-// אם השם אינו ידוע, אפשר לאתר אותו כך:
-// הוסיפו זמנית לקובץ functions.php והריצו עמוד פוסט:
-//
-// add_action(&#x27;wp_head&#x27;, function () {
-//     global $wp_filter;
-//     echo &#x27;&lt;!-- &#x27; . print_r(array_keys($wp_filter[&#x27;wp_head&#x27;]-&gt;callbacks), true) . &#x27; --&gt;&#x27;;
-// }, 999);
-//
-// חפשו בפלט את הפונקציה שמדפיסה את התיאור, ונתקו אותה.
+זו הדרך הבטוחה ביותר, ואינה דורשת קוד.</pre></div><div class="codewrap"><div class="codehead">אפשרות ב: ניתוק דרך functions.php של תבנית הבת</div><pre class="codeblock" dir="ltr">// לוודא תחילה את שם ה-callback המדויק בגרסת התבנית המותקנת.
+// בגרסאות Hello Elementor הנפוצות זהו:
 
-// חלופה: אם התיאור מגיע מ-Elementor, בדקו
-// Elementor &gt; Settings &gt; Advanced &gt; Meta tags.</pre></div></div>
+remove_action(&#x27;wp_head&#x27;, &#x27;hello_elementor_add_description_meta_tag&#x27;);
+
+// לאימות שם ה-callback, הריצו זמנית בעמוד פוסט:
+
+add_action(&#x27;wp_head&#x27;, function () {
+    global $wp_filter;
+    if (empty($wp_filter[&#x27;wp_head&#x27;])) { return; }
+    foreach ($wp_filter[&#x27;wp_head&#x27;]-&gt;callbacks as $prio =&gt; $cbs) {
+        foreach ($cbs as $id =&gt; $cb) {
+            echo &quot;\n&lt;!-- wp_head $prio : $id --&gt;&quot;;
+        }
+    }
+}, 999);
+
+// חפשו בפלט שם שמכיל description, והשתמשו בו ב-remove_action.
+// שימו לב: אם ה-callback הוא מתודה של מחלקה או פונקציה אנונימית,
+// remove_action עם שם פשוט לא יעבוד, ויש לפנות לאפשרות א.</pre></div></div>
 </details><details class="issue bad">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">3</span><h3>שמונה פריטים בפוטר אינם ניתנים ללחיצה</h3><span class="pill bad">חוסם השקה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>שמונה פריטים מופיעים בפוטר כטקסט בלבד, בתוך <code dir="ltr">&lt;li&gt;</code> ללא תגית קישור. הם מוצגים לצד פריטים אחרים שכן מקושרים, אך לחיצה עליהם אינה מובילה לשום מקום.</p>
@@ -149,23 +167,23 @@ remove_action(&#x27;wp_head&#x27;, &#x27;theme_meta_description&#x27;);
 <details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">5</span><h3>65 עמודי מנהלי סניפים, כפילות בין שפות</h3><span class="pill warn">כפילות</span></summary>
   <div class="issue-body"><div class="issue-b"><div class="clarify"><strong>תיקון להערה קודמת:</strong> בדוח קודם צוין שיש להשלים תיאורי מטא ל-65 עמודי מנהלי הסניפים. <strong>הדבר אינו נדרש.</strong> העמודים הם כפילויות של אותו אדם בשפות שונות, והפתרון הנכון הוא noindex ואיחוד, ולא כתיבת תיאורים לכל אחד מהם.</div>
-<p>תחת <span dir="ltr">/branchmanager/</span> קיימות <strong>65 כתובות</strong>, ועוד 2 תחת <span dir="ltr">/author/</span>. מנהלים רבים מופיעים בכמה כתובות בשפות שונות, ולתשעה מהם קיים גם עמוד נוסף עם הסיומת "-2".</p>
+<p>תחת <span dir="ltr">/branchmanager/</span> קיימות <strong>65 כתובות</strong>, ועוד 2 תחת <span dir="ltr">/author/</span>. מנהלים רבים מופיעים בכמה כתובות בשפות שונות (עברית, אנגלית, רוסית וערבית), ולתשעה מהם קיים גם עמוד נוסף עם הסיומת "-2". לרנה דנילוב, לדוגמה, קיימות חמש כתובות פעילות.</p>
 <table class="mini"><thead><tr><th>כתובת</th><th>כותרת ראשית</th><th>שיוך סניף בעמוד</th></tr></thead><tbody>
 <tr><td><span dir="ltr">/branchmanager/rena-danilov/</span></td><td>Rena Danilov</td><td class="muted small">-</td></tr>
 <tr><td><span dir="ltr">/branchmanager/רנה-דנילוב/</span></td><td>רנה דנילוב</td><td class="muted small">סניף בקעת אונו</td></tr>
 <tr><td><span dir="ltr">/branchmanager/рена-данилов/</span></td><td>Рена Данилов</td><td class="muted small">-</td></tr>
+<tr><td><span dir="ltr">/branchmanager/رينا-دنيلوف/</span></td><td class="muted small">גרסה בערבית</td><td class="muted small">-</td></tr>
 <tr><td><span dir="ltr">/branchmanager/רנה-דנילוב-2/</span></td><td>רנה דנילוב</td><td class="muted small">סניף גוש דן</td></tr>
 </tbody></table>
 <p>שני העמודים בעברית נושאים כותרת ראשית זהה אך משייכים את אותה מנהלת לשני סניפים שונים, עם כתובות מייל שונות. נדרש לאשר מול החברה איזה שיוך עדכני.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשאיר עמוד אחד לכל מנהל.ת ולתת noindex לשאר, וכן לעמודי <span dir="ltr">/author/</span>. אין צורך בתיאורי מטא לעמודים אלה.</div><div class="codewrap"><div class="codehead">functions.php: noindex לעמודי הכפילות</div><pre class="codeblock" dir="ltr">// שלב 1: לאשר מול החברה איזה עמוד מכל זוג הוא העדכני.
 // שלב 2: להוסיף כאן רק את ה-slugs שיוצאים משימוש.
 
 add_filter(&#x27;wpseo_robots_array&#x27;, function ($robots) {
+    // הרשימה ריקה בכוונה. יש למלא אותה רק לאחר
+    // שהחברה אישרה איזה עמוד מכל זוג הוא העדכני.
     $retire = [
-        &#x27;רנה-דנילוב-2&#x27;,
-        &#x27;נאהלה-מלחם-2&#x27;,
-        &#x27;meital-hilve-kimmel-2&#x27;,
-        &#x27;marina-gershengoren-2&#x27;,
-        // להשלים לפי ההחלטה
+        // &#x27;רנה-דנילוב-2&#x27;,
+        // &#x27;נאהלה-מלחם-2&#x27;,
     ];
     if (is_singular(&#x27;branchmanager&#x27;) &amp;&amp; in_array(get_post_field(&#x27;post_name&#x27;), $retire, true)) {
         $robots[&#x27;index&#x27;] = &#x27;noindex&#x27;;
@@ -180,7 +198,11 @@ add_filter(&#x27;wpseo_robots_array&#x27;, function ($robots) {
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">6</span><h3>שני עמודי מבחן תלות עם אותה כותרת ראשית</h3><span class="pill warn">כפילות</span></summary>
   <div class="issue-body"><div class="issue-b"><p>שני עמודים נושאים כותרת ראשית זהה מילה במילה, "איך להיערך למבחן תלות?", ואורך תוכן כמעט זהה (כ-4,600 וכ-4,700 תווים).</p>
-<p class="muted small">המספרים מעוגלים משום ששני העמודים כוללים מקטע מאמרים נוספים שמתחלף בין טעינות.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשמור את <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span>, שתגית ה-Title שלו ממוטבת, ולהפנות אליו את השני.</div><div class="codewrap"><div class="codehead">.htaccess</div><pre class="codeblock" dir="ltr">Redirect 301 /איך-להיערך-למבחן-תלות/ /מהו-מבחן-תלות-ואיך-להיערך/</pre></div></div>
+<p class="muted small">המספר של <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span> מעוגל משום שהעמוד כולל מקטע מאמרים נוספים שמתחלף בין טעינות (נמדדו ערכים בין 4,553 ל-4,689 בשתים עשרה טעינות). העמוד השני יציב על 4,686 תווים.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לשמור את <span dir="ltr">/מהו-מבחן-תלות-ואיך-להיערך/</span>, שתגית ה-Title שלו ממוטבת, ולהפנות אליו את השני.</div><div class="codewrap"><div class="codehead">.htaccess (RedirectMatch, יעד מקודד)</div><pre class="codeblock" dir="ltr">RedirectMatch 301 &quot;^/איך-להיערך-למבחן-תלות/?$&quot; &quot;/%D7%9E%D7%94%D7%95-%D7%9E%D7%91%D7%97%D7%9F-%D7%AA%D7%9C%D7%95%D7%AA-%D7%95%D7%90%D7%99%D7%9A-%D7%9C%D7%94%D7%99%D7%A2%D7%A8%D7%9A/&quot;
+
+# הערה: יעד ההפניה מקודד (percent-encoded) כדי שהכלל יעבוד
+# בוודאות בכל תצורת Apache. יש לבדוק כ-302 בסביבת בדיקה
+# ולהחליף ל-301 רק לאחר אימות.</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">7</span><h3>ארבעה עמודים עוסקים בגמלת סיעוד</h3><span class="pill warn">כפילות</span></summary>
   <div class="issue-body"><div class="issue-b"><table class="mini"><thead><tr><th>עמוד</th><th>תפקיד מוצע</th></tr></thead><tbody>
@@ -189,17 +211,33 @@ add_filter(&#x27;wpseo_robots_array&#x27;, function ($robots) {
 <tr><td><span dir="ltr">/תהליך-קבלת-גמלת-סיעוד/</span></td><td>למקד בשלבי התהליך בלבד</td></tr>
 <tr><td><span dir="ltr">/category/גמלת-סיעוד/</span></td><td>noindex</td></tr>
 </tbody></table>
-<p class="muted small">העמוד <span dir="ltr">/תביעה-ייצוגית-גרוסו/</span> שויך בטעות לקבוצה זו בבדיקה אוטומטית. הוא עוסק בתביעה ייצוגית ואינו חלק ממנה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להגדיר את <span dir="ltr">/גמלת-סיעוד/</span> כעמוד הראשי, ולהעביר אליו את התוכן הייחודי לפני ההפניה.</div><div class="codewrap"><div class="codehead">.htaccess</div><pre class="codeblock" dir="ltr">Redirect 301 /nursing-benefit/ /גמלת-סיעוד/</pre></div></div>
+<p class="muted small">העמוד <span dir="ltr">/תביעה-ייצוגית-גרוסו/</span> שויך בטעות לקבוצה זו בבדיקה אוטומטית. הוא עוסק בתביעה ייצוגית ואינו חלק ממנה.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להגדיר את <span dir="ltr">/גמלת-סיעוד/</span> כעמוד הראשי, ולהעביר אליו את התוכן הייחודי לפני ההפניה.</div><div class="codewrap"><div class="codehead">.htaccess (RedirectMatch, יעד מקודד)</div><pre class="codeblock" dir="ltr">RedirectMatch 301 &quot;^/nursing-benefit/?$&quot; &quot;/%D7%92%D7%9E%D7%9C%D7%AA-%D7%A1%D7%99%D7%A2%D7%95%D7%93/&quot;
+
+# הערה: יעד ההפניה מקודד (percent-encoded) כדי שהכלל יעבוד
+# בוודאות בכל תצורת Apache. יש לבדוק כ-302 בסביבת בדיקה
+# ולהחליף ל-301 רק לאחר אימות.</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">8</span><h3>מדריך המטפלת הסיעודית נמצא בעמוד הלא נכון</h3><span class="pill warn">כפילות</span></summary>
-  <div class="issue-body"><div class="issue-b"><p>עמוד השירות הראשי <span dir="ltr">/מטפלת-סיעודית/</span> מצומצם יחסית (3,933 תווים), בעוד <span dir="ltr">/טיפולי-סיעוד/</span> מכיל 12,816 תווים, ותשע מתוך 13 כותרות המשנה שלו עוסקות ישירות במטפלת סיעודית.</p>
-<p>התוכן המקיף ביותר בנושא נמצא בכתובת שאינה מיועדת לו.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להעביר את תוכן המדריך אל <span dir="ltr">/מטפלת-סיעודית/</span>, ורק לאחר מכן לבצע את ההפניה. <strong>אין לבצע את ההפניה לפני העברת התוכן.</strong></div><div class="codewrap"><div class="codehead">.htaccess: רק אחרי העברת התוכן</div><pre class="codeblock" dir="ltr">Redirect 301 /טיפולי-סיעוד/ /מטפלת-סיעודית/</pre></div></div>
+  <div class="issue-body"><div class="issue-b"><p>עמוד השירות הראשי <span dir="ltr">/מטפלת-סיעודית/</span> מצומצם יחסית (כ-3,930 תווים), בעוד <span dir="ltr">/טיפולי-סיעוד/</span> מכיל 12,816 תווים, ותשע מתוך 13 כותרות המשנה שלו עוסקות ישירות במטפלת סיעודית.</p>
+<p>התוכן המקיף ביותר בנושא נמצא בכתובת שאינה מיועדת לו.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להעביר את תוכן המדריך אל <span dir="ltr">/מטפלת-סיעודית/</span>, ורק לאחר מכן לבצע את ההפניה. <strong>אין לבצע את ההפניה לפני העברת התוכן.</strong></div><div class="codewrap"><div class="codehead">.htaccess: רק אחרי העברת התוכן (RedirectMatch, יעד מקודד)</div><pre class="codeblock" dir="ltr">RedirectMatch 301 &quot;^/טיפולי-סיעוד/?$&quot; &quot;/%D7%9E%D7%98%D7%A4%D7%9C%D7%AA-%D7%A1%D7%99%D7%A2%D7%95%D7%93%D7%99%D7%AA/&quot;
+
+# הערה: יעד ההפניה מקודד (percent-encoded) כדי שהכלל יעבוד
+# בוודאות בכל תצורת Apache. יש לבדוק כ-302 בסביבת בדיקה
+# ולהחליף ל-301 רק לאחר אימות.</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">9</span><h3>שני עמודי טפסים כמעט זהים</h3><span class="pill warn">כפילות</span></summary>
-  <div class="issue-body"><div class="issue-b"><p><span dir="ltr">/טפסים/</span> ו-<span dir="ltr">/טפסים-גמלת-סיעוד/</span> מכילים 682 ו-681 תווים בהתאמה. מדידת חפיפת אוצר המילים ביניהם נתנה כ-87%. רוב התוכן בשניהם הוא אותו טופס יצירת קשר.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לאחד לעמוד אחד, מומלץ <span dir="ltr">/טפסים-גמלת-סיעוד/</span>, ולהעביר אליו את הקישורים הייחודיים מהעמוד השני.</div><div class="codewrap"><div class="codehead">.htaccess</div><pre class="codeblock" dir="ltr">Redirect 301 /טפסים/ /טפסים-גמלת-סיעוד/</pre></div></div>
+  <div class="issue-body"><div class="issue-b"><p><span dir="ltr">/טפסים/</span> ו-<span dir="ltr">/טפסים-גמלת-סיעוד/</span> מכילים 682 ו-681 תווים בהתאמה. מדידת חפיפת אוצר המילים ביניהם נתנה כ-87%. רוב התוכן בשניהם הוא אותו טופס יצירת קשר.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> לאחד לעמוד אחד, מומלץ <span dir="ltr">/טפסים-גמלת-סיעוד/</span>, ולהעביר אליו את הקישורים הייחודיים מהעמוד השני.</div><div class="codewrap"><div class="codehead">.htaccess (RedirectMatch, יעד מקודד)</div><pre class="codeblock" dir="ltr">RedirectMatch 301 &quot;^/טפסים/?$&quot; &quot;/%D7%98%D7%A4%D7%A1%D7%99%D7%9D-%D7%92%D7%9E%D7%9C%D7%AA-%D7%A1%D7%99%D7%A2%D7%95%D7%93/&quot;
+
+# הערה: יעד ההפניה מקודד (percent-encoded) כדי שהכלל יעבוד
+# בוודאות בכל תצורת Apache. יש לבדוק כ-302 בסביבת בדיקה
+# ולהחליף ל-301 רק לאחר אימות.</pre></div></div>
 </details><details class="issue warn">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">10</span><h3>עמוד באנגלית כפול לעמוד העברי</h3><span class="pill warn">כפילות</span></summary>
-  <div class="issue-body"><div class="issue-b"><p><span dir="ltr">/how-to-hire-a-foreign-worker/</span> עוסק באותו נושא של <span dir="ltr">/מדריך-להעסקת-עובד-זר/</span>, ותגית ה-Title שלו היא ברירת מחדל.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להפנות אל העמוד העברי הממוטב.</div><div class="codewrap"><div class="codehead">.htaccess</div><pre class="codeblock" dir="ltr">Redirect 301 /how-to-hire-a-foreign-worker/ /מדריך-להעסקת-עובד-זר/</pre></div></div>
+  <div class="issue-body"><div class="issue-b"><p><span dir="ltr">/how-to-hire-a-foreign-worker/</span> עוסק באותו נושא של <span dir="ltr">/מדריך-להעסקת-עובד-זר/</span>, ותגית ה-Title שלו היא ברירת מחדל.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להפנות אל העמוד העברי הממוטב.</div><div class="codewrap"><div class="codehead">.htaccess (RedirectMatch, יעד מקודד)</div><pre class="codeblock" dir="ltr">RedirectMatch 301 &quot;^/how-to-hire-a-foreign-worker/?$&quot; &quot;/%D7%9E%D7%93%D7%A8%D7%99%D7%9A-%D7%9C%D7%94%D7%A2%D7%A1%D7%A7%D7%AA-%D7%A2%D7%95%D7%91%D7%93-%D7%96%D7%A8/&quot;
+
+# הערה: יעד ההפניה מקודד (percent-encoded) כדי שהכלל יעבוד
+# בוודאות בכל תצורת Apache. יש לבדוק כ-302 בסביבת בדיקה
+# ולהחליף ל-301 רק לאחר אימות.</pre></div></div>
 </details>
 
 <h2>מבנה</h2>
@@ -207,7 +245,7 @@ add_filter(&#x27;wpseo_robots_array&#x27;, function ($robots) {
 <details class="issue mid">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">11</span><h3>שני עמודים נושאים שתי כותרות ראשיות</h3><span class="pill mid">מבנה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>בעמודים <span dir="ltr">/contact/</span> ו-<span dir="ltr">/privacy-policy/</span> מופיעות שתי תגיות <code dir="ltr">H1</code>. בשניהם הכותרת הנוספת היא הכותרת של דף הבית.</p>
-<div class="clarify"><strong>מה תקין:</strong> בכל 128 העמודים קיימת כותרת ראשית, ובכל 128 קיימים פירורי לחם פעילים. שני הסעיפים שנבדקו בבדיקה הטכנית נמצאו תקינים.</div></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשאיר כותרת ראשית אחת בכל עמוד, ולהפוך את השנייה לכותרת משנה.</div></div>
+<div class="clarify"><strong>מה תקין:</strong> בכל 129 הכתובות קיימת כותרת ראשית, ובכל 129 קיימת סכמת <span dir="ltr">BreadcrumbList</span>. פירורי לחם גלויים מופיעים ב-122 מהן. שבע הכתובות ללא פירורי לחם גלויים הן דף הבית (תקין, זהו שורש האתר), עמוד צור קשר, שני עמודי אזור, שני עמודי מחבר ורשומה טכנית של Elementor.</div></div><div class="fix"><strong>הפעולה הנדרשת:</strong> להשאיר כותרת ראשית אחת בכל עמוד, ולהפוך את השנייה לכותרת משנה.</div></div>
 </details><details class="issue mid">
   <summary class="issue-h"><span class="chev" aria-hidden="true"></span><span class="num">12</span><h3>אי התאמה בין כתובת העמוד לכותרת בסניף חיפה</h3><span class="pill mid">מבנה</span></summary>
   <div class="issue-body"><div class="issue-b"><p>הכתובת <span dir="ltr">/branch/סניף-חיפה/</span> מציינת חיפה, וגם תגית ה-Title תקינה ומזכירה את חיפה והצפון. הכותרת הראשית בעמוד היא "סניף צפון" בלבד.</p></div><div class="fix"><strong>הפעולה הנדרשת:</strong> ליישר את הכותרת הראשית לכתובת ולתגית ה-Title.</div><div class="codewrap"><div class="codehead">סניף חיפה: הכותרת הראשית</div><pre class="codeblock" dir="ltr">H1 נוכחי:   סניף צפון
