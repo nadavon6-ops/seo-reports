@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>QMD Implementation Verification | NC Digital</title>
+<style>
+:root { --bg:#0b0f17; --card:#111827; --card2:#0f1524; --border:#1f2937; --text:#e5e7eb; --muted:#9ca3af;
+--green:#22c55e; --amber:#f59e0b; --red:#ef4444; --blue:#3b82f6; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,'Segoe UI',Roboto,sans-serif; line-height:1.55; }
+.wrap { max-width:1180px; margin:0 auto; padding:32px 20px 60px; }
+header.top { padding:26px 0 18px; border-bottom:1px solid var(--border); margin-bottom:22px; }
+.report-title { font-size:26px; font-weight:800; }
+.subtitle { color:var(--muted); margin-top:6px; font-size:14px; max-width:860px; }
+.meta-line { color:var(--muted); font-size:12.5px; margin-top:10px; }
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:20px 0 26px; }
+.sum-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; }
+.sum-card h3 { font-size:14.5px; margin-bottom:4px; }
+.sum-card .src { color:var(--muted); font-size:12px; margin-bottom:10px; word-break:break-all; }
+.verdict-line { font-size:13.5px; margin-top:10px; color:var(--text); }
+.chip { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:20px; margin:2px 4px 2px 0; }
+.c-done { background:rgba(34,197,94,.12); color:#86efac; border:1px solid rgba(34,197,94,.3); }
+.c-partial { background:rgba(245,158,11,.12); color:#fcd34d; border:1px solid rgba(245,158,11,.3); }
+.c-notdone { background:rgba(239,68,68,.12); color:#fca5a5; border:1px solid rgba(239,68,68,.3); }
+.c-info { background:rgba(156,163,175,.12); color:#d1d5db; border:1px solid rgba(156,163,175,.3); }
+.badge { display:inline-block; font-size:11.5px; font-weight:700; padding:2px 10px; border-radius:20px; white-space:nowrap; }
+.b-done { background:rgba(34,197,94,.12); color:#86efac; border:1px solid rgba(34,197,94,.35); }
+.b-partial { background:rgba(245,158,11,.12); color:#fcd34d; border:1px solid rgba(245,158,11,.35); }
+.b-notdone { background:rgba(239,68,68,.12); color:#fca5a5; border:1px solid rgba(239,68,68,.35); }
+.b-info { background:rgba(156,163,175,.12); color:#d1d5db; border:1px solid rgba(156,163,175,.35); }
+.toolbar { margin:6px 0 14px; }
+.toolbar button { background:var(--card2); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:6px 14px; font-size:12.5px; cursor:pointer; margin-right:8px; font-family:inherit; }
+.toolbar button:hover { border-color:var(--blue); }
+details.sec { background:var(--card); border:1px solid var(--border); border-radius:12px; margin-bottom:14px; overflow:hidden; }
+details.sec > summary { cursor:pointer; padding:16px 18px; font-weight:700; font-size:15.5px; list-style:none; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+details.sec > summary::-webkit-details-marker { display:none; }
+details.sec > summary::before { content:'\25B8'; color:var(--muted); font-size:13px; transition:transform .15s; }
+details.sec[open] > summary::before { transform:rotate(90deg); }
+details.sub { background:var(--card2); border:1px solid var(--border); border-radius:10px; margin:0 16px 12px; }
+details.sub > summary { cursor:pointer; padding:12px 14px; font-weight:600; font-size:13.5px; list-style:none; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+details.sub > summary::-webkit-details-marker { display:none; }
+details.sub > summary::before { content:'\25B8'; color:var(--muted); font-size:11px; }
+details.sub[open] > summary::before { content:'\25BE'; }
+.sec-body { padding:4px 16px 16px; }
+.sub-body { padding:2px 12px 12px; overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; min-width:640px; }
+th { text-align:left; color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; padding:8px 10px; border-bottom:1px solid var(--border); }
+td { padding:9px 10px; border-bottom:1px solid rgba(31,41,55,.6); vertical-align:top; }
+td.c, th.c { text-align:center; }
+tr:last-child td { border-bottom:none; }
+.url { font-family:'SF Mono',Menlo,Consolas,monospace; font-size:12px; color:#93c5fd; word-break:break-all; }
+.note-block { background:var(--card2); border:1px solid var(--border); border-left:3px solid var(--blue); border-radius:8px; padding:12px 14px; font-size:13px; margin:10px 0; }
+.note-block.warn { border-left-color:var(--amber); }
+h4.remains { font-size:15px; margin:26px 0 10px; }
+ul.todo { list-style:none; }
+ul.todo li { padding:9px 12px; background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; font-size:13.5px; }
+ul.todo li b { color:#fca5a5; }
+footer { margin-top:36px; padding-top:16px; border-top:1px solid var(--border); color:var(--muted); font-size:12px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+@media (max-width:640px) { .report-title { font-size:21px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="report-title">QMD - Implementation Verification Report</div>
+  <div class="subtitle">Verification of the three SEO deliverables sent to the qmd.net development team: the SEO Improvement Report (March 2026), the Technical SEO Report, and the sitemap instructions document. Every recommendation was checked against the live production site.</div>
+  <div class="meta-line">Verified: 29.07.2026 &nbsp;|&nbsp; Method: full production crawl (60 URLs), rendered-DOM schema check on all 26 live pages (headless Chrome), live sitemap and robots inspection, Google Search Console URL inspection &nbsp;|&nbsp; NC Digital</div>
+</header>
+
+<div class="summary-grid">
+  <div class="sum-card">
+    <h3>1. SEO Improvement Report</h3>
+    <div class="src">qmd-seo-geo-improvement-report.html</div>
+    <span class="chip c-done">70 done</span> <span class="chip c-partial">9 partial</span> <span class="chip c-notdone">124 not done</span> <span class="chip c-info">4 info</span>
+    <div class="verdict-line"><b>Partially implemented.</b> Titles and meta descriptions: implemented with high accuracy. New pages, H2/H3 heading plan, schema and hreflang: not started.</div>
+  </div>
+  <div class="sum-card">
+    <h3>2. Technical SEO Report</h3>
+    <div class="src">qmd-technical-seo-report.html</div>
+    <span class="chip c-partial">4 partial</span> <span class="chip c-notdone">9 not done</span>
+    <div class="verdict-line"><b>Partially implemented.</b> Meta tags, ALT, H1 and performance: partially implemented. All content sections and all four schema specs: not implemented.</div>
+  </div>
+  <div class="sum-card">
+    <h3>3. Sitemap Instructions (Google Doc)</h3>
+    <div class="src">Hebrew doc, 4 findings</div>
+    <span class="chip c-done">3 done</span> <span class="chip c-partial">1 partial</span>
+    <div class="verdict-line"><b>Largely complete.</b> 3 of 4 fully handled; the leadership duplicate was resolved with noindex instead of the requested 301.</div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <button onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">Expand all</button>
+  <button onclick="document.querySelectorAll('details').forEach(d=>d.open=false)">Collapse all</button>
+</div>
+
+<details class="sec">
+  <summary>1. SEO Improvement Report (March 2026) <span class="chip c-done">70 done</span> <span class="chip c-partial">9 partial</span> <span class="chip c-notdone">124 not done</span> <span class="chip c-info">4 info</span></summary>
+  <div class="sec-body">
+
+  <details class="sub">
+    <summary>1.1 Technical SEO issues (10) <span class="chip c-done">3 done</span> <span class="chip c-partial">1 partial</span> <span class="chip c-notdone">5 not done</span> <span class="chip c-info">1 info</span></summary>
+    <div class="sub-body"><table><thead><tr><th style="width:30%">Issue</th><th class="c" style="width:110px">Status</th><th>Live state (29.07.2026)</th></tr></thead><tbody><tr><td>Zero Meta Descriptions Site-Wide</td><td class="c"><span class="badge b-done">Done</span></td><td>25/26 indexable pages now have meta descriptions (was 0). Only the empty /news/ archive lacks one.</td></tr><tr><td>No Product Schema on Any Product Page</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>Rendered DOM on all 26 live pages: no Product/MedicalDevice schema anywhere - only default Yoast graph.</td></tr><tr><td>Generic Title Tags - No Target Keywords</td><td class="c"><span class="badge b-partial">Partial</span></td><td>All 18 pages from the report&#x27;s page list carry the exact recommended titles, but /about/, /contact/, /locations/, /news/, /qmd-leadership/ and the Arthesys/Degania hub pages still use the old generic brand-suffix title.</td></tr><tr><td>Canonical Tags - Present (Yoast SEO)</td><td class="c"><span class="badge b-info">Info</span></td><td>Was already OK; still OK (self-canonicals present).</td></tr><tr><td>No Hreflang Tags - 6 Countries</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>Zero hreflang tags on all crawled pages.</td></tr><tr><td>Locations Page Missing H1</td><td class="c"><span class="badge b-done">Done</span></td><td>H1 &#x27;Locations&#x27; now present.</td></tr><tr><td>Thin Content on Product Pages</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>Product pages still 200–640 words incl. nav/footer; capabilities 337 words vs 800+ target.</td></tr><tr><td>No FAQPage Schema</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>No FAQPage schema on any rendered page.</td></tr><tr><td>Homepage Title Starts with &quot;Homepage&quot;</td><td class="c"><span class="badge b-done">Done</span></td><td>Now: &#x27;Medical Device Contract Manufacturer &amp; CDMO | QMD&#x27;.</td></tr><tr><td>About Page H1 is Just &quot;About&quot;</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>H1 is still &#x27;About&#x27;.</td></tr></tbody></table></div>
+  </details>
+
+  <details class="sub">
+    <summary>1.2 Existing pages: titles, meta descriptions, H1 (18 pages) <span class="chip c-done">17 done</span> <span class="chip c-partial">1 partial</span></summary>
+    <div class="sub-body">
+    <div class="note-block">This section was implemented with high accuracy: 17 of 18 pages carry the exact recommended title and meta description. The Biometrix hub moved from /product-category/biometrix/ to /product/biometrix-products/ and the recommended texts were implemented on the new URL. Two nuances: the homepage H1 uses a regular hyphen where the spec used a long dash (cosmetic), and the per-page "schema to add" and "content gap" notes inside these cards were not implemented anywhere; they are graded under sections 1.1 and 2.3.</div>
+    <table><thead><tr><th style="width:34%">Page</th><th class="c" style="width:110px">Status</th><th>Detail</th></tr></thead><tbody><tr><td><span class="url">qmd.net/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified; H1: implemented as specified</td></tr><tr><td><span class="url">qmd.net/capabilities/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified; H1: implemented as specified</td></tr><tr><td><span class="url">qmd.net/quality-regulatory/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>Title and H1 implemented as specified. Meta description implemented with typos: “ISO13485” and “FDA21” are missing spaces, and the final clause was cut.</td></tr><tr><td><span class="url">qmd.net/clinical-areas/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified; H1: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/degania-products/urinary-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/pta-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/ptca-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/aspiration-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/y-connectors-accessories/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/arterial-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/rapid-infusion-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/central-venous-catheters/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product-category/biometrix/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Page moved to /product/biometrix-products/ - recommended title AND meta implemented there exactly</td></tr><tr><td><span class="url">qmd.net/product/degania-products/wound-drainage/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/degania-products/enteral-feeding/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/degania-products/vessel-loops/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr><tr><td><span class="url">qmd.net/product/degania-products/silicone-tubing/</span></td><td class="c"><span class="badge b-done">Done</span></td><td>Title: implemented as specified; Meta description: implemented as specified</td></tr></tbody></table></div>
+  </details>
+
+  <details class="sub">
+    <summary>1.3 New pages to create (19) <span class="chip c-notdone">19 not done</span></summary>
+    <div class="sub-body">
+    <div class="note-block warn">None of the 19 proposed pages have been created. Every URL returns 404 and none appears in the sitemap. This is the largest untouched block: a combined cluster volume of tens of thousands of monthly searches.</div>
+    <table><thead><tr><th>Proposed page</th><th>Primary keyword</th><th class="c">Cluster vol/mo</th><th class="c" style="width:110px">Status</th><th>Live state</th></tr></thead><tbody><tr><td><span class="url">/suction-catheters/</span></td><td>suction catheter</td><td class="c">27,660</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/silicone-catheters/</span></td><td>silicone catheter</td><td class="c">7,830</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/balloon-catheters/</span></td><td>balloon catheter</td><td class="c">7,550</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/medical-tubing-extrusion/</span></td><td>medical tubing</td><td class="c">5,550</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/liquid-silicone-rubber/</span></td><td>liquid silicone rubber</td><td class="c">4,510</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/compression-molding/</span></td><td>compression molding</td><td class="c">3,080</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/catheter-parts/</span></td><td>catheter parts</td><td class="c">2,340</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/silicone-injection-molding/</span></td><td>silicone injection molding</td><td class="c">2,230</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/medical-device-prototyping/</span></td><td>medical device prototyping</td><td class="c">1,610</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/medical-grade-silicone/</span></td><td>medical grade silicone</td><td class="c">1,020</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/gamma-irradiation-sterilization/</span></td><td>gamma irradiation sterilization</td><td class="c">1,000</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/hydrophilic-coating/</span></td><td>hydrophilic catheter</td><td class="c">850</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/catheter-manufacturing/</span></td><td>catheter manufacturer</td><td class="c">720</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/medical-device-design-services/</span></td><td>medical device design services</td><td class="c">330</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/catheter-manufacturing-processes/</span></td><td>catheter tipping</td><td class="c">300</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/multi-lumen-tubing/</span></td><td>multi lumen tubing</td><td class="c">260</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/medical-device-lifecycle-management/</span></td><td>medical device lifecycle management</td><td class="c">60</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/advanced-medical-materials/</span></td><td>medical grade polyurethane</td><td class="c">50</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr><tr><td><span class="url">/private-label-medical-devices/</span></td><td>private label medical device manufacturer</td><td class="c">-</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>HTTP 404, not in sitemap</td></tr></tbody></table></div>
+  </details>
+
+  <details class="sub">
+    <summary>1.4 H2/H3 heading optimization (28 pages) <span class="chip c-partial">7 partial</span> <span class="chip c-notdone">95 not done</span> <span class="chip c-info">2 info</span></summary>
+    <div class="sub-body">
+    <div class="note-block warn">The heading plan was not implemented. Old heading texts and tags are still live on almost every page checked; the H5 nav-style headings were not retagged and the product-page H1s were not added. The few items counted as done or partial overlap with the title/H1 work from section 1.2.</div>
+    <table><thead><tr><th style="width:34%">Page</th><th class="c" style="width:110px">Status</th><th>Heading work</th></tr></thead><tbody><tr><td><span class="url">qmd.net/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>10 heading changes requested: 0 done, 0 partial, 10 not done.</td></tr><tr><td><span class="url">qmd.net/capabilities/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>6 heading changes requested: 0 done, 2 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/quality-regulatory/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>8 heading changes requested: 0 done, 0 partial, 8 not done.</td></tr><tr><td><span class="url">qmd.net/clinical-areas/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>2 heading changes requested: 0 done, 0 partial, 2 not done.</td></tr><tr><td><span class="url">qmd.net/about/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>2 heading changes requested: 0 done, 0 partial, 2 not done.</td></tr><tr><td><span class="url">qmd.net/qmd-leadership/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>1 heading changes requested: 0 done, 0 partial, 1 not done. 1 heading(s) marked “keep” no longer appear (page content changed).</td></tr><tr><td><span class="url">qmd.net/contact/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>1 heading changes requested: 0 done, 0 partial, 1 not done. 1 heading(s) marked “keep” no longer appear (page content changed).</td></tr><tr><td><span class="url">qmd.net/locations/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>1 heading changes requested: 0 done, 1 partial, 0 not done.</td></tr><tr><td><span class="url">qmd.net/product/</span></td><td class="c"><span class="badge b-info">Info</span></td><td>0 heading changes requested: 0 done, 0 partial, 0 not done. 1 heading(s) marked “keep” no longer appear (page content changed).</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>3 heading changes requested: 0 done, 0 partial, 3 not done.</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>1 heading changes requested: 0 done, 1 partial, 0 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>1 heading changes requested: 0 done, 0 partial, 1 not done.</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/pta-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>7 heading changes requested: 0 done, 0 partial, 7 not done.</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/ptca-catheters/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>6 heading changes requested: 0 done, 2 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/aspiration-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>6 heading changes requested: 0 done, 0 partial, 6 not done.</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/y-connectors-accessories/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>5 heading changes requested: 0 done, 0 partial, 5 not done.</td></tr><tr><td><span class="url">qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>3 heading changes requested: 0 done, 0 partial, 3 not done.</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/arterial-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>4 heading changes requested: 0 done, 0 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/central-venous-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>5 heading changes requested: 0 done, 0 partial, 5 not done.</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/rapid-infusion-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>4 heading changes requested: 0 done, 0 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>3 heading changes requested: 0 done, 0 partial, 3 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/urinary-catheters/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>6 heading changes requested: 0 done, 0 partial, 6 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/wound-drainage/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>3 heading changes requested: 0 done, 0 partial, 3 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/enteral-feeding/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>4 heading changes requested: 0 done, 0 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/vessel-loops/</span></td><td class="c"><span class="badge b-notdone">Not done</span></td><td>5 heading changes requested: 0 done, 0 partial, 5 not done.</td></tr><tr><td><span class="url">qmd.net/product/degania-products/silicone-tubing/</span></td><td class="c"><span class="badge b-partial">Partial</span></td><td>5 heading changes requested: 0 done, 1 partial, 4 not done.</td></tr><tr><td><span class="url">qmd.net/product-category/coronary-products/</span></td><td class="c"><span class="badge b-info">Info</span></td><td>0 heading changes requested: 0 done, 0 partial, 0 not done. 1 heading(s) marked “keep” no longer appear (page content changed).</td></tr><tr><td><span class="url">qmd.net/product-category/peripheral-vascular-products/</span></td><td class="c"><span class="badge b-info">Info</span></td><td>0 heading changes requested: 0 done, 0 partial, 0 not done. 1 heading(s) marked “keep” no longer appear (page content changed).</td></tr></tbody></table></div>
+  </details>
+
+  <details class="sub">
+    <summary>1.5 CDMO keyword decision note <span class="chip c-info">1 info</span></summary>
+    <div class="sub-body"><div class="note-block">Informational note, no developer action required. The homepage now targets the CDMO keyword in its title and H1, consistent with the note's direction.</div></div>
+  </details>
+
+  </div>
+</details>
+
+<details class="sec">
+  <summary>2. Technical SEO Report <span class="chip c-partial">4 partial</span> <span class="chip c-notdone">9 not done</span></summary>
+  <div class="sec-body">
+  <details class="sub">
+    <summary>2.1 Technical and implementation fixes <span class="chip c-partial">4 partial</span></summary>
+    <div class="sub-body"><table><thead><tr><th style="width:28%">Recommendation</th><th class="c" style="width:110px">Status</th><th>Live state (29.07.2026)</th></tr></thead><tbody><tr><td>Meta Tags (Title &amp; Description)</td><td class="c"><span class="badge b-partial">Partial</span></td><td>Meta descriptions were implemented site-wide and the homepage title was rewritten, but /locations/ reuses the homepage description (not unique) and /news/ has none.</td></tr><tr><td>Image ALT Tags</td><td class="c"><span class="badge b-partial">Partial</span></td><td>Homepage still has 5/11 images with empty alt; all other crawled pages have 0 empty alts.</td></tr><tr><td>Heading Structure (H1)</td><td class="c"><span class="badge b-partial">Partial</span></td><td>H1 added to /locations/, brand hub pages and key pages; 14 product detail pages still have NO H1.</td></tr><tr><td>Performance &amp; Core Web Vitals</td><td class="c"><span class="badge b-partial">Partial</span></td><td>TTFB now ~0.08-0.10s (target &lt;0.8s, baseline ~1.6s); all 11 homepage images use responsive srcset, lazy-loading via attribute on 7 plus WP Rocket JS for the rest; however, 0 scripts are deferred and no WebP is served. PSI quota blocked a Lighthouse score today.</td></tr></tbody></table></div>
+  </details>
+  <details class="sub">
+    <summary>2.2 Content recommendations <span class="chip c-notdone">5 not done</span></summary>
+    <div class="sub-body"><table><thead><tr><th style="width:28%">Recommendation</th><th class="c" style="width:110px">Status</th><th>Live state (29.07.2026)</th></tr></thead><tbody><tr><td>Blog</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>/blog/ 404; no blog in nav or sitemap. Pre-existing /news/ archive is empty (0 posts).</td></tr><tr><td>Case Studies</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>/case-studies/ 404; nothing in nav/sitemap.</td></tr><tr><td>Download Center</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>/downloads/ and /download-center/ 404; nothing in nav/sitemap.</td></tr><tr><td>FAQ Section</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>/faq/ and /faqs/ 404; no FAQ blocks found on key pages; no FAQPage schema.</td></tr><tr><td>About Page - Company History</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>About page unchanged: 410 words, no history/timeline content, H1 still &#x27;About&#x27;.</td></tr></tbody></table></div>
+  </details>
+  <details class="sub">
+    <summary>2.3 Schema implementation <span class="chip c-notdone">4 not done</span></summary>
+    <div class="sub-body">
+    <div class="note-block warn">The schema recommendations were not implemented. Every page still carries only the default Yoast graph (WebPage, BreadcrumbList, WebSite, minimal Organization). Verified on the rendered DOM of all 26 live pages, so client-side injection is ruled out.</div>
+    <table><thead><tr><th style="width:28%">Recommendation</th><th class="c" style="width:110px">Status</th><th>Live state (29.07.2026)</th></tr></thead><tbody><tr><td>3.1 Organization Schema</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>The live Organization schema is the default from Yoast (name/url/logo only) - none of the spec&#x27;d fields (legalName, address, areaServed, contactPoint, hasCredential, knowsAbout...).</td></tr><tr><td>3.2 Product Schemas</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>No Product schema on any product page (rendered DOM, full set).</td></tr><tr><td>3.3 Person Schemas - Leadership Page</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>No Person/ItemList schema on /qmd-leadership/ (rendered DOM).</td></tr><tr><td>3.4 LocalBusiness Schemas - Locations Page</td><td class="c"><span class="badge b-notdone">Not done</span></td><td>No LocalBusiness schema on /locations/ (rendered DOM).</td></tr></tbody></table></div>
+  </details>
+  </div>
+</details>
+
+<details class="sec">
+  <summary>3. Sitemap Instructions (Google Doc) <span class="chip c-done">3 done</span> <span class="chip c-partial">1 partial</span></summary>
+  <div class="sec-body">
+  <details class="sub" open>
+    <summary>3.1 The four findings <span class="chip c-done">3 done</span> <span class="chip c-partial">1 partial</span></summary>
+    <div class="sub-body">
+    <table><thead><tr><th style="width:30%">Finding</th><th class="c" style="width:110px">Status</th><th>Live state (29.07.2026)</th></tr></thead><tbody><tr><td>/coming-soon/ in sitemap</td><td class="c"><span class="badge b-done">Done</span></td><td>Removed from sitemap; page is noindex,nofollow; GSC: &#x27;URL is unknown to Google&#x27;.</td></tr><tr><td>Leadership duplicate /leadership/ vs /qmd-leadership/</td><td class="c"><span class="badge b-partial">Partial</span></td><td>Resolved via noindex + sitemap removal instead of the specified 301. /leadership/ still returns 200 and was still &#x27;Submitted and indexed&#x27; in GSC at its last crawl (14 Jul). /qmd-leadership/ is the sole indexable version, in sitemap, self-canonical.</td></tr><tr><td>Leadership structure inconsistency (leadership-sitemap.xml)</td><td class="c"><span class="badge b-done">Done</span></td><td>leadership-sitemap.xml removed (404, out of index); old member pages (e.g. /leadership/peter-vajo/) live but noindexed.</td></tr><tr><td>Product/category archives in sitemap</td><td class="c"><span class="badge b-done">Done</span></td><td>/product/ + both product-category archives: noindex,follow + removed from sitemap; product-category-sitemap.xml deleted; /product-category/biometrix/ removed entirely (404). Doc&#x27;s &#x27;add content OR noindex&#x27; satisfied via noindex. Note: GSC still showed /product/ indexed at last crawl 24 Jul - recrawl pending.</td></tr></tbody></table>
+    <div class="note-block">The sitemap index now contains only page-sitemap.xml and product-sitemap.xml (25 URLs). Google has not yet recrawled /leadership/ and /product/ since the noindex was added, so they still show as indexed in Search Console; this resolves on its own, faster with a recrawl request.</div>
+    </div>
+  </details>
+  </div>
+</details>
+
+<h4 class="remains">What remains for the developer</h4>
+<ul class="todo">
+  <li><b>New pages:</b> none of the 19 proposed keyword pages was created (section 1.3). This is the highest-value remaining item.</li>
+  <li><b>Schema:</b> all four specs from the Technical SEO Report (Organization, Product, Person, LocalBusiness) plus the FAQPage recommendation are unimplemented on every page.</li>
+  <li><b>Headings:</b> the full H2/H3 optimization plan (section 1.4) is untouched, including H1s on 14 product detail pages.</li>
+  <li><b>Content:</b> Blog, Case Studies, Download Center, FAQ section and the About-page history section were not added.</li>
+  <li><b>Hreflang:</b> still missing across the site (6 facility countries).</li>
+  <li><b>Titles outside the page list:</b> /about/, /contact/, /locations/, /news/, /qmd-leadership/ and the Arthesys and Degania hub pages still carry the old generic brand-suffix title.</li>
+  <li><b>Small fixes:</b> 5 homepage images still have empty ALT text; About page H1 is still "About"; /locations/ needs a unique meta description (it currently reuses the homepage text); quality-regulatory meta description has two typos ("ISO13485", "FDA21"); scripts are still not deferred and images are not served as WebP.</li>
+</ul>
+
+<footer>
+  <span>NC Digital | QMD Implementation Verification</span>
+  <span>Data: live crawl of qmd.net, rendered DOM, sitemap XML, Google Search Console | 29.07.2026</span>
+</footer>
+</div>
+</body>
+</html>
