@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<title>Manpower Care | הטמעת סכמות באתר החדש</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;font-family:'Segoe UI',Arial,sans-serif;line-height:1.78;padding:0 0 60px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+header{background:linear-gradient(135deg,#131a24,#0d1117);border-bottom:1px solid #21262d;padding:44px 0 30px;margin-bottom:28px}
+h1{font-size:1.82rem;margin-bottom:8px}
+.sub{color:#8b949e;font-size:.95rem}
+h2{font-size:1.25rem;margin:36px 0 6px;padding-bottom:9px;border-bottom:1px solid #21262d}
+.h2sub{color:#6e7681;font-size:.83rem;margin-bottom:14px}
+h3{font-size:1rem;font-weight:650;flex:1}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:13px}
+.card{background:#161b22;border:1px solid #21262d;border-radius:10px;padding:15px}
+.card-label{color:#8b949e;font-size:.77rem;margin-bottom:5px}
+.card-value{font-size:1.7rem;font-weight:700;color:#58a6ff}
+.card-sub{color:#6e7681;font-size:.73rem}
+.note{background:#161b22;border:1px solid #21262d;border-right:3px solid #58a6ff;border-radius:8px;padding:14px 17px;margin:20px 0;font-size:.89rem;color:#c9d1d9}
+.issue{background:#161b22;border:1px solid #21262d;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.issue.bad{border-right:3px solid #f85149}
+.issue.warn{border-right:3px solid #d29922}
+.issue.mid{border-right:3px solid #58a6ff}
+.issue.open{border-right:3px solid #8957e5}
+.issue[open]{border-color:#30363d}
+.issue-h{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:15px 19px;user-select:none}
+.issue-h::-webkit-details-marker{display:none}
+.issue-h:hover{background:#1a2028}
+.issue[open] .issue-h{border-bottom:1px solid #21262d}
+.issue-body{padding:16px 19px 18px}
+.chev{flex-shrink:0;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:6px solid #8b949e;transition:transform .15s}
+.issue[open] .chev{transform:rotate(-90deg)}
+.owner{background:#1f2630;border:1px solid #30363d;color:#8b949e;border-radius:5px;padding:2px 9px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.num{background:#6e7681;color:#fff;border-radius:20px;padding:2px 10px;font-size:.75rem;font-weight:700;flex-shrink:0}
+.issue.bad .num{background:#f85149} .issue.warn .num{background:#d29922} .issue.mid .num{background:#58a6ff} .issue.open .num{background:#8957e5}
+.issue-b p{color:#c9d1d9;font-size:.89rem;margin-bottom:9px}
+.fix{margin-top:12px;padding-top:11px;border-top:1px dashed #30363d;color:#7ee787;font-size:.87rem}
+.fix strong{color:#3fb950}
+.clarify{background:rgba(88,166,255,.07);border:1px solid rgba(88,166,255,.25);border-radius:6px;padding:11px 14px;margin:10px 0;font-size:.86rem;color:#c9d1d9}
+.clarify strong{color:#58a6ff}
+code{background:#0d1117;border:1px solid #30363d;border-radius:4px;padding:1px 6px;font-size:.85em;display:inline-block}
+table.mini{width:100%;border-collapse:collapse;margin:10px 0;font-size:.84rem;background:#0d1117;border:1px solid #21262d;border-radius:6px;overflow:hidden}
+table.mini th{background:#1c2129;color:#8b949e;text-align:right;padding:8px 11px;font-size:.77rem;font-weight:600}
+table.mini td{padding:8px 11px;border-top:1px solid #21262d;vertical-align:top}
+ul.rec{margin:6px 20px 10px 0;color:#c9d1d9;font-size:.86rem}
+ul.rec li{margin-bottom:5px}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap}
+.pill.ok{background:rgba(63,185,80,.15);color:#3fb950}
+.pill.bad{background:rgba(248,81,73,.15);color:#f85149}
+.pill.warn{background:rgba(210,153,34,.15);color:#d29922}
+.pill.mid{background:rgba(88,166,255,.15);color:#58a6ff}
+.pill.open{background:rgba(137,87,229,.16);color:#a371f7}
+.muted{color:#6e7681} .small{font-size:.8rem}
+.acc-ctl{display:flex;gap:8px;margin:14px 0}
+.acc-btn{background:#161b22;border:1px solid #30363d;color:#c9d1d9;border-radius:6px;padding:6px 14px;font-size:.8rem;cursor:pointer;font-family:inherit}
+.acc-btn:hover{background:#1f2630;color:#e6edf3}
+a{color:#58a6ff} a:hover{color:#79c0ff}
+.codewrap{margin-top:12px;border:1px solid #30363d;border-radius:8px;overflow:hidden;background:#0b0f14}
+.codehead{background:#161b22;border-bottom:1px solid #30363d;padding:7px 12px;font-size:.78rem;font-weight:600;color:#7ee787;text-align:right}
+pre.codeblock{margin:0;padding:12px 14px;overflow-x:auto;font-family:ui-monospace,Menlo,monospace;font-size:.79rem;line-height:1.55;color:#c9d1d9;white-space:pre;text-align:left}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid #21262d;color:#6e7681;font-size:.8rem;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>הטמעת סכמות באתר החדש, מדריך למפתח</h1>
+  <div class="sub">Manpower Care · קוד מוכן להדבקה לכל עמוד · 01.08.2026</div>
+</div></header>
+
+<div class="wrap">
+
+<div class="cards">
+<div class="card"><div class="card-label">בלוקים מוכנים להדבקה</div><div class="card-value">24</div><div class="card-sub">14 סניפים, 5 שירותים, 5 עמודי שאלות</div></div>
+<div class="card"><div class="card-label">עמודי FAQ שכבר תקינים</div><div class="card-value">7</div><div class="card-sub">אומתו מילה במילה מול התוכן החדש</div></div>
+<div class="card"><div class="card-label">הגדרת Organization</div><div class="card-value">1</div><div class="card-sub">קטע PHP אחד לכל האתר</div></div>
+<div class="card"><div class="card-label">בלוקים ישנים שאין להעביר</div><div class="card-value">3</div><div class="card-sub">פירוט בסעיף האחרון</div></div>
+</div>
+
+<div class="note">שלושה כללים לכל ההטמעה: 1) האתר החדש כבר מפיק אוטומטית (דרך Yoast) סכמות Organization, WebSite, BreadcrumbList ו-WebPage בכל עמוד, ו-Article עם Person בכל פוסט. אין להוסיף ידנית אף בלוק מהסוגים האלה, תוספת כזו יוצרת סכמה כפולה. 2) כל הקוד בדוח כתוב עם כתובות הדומיין הראשי manpowercare.co.il, כך שהוא נכון לרגע שאחרי ההחלפה. 3) מקום ההדבקה של בלוקי העמודים: תוסף WPCode (קטע HTML עם תנאי טעינה לעמוד המתאים) או Custom Code של אלמנטור עם תנאי הצגה לעמוד, מיקום Head.</div>
+
+<div class="acc-ctl">
+  <button class="acc-btn" onclick="document.querySelectorAll('details.issue').forEach(d=>d.open=true)">פתח הכל</button>
+  <button class="acc-btn" onclick="document.querySelectorAll('details.issue').forEach(d=>d.open=false)">סגור הכל</button>
+</div>
+
+<h2>מפת סכמות לפי סוג עמוד</h2>
+<div class="h2sub">מה קיים אוטומטית ומה מוסיפים בכל עמוד</div>
+<table class="mini">
+<tr><th>עמוד / סוג עמוד</th><th>קיים אוטומטית (Yoast)</th><th>מה מוסיפים</th></tr>
+<tr><td>דף הבית</td><td>Organization, WebSite, WebPage, Breadcrumb, FAQPage (תקין)</td><td>העשרת Organization, סעיף 1</td></tr>
+<tr><td>14 עמודי סניפים</td><td>WebPage, Breadcrumb</td><td>LocalBusiness, סעיף 2</td></tr>
+<tr><td>עמודי שירות (מטפלת סיעודית, זרה 24/7, סיעוד בבית, טיפולי סיעוד, נכי צה"ל)</td><td>WebPage, Breadcrumb, FAQPage בחלקם (תקין)</td><td>Service, סעיף 3</td></tr>
+<tr><td>תביעה לגמלת סיעוד, המדריך להעסקת עובד זר, דמנציה + 2 מאמרים</td><td>WebPage, Breadcrumb (במאמרים גם Article)</td><td>FAQPage חדש, סעיף 4</td></tr>
+<tr><td>מאמרי הבלוג</td><td>Article + Person (כותב), WebPage, Breadcrumb</td><td>אין מה להוסיף</td></tr>
+</table>
+
+<h2>סעיף 1, Organization</h2>
+<div class="h2sub">פעם אחת, לכל האתר</div>
+<details class="issue bad">
+  <summary class="issue-h"><span class="chev"></span><span class="num">1</span><h3>העשרת סכמת ה-Organization הקיימת: כתובת, טלפונים ופרופילים חברתיים</h3><span class="pill bad">עדיפות ראשונה</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <p>הנתונים האלה קיימים היום בסכמה של האתר הישן ועוברים לאתר החדש בשני צעדים. חשוב: לא מדביקים בלוק Organization נפרד (כמו שקיים באתר הישן), אלא מעשירים את הבלוק שהאתר כבר מפיק. בלוק נפרד ייצור שתי ישויות Organization מתחרות.</p>
+  <p><strong>צעד א, בהגדרות Yoast</strong> (Settings, Site representation): שם הארגון <code dir="ltr">Manpower Care</code>, שם חלופי <code>מנפאואר קר</code>, ולוגו: קובץ הלוגו הראשי בגודל 112 פיקסלים לפחות. זה גם מתקן את השם הנוכחי בסכמה, שהוא כרגע שם האתר מההתקנה.</p>
+  <p><strong>צעד ב, קטע PHP</strong> שמוסיף כתובת, דרכי התקשרות ופרופילים חברתיים:</p>
+  <div class="codewrap"><div class="codehead">PHP, מסנן wpseo_schema_organization</div><pre class="codeblock" dir="ltr">// להוסיף ל-functions.php של תבנית הבן, או דרך תוסף קטעי קוד (WPCode)
+add_filter( &#x27;wpseo_schema_organization&#x27;, function( $data ) {
+
+    $data[&#x27;address&#x27;] = array(
+        &#x27;@type&#x27;           =&gt; &#x27;PostalAddress&#x27;,
+        &#x27;streetAddress&#x27;   =&gt; &#x27;התע&quot;ש 23&#x27;,
+        &#x27;addressLocality&#x27; =&gt; &#x27;כפר סבא&#x27;,
+        &#x27;addressCountry&#x27;  =&gt; &#x27;IL&#x27;,
+    );
+
+    $data[&#x27;contactPoint&#x27;] = array(
+        array(
+            &#x27;@type&#x27;             =&gt; &#x27;ContactPoint&#x27;,
+            &#x27;telephone&#x27;         =&gt; &#x27;*9055&#x27;,
+            &#x27;contactType&#x27;       =&gt; &#x27;customer service&#x27;,
+            &#x27;areaServed&#x27;        =&gt; &#x27;IL&#x27;,
+            &#x27;availableLanguage&#x27; =&gt; array( &#x27;he&#x27;, &#x27;en&#x27; ),
+        ),
+        array(
+            &#x27;@type&#x27;       =&gt; &#x27;ContactPoint&#x27;,
+            &#x27;telephone&#x27;   =&gt; &#x27;03-5496311&#x27;,
+            &#x27;contactType&#x27; =&gt; &#x27;head office&#x27;,
+            &#x27;areaServed&#x27;  =&gt; &#x27;IL&#x27;,
+        ),
+        array(
+            &#x27;@type&#x27;       =&gt; &#x27;ContactPoint&#x27;,
+            &#x27;telephone&#x27;   =&gt; &#x27;03-5404566&#x27;,
+            &#x27;contactType&#x27; =&gt; &#x27;fax&#x27;,
+            &#x27;areaServed&#x27;  =&gt; &#x27;IL&#x27;,
+        ),
+    );
+
+    $data[&#x27;sameAs&#x27;] = array(
+        &#x27;https://www.facebook.com/ManpowerCare/&#x27;,
+        &#x27;https://www.youtube.com/@manpowercare-6429&#x27;,
+    );
+
+    return $data;
+} );</pre></div>
+  <div class="clarify"><strong>לתשומת לב:</strong> הכתובת בקוד נלקחה מעמוד צור קשר של האתר החדש, שמציג את משרדי ההנהלה בכתובת התע"ש 23, כפר סבא (טלפון 03-5496311). העמוד האנגלי /en/ עדיין מציג את הכתובת הקודמת, סוקולוב 62 רמת השרון. אם הכתובת ברמת השרון היא העדכנית, נעדכן את הקוד ואת עמוד צור קשר, ואם כפר סבא עדכנית, נתקן את העמוד האנגלי.</div>
+  <p class="small muted">התוצאה בסכמה של דף הבית אחרי ההטמעה תכלול את השדות הבאים בתוך בלוק ה-Organization הקיים:</p>
+  <div class="codewrap"><div class="codehead">כך אמורים השדות להיראות בתוך הסכמה (לא להדביק כבלוק נפרד)</div><pre class="codeblock" dir="ltr">{
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;התע\&quot;ש 23&quot;,
+    &quot;addressLocality&quot;: &quot;כפר סבא&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;contactPoint&quot;: [
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;telephone&quot;: &quot;*9055&quot;,
+      &quot;contactType&quot;: &quot;customer service&quot;,
+      &quot;areaServed&quot;: &quot;IL&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;he&quot;,
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;telephone&quot;: &quot;03-5496311&quot;,
+      &quot;contactType&quot;: &quot;head office&quot;,
+      &quot;areaServed&quot;: &quot;IL&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;telephone&quot;: &quot;03-5404566&quot;,
+      &quot;contactType&quot;: &quot;fax&quot;,
+      &quot;areaServed&quot;: &quot;IL&quot;
+    }
+  ],
+  &quot;sameAs&quot;: [
+    &quot;https://www.facebook.com/ManpowerCare/&quot;,
+    &quot;https://www.youtube.com/@manpowercare-6429&quot;
+  ]
+}</pre></div>
+  </div></div>
+</details>
+
+<h2>סעיף 2, LocalBusiness לעמודי הסניפים</h2>
+<div class="h2sub">14 בלוקים, כל הנתונים נלקחו מעמודי הסניפים עצמם</div>
+<details class="issue warn">
+  <summary class="issue-h"><span class="chev"></span><span class="num">2</span><h3>בלוק LocalBusiness לכל אחד מ-14 עמודי הסניפים</h3><span class="pill warn">עדיפות שנייה</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <p>לעמודי הסניפים חשיבות רבה בקידום המקומי של האתר (עמוד הסניפים הוא השני בתנועה). בלוק LocalBusiness בכל עמוד סניף מספק לגוגל את הכתובת והטלפון של כל סניף בצורה מובנית. כל בלוק מודבק בעמוד הסניף שלו בלבד.</p>
+  <details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף בקעת אונו</h3><span class="muted small" dir="ltr">/branch/סניף-בקעת-אונו/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף בקעת אונו</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-בקעת-אונו/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף בקעת אונו&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-בקעת-אונו/&quot;,
+  &quot;telephone&quot;: &quot;03-9322352&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;ויצמן 43&quot;,
+    &quot;addressLocality&quot;: &quot;יהוד&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-5365639&quot;,
+  &quot;email&quot;: &quot;irenae@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף גוש דן</h3><span class="muted small" dir="ltr">/branch/סניף-גוש-דן/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף גוש דן</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-גוש-דן/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף גוש דן&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-גוש-דן/&quot;,
+  &quot;telephone&quot;: &quot;03-5254450&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;יגאל אלון 110&quot;,
+    &quot;addressLocality&quot;: &quot;תל אביב&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-5254480&quot;,
+  &quot;email&quot;: &quot;RenaD@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף חדרה</h3><span class="muted small" dir="ltr">/branch/סניף-חדרה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף חדרה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-חדרה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף חדרה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-חדרה/&quot;,
+  &quot;telephone&quot;: &quot;04-6324622&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;הלל יפה 25, קומה 2&quot;,
+    &quot;addressLocality&quot;: &quot;חדרה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;04-6325633&quot;,
+  &quot;email&quot;: &quot;LizaL@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף חולון-בת ים</h3><span class="muted small" dir="ltr">/branch/סניף-חולון-בת-ים/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף חולון-בת ים</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-חולון-בת-ים/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף חולון-בת ים&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-חולון-בת-ים/&quot;,
+  &quot;telephone&quot;: &quot;03-7507625&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;סוקולוב 1&quot;,
+    &quot;addressLocality&quot;: &quot;חולון&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-7507620&quot;,
+  &quot;email&quot;: &quot;YuliaT@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף חיפה</h3><span class="muted small" dir="ltr">/branch/סניף-חיפה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף חיפה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-חיפה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף חיפה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-חיפה/&quot;,
+  &quot;telephone&quot;: &quot;04-8527676&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;שדרות בן גוריון 6, קומה 4&quot;,
+    &quot;addressLocality&quot;: &quot;חיפה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;04-8510063&quot;,
+  &quot;email&quot;: &quot;MarinaV@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף טייבה</h3><span class="muted small" dir="ltr">/branch/סניף-טייבה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף טייבה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-טייבה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף טייבה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-טייבה/&quot;,
+  &quot;telephone&quot;: &quot;09-8923520&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;אמיר ג&#x27;בארה קומפלקס, כביש מחמוד דרוויש 24&quot;,
+    &quot;addressLocality&quot;: &quot;טייבה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;email&quot;: &quot;WissalM@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף ירושלים</h3><span class="muted small" dir="ltr">/branch/סניף-ירושלים/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף ירושלים</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-ירושלים/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף ירושלים&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-ירושלים/&quot;,
+  &quot;telephone&quot;: &quot;02-6233732&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;יפו 33, בית יואל&quot;,
+    &quot;addressLocality&quot;: &quot;ירושלים&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;02-6250249&quot;,
+  &quot;email&quot;: &quot;SivanZi@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף כפר סבא</h3><span class="muted small" dir="ltr">/branch/סניף-כפר-סבא/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף כפר סבא</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-כפר-סבא/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף כפר סבא&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-כפר-סבא/&quot;,
+  &quot;telephone&quot;: &quot;03-5496311&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;התע\&quot;ש 23&quot;,
+    &quot;addressLocality&quot;: &quot;כפר סבא&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-5404566&quot;,
+  &quot;email&quot;: &quot;OshriG@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף מגזר</h3><span class="muted small" dir="ltr">/branch/סניף-מגזר/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף מגזר</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-מגזר/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף מגזר&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-מגזר/&quot;,
+  &quot;telephone&quot;: &quot;04-6826249&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;בניין אלעמאר, מרפאה כללית מקצועית&quot;,
+    &quot;addressLocality&quot;: &quot;כפר קרע&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;04-6353176&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף מזרח ירושלים</h3><span class="muted small" dir="ltr">/branch/סניף-מזרח-ירושלים/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף מזרח ירושלים</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-מזרח-ירושלים/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף מזרח ירושלים&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-מזרח-ירושלים/&quot;,
+  &quot;telephone&quot;: &quot;02-6262503&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;הנביאים 18&quot;,
+    &quot;addressLocality&quot;: &quot;ירושלים&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;02-6289463&quot;,
+  &quot;email&quot;: &quot;rihamb@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף נתניה</h3><span class="muted small" dir="ltr">/branch/סניף-נתניה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף נתניה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-נתניה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף נתניה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-נתניה/&quot;,
+  &quot;telephone&quot;: &quot;09-8619345&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;פינסקר 18, בית חבה&quot;,
+    &quot;addressLocality&quot;: &quot;נתניה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;09-8845466&quot;,
+  &quot;email&quot;: &quot;YosefaI@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף פתח תקווה</h3><span class="muted small" dir="ltr">/branch/סניף-פתח-תקווה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף פתח תקווה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-פתח-תקווה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף פתח תקווה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-פתח-תקווה/&quot;,
+  &quot;telephone&quot;: &quot;03-7501012&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;קניון לב העיר, חובבי ציון 46&quot;,
+    &quot;addressLocality&quot;: &quot;פתח תקווה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-5039818&quot;,
+  &quot;email&quot;: &quot;MarinaK@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף רמלה-לוד</h3><span class="muted small" dir="ltr">/branch/סניף-רמלוד/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף רמלה-לוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-רמלוד/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף רמלה-לוד&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-רמלוד/&quot;,
+  &quot;telephone&quot;: &quot;08-9152666&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;סוקולוב 21&quot;,
+    &quot;addressLocality&quot;: &quot;רמלה&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;08-9154222&quot;,
+  &quot;email&quot;: &quot;AviahG@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סניף שפלה</h3><span class="muted small" dir="ltr">/branch/סניף-שפלה/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד סניף שפלה</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;LocalBusiness&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/branch/סניף-שפלה/#branch&quot;,
+  &quot;name&quot;: &quot;מנפאואר קר, סניף שפלה&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/branch/סניף-שפלה/&quot;,
+  &quot;telephone&quot;: &quot;03-9589888&quot;,
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;הרצל 30, קומה 4&quot;,
+    &quot;addressLocality&quot;: &quot;ראשון לציון&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;parentOrganization&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;faxNumber&quot;: &quot;03-9509580&quot;,
+  &quot;email&quot;: &quot;AlexS@manpowercare.co.il&quot;
+}
+&lt;/script&gt;</pre></div></div></details>
+  </div></div>
+</details>
+
+<h2>סעיף 3, Service לעמודי השירות</h2>
+<div class="h2sub">5 בלוקים</div>
+<details class="issue warn">
+  <summary class="issue-h"><span class="chev"></span><span class="num">3</span><h3>בלוק Service לחמשת עמודי השירות המרכזיים</h3><span class="pill warn">עדיפות שנייה</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <p>סכמת Service לא הייתה קיימת באתר הישן, וזו תוספת שמגדירה לגוגל ולמנועי הבינה המלאכותית את השירותים עצמם, מקושרים לישות החברה. כל בלוק מודבק בעמוד שלו בלבד.</p>
+  <details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">מטפלת סיעודית בבית</h3><span class="muted small" dir="ltr">/מטפלת-סיעודית/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Service&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/מטפלת-סיעודית/#service&quot;,
+  &quot;name&quot;: &quot;מטפלת סיעודית בבית&quot;,
+  &quot;serviceType&quot;: &quot;מטפלת סיעודית בבית&quot;,
+  &quot;description&quot;: &quot;השמת מטפלות ומטפלים סיעודיים לטיפול בבית, בהתאמה אישית לצורכי המטופל, כולל ליווי מול ביטוח לאומי.&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/מטפלת-סיעודית/&quot;,
+  &quot;provider&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;areaServed&quot;: {
+    &quot;@type&quot;: &quot;Country&quot;,
+    &quot;name&quot;: &quot;IL&quot;
+  }
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">מטפלת סיעודית זרה 24/7 עם לינה</h3><span class="muted small" dir="ltr">/מטפלת-סיעודית-זרה-24-7/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Service&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/מטפלת-סיעודית-זרה-24-7/#service&quot;,
+  &quot;name&quot;: &quot;מטפלת סיעודית זרה 24/7 עם לינה&quot;,
+  &quot;serviceType&quot;: &quot;מטפלת סיעודית זרה 24/7 עם לינה&quot;,
+  &quot;description&quot;: &quot;השמת מטפלות סיעודיות זרות עם לינה להשגחה מסביב לשעון, כולל סיוע בהיתרים ובבירוקרטיה.&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/מטפלת-סיעודית-זרה-24-7/&quot;,
+  &quot;provider&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;areaServed&quot;: {
+    &quot;@type&quot;: &quot;Country&quot;,
+    &quot;name&quot;: &quot;IL&quot;
+  }
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">סיעוד בבית לקשישים</h3><span class="muted small" dir="ltr">/סיעוד-בבית/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Service&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/סיעוד-בבית/#service&quot;,
+  &quot;name&quot;: &quot;סיעוד בבית לקשישים&quot;,
+  &quot;serviceType&quot;: &quot;סיעוד בבית לקשישים&quot;,
+  &quot;description&quot;: &quot;שירותי סיעוד בבית לקשישים ולהורים מבוגרים, עם ליווי מקצועי ומטפלת סיעודית בהתאמה אישית.&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/סיעוד-בבית/&quot;,
+  &quot;provider&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;areaServed&quot;: {
+    &quot;@type&quot;: &quot;Country&quot;,
+    &quot;name&quot;: &quot;IL&quot;
+  }
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">טיפולי סיעוד</h3><span class="muted small" dir="ltr">/טיפולי-סיעוד/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Service&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/טיפולי-סיעוד/#service&quot;,
+  &quot;name&quot;: &quot;טיפולי סיעוד&quot;,
+  &quot;serviceType&quot;: &quot;טיפולי סיעוד&quot;,
+  &quot;description&quot;: &quot;שירותי טיפולי סיעוד בבית: מטפלות סיעודיות מוסמכות, התאמה אישית וליווי מול ביטוח לאומי.&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/טיפולי-סיעוד/&quot;,
+  &quot;provider&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;areaServed&quot;: {
+    &quot;@type&quot;: &quot;Country&quot;,
+    &quot;name&quot;: &quot;IL&quot;
+  }
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">טיפול וליווי נכי צה&quot;ל</h3><span class="muted small" dir="ltr">/טיפול-בנכי-צהל/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;Service&quot;,
+  &quot;@id&quot;: &quot;https://manpowercare.co.il/טיפול-בנכי-צהל/#service&quot;,
+  &quot;name&quot;: &quot;טיפול וליווי נכי צה\&quot;ל&quot;,
+  &quot;serviceType&quot;: &quot;טיפול וליווי נכי צה\&quot;ל&quot;,
+  &quot;description&quot;: &quot;שירותי טיפול וליווי לנכי צה\&quot;ל ונפגעי פעולות איבה בהרשאת משרד הביטחון, בתיאום מול אגף השיקום.&quot;,
+  &quot;url&quot;: &quot;https://manpowercare.co.il/טיפול-בנכי-צהל/&quot;,
+  &quot;provider&quot;: {
+    &quot;@id&quot;: &quot;https://manpowercare.co.il/#organization&quot;
+  },
+  &quot;areaServed&quot;: {
+    &quot;@type&quot;: &quot;Country&quot;,
+    &quot;name&quot;: &quot;IL&quot;
+  }
+}
+&lt;/script&gt;</pre></div></div></details>
+  </div></div>
+</details>
+
+<h2>סעיף 4, FAQPage</h2>
+<div class="h2sub">מה שקיים תקין, ואלה התוספות</div>
+<details class="issue mid">
+  <summary class="issue-h"><span class="chev"></span><span class="num">4</span><h3>שבעה עמודים כבר תקינים, לחמישה עמודים יתווסף בלוק חדש</h3><span class="pill mid">עדיפות שלישית</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <p><strong>לא נדרשת פעולה</strong> בשבעת העמודים שכבר כוללים FAQPage באתר החדש: דף הבית, גמלת סיעוד, מחשבון גמלת סיעוד, מטפלת סיעודית, מטפלת סיעודית זרה 24/7, טיפולי סיעוד, והמאמר על טיפול פליאטיבי. הנוסח בבלוקים האלה נבדק שאלה אחר שאלה מול התוכן המוצג בעמודים, והוא תואם את הנוסח החדש במלואו.</p>
+  <p><strong>חמישה עמודים עם שאלות ותשובות גלויות בתוכן עדיין ללא בלוק FAQPage.</strong> הקוד למטה בנוי מהנוסח המוצג בעמודים החדשים עצמם (התשובות הן קטעי הפתיחה של כל סעיף בעמוד). ערך מרכזי: מנועי חיפוש מבוססי בינה מלאכותית נשענים על מבנה שאלה-תשובה מובנה כשהם מרכיבים תשובות בתחום הסיעוד.</p>
+  <details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">תביעה לגמלת סיעוד, 3 שאלות</h3><span class="muted small" dir="ltr">/nursing-benefit/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי גמלת סיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;גמלת סיעוד היא גמלת שירותים הניתנת על פי חוק לגברים ולנשים מעל גיל פנסיה, המתגוררים בביתם או בדיור מוגן (ולא במוסד סיעודי) ונזקקים לעזרה וסיוע בפעולות היומיום – רחצה, הלבשה, וכן עבודות משק הבית – ו/או להשגחה בביתם למען בטיחותם. חוק סיעוד נועד לאפשר לבני הגיל השלישי להמשיך ולהתגורר בביתם ובקהילתם המוכרת, כדי לשמר את שגרת חייהם ולהבטיח את איכותם עד כמה שניתן.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי זכאי לגמלת סיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;• תושבי ישראל מעל גיל הפנסיה. • מי שבוחר להמשיך להתגורר בביתו או בדיור מוגן (מי שמתגורר בבית אבות, במוסד סיעודי או במחלקה סיעודית אינו זכאי לגמלה). • מי שנזקק להשגחה או לסיוע בביצוע פעולות היומיום, בהתאם למבחן היכולת התפקודית (\&quot;מבחן תלות\&quot;) של הביטוח הלאומי. • מי שאינו מקבל קצבה אחרת מהמוסד לביטוח לאומי, כגון קצבת שירותים מיוחדים או קצבת נכה עבודה, להוציא קצבה חודשית בשל רדיפות הנאצים, שאינה מונעת את קבלת קצבת סיעוד • מי שעומד ב\&quot;מבחן ההכנסות\&quot; של הביטוח הלאומי, כלומר שהיקף ההכנסות שלו נמוך מהתקרה שהגדיר הביטוח הלאומי לקבלת הגמלה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מגישים תביעה לגמלת סיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;• את טופסי הבקשה לקבלת גמלת סיעוד אפשר לקבל בכל סניפי המוסד לביטוח לאומי ובאתר האינטרנט של המוסד. • התביעה מחולקת לשני חלקים: 1. חוות דעת של הרופא המטפל על מצבו וקשייו התפקודיים של מבקש הגמלה.ומילוי פרטים, כגון עם מי מתגורר מגיש התביעה, אנשי הקשר שלו ומי המטפל העיקרי בו וכו&#x27; 2. אישורים על הכנסות מבקש הגמלה. • חשוב מאוד לפרט את המגבלות התפקודיות של המבוגר ולציין את מצבו המשפחתי. • בהגשת בקשה לחולי אלצהיימר, מומלץ לצרף אבחון של רופא פסיכוגריאטרי. • יש להגיש את הטפסים חתומים על ידי מבקש הבקשה או אדם מטעמו (בן משפחה, עובד סוציאלי, אחות וכו&#x27;).&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">המדריך להעסקת עובד זר, 3 שאלות</h3><span class="muted small" dir="ltr">/מדריך-להעסקת-עובד-זר/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי זכאי?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;היתר להעסקת עובד זר בסיעוד ניתן למטופלים הזקוקים לעזרה סיעודית מלאה ( מטפל סיעודי במשרה מלאה לפחות), המתגוררים בביתם או במסגרת דיור מוגן שאין בו שירותי סיעוד .&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מגישים בקשה להיתר העסקת עובד זר בסיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כדי לקבל היתר העסקה לעובד זר בסיעוד יש למלא טופסי בקשה ולשלם אגרת העסקה. את כל המסמכים, אישורי התשלום ואישורים נוספים במידת הצורך, יש לשלוח בדואר לאחת מלשכות רשות האוכלוסין וההגירה בענף הסיעוד הפרוסות ברחבי הארץ: ירושלים, תל אביב, ראשון לציון, כפר סבא, חיפה ובאר שבע. כתובות הלשכות רשומות בתחתית טפסי הבקשה. לא ניתן לשלוח בקשות באמצעות פקס. יש לשלוח אישורים מקוריים ומאומתים על ידי עורך דין או רואה חשבון בלבד.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי מקבלים תשובות? ומה עלי לעשות לאחר מכן?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תשובת אגף הסיעוד לבקשת ההיתר תישלח בדואר. לאחר קבלת היתר, יש לשלם 180 ₪ בגין אשרת הכניסה של העובד הזר. עם קבלת הזכאות, יש להירשם אצל אחת הלשכות הפרטיות המורשות, הרשומות באתר רשות ההגירה, לצורך רישום עובד זר על שמך. החברות המורשות רשאיות לגבות עד 70 ₪ לחודש עבור שירותיהן, כגון: ביקורי בית, סיוע בפתרון בעיות, טיפול באשרות וכו&#x27;. אין להעסיק עובד זר ללא רישום בלשכה פרטית וקבלת מכתב השמה מהלשכה המאשר את הרישום. * הסכומים מתעדכנים מעת לעת באתר רשות האוכלוסין www.piba.gov.il&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">דמנציה, מידע, 3 שאלות</h3><span class="muted small" dir="ltr">/דמנציה-מידע/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהי דמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;דמנציה – בעברית \&quot;שיטיון\&quot; או \&quot;קיהיון\&quot; – היא אוסף תסמינים של הידרדרות בתפקודים הקוגניטיביים – זיכרון, חשיבה, זיהוי, תפיסה ושיפוט; ושל התפקודים המנטליים – כלומר התנהגותיים ורגשיים. פגיעתה של הדמנציה היא הדרגתית, בקצב ובאופן השונים מאדם לאדם, ועם התקדמותה נפגמת יכולתו של החולה לבצע פעילויות יומיומיות ולתקשר עם סביבתו, עד למצב של תלות מוחלטת באחרים, מה שלעיתים יעלה את הצורך להעזר בשירותי חברת סיעוד . תסמינים מוקדמים דמנציה מתפתחת בהדרגה, עם סימנים מוקדמים שעלולים להיות קשים לזיהוי בתחילה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהם השלבים האופייניים לדמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הדמנציה מכרסמת בהדרגה במשך 8-10 שנים. נהוג לחלקה לשלושה שלבים אופייניים שכל אחד מהם נמשך כשלוש שנים: בשלב הראשון , האדם חש בתהליך של ירידה בזיכרון ובלבול. בשלב זה יש ביכולתו של החולה להסתיר את הליקוי. ברמה ההתנהגותית, נוטה החולה להפגין כעס ולעתים אדישות. בשלב השני , תחול החמרה באובדן הזיכרון, וייפגעו חוש הזמן וההתמצאות במרחב. בשלב זה תהיה פגיעה גם ביכולת השיפוט והסקת מסקנות כמו גם ליקוי בכושר הדיבור וקושי בתכנון תנועה. בשנים אלה יופיעו בעיות התנהגות כמו שוטטות, חשדנות והזיות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה גורם לדמנציה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הדמנציה נגרמת כתוצאה ממחלות שונות הפוגעות ברקמת המוח. הנפוצות שבהן: מחלת אלצהיימר היא השכיחה ביותר בקרב הסובלים בדמנציה, ומאובחנת אצל 60%-70% מהמקרים.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">איך להיערך למבחן תלות (מאמר), 3 שאלות</h3><span class="muted small" dir="ltr">/איך-להיערך-למבחן-תלות/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו מבחן תלות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;• מבחן תלות ( או \&quot; בדיקת הזכאות לגמלה \&quot;) נועד לבדוק את היכולת התפקודית של מבקש הגמלה , את מידת התלות שלו באחרים ואת הצורך בעזרה והשגחה . על פי תוצאותיה תיקבע הזכאות והיקף הגמלה שתינתן . • הבדיקה נעשית על ידי איש מקצוע מטעם המוסד לביטוח לאומי – אח / ות , פיזותרפיסט / ית או מרפא / ה בעיסוק – והיא אישית , מקצועית ואובייקטיבית . • הבדיקה נעשית לרב טלפונית עם הקשיש או בן המשפחה שלו . • במהלך הביקור , בוחן הבודק את מידת הזדקקותו של המבוגר לסיוע ותמיכה של אדם אחר בכמה תחומים , ובהם ניידות בבית , אכילה , לבישת בגדים , רחצה ושליטה על סוגרים .&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי אינו חייב במבחן תלות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בני 90 ומעלה יוכלו לבחור בהערכה תפקודית על ידי רופא המומחה לגריאטריה המועסק במוסד ציבורי (בית חולים, קופ\&quot;ח וכו&#x27;), במקום בהערכה של המוסד לביטוח לאומי. בדיקה זו יכולה להתבצע גם בעת אשפוז וללא עלות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך מתכוננים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;• ספרו על הבדיקה מראש. ככל שהנבדק יבין יותר מה מטרת הבדיקה ומה עתיד לקרות בה, הוא ירגיש רגוע ובטוח יותר. ספקו את מקסימום המידע, והכינו אותו לאפשרות שיצטרך להדגים פעולות אחדות כחלק מהבדיקה. היו אמפתיים לחששות ולגילויי המבוכה, אך הסבירו ששיתוף פעולה מצדו יבטיח את התוצאה הטובה ביותר בשבילו. • היו נוכחים בבית בעת הבדיקה. אל תשאירו את בן המשפחה לבד בזמן הבדיקה. בטופס הבקשה לבדיקה, ציינו מראש שאתם מעוניינים ללוות את הנבדק בעת בדיקת התלות.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre></div></div></details><details class="issue mid" style="margin-bottom:6px"><summary class="issue-h"><span class="chev"></span><h3 style="font-size:.92rem">חוק הסיעוד (מאמר), 2 שאלות</h3><span class="muted small" dir="ltr">/חוק-הסיעוד-כל-מה-שחשוב-לדעת/</span></summary><div class="issue-body"><div class="codewrap"><div class="codehead">להדבקה בעמוד</div><pre class="codeblock" dir="ltr">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מהו חוק הסיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;חוק הסיעוד, שנחקק בשנת 1986, נועד לספק תמיכה לקשישים המתגוררים בביתם או בדיור מוגן וזקוקים לעזרה בפעולות יומיומיות או להשגחה למען בטיחותם. החוק מופעל על ידי המוסד לביטוח לאומי בשיתוף עם משרד הרווחה וקופות החולים, ומאפשר לקשישים לקבל שירותים כגון סיוע של מטפלת בבית, טיפול במרכזי יום, אספקת מוצרי ספיגה, לחצן מצוקה ושירותי כביסה. מטרת החוק היא לאפשר לקשישים להמשיך לחיות בסביבתם המוכרת תוך קבלת הסיוע הנדרש לשמירה על איכות חייהם.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מי זכאי לחוק הסיעוד?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הזכאות הבסיסית לגמלה ניתנת לאנשי אחרי גיל הפרישה, בעלי תושבות ישראלית המתגוררים בקהילה (בבית או בדיור מוגן).&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre></div></div></details>
+  </div></div>
+</details>
+
+<h2>סעיף 5, שני תיקונים בסכמה שהאתר כבר מפיק</h2>
+<div class="h2sub">נמצאו בבדיקת הסכמות הקיימות</div>
+<details class="issue warn">
+  <summary class="issue-h"><span class="chev"></span><span class="num">5</span><h3>שם מחבר טכני בסכמת המאמרים והסרת תיבת חיפוש שאינה קיימת</h3><span class="pill warn">עדיפות שנייה</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <p><strong>א. שם המחבר בסכמת המאמרים.</strong> סכמת ה-Article של 20 מתוך 23 המאמרים מציגה כמחבר את שם המשתמש הטכני <code dir="ltr">manpowerus26</code>. גוגל ומנועי הבינה המלאכותית קוראים את השם הזה כזהות הכותב. התיקון בוורדפרס, לא בקוד: במסך Users לפתוח את המשתמש, למלא שם תצוגה מקצועי (למשל צוות מנפאואר קר) ולבחור אותו בשדה Display name publicly as. הסכמה מתעדכנת באופן אוטומטי בכל המאמרים.</p>
+  <p><strong>ב. הסרת סימון החיפוש מהסכמה.</strong> הסכמה הקיימת מצהירה בכל עמוד על פעולת חיפוש (SearchAction) באתר, אבל באתר אין תיבת חיפוש. שורה אחת מסירה את ההצהרה:</p>
+  <div class="codewrap"><div class="codehead">PHP, שורה אחת</div><pre class="codeblock" dir="ltr">add_filter( 'disable_wpseo_json_ld_search', '__return_true' );</pre></div>
+  </div></div>
+</details>
+
+<h2>סעיף 6, מה לא מעבירים מהאתר הישן</h2>
+<div class="h2sub">שלושה בלוקים שקיימים באתר הישן ואין להעתיק</div>
+<details class="issue bad">
+  <summary class="issue-h"><span class="chev"></span><span class="num">6</span><h3>שלושה בלוקים מהאתר הישן שאין להעביר</h3><span class="pill bad">חשוב</span></summary>
+  <div class="issue-body"><div class="issue-b">
+  <table class="mini">
+  <tr><th>בלוק באתר הישן</th><th>למה לא מעבירים</th></tr>
+  <tr><td>בלוק Organization נפרד שמופיע בכל עמודי האתר הישן</td><td>באתר החדש הנתונים נכנסים לתוך הבלוק הקיים דרך סעיף 1. העתקה של הבלוק הנפרד תיצור שתי ישויות Organization בכל עמוד.</td></tr>
+  <tr><td>BreadcrumbList ידני בעמוד תביעה לגמלת סיעוד</td><td>האתר החדש מפיק Breadcrumb אוטומטית בכל עמוד. בלוק ידני נוסף יוצר כפילות.</td></tr>
+  <tr><td>בלוק FAQPage בעמוד תביעה לגמלת סיעוד</td><td>הבלוק הישן מכיל שגיאת תחביר (JSON לא תקין) ונוסח ישן. במקומו נבנה בלוק חדש ותקין בסעיף 4, מהנוסח של העמוד החדש.</td></tr>
+  </table>
+  </div></div>
+</details>
+
+<footer>NC Digital · הטמעת סכמות באתר החדש · Manpower Care · 01.08.2026</footer>
+</div>
+<script>document.documentElement.lang = 'he';</script>
+</body>
+</html>
