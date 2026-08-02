@@ -122,11 +122,6 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 /* ── document pane ──────────────────────────────────────────────────────── */
 .dp{border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
 .dp-top{display:flex;gap:12px;padding:14px;border-bottom:1px solid var(--rule2)}
-.dp-thumb{
-  width:62px;height:88px;flex:0 0 62px;border:1px solid var(--rule);border-radius:3px;
-  background:var(--sunk);overflow:hidden;display:block;
-}
-.dp-thumb canvas{width:100%;height:100%;object-fit:cover;display:block}
 .dp-t{font-size:14.5px;font-weight:700;color:var(--navy);line-height:1.3}
 .dp-m{font-size:11.5px;color:var(--ink3);margin-top:4px;font-variant-numeric:tabular-nums}
 .dp-sec{padding:12px 14px;border-bottom:1px solid var(--rule2)}
@@ -260,11 +255,6 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
   font-size:10px;font-weight:700;color:#fff;background:var(--navy);border-radius:3px;
   padding:2px 7px;margin-inline-start:8px;vertical-align:middle;
 }
-.doc-th{
-  width:58px;height:82px;flex:0 0 58px;border:1px solid var(--rule);border-radius:2px;
-  background:var(--sunk);overflow:hidden;
-}
-.doc-th canvas{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
 
 .doc-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;justify-content:center}
 .doc-t{font-size:15px;font-weight:700;color:var(--navy);line-height:1.25}
@@ -272,8 +262,7 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 .doc-d{font-size:12.5px;color:var(--ink2);line-height:1.45;max-width:64ch}
 .doc.off{border-style:dashed;background:none;cursor:not-allowed}
 .doc.off .doc-t{color:var(--ink3)}
-.doc.off .doc-th{border-style:dashed;display:grid;place-items:center;color:var(--ink3);font-size:18px}
-.doc.off .miss{
+.doc.off .doc.off .miss{
   display:inline-block;font-size:10.5px;font-weight:700;color:var(--warn);
   background:var(--warn-bg);border:1px solid #EBDCB8;border-radius:3px;padding:1px 7px;
 }
@@ -483,7 +472,6 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 /* ============================================================================
    ANBAR — multi-lender mortgage application console
@@ -501,8 +489,7 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 const ROUTES = {
   "clal-reverse": {
     lender:"כלל", lenderShort:"כלל", product:"reverse", productLabel:"משכנתא הפוכה",
-    doc:"1875", ver:"07/25", pages:9, maxBorrowers:2, maxCollateral:2, maxOther:2, maxTracks:2,
-    pdfFile:"clal-reverse", pdfReady:true, agentPreprinted:true,
+    doc:"1875", ver:"07/25", pages:9, maxBorrowers:2, maxCollateral:2, maxOther:2, maxTracks:2,  
     annexes:[
       {t:"שאלון הכר את הלקוח", d:"עמודים 6–7 · עותק נפרד לכל לווה", perBorrower:true},
       {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"עמודים 8–9 · כולל אימות חתימה"},
@@ -518,15 +505,11 @@ const ROUTES = {
     purposeOpts:["עזרה לבן משפחה","מחיה, הוצאות שוטפות וטיפול רפואי","מיחזור משכנתא מבנק או גורם חוץ בנקאי",
                  "מעבר לדיור מוגן","סילוק הלוואה או התחייבות אחרת","רכישת דירה","מטרה אחרת"],
     propTypeOpts:["בית פרטי","דירה"],
-    note:"הטופס העדכני. הדף הקיים באתר נבנה על גרסה בת 7 עמודים — רוב השדות ש\"חסרים\" קיימים כבר בגרסה זו.",
-    caveats:["שאלון הכר את הלקוח מודפס פעמיים בחוברת (עמודים 6–7) — עותק פיזי נפרד לכל לווה.",
-             "טבלת «מי עוד גר בנכס» מודפסת בטופס זה בלבד; בטופס הרגילה אין לה מקום.",
-             "פרטי היועץ מודפסים מראש על העותק של אנבר — אך בשורת «שם גורם מתפעל», ולא בשורת «שם יועץ המשכנתאות» או «שם מגיש הבקשה». כדאי לוודא מול כלל שזו השורה הנכונה."]
+    note:"עד 2 לווים · כולל איש קשר לטיפול בהחזר · ללא בלוק תעסוקה.",
   },
   "clal-regular": {
     lender:"כלל", lenderShort:"כלל", product:"regular", productLabel:"משכנתא רגילה",
-    doc:"119", ver:"5/25", pages:8, maxBorrowers:4, maxCollateral:2, maxOther:2, maxTracks:3,
-    pdfFile:"clal-regular", pdfReady:true,
+    doc:"119", ver:"5/25", pages:8, maxBorrowers:4, maxCollateral:2, maxOther:2, maxTracks:3, 
     annexes:[
       {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"כולל אימות חתימה"},
       {t:"שאלון הכר את הלקוח", d:"מסמך נפרד · עותק לכל לווה", perBorrower:true}
@@ -544,13 +527,10 @@ const ROUTES = {
                  "סילוק הלוואה או התחייבות אחרת","שיפוץ","בניה עצמית","הלוואה עסקית בשיעבוד נכס מסחרי","מטרה אחרת"],
     propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
     note:"עד 4 לווים · כולל בלוק תעסוקה · אין צורך בפרטי איש קשר לטיפול בהחזר.",
-    caveats:["הבקשה מאפשרת 4 לווים, אך כתב ההרשאה המצורף מספק 3 מקומות חתימה בלבד — לווה רביעי דורש בירור מול כלל.",
-             "רשימת «מקום מגורי» שונה מזו שבטופס ההפוכה ואינה ניתנת לאיחוד."]
   },
   "ayalon-reverse": {
     lender:"איילון", lenderShort:"איילון", product:"reverse", productLabel:"משכנתא הפוכה",
-    doc:"—", ver:"—", pages:12, maxBorrowers:2, maxCollateral:1, maxOther:2, maxTracks:1,
-    pdfFile:"ayalon-reverse", pdfReady:true, maxContacts:2,
+    doc:"—", ver:"—", pages:12, maxBorrowers:2, maxCollateral:1, maxOther:2, maxTracks:1,  maxContacts:2,
     annexes:[
       {t:"ייפוי כוח והסכמה למסירת מידע", d:"לפי חוק הגנת הפרטיות התשמ\"א־1981"},
       {t:"אימות חתימה ע\"י עו\"ד / יועץ משכנתאות", d:"זיהוי פנים אל פנים מול תעודה מזהה"}
@@ -566,10 +546,7 @@ const ROUTES = {
                  "סילוק הלוואה או התחייבות אחרת","רכישת דירה","מטרה אחרת"],
     propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
     hasAnnuity:true,
-    note:"מסמך זה הוא בקשה לאישור עקרוני למשכנתא הפוכה בלבד · שני אנשי קשר · כולל שאלות ביטוח מבנה.",
-    caveats:["שתי חתימות נפרדות על הבקשה: חתימת חיווי אשראי בעמוד 5 וחתימת ההצהרות בעמוד 6.",
-             "«מי עוד גר בנכס» הוא שדה חופשי מצומצם (שם מלא וקשר ללווים), לא טבלה מלאה.",
-             "העיקולים נשאלים יחד עם חובות והערות אזהרה, בשאלה אחת."]
+    note:"משכנתא הפוכה בלבד · שני אנשי קשר · כולל מסלול אנונה ושאלות ביטוח מבנה.",
   },
   "ayalon-regular": {
     lender:"איילון", lenderShort:"איילון", product:"regular", productLabel:"משכנתא רגילה",
@@ -577,8 +554,7 @@ const ROUTES = {
   },
   "credit360-both": {
     lender:"קרדיט 360", lenderShort:"360", product:"both", productLabel:"רגילה והפוכה",
-    doc:"1001", ver:"—", pages:12, maxBorrowers:2, maxCollateral:3, maxOther:3, maxTracks:3,
-    pdfFile:"credit360", pdfReady:true, spansBoth:true,
+    doc:"1001", ver:"—", pages:12, maxBorrowers:2, maxCollateral:3, maxOther:3, maxTracks:3,  spansBoth:true,
     annexes:[
       {t:"חיווי אשראי", d:"כלול בטופס"},
       {t:"כתב הרשאה", d:"כלול בטופס"}
@@ -595,10 +571,7 @@ const ROUTES = {
     propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
     has360Extras:true,
     dealPurpose:["דרגה ראשונה","דרגה שניה","הפוכה"],
-    note:"טופס אחד משרת את שני המוצרים · מטרת העסקה (דרגה ראשונה / שניה / הפוכה) נבחרת בתוך הטופס.",
-    caveats:["עמוד 1 מציג 4 מבקשים, אך עמוד 2 מכיל 2 עמודות פירוט בלבד — הטופס מורה למלא טופס נפרד ללווים נוספים.",
-             "הסכמת חיווי האשראי ואימותה מודפסות פעמיים (עמודים 9–10 ו־11–12).",
-             "אין שדה «ישוב» נפרד למקום העבודה, ואין «מצב תעסוקתי» בנוסח של כלל."]
+    note:"מוצר אחד לשני הסוגים · מטרת העסקה (דרגה ראשונה / שניה / הפוכה) נבחרת בבקשה.",
   }
 };
 
@@ -718,11 +691,11 @@ function go(n){
 function renderDocPane(){
   const el=$("#docpane");
   if(S.step===0){
-    el.innerHTML=`<div class="eyebrow">תצוגה מקדימה</div>
-      <div class="dp"><div class="dp-prev" id="dpPrev">
-        <div class="dp-empty">העבר את העכבר מעל טופס<br>כדי לראות את העמוד הראשון שלו.</div>
-      </div></div>`;
-    if(S.route) previewInPane(R().pdfFile,`${R().lender} · ${R().productLabel}`);
+    el.innerHTML=`<div class="eyebrow">מה מופק בסוף</div>
+      <div class="dp"><div class="dp-sec"><div class="dp-k">טופס אנבר</div>
+        <ul class="dp-list">${DOCSECS.map(([t])=>`<li><span>${esc(t)}</span></li>`).join("")}</ul></div>
+      <div class="dp-sec"><div class="dp-k">פלט</div>
+        <div class="dp-list" style="font-size:12.5px">PDF עם טקסט עברי מלא — ניתן לחיפוש והעתקה, מוכן לחתימה ב־iSign.</div></div></div>`;
     return;
   }
   if(!S.route){
@@ -731,16 +704,14 @@ function renderDocPane(){
     return;
   }
   const r=R();
-  const meta = r.doc&&r.doc!=="—" ? `טופס ${esc(r.doc)} · גרסה ${esc(r.ver)} · ${r.pages} עמ'` : `${r.pages} עמודים`;
+  const meta = `עד ${r.maxBorrowers} לווים · עד ${r.maxTracks} מסלולים`;
   el.innerHTML=`<div class="eyebrow">הגורם המממן</div>
     <div class="dp">
       <div class="dp-top">
-        <div class="dp-thumb" data-thumb="${esc(r.pdfFile||"")}"></div>
         <div>
           <div class="dp-t">${esc(r.lender)}<br>${esc(r.productLabel)}</div>
           <div class="dp-m">${meta}</div>
-          <div class="dp-m" style="margin-top:5px">טופס המקור של החברה — לעיון</div>
-          <button type="button" class="ghost" style="margin-top:7px;padding:3px 9px;font-size:11.5px" id="dpChange">החלף חברה</button>
+          <button type="button" class="ghost" style="margin-top:8px;padding:3px 9px;font-size:11.5px" id="dpChange">החלף חברה</button>
         </div>
       </div>
       <div class="dp-sec">
@@ -761,7 +732,6 @@ function renderDocPane(){
         <ul class="dp-list">${docSections().map(x=>`<li><span>${esc(x)}</span></li>`).join("")}</ul></div>
     </div>`;
   const ch=$("#dpChange"); if(ch) ch.onclick=()=>go(0);
-  paintThumbs();
 }
 
 /* ===========================================================================
@@ -771,7 +741,7 @@ function render(){
   renderRail(); renderDocPane();
   const m=$("#main");
   m.innerHTML = [step0,step1,step2,step3,step4,step5,step6][S.step]();
-  bind(); paintThumbs();
+  bind();
 }
 
 function nav(){
@@ -789,7 +759,6 @@ function step0(){
     const r = ROUTES[key];
     if(!r) return "";
     if(r.unavailable) return `<div class="doc off">
-        <div class="doc-th">—</div>
         <div class="doc-b">
           <div class="doc-t">${esc(label||r.productLabel)}</div>
           <div><span class="miss">${esc(r.reason)}</span></div>
@@ -797,12 +766,12 @@ function step0(){
         </div>
       </div>`;
     return `<button class="doc ${S.route===key?"sel":""}" data-route="${key}">
-        <span class="doc-th" data-thumb="${esc(r.pdfFile||"")}"></span>
         <span class="doc-b">
           <span class="doc-t">${esc(label||r.productLabel)}${S.route===key?'<span class="badge">נבחר</span>':""}</span>
-          <span class="doc-m">${r.doc&&r.doc!=="—"?`טופס ${esc(r.doc)} · גרסה ${esc(r.ver)} · `:""}${r.pages} עמודים · ${r.maxBorrowers} לווים</span>
+          <span class="doc-m">עד ${r.maxBorrowers} לווים · עד ${r.maxCollateral} נכסים לשעבוד · עד ${r.maxTracks} מסלולים</span>
           <span class="doc-d">${esc(r.note||"")}</span>
         </span>
+        <span class="doc-go" aria-hidden="true">בחר</span>
       </button>`;
   };
 
@@ -810,73 +779,22 @@ function step0(){
     if(row.span){
       const r=ROUTES[row.span];
       return `<div class="lgroup">
-        <div class="lgroup-h"><b>${esc(row.lender)}</b><span></span><em>טופס אחד · שני המוצרים</em></div>
+        <div class="lgroup-h"><b>${esc(row.lender)}</b><span></span><em>מוצר אחד · שני הסוגים</em></div>
         <div class="docs">${item(row.span,"רגילה והפוכה — טופס אחד")}</div></div>`;
     }
     return `<div class="lgroup">
-      <div class="lgroup-h"><b>${esc(row.lender)}</b><span></span><em>שני טפסים נפרדים</em></div>
+      <div class="lgroup-h"><b>${esc(row.lender)}</b><span></span><em>שני סוגי משכנתא</em></div>
       <div class="docs">${item(row.regular,"משכנתא רגילה")}${item(row.reverse,"משכנתא הפוכה")}</div></div>`;
   }).join("");
 
   return `<div class="head">
       <h1>לאיזו חברה מגישים את הבקשה?</h1>
       <p>הבחירה נעשית כאן, לפני מילוי הנתונים — היא קובעת אילו שדות נאספים, כמה לווים מותרים
-         ואילו הצהרות ונספחים ייכללו. התמונות הן טפסי המקור של החברות, לעיון בלבד.</p>
+         ואילו הצהרות ייכללו בטופס.</p>
     </div>
     <div class="note info">היועץ ממלא את הבקשה, והמערכת מפיקה <b>טופס אחד של אנבר</b> — מסמך אחיד שנבנה על בסיס טפסי החברות. הלקוח מקבל אותו מוכן וחותם עליו ב־iSign.</div>
     ${groups}
     ${S.route?`<div class="nav"><div class="sp"></div><button class="btn p" data-nav="1">המשך למילוי ←</button></div>`:""}`;
-}
-
-/* ---------- large first-page preview into the side pane ---------- */
-let previewToken=0;
-async function previewInPane(file,caption){
-  const box=document.getElementById("dpPrev");
-  if(!box||!file||!window.pdfjsLib) return;
-  const my=++previewToken;
-  try{
-    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-    const doc=await pdfjsLib.getDocument(`/anbar-form/pdf/${file}.pdf`).promise;
-    if(my!==previewToken) return;
-    const pg=await doc.getPage(1);
-    const vp=pg.getViewport({scale:1.15});
-    const c=document.createElement("canvas");
-    c.width=vp.width; c.height=vp.height;
-    await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-    if(my!==previewToken) return;
-    box.innerHTML="";
-    box.appendChild(c);
-    const cap=document.createElement("div");
-    cap.className="cap"; cap.textContent=caption+" · עמוד 1";
-    box.appendChild(cap);
-  }catch(e){}
-}
-
-/* ---------- real first-page thumbnails of each lender document ---------- */
-const THUMBS={};
-async function paintThumbs(){
-  const nodes=[...document.querySelectorAll("[data-thumb]")].filter(n=>n.dataset.thumb&&!n.dataset.done);
-  for(const n of nodes){
-    const file=n.dataset.thumb;
-    n.dataset.done="1";
-    try{
-      if(!THUMBS[file]){
-        if(!window.pdfjsLib) return;
-        pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-        const doc=await pdfjsLib.getDocument(`/anbar-form/pdf/${file}.pdf`).promise;
-        const pg=await doc.getPage(1);
-        const vp=pg.getViewport({scale:0.42});
-        const c=document.createElement("canvas");
-        c.width=vp.width; c.height=vp.height;
-        await pg.render({canvasContext:c.getContext("2d"),viewport:vp}).promise;
-        THUMBS[file]=c.toDataURL("image/png");
-      }
-      const img=new Image();
-      img.src=THUMBS[file];
-      img.style.cssText="width:100%;height:100%;object-fit:cover;object-position:top;display:block";
-      n.innerHTML=""; n.appendChild(img);
-    }catch(e){ n.dataset.done=""; }
-  }
 }
 
 /* ---------- field builders ---------- */
@@ -1538,11 +1456,7 @@ function unmappedFields(){ return []; }
 function bind(){
   const m=$("#main");
 
-  m.querySelectorAll("[data-route]").forEach(b=>{
-    b.onclick=()=>pickRoute(b.dataset.route);
-    b.onmouseenter=()=>{ const r=ROUTES[b.dataset.route];
-      if(r&&r.pdfFile) previewInPane(r.pdfFile,`${r.lender} · ${r.productLabel}`); };
-  });
+  m.querySelectorAll("[data-route]").forEach(b=>b.onclick=()=>pickRoute(b.dataset.route));
   m.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>go(S.step+(+b.dataset.nav)));
   m.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>go(+b.dataset.jump));
 
@@ -1709,19 +1623,9 @@ $("#mask").onclick=e=>{ if(e.target.id==="mask") closeModal(); };
    drawn by the browser (which does full bidi) into a canvas, and pdf-lib
    only embeds that canvas as an image over the untouched original page.
    ======================================================================== */
-const PDF_DIR = "/anbar-form/pdf/";
-const templates = {};                 // file -> ArrayBuffer, fetched once
-let pdfState = {pages:0, cur:1, out:null};
-
-async function template(file){
-  if(!templates[file]){
-    const res=await fetch(PDF_DIR+file+".pdf");
-    if(!res.ok) throw new Error("template "+file);
-    templates[file]=await res.arrayBuffer();
-  }
-  return templates[file];
-}
-
+/* ===========================================================================
+   10. SEND STEP — build Anbar's document, print it, hand off to iSign
+   ======================================================================== */
 function bindSend(){
   const g=$("#genDoc"), pr=$("#printDoc"), si=$("#sendISign");
   if(g) g.onclick=()=>{
@@ -1743,55 +1647,6 @@ function bindSend(){
      <div class="note info" style="margin-top:14px">אם אנבר יקבלו גישת API — ההחלפה כאן היא פונקציית מתאם אחת.</div>`,
     [{t:"סגור",cls:"g",fn:closeModal}]);
 }
-
-async function generate(){
-  const area=$("#pdfArea");
-  area.innerHTML=`<div><div class="spin"></div>מפיק את המסמך…</div>`;
-  $("#genPdf").disabled=true;
-  try{
-    const out=await buildPdf();
-    pdfState.out=out;
-    await preview(out);
-    $("#dlPdf").disabled=false;
-    $("#sendISign").disabled=false;
-  }catch(err){
-    area.innerHTML=`<div style="color:var(--err)">לא ניתן היה להפיק את המסמך: ${esc(err.message||err)}</div>`;
-  }finally{ $("#genPdf").disabled=false; }
-}
-
-/* --- preview via pdf.js --- */
-async function preview(bytes){
-  const area=$("#pdfArea");
-  if(!window.pdfjsLib){ area.innerHTML="המסמך הופק. תצוגה מקדימה אינה זמינה."; return; }
-  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  const task=pdfjsLib.getDocument({data:bytes.slice(0)});
-  const pdf=await task.promise;
-  pdfState.pages=pdf.numPages; pdfState.cur=1;
-  const render=async n=>{
-    const page=await pdf.getPage(n);
-    const vp=page.getViewport({scale:1.35});
-    const cv=document.createElement("canvas");
-    cv.width=vp.width; cv.height=vp.height;
-    await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
-    area.innerHTML="";
-    area.appendChild(cv);
-    const bar=document.createElement("div");
-    bar.className="pgnav";
-    bar.innerHTML=`<button ${n>=pdf.numPages?"disabled":""} data-d="1">‹</button>
-      <span>עמוד ${n} מתוך ${pdf.numPages}</span>
-      <button ${n<=1?"disabled":""} data-d="-1">›</button>`;
-    area.appendChild(bar);
-    bar.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>render(n+(+b.dataset.d)));
-  };
-  await render(1);
-}
-
-/* ===========================================================================
-   10. FIELD MAP — explicit page/x/y per value. Never name-matching.
-   Coordinates are PDF points, origin bottom-left, generated from the real
-   label positions in the source document.
-   ======================================================================== */
-const FIELD_MAP = window.ANBAR_FIELD_MAP || {};
 
 /* ===========================================================================
    ANBAR APPLICATION DOCUMENT
@@ -2056,8 +1911,7 @@ function buildDocument(){
     </header>
     <div class="d-title">
       <h1>בקשה לקבלת הלוואת משכנתא</h1>
-      <p class="d-route">מיועד ל־<b>${esc(r.lender)}</b> · ${esc(r.productLabel)}${
-        r.doc&&r.doc!=="—"?` · מבוסס טופס ${esc(r.doc)} גרסה ${esc(r.ver)}`:""}</p>
+      <p class="d-route">מיועד ל־<b>${esc(r.lender)}</b> · ${esc(r.productLabel)}</p>
     </div>
     ${secs}
     <footer class="d-foot">
