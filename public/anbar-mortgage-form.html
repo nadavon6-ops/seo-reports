@@ -638,8 +638,17 @@ function renderDocPane(){
       </div>
       ${(r.caveats||[]).length?`<div class="dp-sec"><div class="dp-k">לתשומת לב</div>
         <div class="dp-warn">${esc(r.caveats[0])}</div></div>`:""}
-      <div class="dp-sec"><div class="dp-k">הפקה</div>
-        <div class="dp-list" style="font-size:12.5px;color:var(--ok)">מיפוי הטופס הושלם — ניתן להפיק מסמך מלא</div></div>
+      ${(()=>{const c=coverage(r.pdfFile); const gap=collectedNotPrinted();
+        const noslot=NO_SLOT[r.pdfFile]||[];
+        const absent=gap.filter(x=>noslot.includes(x));
+        const todo=gap.filter(x=>!noslot.includes(x));
+        return `<div class="dp-sec"><div class="dp-k">נכתב על המסמך</div>
+          <ul class="dp-list">${c.on.map(x=>`<li><span>${esc(x)}</span></li>`).join("")}</ul></div>
+        ${absent.length?`<div class="dp-sec"><div class="dp-k">אין לכך שדה בטופס זה</div>
+          <div class="dp-list" style="font-size:12.5px">${absent.map(esc).join(" · ")} — נשמר בתיק היועץ בלבד.</div></div>`:""}
+        ${todo.length?`<div class="dp-sec"><div class="dp-k">טרם מופה</div>
+          <div class="dp-warn">${todo.map(esc).join(" · ")} — קיים בטופס אך אינו מוטבע עדיין.
+          יש להשלים לפני שימוש אמיתי במסלול זה.</div></div>`:""}`;})()}
     </div>`;
   const ch=$("#dpChange"); if(ch) ch.onclick=()=>go(0);
   paintThumbs();
@@ -1220,6 +1229,9 @@ function step6(){
     <div class="note info"><b>המסמך שיישלח:</b> ${esc(r.lender)} · ${esc(r.productLabel)}
       ${r.doc&&r.doc!=="—"?` — טופס ${esc(r.doc)}, גרסה ${esc(r.ver)}`:""}, ${r.pages} עמודים.</div>`;
 
+  if(S.data.demoNote){
+    h += `<div class="note info">${esc(S.data.demoNote)}</div>`;
+  }
   if(missing.length){
     h += `<div class="note warn"><b>חסרים ${missing.length} שדות:</b>
       <div class="miss-list">${missing.map(m=>
@@ -1228,6 +1240,12 @@ function step6(){
     h += `<div class="note ok"><b>כל שדות החובה מולאו.</b></div>`;
   }
 
+  const _todo=collectedNotPrinted().filter(x=>!(NO_SLOT[r.pdfFile]||[]).includes(x));
+  if(_todo.length){
+    h += `<div class="note warn"><b>מיפוי חלקי במסלול זה.</b> הסעיפים הבאים קיימים בטופס של
+      ${esc(r.lender)} אך אינם מוטבעים על המסמך המופק: ${_todo.map(esc).join(" · ")}.
+      המסמך שיופק יהיה חסר בסעיפים אלה — אין להשתמש בו מול הלקוח עד להשלמת המיפוי.</div>`;
+  }
   if(unmapped.length){
     h += `<div class="note info"><b>נאסף לתיק, אך אין לו שדה בטופס של ${esc(r.lender)}:</b>
       <ul>${unmapped.map(u=>`<li>${esc(u)}</li>`).join("")}</ul>
@@ -1247,7 +1265,8 @@ function step6(){
     </div>
 
     <div class="nav">
-      <button class="btn n" id="genPdf" ${r.pdfReady?"":"disabled"}>הפק מסמך לבדיקה</button>
+      <button class="btn n" id="genPdf" ${missing.length?"disabled":""}>הפק מסמך לבדיקה</button>
+      ${missing.length?`<span style="font-size:12.5px;color:var(--warn);align-self:center">יש להשלים ${missing.length} שדות לפני הפקה</span>`:""}
       <button class="btn g" id="dlPdf" disabled>הורד PDF</button>
       <div class="sp"></div>
       <button class="btn p" id="sendISign" disabled>שלח לחתימה ב־iSign</button>
@@ -1382,6 +1401,12 @@ function collectMissing(){
     else if(!validPhone(b.phone)){ out.push({step:1,label:`לווה ${i+1} — טלפון לא תקין`}); S.errors[`borrowers.${i}.phone`]="מספר לא תקין"; }
     if(b.email&&!validEmail(b.email)){ out.push({step:1,label:`לווה ${i+1} — דוא"ל לא תקין`}); S.errors[`borrowers.${i}.email`]="כתובת לא תקינה"; }
     if(!b.residence) out.push({step:1,label:`לווה ${i+1} — מקום מגורי`});
+  });
+  S.data.occupants.forEach((o,i)=>{
+    if(o.id&&!validId(o.id)){ out.push({step:1,label:`דייר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`occupants.${i}.id`]="ספרת ביקורת שגויה"; }
+  });
+  S.data.contacts.forEach((c,i)=>{
+    if(c.id&&!validId(c.id)){ out.push({step:1,label:`איש קשר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`contacts.${i}.id`]="ספרת ביקורת שגויה"; }
   });
   if(!S.data.purpose.amount) out.push({step:4,label:"סכום ההלוואה המבוקש"});
   const sum=S.data.tracks.reduce((a,t)=>a+(+t.amount||0),0);
@@ -1829,6 +1854,49 @@ async function preview(bytes){
   await render(1);
 }
 
+/* Which sections this lender's map actually PRINTS. Derived from the map at
+   runtime — the page can therefore never claim coverage it does not have. */
+const SECGROUPS=[
+  ["פרטי הלווים",["firstName","lastName",".id",".gender",".marital",".phone",".email",".residence"]],
+  ["תעסוקה",["workplace","seniority",".employment",".role","netIncome"]],
+  ["הכנסות",["incWork","incAllowance","incPension","otherIncome"]],
+  ["התחייבויות",["oblLoanM","oblMortM",".attachment"]],
+  ["חשבון בנק",["bank.","bankLine"]],
+  ["נכס לשעבוד",["collateral.","gushHelka","propAddr"]],
+  ["נכסים נוספים",["other."]],
+  ["מי עוד גר בנכס",["occupants."]],
+  ["איש קשר",["contacts.","contactName"]],
+  ["מטרת ההלוואה",["purpose.list","purposeHas","dealRank"]],
+  ["פרטי רכישה",["purchase."]],
+  ["מסלולים",["tracks."]],
+  ["הצהרות / הכר את הלקוח",["consents.","kyc"]]
+];
+const NO_SLOT={
+  "clal-reverse":["תעסוקה"],
+  "clal-regular":["מי עוד גר בנכס","איש קשר"],
+  "ayalon-reverse":["תעסוקה","נכסים נוספים","מי עוד גר בנכס","הצהרות / הכר את הלקוח"],
+  "credit360":["איש קשר","פרטי רכישה","הצהרות / הכר את הלקוח"]
+};
+function coverage(file){
+  const map=FIELD_MAP[file]||{};
+  const blob=Object.values(map).flat().map(i=>i.p||i.fnKey||"").join(" ");
+  const on=[],off=[];
+  SECGROUPS.forEach(([name,keys])=>{ (keys.some(k=>blob.includes(k))?on:off).push(name); });
+  return {on,off};
+}
+/* sections this route COLLECTS but the lender's document has no slot for */
+function collectedNotPrinted(){
+  const r=R(); if(!r.pdfFile) return [];
+  let {off}=coverage(r.pdfFile);
+  // the KYC annex is appended for routes that carry it, so it IS printed
+  if((r.annexes||[]).some(a=>a.perBorrower)) off=off.filter(x=>x!=="הצהרות / הכר את הלקוח");
+  const collected={"תעסוקה":has("employment"),"הכנסות":true,"התחייבויות":true,"חשבון בנק":true,
+    "נכס לשעבוד":true,"נכסים נוספים":S.data.other.length>0,"מי עוד גר בנכס":S.data.occupants.length>0,
+    "איש קשר":has("contact")&&S.data.contacts.length>0,"מטרת ההלוואה":true,
+    "פרטי רכישה":has("purchase"),"מסלולים":true,"הצהרות / הכר את הלקוח":true,"פרטי הלווים":true};
+  return off.filter(x=>collected[x]);
+}
+
 /* ===========================================================================
    10. FIELD MAP — explicit page/x/y per value. Never name-matching.
    Coordinates are PDF points, origin bottom-left, generated from the real
@@ -1869,7 +1937,7 @@ function demoData(){
   Object.assign(t2,{amount:"200000",years:"10",rate:"משתנה פריים",repay:"שפיצר"});
 
   const occ=blankOccupant();
-  Object.assign(occ,{firstName:"אולגה",lastName:"קוזניצוב",id:"984412037",
+  Object.assign(occ,{firstName:"אולגה",lastName:"קוזניצוב",id:"984412031",
     birthDate:"1981-06-23",marital:"נשוי/ה",relation:"מטפלת"});
   const ct=blankContact();
   Object.assign(ct,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",
@@ -1909,7 +1977,10 @@ function demoData(){
   // keep the demo internally consistent: tracks must sum to the requested amount
   // even on routes that allow fewer tracks than the sample supplies.
   const gap=(+d.purpose.amount||0)-d.tracks.reduce((a,t)=>a+(+t.amount||0),0);
-  if(gap&&d.tracks.length) d.tracks[0].amount=String((+d.tracks[0].amount||0)+gap);
+  if(gap&&d.tracks.length){
+    d.tracks[0].amount=String((+d.tracks[0].amount||0)+gap);
+    d.demoNote=`טופס זה מאפשר ${r.maxTracks} מסלולים, ולכן נתוני הדמו אוחדו למסלול אחד בסך ${(+d.purpose.amount).toLocaleString("en-US")} ₪.`;
+  }
   d.collateral.forEach(x=>{ if(!r.propTypeOpts.includes(x.type)) x.type=r.propTypeOpts[0]; });
   if(has("employment")){
     d.borrowers.forEach((b,i)=>Object.assign(b,{
