@@ -408,7 +408,7 @@ const ROUTES = {
   "clal-regular": {
     lender:"כלל", lenderShort:"כלל", product:"regular", productLabel:"משכנתא רגילה",
     doc:"119", ver:"5/25", pages:8, maxBorrowers:4, maxCollateral:2, maxOther:2, maxTracks:3,
-    pdfFile:"clal-regular", pdfReady:false,
+    pdfFile:"clal-regular", pdfReady:true,
     annexes:[
       {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"כולל אימות חתימה"},
       {t:"שאלון הכר את הלקוח", d:"מסמך נפרד · עותק לכל לווה", perBorrower:true}
@@ -432,7 +432,7 @@ const ROUTES = {
   "ayalon-reverse": {
     lender:"איילון", lenderShort:"איילון", product:"reverse", productLabel:"משכנתא הפוכה",
     doc:"—", ver:"—", pages:12, maxBorrowers:2, maxCollateral:1, maxOther:2, maxTracks:1,
-    pdfFile:"ayalon-reverse", pdfReady:false, maxContacts:2,
+    pdfFile:"ayalon-reverse", pdfReady:true, maxContacts:2,
     annexes:[
       {t:"ייפוי כוח והסכמה למסירת מידע", d:"לפי חוק הגנת הפרטיות התשמ\"א־1981"},
       {t:"אימות חתימה ע\"י עו\"ד / יועץ משכנתאות", d:"זיהוי פנים אל פנים מול תעודה מזהה"}
@@ -460,7 +460,7 @@ const ROUTES = {
   "credit360-both": {
     lender:"קרדיט 360", lenderShort:"360", product:"both", productLabel:"רגילה והפוכה",
     doc:"1001", ver:"—", pages:12, maxBorrowers:2, maxCollateral:3, maxOther:3, maxTracks:3,
-    pdfFile:"credit360", pdfReady:false, spansBoth:true,
+    pdfFile:"credit360", pdfReady:true, spansBoth:true,
     annexes:[
       {t:"חיווי אשראי", d:"כלול בטופס"},
       {t:"כתב הרשאה", d:"כלול בטופס"}
@@ -504,7 +504,7 @@ const S = {
     collateral:[blankCollateral()],
     other:[],
     tracks:[blankTrack()],
-    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}
+    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}
   },
   errors:{}
 };
@@ -519,7 +519,7 @@ function blankBorrower(){return{
   incOtherSrc:"",incOtherAmt:"",
   oblLoanM:"",oblLoanB:"",oblMortM:"",oblMortB:"",oblRent:"",oblAlimony:"",
   oblOtherName:"",oblOtherM:"",oblOtherB:"",attachment:"לא",
-  kyc:"חסר"
+  kyc:"חסר", isOwner:"", otherIncome:""
 };}
 function blankCollateral(){return{
   gush:"",helka:"",sub:"",builtArea:"",lotArea:"",street:"",num:"",apt:"",city:"",
@@ -531,7 +531,7 @@ function blankCollateral(){return{
 function blankOther(){return{type:"",address:"",value:"",rentIncome:"",mortgagedTo:"",mortgageBalance:""};}
 function blankTrack(){return{amount:"",years:"",rate:"",repay:"",graceMonths:""};}
 function blankOccupant(){return{firstName:"",lastName:"",id:"",birthDate:"",marital:"",relation:""};}
-function blankContact(){return{firstName:"",lastName:"",id:"",address:"",phone:"",email:"",relation:""};}
+function blankContact(){return{firstName:"",lastName:"",id:"",address:"",phone:"",email:"",relation:"",gender:""};}
 
 const R = ()=>ROUTES[S.route]||{};
 const has = s => (R().sections||[]).includes(s);
@@ -638,9 +638,8 @@ function renderDocPane(){
       </div>
       ${(r.caveats||[]).length?`<div class="dp-sec"><div class="dp-k">לתשומת לב</div>
         <div class="dp-warn">${esc(r.caveats[0])}</div></div>`:""}
-      ${r.pdfReady
-        ? `<div class="dp-sec"><div class="dp-k">הפקה</div><div class="dp-list" style="font-size:12.5px;color:var(--ok)">מיפוי הטופס הושלם — ניתן להפיק מסמך מלא</div></div>`
-        : `<div class="dp-sec"><div class="dp-k">הפקה</div><div class="dp-warn">מיפוי הקואורדינטות טרם הושלם למסלול זה</div></div>`}
+      <div class="dp-sec"><div class="dp-k">הפקה</div>
+        <div class="dp-list" style="font-size:12.5px;color:var(--ok)">מיפוי הטופס הושלם — ניתן להפיק מסמך מלא</div></div>
     </div>`;
   const ch=$("#dpChange"); if(ch) ch.onclick=()=>go(0);
   paintThumbs();
@@ -896,6 +895,13 @@ function step1(){
         ${fSelect(`occupants.${i}.marital`,"מצב משפחתי",["רווק/ה","נשוי/ה","גרוש/ה","אלמן/נה","ידוע/ה בציבור"])}
         ${fInput(`occupants.${i}.relation`,"הקשר ללווה")}
       </div>`,blankOccupant,"הוסף דייר"));
+
+  if(r.lender==="איילון"){
+    h += sec("בעלות בנכס המוצע לשעבוד","שדה בטופס איילון",
+      S.data.borrowers.map((b,i)=>`<div class="grid">
+        ${fRadio(`borrowers.${i}.isOwner`,`לווה ${i+1}${b.firstName?" · "+esc(b.firstName):""} — האם הלווה הינו בעלים רשום בנכס המוצע לשעבוד?`,["כן","לא"],{wide:true})}
+      </div>`).join(""));
+  }
 
   if(has("contact")){
     const maxC = r.maxContacts||1;
@@ -1158,6 +1164,14 @@ function step5(){
             ${fRadio(`borrowers.${i}.kyc`,`לווה ${i+1}${b.firstName?" · "+esc(b.firstName)+" "+esc(b.lastName):""}`,["חסר","הושלם","נדרשת בדיקה"],{wide:true})}
           </div>`).join("")}
           <div class="note info" style="margin:4px 0 0">ההתראה במייל נושאת את <b>מצב</b> ההשלמה בלבד — לא את תוכן שאלון הכר את הלקוח.</div>
+          <hr class="rule">
+          <div class="subhead">תוכן השאלון (מודפס כנספח נפרד לכל לווה)</div>
+          <div class="grid">
+            ${fRadio("kyc.purpose","מטרת נטילת ההלוואה",["רכישת דירה","בנייה עצמית","שיפוצים","מיחזור","אחר"],{wide:true})}
+            ${fRadio("kyc.repaySource","מקור הכסף להחזר ההלוואה",["משכורת","אחר"],{wide:true})}
+            ${fRadio("kyc.refused","האם גוף מוסדי או בנק סירב לפתוח לך חשבון מטעמי איסור הלבנת הון?",["לא","כן"],{wide:true})}
+          </div>
+          ${fArea("kyc.assets","פירוט הנכסים שברשותי (אם שכר הדירה שלהם אמור לשמש להחזר ההלוואה)",{rows:2})}
         </div></div>`;
       }
       return `<div class="row" style="margin-bottom:11px"><header>${esc(a.t)}</header><div class="rbody">
@@ -1227,7 +1241,7 @@ function step6(){
       <div class="fl"><i>1</i><div><b>הפקת המסמך</b>
         <p>הנתונים מוטבעים על גבי מסמך המקור של ${esc(r.lender)} — ${r.pages} עמודים, ללא שינוי בנוסח או בהצהרות.</p></div></div>
       <div class="fl ${r.pdfReady?"":"pending"}"><i>2</i><div><b>בדיקה ויזואלית</b>
-        <p>${r.pdfReady?"תצוגה מקדימה של המסמך המופק, עמוד אחר עמוד.":"מיפוי הקואורדינטות למסלול זה טרם הושלם — באב־טיפוס מודגם מסלול כלל · הפוכה."}</p></div></div>
+        <p>תצוגה מקדימה של המסמך המופק, עמוד אחר עמוד — להשוואה מול מסמך המקור.</p></div></div>
       <div class="fl pending"><i>3</i><div><b>שליחה ב־iSign</b>
         <p>המסמך המוכן נשלח ללקוח לחתימה מחשבון ה־iSign של המשרד.</p></div></div>
     </div>
@@ -1239,9 +1253,7 @@ function step6(){
       <button class="btn p" id="sendISign" disabled>שלח לחתימה ב־iSign</button>
     </div>
 
-    <div id="pdfArea" class="pv" style="margin-top:14px">${r.pdfReady
-      ? "לחץ «הפק מסמך לבדיקה» כדי להטביע את הנתונים על גבי מסמך המקור."
-      : "מסלול זה מוצג באב־טיפוס ברמת השדות והוולידציה. הפקת PDF מודגמת על מסלול כלל · משכנתא הפוכה."}</div>
+    <div id="pdfArea" class="pv" style="margin-top:14px">לחץ «הפק מסמך לבדיקה» כדי להטביע את הנתונים על גבי מסמך המקור.</div>
   </div></div>`;
 
   h += `<div class="note warn" style="margin-top:16px"><b>על שילוב iSign:</b> אתר isign.co.il אינו מפרסם API או תיעוד למפתחים.
@@ -1570,8 +1582,18 @@ $("#mask").onclick=e=>{ if(e.target.id==="mask") closeModal(); };
    drawn by the browser (which does full bidi) into a canvas, and pdf-lib
    only embeds that canvas as an image over the untouched original page.
    ======================================================================== */
-const PDF_SRC = "/anbar-form/pdf/clal-reverse.pdf";
-let pdfState = {bytes:null, pages:0, cur:1, out:null};
+const PDF_DIR = "/anbar-form/pdf/";
+const templates = {};                 // file -> ArrayBuffer, fetched once
+let pdfState = {pages:0, cur:1, out:null};
+
+async function template(file){
+  if(!templates[file]){
+    const res=await fetch(PDF_DIR+file+".pdf");
+    if(!res.ok) throw new Error("template "+file);
+    templates[file]=await res.arrayBuffer();
+  }
+  return templates[file];
+}
 
 function bindSend(){
   const g=$("#genPdf"), d=$("#dlPdf"), s=$("#sendISign");
@@ -1603,29 +1625,20 @@ async function generate(){
   area.innerHTML=`<div><div class="spin"></div>מפיק את המסמך…</div>`;
   $("#genPdf").disabled=true;
   try{
-    if(!pdfState.bytes){
-      const res=await fetch(PDF_SRC);
-      if(!res.ok) throw new Error("template");
-      pdfState.bytes=await res.arrayBuffer();
-    }
-    const out=await buildPdf(pdfState.bytes);
+    const out=await buildPdf();
     pdfState.out=out;
     await preview(out);
     $("#dlPdf").disabled=false;
     $("#sendISign").disabled=false;
   }catch(err){
-    area.innerHTML=`<div style="color:var(--err)">לא ניתן היה לטעון את מסמך המקור (<code>${esc(PDF_SRC)}</code>).<br>
-      באב־טיפוס המקומי יש להעלות את הקובץ לצד הדף.</div>`;
+    area.innerHTML=`<div style="color:var(--err)">לא ניתן היה להפיק את המסמך: ${esc(err.message||err)}</div>`;
   }finally{ $("#genPdf").disabled=false; }
 }
 
 /* --- overlay: browser draws the Hebrew, pdf-lib only merges --- */
-async function buildPdf(bytes){
-  const {PDFDocument} = PDFLib;
-  const doc = await PDFDocument.load(bytes);
+async function overlay(doc,mapKey){
+  const map = FIELD_MAP[mapKey]||{};
   const pages = doc.getPages();
-  const map = FIELD_MAP["clal-reverse"]||{};
-
   for(const pageNo of Object.keys(map)){
     const pg = pages[+pageNo-1];
     if(!pg) continue;
@@ -1634,8 +1647,29 @@ async function buildPdf(bytes){
     const img = await doc.embedPng(png);
     pg.drawImage(img,{x:0,y:0,width,height});
   }
+}
+
+/* Fill the selected lender document, then append one filled KYC page per
+   borrower for the routes whose annex list calls for it. */
+async function buildPdf(){
+  const {PDFDocument} = PDFLib;
+  const r = R();
+  const doc = await PDFDocument.load(await template(r.pdfFile));
+  await overlay(doc, r.pdfFile);   // map keys are the file names, not the route ids
+
+  if((r.annexes||[]).some(a=>a.perBorrower) && FIELD_MAP["clal-kyc"]){
+    for(let i=0;i<S.data.borrowers.length;i++){
+      kycFor = i;                                   // which borrower this copy is for
+      const k = await PDFDocument.load(await template("clal-kyc"));
+      await overlay(k,"clal-kyc");
+      const [pg] = await doc.copyPages(k,[0]);
+      doc.addPage(pg);
+    }
+    kycFor = 0;
+  }
   return await doc.save();
 }
+let kycFor = 0;
 
 // Render one page's values into a transparent canvas at 3x, using the browser's
 // own text engine so bidi and digit order are correct by construction.
@@ -1652,6 +1686,14 @@ function drawOverlay(items,w,h){
     items.forEach(it=>{
       const v=resolveVal(it);
       if(v===""||v==null||v===false) return;
+      if(it.ring){                       // ring a printed choice (360 prints the option list)
+        ctx.save();
+        ctx.strokeStyle="#0b1a3a"; ctx.lineWidth=1.1;
+        ctx.beginPath();
+        ctx.ellipse(it.x,h-it.y,(it.rw||24)/2,(it.rh||10)/2,0,0,Math.PI*2);
+        ctx.stroke(); ctx.restore();
+        return;
+      }
       if(it.mark){                       // checkbox / radio tick
         ctx.save();
         ctx.strokeStyle="#0b1a3a"; ctx.lineWidth=1.6; ctx.lineCap="round";
@@ -1687,14 +1729,61 @@ function drawOverlay(items,w,h){
 const FN = {
   collateralTotal: d => { const t=d.collateral.reduce((a,c)=>a+(+c.value||0),0); return t?t.toLocaleString("en-US"):""; },
   notes:           d => d.purpose.notes||"",
-  borrowerName0:   d => d.borrowers[0]?`${d.borrowers[0].firstName} ${d.borrowers[0].lastName}`.trim():"",
-  borrowerName1:   d => d.borrowers[1]?`${d.borrowers[1].firstName} ${d.borrowers[1].lastName}`.trim():"",
+  borrowerName0:   d => nameOf(d.borrowers[0]),
+  borrowerName1:   d => nameOf(d.borrowers[1]),
+  borrowerName2:   d => nameOf(d.borrowers[2]),
+  borrowerName3:   d => nameOf(d.borrowers[3]),
+  otherIncome0:    d => otherIncome(d.borrowers[0]),
+  otherIncome1:    d => otherIncome(d.borrowers[1]),
+  bankName0:       d => (d.bank||{}).name||"",
+  bankName1:       d => "",
+  trackTotal:      d => { const t=d.tracks.reduce((a,x)=>a+(+x.amount||0),0);
+                          return t?t.toLocaleString("en-US"):""; },
   today:           () => { const n=new Date(); return `${String(n.getDate()).padStart(2,"0")}/${String(n.getMonth()+1).padStart(2,"0")}/${n.getFullYear()}`; },
   agentName:       d => (d.agent||{}).name||"",
   agentPhone:      d => (d.agent||{}).phone||"",
   agentNumber:     d => (d.agent||{}).number||"",
-  purposeHas:    (d,_,arg) => (d.purpose.list||[]).includes(arg)
+  purposeHas:    (d,_,arg) => (d.purpose.list||[]).includes(arg),
+
+  /* composite strings the table-based documents want in a single cell */
+  addr0: d => addrOf(d.borrowers[0]),
+  addr1: d => addrOf(d.borrowers[1]),
+  bankLine:  d => bankLine(d),
+  bankLine0: d => bankLine(d),
+  bankLine1: d => "",
+  gushHelka: d => { const c=d.collateral[0]||{};
+    return [c.gush&&`גוש ${c.gush}`,c.helka&&`חלקה ${c.helka}`,c.sub&&`תת ${c.sub}`].filter(Boolean).join(" · "); },
+  propAddr0: d => propAddr(d.collateral[0]),
+  propAddr1: d => propAddr(d.collateral[1]),
+  propAddr2: d => propAddr(d.collateral[2]),
+  contactName0: d => nameOf(d.contacts[0]),
+  contactName1: d => nameOf(d.contacts[1]),
+  dealRank:  d => d.deal.rank||"",
+
+  /* KYC annex — identity comes from the borrower this copy belongs to */
+  kycLastName:  d => (d.borrowers[kycFor]||{}).lastName||"",
+  kycFirstName: d => (d.borrowers[kycFor]||{}).firstName||"",
+  kycId:        d => (d.borrowers[kycFor]||{}).id||"",
+  kycBirth:     d => fmtDate((d.borrowers[kycFor]||{}).birthDate),
+  kycResidency: d => (d.borrowers[kycFor]||{}).residency||"",
+  kycPhone:     d => (d.borrowers[kycFor]||{}).phone||"",
+  kycMobile:    d => (d.borrowers[kycFor]||{}).phone||"",
+  kycGender:  (d,_,arg) => {
+    const g=(d.borrowers[kycFor]||{}).gender;
+    return (arg==="ז"&&g==="זכר")||(arg==="נ"&&g==="נקבה");
+  }
 };
+function nameOf(x){ return x?`${x.firstName||""} ${x.lastName||""}`.trim():""; }
+function addrOf(b){ return b?[b.street,b.city,b.zip].filter(Boolean).join(", "):""; }
+function propAddr(c){ return c?[c.street,c.num,c.apt&&`דירה ${c.apt}`,c.city].filter(Boolean).join(" "):""; }
+function otherIncome(b){
+  if(!b) return "";
+  return [b.incAllowance&&`קצבה ${(+b.incAllowance).toLocaleString("en-US")}`,
+          b.incRent&&`שכ"ד ${(+b.incRent).toLocaleString("en-US")}`,
+          b.incAlimony&&`מזונות ${(+b.incAlimony).toLocaleString("en-US")}`].filter(Boolean).join(" · ");
+}
+function bankLine(d){ const b=d.bank||{};
+  return [b.name,b.branch&&`סניף ${b.branch}`,b.account&&`חשבון ${b.account}`].filter(Boolean).join(" · "); }
 
 function resolveVal(it){
   if(it.fnKey){
@@ -1702,7 +1791,7 @@ function resolveVal(it){
     return f ? f(S.data,R(),it.arg) : "";
   }
   const v=getv(it.p);
-  if(it.mark){
+  if(it.mark||it.ring){
     // eq === null  → tick whenever the field carries a value
     // eq defined   → tick only on an exact match
     if(it.eq===null||it.eq===undefined) return v!==""&&v!=null&&v!==false;
@@ -1759,12 +1848,12 @@ function demoData(){
     residence:"הנכס המוצע לשעבוד",spouseInProperty:"לא",children:"3",
     incWork:"",incAllowance:"4200",incRent:"3800",incPension:"6150",
     incOtherSrc:"קרן השתלמות",incOtherAmt:"900",
-    oblLoanM:"1250",oblLoanB:"41000",oblRent:"",attachment:"לא",kyc:"הושלם"});
+    oblLoanM:"1250",oblLoanB:"41000",oblRent:"",attachment:"לא",kyc:"הושלם",isOwner:"כן"});
   Object.assign(b2,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",birthDate:"1976-11-02",
     gender:"זכר",marital:"נשוי/ה",phone:"054-8812267",email:"y.benavraham@example.co.il",
     sameAddr:false,street:"סוקולוב 4",city:"הרצליה",zip:"4635004",residency:"אזרח ישראל",
     relation:"אח או אחות",residence:"דירה אחרת בבעלותי",spouseInProperty:"כן",spouseName:"נועה בן־אברהם",
-    children:"2",incWork:"18400",oblMortM:"5100",oblMortB:"612000",attachment:"לא",kyc:"נדרשת בדיקה"});
+    children:"2",incWork:"18400",oblMortM:"5100",oblMortB:"612000",attachment:"לא",kyc:"נדרשת בדיקה",isOwner:"לא"});
 
   const c=blankCollateral();
   Object.assign(c,{gush:"6128",helka:"447",sub:"12",builtArea:"92",lotArea:"",
@@ -1785,7 +1874,7 @@ function demoData(){
   const ct=blankContact();
   Object.assign(ct,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",
     address:"סוקולוב 4, הרצליה 4635004",phone:"054-8812267",
-    email:"y.benavraham@example.co.il",relation:"בן"});
+    email:"y.benavraham@example.co.il",relation:"בן",gender:"זכר"});
 
   const r=R();
   const d={
@@ -1797,11 +1886,16 @@ function demoData(){
     purpose:{amount:"600000",
       list:r.purposeOpts.filter(x=>/עזרה לבן משפחה|מחיה|רכיש/.test(x)).slice(0,2),
       notes:"הלווה מבקשת לסייע לבנה ברכישת דירה ראשונה. הנכס נקי מחובות למעט המשכנתא הקיימת."},
-    purchase:{}, deal:{rank:r.dealPurpose?r.dealPurpose[2]:""},
+    purchase: has("purchase")?{kind:"דירה יחידה",hand:"הנכס יירכש מיד שניה",
+      fromSale:"450000",equitySource:"חסכונות והורים",equityAmount:"310000",
+      fromLoan:"600000",sellerRelation:"אין"}:{},
+    deal:{rank:r.dealPurpose?r.dealPurpose[2]:""},
     consents:{insurance:true,credit:true,declarations:true,privacy:true},
     annexes:{a0:"הושלם",a1:"חסר",a2:"הושלם"},
     insurance:{exists:"לא",wantOffer:"כן"},
     clal:{existingMortgage:"כן",existingOnListed:"לא"},
+    kyc:{purpose:"אחר",repaySource:"משכורת",refused:"לא",
+         assets:"דירה בכפר סבא המושכרת ב־5,200 ₪ לחודש."},
     agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}
   };
   if(r.hasAnnuity) d.purpose.annuity="4500";
@@ -1836,7 +1930,7 @@ $("#loadDemo").onclick=()=>{
 $("#clearAll").onclick=()=>{
   S.data={borrowers:[blankBorrower()],occupants:[],contacts:[],collateral:[blankCollateral()],
           other:[],tracks:[blankTrack()],bank:{},purpose:{},purchase:{},consents:{},
-          annexes:{},insurance:{},deal:{},clal:{},agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}};
+          annexes:{},insurance:{},deal:{},clal:{},kyc:{},agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}};
   S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
 };
 
