@@ -504,7 +504,7 @@ const S = {
     collateral:[blankCollateral()],
     other:[],
     tracks:[blankTrack()],
-    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}
+    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}, hasOccupants:""
   },
   errors:{}
 };
@@ -519,7 +519,7 @@ function blankBorrower(){return{
   incOtherSrc:"",incOtherAmt:"",
   oblLoanM:"",oblLoanB:"",oblMortM:"",oblMortB:"",oblRent:"",oblAlimony:"",
   oblOtherName:"",oblOtherM:"",oblOtherB:"",attachment:"לא",
-  kyc:"חסר", isOwner:"", otherIncome:""
+  kyc:"חסר", isOwner:"", otherIncome:"", incWorkSelf:"", hasRealEstate:""
 };}
 function blankCollateral(){return{
   gush:"",helka:"",sub:"",builtArea:"",lotArea:"",street:"",num:"",apt:"",city:"",
@@ -1784,6 +1784,24 @@ const FN = {
   contactName0: d => nameOf(d.contacts[0]),
   contactName1: d => nameOf(d.contacts[1]),
   dealRank:  d => d.deal.rank||"",
+  otherAddr0: d => (d.other[0]||{}).address||"",
+  otherAddr1: d => (d.other[1]||{}).address||"",
+  purposeLine: d => (d.purpose.list||[]).join(", "),
+  occupantsLine: d => d.occupants.map(o=>`${nameOf(o)}${o.relation?" ("+o.relation+")":""}`).filter(Boolean).join("; "),
+  /* only label the row when that borrower actually carries the obligation */
+  oblName0_0: d => (d.borrowers[0]||{}).oblLoanM ? "הלוואה שאינה משכנתא":"",
+  oblName0_1: d => (d.borrowers[1]||{}).oblLoanM ? "הלוואה שאינה משכנתא":"",
+  oblName1_0: d => (d.borrowers[0]||{}).oblMortM ? "משכנתא":"",
+  oblName1_1: d => (d.borrowers[1]||{}).oblMortM ? "משכנתא":"",
+  /* 360 · bank-account table rows (only one account is collected today) */
+  bankRowName0:  d => (d.bank||{}).name||"",   bankRowName1: ()=>"", bankRowName2: ()=>"",
+  bankRowBranch0:d => (d.bank||{}).branch||"", bankRowBranch1:()=>"",bankRowBranch2:()=>"",
+  bankRowAcct0:  d => (d.bank||{}).account||"",bankRowAcct1: ()=>"", bankRowAcct2: ()=>"",
+  bankRowOwner0: d => (d.bank||{}).owner||"",  bankRowOwner1:()=>"", bankRowOwner2:()=>"",
+  /* 360 · liabilities table, flattened from every borrower */
+  ...oblRows(),
+  /* 360 · one property table holds the collateral AND the additional properties */
+  ...propRows(),
 
   /* KYC annex — identity comes from the borrower this copy belongs to */
   kycLastName:  d => (d.borrowers[kycFor]||{}).lastName||"",
@@ -1799,6 +1817,42 @@ const FN = {
   }
 };
 function nameOf(x){ return x?`${x.firstName||""} ${x.lastName||""}`.trim():""; }
+/* Flatten every borrower's obligations into the rows 360 prints. */
+function allObligations(d){
+  const out=[];
+  d.borrowers.forEach((b,i)=>{
+    const who=b.lastName?` (${b.lastName})`:"";
+    if(b.oblLoanM||b.oblLoanB) out.push(["הלוואה שאינה משכנתא"+who,b.oblLoanM,b.oblLoanB]);
+    if(b.oblMortM||b.oblMortB) out.push(["משכנתא"+who,b.oblMortM,b.oblMortB]);
+    if(b.oblOtherM)            out.push([(b.oblOtherName||"אחר")+who,b.oblOtherM,b.oblOtherB]);
+  });
+  return out;
+}
+function oblRows(){
+  const o={};
+  for(let r=0;r<6;r++){
+    o["oblSource"+r] =d=>(allObligations(d)[r]||[])[0]||"";
+    o["oblMonthly"+r]=d=>{const v=(allObligations(d)[r]||[])[1]; return v?Number(v).toLocaleString("en-US"):"";};
+    o["oblBalance"+r]=d=>{const v=(allObligations(d)[r]||[])[2]; return v?Number(v).toLocaleString("en-US"):"";};
+  }
+  return o;
+}
+/* Collateral first, then any additional property — 360 lists them in one table. */
+function allProperties(d){
+  return d.collateral.map(c=>({addr:propAddr(c),reg:c.registry,val:c.value,to:c.mortgagedTo,bal:c.mortgageBalance}))
+    .concat(d.other.map(o=>({addr:o.address,reg:"",val:o.value,to:o.mortgagedTo,bal:o.mortgageBalance})));
+}
+function propRows(){
+  const o={};
+  for(let i=0;i<3;i++){
+    o["propAddrAll"+i]=d=>(allProperties(d)[i]||{}).addr||"";
+    o["propRegistry"+i]=d=>(allProperties(d)[i]||{}).reg||"";
+    o["propValue"+i]  =d=>{const v=(allProperties(d)[i]||{}).val; return v?Number(v).toLocaleString("en-US"):"";};
+    o["propMortTo"+i] =d=>(allProperties(d)[i]||{}).to||"";
+    o["propMortBal"+i]=d=>{const v=(allProperties(d)[i]||{}).bal; return v?Number(v).toLocaleString("en-US"):"";};
+  }
+  return o;
+}
 function addrOf(b){ return b?[b.street,b.city,b.zip].filter(Boolean).join(", "):""; }
 function propAddr(c){ return c?[c.street,c.num,c.apt&&`דירה ${c.apt}`,c.city].filter(Boolean).join(" "):""; }
 function otherIncome(b){
@@ -1859,23 +1913,25 @@ async function preview(bytes){
 const SECGROUPS=[
   ["פרטי הלווים",["firstName","lastName",".id",".gender",".marital",".phone",".email",".residence"]],
   ["תעסוקה",["workplace","seniority",".employment",".role","netIncome"]],
-  ["הכנסות",["incWork","incAllowance","incPension","otherIncome"]],
-  ["התחייבויות",["oblLoanM","oblMortM",".attachment"]],
-  ["חשבון בנק",["bank.","bankLine"]],
+  ["הכנסות",["incWork","incAllowance","incPension","otherIncome","incWorkSelf"]],
+  ["התחייבויות",["oblLoanM","oblMortM",".attachment","oblSource","oblName"]],
+  ["חשבון בנק",["bank.","bankLine","bankRow"]],
   ["נכס לשעבוד",["collateral.","gushHelka","propAddr"]],
-  ["נכסים נוספים",["other."]],
-  ["מי עוד גר בנכס",["occupants."]],
+  ["נכסים נוספים",["other.","otherAddr","propAddrAll"]],
+  ["מי עוד גר בנכס",["occupants.","occupantsLine"]],
   ["איש קשר",["contacts.","contactName"]],
-  ["מטרת ההלוואה",["purpose.list","purposeHas","dealRank"]],
+  ["מטרת ההלוואה",["purpose.list","purposeHas","dealRank","purposeLine"]],
   ["פרטי רכישה",["purchase."]],
   ["מסלולים",["tracks."]],
   ["הצהרות / הכר את הלקוח",["consents.","kyc"]]
 ];
+/* Sections the lender's document genuinely does not contain — verified page by
+   page against each source PDF. Everything else must be mapped. */
 const NO_SLOT={
   "clal-reverse":["תעסוקה"],
   "clal-regular":["מי עוד גר בנכס","איש קשר"],
-  "ayalon-reverse":["תעסוקה","נכסים נוספים","מי עוד גר בנכס","הצהרות / הכר את הלקוח"],
-  "credit360":["איש קשר","פרטי רכישה","הצהרות / הכר את הלקוח"]
+  "ayalon-reverse":["תעסוקה","פרטי רכישה","הצהרות / הכר את הלקוח"],
+  "credit360":["איש קשר","מי עוד גר בנכס","פרטי רכישה","הצהרות / הכר את הלקוח"]
 };
 function coverage(file){
   const map=FIELD_MAP[file]||{};
@@ -1914,12 +1970,12 @@ function demoData(){
     gender:"נקבה",marital:"אלמן/נה",phone:"052-7741903",email:"miriam.ba@example.co.il",
     street:"הרצל 118",city:"רמת גן",zip:"5252118",residency:"אזרח ישראל",
     residence:"הנכס המוצע לשעבוד",spouseInProperty:"לא",children:"3",
-    incWork:"",incAllowance:"4200",incRent:"3800",incPension:"6150",
+    incWork:"",incAllowance:"4200",incRent:"3800",incPension:"6150",incWorkSelf:"",hasRealEstate:"כן",
     incOtherSrc:"קרן השתלמות",incOtherAmt:"900",
     oblLoanM:"1250",oblLoanB:"41000",oblRent:"",attachment:"לא",kyc:"הושלם",isOwner:"כן"});
   Object.assign(b2,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",birthDate:"1976-11-02",
     gender:"זכר",marital:"נשוי/ה",phone:"054-8812267",email:"y.benavraham@example.co.il",
-    sameAddr:false,street:"סוקולוב 4",city:"הרצליה",zip:"4635004",residency:"אזרח ישראל",
+    sameAddr:false,street:"סוקולוב 4",city:"הרצליה",zip:"4635004",residency:"אזרח ישראל",incWorkSelf:"כן",hasRealEstate:"",
     relation:"אח או אחות",residence:"דירה אחרת בבעלותי",spouseInProperty:"כן",spouseName:"נועה בן־אברהם",
     children:"2",incWork:"18400",oblMortM:"5100",oblMortB:"612000",attachment:"לא",kyc:"נדרשת בדיקה",isOwner:"לא"});
 
@@ -1962,6 +2018,7 @@ function demoData(){
     annexes:{a0:"הושלם",a1:"חסר",a2:"הושלם"},
     insurance:{exists:"לא",wantOffer:"כן"},
     clal:{existingMortgage:"כן",existingOnListed:"לא"},
+    hasOccupants:S.data.occupants.length?"כן":"לא",
     kyc:{purpose:"אחר",repaySource:"משכורת",refused:"לא",
          assets:"דירה בכפר סבא המושכרת ב־5,200 ₪ לחודש."},
     agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}
@@ -2001,7 +2058,7 @@ $("#loadDemo").onclick=()=>{
 $("#clearAll").onclick=()=>{
   S.data={borrowers:[blankBorrower()],occupants:[],contacts:[],collateral:[blankCollateral()],
           other:[],tracks:[blankTrack()],bank:{},purpose:{},purchase:{},consents:{},
-          annexes:{},insurance:{},deal:{},clal:{},kyc:{},agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}};
+          annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}};
   S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
 };
 
