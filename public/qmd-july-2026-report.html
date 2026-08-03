@@ -1,0 +1,906 @@
+<!-- wp:html -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content { background: #0f172a !important; margin: 0 !important; padding: 0 !important; }
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; padding: 0 !important; }
+    .ult-wrapper { width: 100% !important; max-width: 100% !important; padding: 20px 2% !important; margin: 0 !important; }
+    .ult-header { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; margin: 0 0 25px 0 !important; }
+    .ult-section, .success-banner, .data-sources-strip, .hero-stats { width: 100% !important; max-width: 100% !important; }
+}
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; padding-top: 0 !important; margin-top: 0 !important; min-height: 100vh !important; }
+html { background: #0f172a !important; direction: ltr !important; }
+.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content, header.site-header, footer.site-footer, nav, .site-navigation, .wp-block-post-title, .entry-header, h1.entry-title { all: unset !important; display: block !important; }
+header, footer, nav, .site-header, .site-footer, .site-navigation, .wp-block-post-title, .entry-header, .entry-title { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: transparent !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+.entry-content, .wp-block-post-content, .wp-site-blocks, main, article { max-width: none !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; position: relative !important; left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.ult-container { direction: ltr; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; color: #e2e8f0; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+.ult-wrapper { max-width: 100%; width: 100%; margin: 0; padding: 20px 16px; }
+
+.ult-header { background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #1e293b 100%); padding: 50px 25px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
+.ult-header::before { content: ''; position: absolute; top: -100%; right: -50%; width: 200%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); animation: headerPulse 6s ease-in-out infinite; }
+@keyframes headerPulse { 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.ult-header .version-badge { position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em; z-index: 10; }
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; text-shadow: 2px 4px 12px rgba(0,0,0,0.3); margin-bottom: 10px; position: relative; z-index: 1; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; position: relative; z-index: 1; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; position: relative; z-index: 1; }
+.ult-header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+.success-banner { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px; }
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px 20px; background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(79,70,229,0.1)); border: 1px solid rgba(99,102,241,0.3); border-radius: 16px; margin-bottom: 25px; }
+.data-source-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #a5b4fc; }
+.data-source-item .icon { font-size: 1.2em; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(79,70,229,0.08) 100%); border: 1px solid rgba(99,102,241,0.3); border-radius: 18px; padding: 22px 16px; text-align: center; }
+.kpi-card.green { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(34,197,94,0.3); }
+.kpi-card.gold { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border-color: rgba(251,191,36,0.3); }
+.kpi-card.purple { background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.08) 100%); border-color: rgba(139,92,246,0.3); }
+.kpi-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.kpi-card .secondary { font-size: 1.05em; color: #cbd5e1; margin-bottom: 6px; }
+.kpi-card .label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.kpi-card .compare { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.kpi-card .compare.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.kpi-card .compare.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.kpi-card .compare.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+.ult-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid rgba(99,102,241,0.4); }
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; min-width: 0; overflow: visible; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.traffic-item { display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px; gap: 15px; }
+.traffic-item:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bar-container { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; border-radius: 4px; }
+.traffic-item .users { font-weight: 700; font-size: 1.05em; text-align: right; }
+.traffic-item .pct { color: #94a3b8; font-size: 0.9em; text-align: right; }
+
+.keywords-category { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.keywords-category.brand { border-left: 4px solid #6366f1; }
+.keywords-category.nonbrand { border-left: 4px solid #8b5cf6; }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cat-icon { font-size: 1.5em; }
+.cat-title { font-size: 1.2em; font-weight: 700; color: #fff; }
+.cat-count { margin-left: auto; background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: #94a3b8; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table th { text-align: left; padding: 12px 10px; font-size: 0.85em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+.kw-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9em; color: #e2e8f0; }
+.kw-table tr:hover { background: rgba(255,255,255,0.03); }
+.kw-name { font-weight: 600; color: #e2e8f0; }
+.vol-badge { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px; font-weight: 800; font-size: 0.85em; color: #fff; }
+.pos-badge.p1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; }
+.pos-badge.top5 { background: rgba(34,197,94,0.35); color: #86efac; }
+.pos-badge.top10 { background: rgba(59,130,246,0.35); color: #93c5fd; }
+.pos-badge.top20 { background: rgba(139,92,246,0.35); color: #c4b5fd; }
+.pos-badge.top50 { background: rgba(239,68,68,0.3); color: #fca5a5; }
+.pos-badge.out { background: rgba(100,116,139,0.35); color: #cbd5e1; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.clicks-badge { background: rgba(34,197,94,0.15); color: #4ade80; padding: 3px 9px; border-radius: 10px; font-size: 0.85em; font-weight: 600; }
+
+.pages-grid { display: flex; flex-direction: column; gap: 10px; }
+.page-row { display: grid; grid-template-columns: 40px 1fr 380px; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 14px; border-radius: 10px; gap: 15px; }
+.page-rank { font-size: 1.2em; font-weight: 800; color: #6366f1; }
+.page-url { font-weight: 600; color: #e2e8f0; word-break: break-word; font-size: 0.9em; }
+.page-metrics { display: flex; gap: 12px; }
+.metric-card { background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center; min-width: 60px; }
+.metric-value { font-size: 1em; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.7em; color: #64748b; margin-top: 2px; }
+
+.ult-footer { text-align: center; padding: 30px 20px; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+.se-ranking-section { background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.05) 100%); border: 1px solid rgba(139,92,246,0.3); }
+
+.timeframes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 25px; }
+.timeframe-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(139,92,246,0.25); border-radius: 14px; padding: 16px 14px; text-align: center; }
+.tf-label { font-size: 1em; font-weight: 700; color: #c4b5fd; margin-bottom: 3px; }
+.tf-date { font-size: 0.75em; color: #64748b; margin-bottom: 12px; }
+.tf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.tf-stat { display: flex; flex-direction: column; align-items: center; }
+.tf-num { font-size: 1.4em; font-weight: 800; }
+.tf-cap { font-size: 0.7em; color: #94a3b8; margin-top: 2px; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .page-row { grid-template-columns: 40px 1fr; }
+    .page-metrics { display: none; }
+    .timeframes-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .kw-table { font-size: 0.8em; }
+    .kw-table th, .kw-table td { padding: 6px 3px; }
+}
+.month-switcher { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; position: relative; z-index: 2; }
+.month-switcher .ms-label { color: rgba(255,255,255,0.8); font-size: 0.95em; margin-right: 6px; }
+.month-switcher .ms-btn { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9em; font-weight: 600; }
+.month-switcher .ms-btn:hover { background: rgba(255,255,255,0.25); }
+.month-switcher .ms-btn.active { background: rgba(99,102,241,0.5); border-color: rgba(99,102,241,0.8); }
+
+.bot-warning { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border: 2px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 18px; margin-bottom: 25px; }
+.bot-warning h4 { color: #fbbf24; font-size: 1.1em; margin-bottom: 8px; }
+.bot-warning p { color: #cbd5e1; line-height: 1.6; margin-bottom: 8px; }
+</style>
+
+<div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">Ultimate Report v3.0</div>
+        <div class="client-name">QMD — Global Medical Devices</div>
+        <h1>Monthly SEO Performance Report — July 2026</h1>
+        <p class="subtitle">qmd.net | Degania + Arthesys + Biometrix | Global B2B Medical Manufacturing</p>
+        <div class="period-badge">July 2026 | 01/07/2026 - 31/07/2026 vs June 2026</div>
+        <div class="month-switcher">
+            <span class="ms-label">Available months:</span>
+            <a href="/qmd-april-2026" class="ms-btn">April 2026</a>
+            <a href="/qmd-june-2026" class="ms-btn">June 2026</a>
+            <a href="/qmd-july-2026" class="ms-btn active">July 2026</a>
+        </div>
+    </div>
+
+    <div class="ult-wrapper">
+        <!-- Bot warning removed for July - not relevant -->
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">📊</span><span>GA4: 2,648 users</span></div>
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 830 clicks / 25,397 impressions</span></div>
+            <div class="data-source-item"><span class="icon">🌐</span><span>SE Ranking: 180 keywords (USA + UK + France)</span></div>
+            <div class="data-source-item"><span class="icon">🌍</span><span>135/180 keywords in AI Overview</span></div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="value">1,068</div>
+                <div class="label">Organic Users (GA4)</div>
+                <div class="secondary">40.3% of traffic</div>
+                <div class="compare down">-8.7% vs June</div>
+            </div>
+            <div class="kpi-card">
+                <div class="value">830</div>
+                <div class="label">Organic Clicks (GSC)</div>
+                <div class="secondary">CTR 3.27%</div>
+                <div class="compare down">-2.6% vs June</div>
+            </div>
+            <div class="kpi-card gold">
+                <div class="value">25,397</div>
+                <div class="label">Impressions (GSC)</div>
+                <div class="secondary">819/day</div>
+                <div class="compare down">-1.0% vs June</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="value">180</div>
+                <div class="label">Keywords Tracked (3 countries)</div>
+                <div class="secondary">0 at #1-3 | 135 in AI Overview</div>
+                <div class="compare stable">SE Ranking</div>
+            </div>
+        </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>Month-over-Month Performance</h2>
+                    <div class="desc">June 2026 vs May 2026 | Apples-to-Apples: GA4 vs GA4, GSC vs GSC</div>
+                </div>
+            </div>
+
+            <div class="comp-card" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:18px;">
+                <h4 style="color:#fff; margin-bottom:12px;">📅 MoM Comparison — June 2026</h4>
+                <table style="width:100%;">
+                    <tr><td colspan="3" style="background:rgba(34,197,94,0.12); color:#86efac; font-weight:700; text-align:center; padding:6px;">GA4 — Traffic (same source)</td></tr>
+                    <tr><td>Total Users</td><td>2,648 ↔ 2,532</td><td><span class="up">+4.6%</span></td></tr>
+                    <tr><td>Organic Search</td><td>1,068 ↔ 1,170</td><td><span class="down">-8.7%</span></td></tr>
+                    <tr><td>Direct</td><td>1,420 ↔ 1,173</td><td><span class="up">+21.1%</span></td></tr>
+                    <tr><td>Referral</td><td>102 ↔ 147</td><td><span class="down">-30.6%</span></td></tr>
+                    <tr><td>AI Assistant</td><td>18 ↔ 12</td><td><span class="up">+50.0%</span></td></tr>
+                    <tr><td colspan="3" style="background:rgba(59,130,246,0.12); color:#93c5fd; font-weight:700; text-align:center; padding:6px;">GSC — Clicks & Impressions</td></tr>
+                    <tr><td>GSC Clicks</td><td>830 ↔ 852</td><td><span class="down">-2.6%</span></td></tr>
+                    <tr><td>GSC Impressions</td><td>25,397 ↔ 25,648</td><td><span class="down">-1.0%</span></td></tr>
+                    <tr><td>Average CTR</td><td>3.27% ↔ 3.32%</td><td><span class="down">-0.05 pts</span></td></tr>
+                    <tr><td>Brand Clicks (QMD/Degania/Arthesys/Biometrix)</td><td>389 ↔ 448</td><td><span class="down">-13.2%</span></td></tr>
+                    <tr><td>Non-Brand Clicks</td><td>19 ↔ 5</td><td><span class="up">+280.0%</span></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>Traffic Sources — Full Breakdown</h2>
+                    <div class="desc">All channels | Source: GA4</div>
+                </div>
+                <div class="total-badge" style="margin-left: auto; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); color: white; padding: 12px 24px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 1.8em; font-weight: 800;">2,648</div>
+                    <div style="font-size: 0.85em; opacity: 0.9;">Total Users</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area"><canvas id="trafficChart" height="300"></canvas></div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span><span>Direct</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 100%; background: #3b82f6;"></div></div>
+                        <div class="users">1,420</div>
+                        <div class="pct">53.6%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span><span>Organic Search</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 75%; background: #22c55e;"></div></div>
+                        <div class="users">1,068</div>
+                        <div class="pct">40.3%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #10b981;"></span><span>Referral</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 7%; background: #10b981;"></div></div>
+                        <div class="users">102</div>
+                        <div class="pct">3.9%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span><span>Organic Social</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 2%; background: #8b5cf6;"></div></div>
+                        <div class="users">31</div>
+                        <div class="pct">1.2%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #06b6d4;"></span><span>AI Assistant</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #06b6d4;"></div></div>
+                        <div class="users">18</div>
+                        <div class="pct">0.7%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #64748b;"></span><span>Unassigned</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 0%; background: #64748b;"></div></div>
+                        <div class="users">9</div>
+                        <div class="pct">0.3%</div>
+                    </div>
+
+                </div>
+            </div>
+            <div style="margin-top: 25px;">
+                <h3 style="color:#fff; font-size:1.1em; margin-bottom:12px;">📊 Channels & Engagement MoM</h3>
+                <table class="kw-table" style="background:rgba(0,0,0,0.2); border-radius:12px;">
+                    <thead><tr><th>Channel</th><th>July</th><th>June</th><th>Events</th><th>Avg Time (Jul/Jun)</th><th>Δ Users</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td class="kw-name">Direct</td>
+                            <td><strong style="color:#60a5fa;">1,420</strong></td>
+                            <td><strong style="color:#cbd5e1;">1,173</strong></td>
+                            <td><strong style="color:#fbbf24;">6,459</strong></td>
+                            <td><strong style="color:#4ade80;">19s / 21s</strong></td>
+                            <td><span class="change-badge up">+21.1%</span></td>
+                        </tr>
+<tr>
+                            <td class="kw-name">Organic Search</td>
+                            <td><strong style="color:#60a5fa;">1,068</strong></td>
+                            <td><strong style="color:#cbd5e1;">1,170</strong></td>
+                            <td><strong style="color:#fbbf24;">7,171</strong></td>
+                            <td><strong style="color:#4ade80;">54s / 52s</strong></td>
+                            <td><span class="change-badge down">-8.7%</span></td>
+                        </tr>
+<tr>
+                            <td class="kw-name">Referral</td>
+                            <td><strong style="color:#60a5fa;">102</strong></td>
+                            <td><strong style="color:#cbd5e1;">147</strong></td>
+                            <td><strong style="color:#fbbf24;">498</strong></td>
+                            <td><strong style="color:#4ade80;">20s / 29s</strong></td>
+                            <td><span class="change-badge down">-30.6%</span></td>
+                        </tr>
+<tr>
+                            <td class="kw-name">Organic Social</td>
+                            <td><strong style="color:#60a5fa;">31</strong></td>
+                            <td><strong style="color:#cbd5e1;">22</strong></td>
+                            <td><strong style="color:#fbbf24;">216</strong></td>
+                            <td><strong style="color:#4ade80;">41s / 29s</strong></td>
+                            <td><span class="change-badge up">+40.9%</span></td>
+                        </tr>
+<tr>
+                            <td class="kw-name">AI Assistant</td>
+                            <td><strong style="color:#60a5fa;">18</strong></td>
+                            <td><strong style="color:#cbd5e1;">12</strong></td>
+                            <td><strong style="color:#fbbf24;">102</strong></td>
+                            <td><strong style="color:#4ade80;">23s / 19s</strong></td>
+                            <td><span class="change-badge up">+50.0%</span></td>
+                        </tr>
+<tr>
+                            <td class="kw-name">Unassigned</td>
+                            <td><strong style="color:#60a5fa;">9</strong></td>
+                            <td><strong style="color:#cbd5e1;">8</strong></td>
+                            <td><strong style="color:#fbbf24;">25</strong></td>
+                            <td><strong style="color:#4ade80;">45s / 15s</strong></td>
+                            <td><span class="change-badge up">+12.5%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:8px; padding:8px 12px; background:rgba(0,0,0,0.25); border-left:3px solid #4ade80; border-radius:6px; font-size:0.78em; color:#cbd5e1; line-height:1.5;">
+                    📌 <b>Direct leads</b> (1,420 users). <b>Organic Search:</b> 1068 users at 54s avg engagement (highest quality signal). <b>AI Assistant grew</b>: 18 vs 12 in June. Referral quality dropped (102 vs 147).
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section se-ranking-section">
+            <div class="section-header">
+                <span class="section-icon">🌐</span>
+                <div class="section-title">
+                    <h2>SE Ranking — Multi-Country Position Tracking</h2>
+                    <div class="desc">180 keywords tracked (60 × 3 countries) | Focus on medical device manufacturing terms</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; margin-bottom:20px; font-size:0.9em; color:#cbd5e1; line-height:1.7;">
+                🏆 <b>Combined Movement (Apr → Aug):</b>
+                <span style="color:#4ade80; font-weight:700;">↑ 0 up</span> |
+                <span style="color:#f87171; font-weight:700;">↓ 4 down</span> |
+                <span style="color:#94a3b8; font-weight:700;">= 0 stable</span> |
+                <span style="color:#93c5fd; font-weight:700;">✨ 3 newly ranked</span>
+                <br><br>
+                🥇 <b>0 keywords at #1-3</b> across 3 countries | <b>135 keywords with AI Overview presence</b>.
+            </div>
+        </div>
+
+        
+        <div class="ult-section" style="border-left: 4px solid #6366f1;">
+            <div class="section-header">
+                <span class="section-icon">🇺🇸</span>
+                <div class="section-title">
+                    <h2>USA — Google.us</h2>
+                    <div class="desc"> 60 keywords tracked | Currently ranked: 2</div>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <div style="background: #fbbf24; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 3</div>
+                    <div style="background: #4ade80; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 10</div>
+                    <div style="background: #60a5fa; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 20</div>
+                    <div style="background: #64748b; color:#fff; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">58 Unranked</div>
+                </div>
+            </div>
+            <div style='overflow-x:auto;'><table class='kw-table' style='background:rgba(0,0,0,0.2); border-radius:12px;'><thead><tr><th>Keyword</th><th>Volume</th><th>3 Mo Ago</th><th>1 Mo Ago</th><th style='color:#a78bfa;'>Current</th><th>Δ 3 Mo</th></tr></thead><tbody><tr>
+                                <td class="kw-name">rapid infusion catheter</td>
+                                <td><span class="vol-badge">390</span></td>
+                                <td><span class="pos-badge top20">15</span></td>
+                                <td><span class="pos-badge top50">22</span></td>
+                                <td><span class="pos-badge top50">22</span></td>
+                                <td><span class="change-badge down">-7</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">temp sensing foley</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="pos-badge top50">21</span></td>
+                                <td><span class="pos-badge top50">23</span></td>
+                                <td><span class="change-badge down">-14</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">vessel loop</td>
+                                <td><span class="vol-badge">240</span></td>
+                                <td><span class="pos-badge top20">17</span></td>
+                                <td><span class="pos-badge top50">23</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="change-badge down">↓ Out</span></td>
+                            </tr>
+</tbody></table></div>
+        </div>
+
+        <div class="ult-section" style="border-left: 4px solid #6366f1;">
+            <div class="section-header">
+                <span class="section-icon">🇬🇧</span>
+                <div class="section-title">
+                    <h2>UK — Google.uk</h2>
+                    <div class="desc"> 60 keywords tracked | Currently ranked: 2</div>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <div style="background: #fbbf24; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 3</div>
+                    <div style="background: #4ade80; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 10</div>
+                    <div style="background: #60a5fa; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">1 Top 20</div>
+                    <div style="background: #64748b; color:#fff; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">58 Unranked</div>
+                </div>
+            </div>
+            <div style='overflow-x:auto;'><table class='kw-table' style='background:rgba(0,0,0,0.2); border-radius:12px;'><thead><tr><th>Keyword</th><th>Volume</th><th>3 Mo Ago</th><th>1 Mo Ago</th><th style='color:#a78bfa;'>Current</th><th>Δ 3 Mo</th></tr></thead><tbody><tr>
+                                <td class="kw-name">rapid infusion catheter</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top20">15</span></td>
+                                <td><span class="pos-badge top20">16</span></td>
+                                <td><span class="pos-badge top20">19</span></td>
+                                <td><span class="change-badge down">-4</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">temp sensing foley</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top20">12</span></td>
+                                <td><span class="pos-badge top20">20</span></td>
+                                <td><span class="pos-badge top50">23</span></td>
+                                <td><span class="change-badge down">-11</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">vessel loop</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge top50">27</span></td>
+                                <td><span class="pos-badge top50">30</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="change-badge down">↓ Out</span></td>
+                            </tr>
+</tbody></table></div>
+        </div>
+
+        <div class="ult-section" style="border-left: 4px solid #6366f1;">
+            <div class="section-header">
+                <span class="section-icon">🇫🇷</span>
+                <div class="section-title">
+                    <h2>France — Google.fr</h2>
+                    <div class="desc"> 60 keywords tracked | Currently ranked: 3</div>
+                </div>
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <div style="background: #fbbf24; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 3</div>
+                    <div style="background: #4ade80; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">0 Top 10</div>
+                    <div style="background: #60a5fa; color:#1e293b; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">2 Top 20</div>
+                    <div style="background: #64748b; color:#fff; padding: 6px 14px; border-radius: 10px; font-weight: 700; font-size: 0.85em;">57 Unranked</div>
+                </div>
+            </div>
+            <div style='overflow-x:auto;'><table class='kw-table' style='background:rgba(0,0,0,0.2); border-radius:12px;'><thead><tr><th>Keyword</th><th>Volume</th><th>4 Mo Ago</th><th>1 Mo Ago</th><th style='color:#a78bfa;'>Current</th><th>Δ 4 Mo</th></tr></thead><tbody><tr>
+                                <td class="kw-name">temp sensing foley</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge top20">15</span></td>
+                                <td><span class="change-badge up">↑ New</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">rapid infusion catheter</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge top20">17</span></td>
+                                <td><span class="change-badge up">↑ New</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">vessel loop</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge top50">25</span></td>
+                                <td><span class="change-badge up">↑ New</span></td>
+                            </tr>
+</tbody></table></div>
+        </div>
+
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>Top Keywords in GSC — Brand vs Non-Brand</h2>
+                    <div class="desc">Click breakdown | Source: GSC</div>
+                </div>
+            </div>
+
+            <div class="keywords-category brand">
+                <div class="category-header">
+                    <span class="cat-icon">🏷️</span>
+                    <span class="cat-title">Brand — QMD / Degania / Arthesys / Biometrix</span>
+                    <span class="cat-count">136 variations | 389 clicks (95.3%)</span>
+                </div>
+                <table class="kw-table">
+                    <thead><tr><th>Keyword</th><th>Impressions</th><th>Position</th><th>Clicks</th></tr></thead>
+                    <tbody>
+                        <tr>
+                                <td class="kw-name">qmd</td>
+                                <td><span class="vol-badge">8,577</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">112</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">degania medical devices</td>
+                                <td><span class="vol-badge">726</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">48</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">arthesys</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">35</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">degania silicone</td>
+                                <td><span class="vol-badge">83</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">26</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd medical</td>
+                                <td><span class="vol-badge">58</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">22</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd company</td>
+                                <td><span class="vol-badge">51</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">21</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd degania</td>
+                                <td><span class="vol-badge">37</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">15</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">biometrix medical</td>
+                                <td><span class="vol-badge">129</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">13</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">biometrix</td>
+                                <td><span class="vol-badge">1,082</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">11</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd medical device</td>
+                                <td><span class="vol-badge">74</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">11</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd.net</td>
+                                <td><span class="vol-badge">33</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">10</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qmd דגניה</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">degania medical</td>
+                                <td><span class="vol-badge">89</span></td>
+                                <td><span class="pos-badge top20">19</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">degania medical devices private limited</td>
+                                <td><span class="vol-badge">54</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">degania silicone ltd</td>
+                                <td><span class="vol-badge">35</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">🎯</span>
+                    <span class="cat-title">Non-Brand — Generic Medical Device Terms</span>
+                    <span class="cat-count">452 queries | 19 clicks (4.7%)</span>
+                </div>
+                <table class="kw-table">
+                    <thead><tr><th>Keyword</th><th>Impressions</th><th>Position (best)</th><th>Clicks</th></tr></thead>
+                    <tbody>
+                        <tr>
+                                <td class="kw-name">digania company</td>
+                                <td><span class="vol-badge">55</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">4</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">q medical devices</td>
+                                <td><span class="vol-badge">18</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">4</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">silicone vessel loop</td>
+                                <td><span class="vol-badge">64</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qure medical</td>
+                                <td><span class="vol-badge">34</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">irrigation catheter</td>
+                                <td><span class="vol-badge">133</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">david lustig</td>
+                                <td><span class="vol-badge">89</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">q md</td>
+                                <td><span class="vol-badge">38</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">english pls</td>
+                                <td><span class="vol-badge">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מה האתר שלהם?</td>
+                                <td><span class="vol-badge">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">brand</td>
+                                <td><span class="vol-badge">1</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">vessel loop</td>
+                                <td><span class="vol-badge">281</span></td>
+                                <td><span class="pos-badge top20">14</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">temp sensing foley</td>
+                                <td><span class="vol-badge">180</span></td>
+                                <td><span class="pos-badge top20">14</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">temperature sensing foley catheter</td>
+                                <td><span class="vol-badge">118</span></td>
+                                <td><span class="pos-badge top50">23</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">temperature foley catheter</td>
+                                <td><span class="vol-badge">97</span></td>
+                                <td><span class="pos-badge top20">11</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">rapid infusion catheter</td>
+                                <td><span class="vol-badge">94</span></td>
+                                <td><span class="pos-badge top50">21</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:10px; padding:8px 12px; background:rgba(139,92,246,0.1); border-radius:8px; font-size:0.82em; color:#c4b5fd; line-height:1.5;">
+                    💡 Non-Brand grew +280.0% (5 → 19) — still tiny share. QMD relies on brand awareness. Opportunity: build landing pages for "vessel loop", "temp sensing foley", "irrigation catheter" (high impressions, no clicks).
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>Top Pages</h2>
+                    <div class="desc">Pages driving the most organic traffic in July 2026 | Source: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-row">
+                    <div class="page-rank">#1</div>
+                    <div class="page-url">Homepage</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">293</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">13,560</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">2.16%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5.1</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#2</div>
+                    <div class="page-url">/product/degania-products/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">212</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">3,061</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">6.93%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4.0</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#3</div>
+                    <div class="page-url">/wp-content/uploads/2025/06/Biometrix-Product-Catalog__Screen-1.pdf</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">74</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">1,134</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">6.53%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7.4</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#4</div>
+                    <div class="page-url">/product/arthesys-products/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">59</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">474</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">12.45%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4.6</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#5</div>
+                    <div class="page-url">/product/biometrix-products/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">47</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">2,120</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">2.22%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">9.0</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#6</div>
+                    <div class="page-url">/locations/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">28</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">1,418</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">1.97%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5.4</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#7</div>
+                    <div class="page-url">/product/degania-products/vessel-loops/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">12</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">981</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">1.22%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">10.0</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#8</div>
+                    <div class="page-url">/about/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">11</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">1,128</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">0.98%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7.3</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#9</div>
+                    <div class="page-url">/product/arthesys-products/aspiration-catheters/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">11</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">114</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">9.65%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">11.0</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#10</div>
+                    <div class="page-url">/qmd-leadership/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">10</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">1,137</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">0.88%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6.7</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#11</div>
+                    <div class="page-url">/contact/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">9</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">607</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">1.48%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5.0</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#12</div>
+                    <div class="page-url">/product/arthesys-products/y-connectors-accessories/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">Clicks</div></div>
+                        <div class="metric-card"><div class="metric-value">206</div><div class="metric-label">Impressions</div></div>
+                        <div class="metric-card"><div class="metric-value">3.4%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">10.7</div><div class="metric-label">Position</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">💡</span>
+                <div class="section-title">
+                    <h2>Insights & Recommendations</h2>
+                    <div class="desc">Executive summary for July 2026</div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:16px;">
+                <div style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#4ade80; margin-bottom:10px;">✅ Wins</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• <b>Total users +4.6%</b> (2,532 → 2,648)</li>
+                        <li>• <b>Direct traffic +21%</b> (1,173 → 1,420) — brand awareness growing</li>
+                        <li>• <b>Non-Brand clicks +280.0%</b> (5 → 19)</li>
+                        <li>• <b>AI Assistant grew +50%</b> (12 → 18) — SGE routing more B2B buyers</li>
+                        <li>• <b>France newly ranked: 3 keywords</b> (was 0 in June)</li>
+                        <li>• <b>135/180 keywords show AI Overview</b> (75%)</li>
+                        <li>• <b>Homepage: 293 clicks</b> (top page, position 5.1)</li>
+                        <li>• <b>Degania Products page: 212 clicks</b> at CTR 6.93%</li>
+                        <li>• <b>Organic engagement: 54s</b> — highest quality channel</li>
+                    </ul>
+                </div>
+                <div style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.4); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#a5b4fc; margin-bottom:10px;">🎯 August Recommendations</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• Build landing pages for "vessel loop" (US: 240 vol), "temp sensing foley" (170 vol), "rapid infusion catheter" (390 vol)</li>
+                        <li>• USA: Recover "temp sensing foley" (dropped from #9 → #22 over 4 mo)</li>
+                        <li>• UK: Localize content — only 2/60 keywords ranking</li>
+                        <li>• France: Content localization needed — 3/60 ranked (progress from 0!)</li>
+                        <li>• AI Overview optimization: 45 keywords without AIO presence — target these first</li>
+                        <li>• "qmd" (7,970 impressions monthly, avg pos 5.2) — optimize brand snippet to move to #1</li>
+                        <li>• Boost referral traffic — quality is highest but declined -31%</li>
+                        <li>• Track AI Assistant sessions monthly — 18 users this month is significant for B2B medical</li>
+                        <li>• Configure GA4 Key Events (conversions) — currently 0 tracked, missing conversion visibility</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-footer">
+            <div class="brand">Nadav Digital</div>
+            <div class="info">Report generated for QMD — Global Medical Devices | July 2026 | Data: GSC + GA4 + SE Ranking (180 KW / 3 countries)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('trafficChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ["Direct", "Organic Search", "Referral", "Unassigned", "Cross-network", "Organic Social", "AI Assistant"],
+        datasets: [{
+            data: [1016, 777, 94, 33, 20, 19, 9],
+            backgroundColor: ["#3b82f6", "#22c55e", "#10b981", "#64748b", "#eab308", "#8b5cf6", "#06b6d4"],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } },
+        cutout: '60%'
+    }
+});
+</script>
+<!-- /wp:html -->
