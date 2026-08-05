@@ -66,7 +66,6 @@ h3{color:#cfdcf2;margin:14px 0 4px;font-size:1.0em}
 <script>document.documentElement.lang="he";</script>
 <header class="top"><div class="wrap">
 <h1>Experis Cyber - אימות הטמעת המדידה</h1>
-<div class="meta-line">experis.co.il/cyber/ · נבדק מול הסביבה החיה ב-05.08.2026 · כל תרחיש נבדק בדפדפן נקי לחלוטין (הקשר מבודד, ללא היסטוריה או עוגיות קודמות), עם כותרות שפה עבריות, תוך תיעוד כל בקשת רשת וכל עוגייה. בקשות של OneTrust עצמו נספרות בנפרד ואינן נחשבות מדידה.</div>
 </div></header>
 <div class="wrap">
 <div class="toolbar">
@@ -82,7 +81,7 @@ h3{color:#cfdcf2;margin:14px 0 4px;font-size:1.0em}
 <li>בלוק ברירת המחדל של Consent Mode עטוף בעצמו ב-<code>type="text/plain" class="optanon-category-C0002"</code> - כלומר הוא חסום על ידי המנגנון שאותו הוא אמור לאתחל, ואינו רץ בזמן.</li>
 <li>אין באתר <b>אף קריאת</b> <code>gtag('consent','update')</code>. גם כשהגולש מאשר, המצב של Google Consent Mode לעולם אינו מתעדכן ל-granted ונשאר חסום לצמיתות.</li>
 </ul>
-<div class="action"><b>הפעולה הנדרשת:</b> להוציא את בלוק ברירת המחדל של Consent Mode מהחסימה (סקריפט רגיל, ראשון ב-head, ללא optanon-category), ולהוסיף קריאת gtag('consent','update') המופעלת מ-OptanonWrapper לפי הקטגוריות שאושרו - בדיוק כפי שמיושם באתר הראשי. לאחר התיקון לוודא שבאישור מלא הבקשות יוצאות עם gcs=G111 ונוצרת עוגיית _ga.</div></div></details><details class="sec"><summary><span>2. מדידה פעילה לפני הסכמה - וגם אחרי סירוב מפורש <span class="badge no">לא תוקן</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="action"><b>הפעולה הנדרשת:</b> נדרשים שלושה תיקונים: (1) להוציא את בלוק ברירת המחדל של Consent Mode מהחסימה - סקריפט רגיל, ראשון ב-head, ללא optanon-category, עם כל סוגי האחסון כ-denied ו-wait_for_update; (2) להוסיף קריאת gtag('consent','update') המופעלת מ-OptanonWrapper לפי הקטגוריות שאושרו; (3) להפעיל מחדש את OtAutoBlock.js. שלושת הרכיבים האלה כבר מיושמים כהלכה באתר הראשי וניתן להעתיק אותם משם. לאחר התיקון לוודא שבאישור מלא הבקשות יוצאות עם gcs=G111 ונוצרת עוגיית _ga.</div></div></details><details class="sec"><summary><span>2. מדידה פעילה לפני הסכמה - וגם אחרי סירוב מפורש <span class="badge no">לא תוקן</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <p>בטעינה נקייה של האתר, ללא נגיעה בבאנר, נשלחות <b>4 בקשות מדידה</b>: Hotjar ושלוש בקשות ל-DoubleClick. הליקוי שדווח בדוח הקודם על האתר הראשי עדיין פתוח כאן.</p>
 <p><b>חמור מכך:</b> ארבע הבקשות ממשיכות להישלח גם לאחר שהגולש מסרב במפורש דרך מסך ההגדרות, וגם לאחר רענון העמוד - סטטוס ההסכמה נשאר <code>,C0001,</code> אך הבקשות אינן נפסקות. כלומר הסירוב אינו עוצר אותן כלל.</p>
 <p class="note">לזכות ההטמעה: בשלב הזה עדיין לא נוצרות עוגיות מדידה ואין בקשות איסוף ל-GA4. הבעיה היא בבקשות עצמן, שכבר מעבירות מידע לשרתים חיצוניים לפני שהגולש הכריע.</p>
@@ -96,15 +95,13 @@ h3{color:#cfdcf2;margin:14px 0 4px;font-size:1.0em}
 <div class="action"><b>הפעולה הנדרשת:</b> להפעיל ב-OneTrust את שתי הגדרות הסירוב. שינוי אחד בתצורה מטפל בשני האתרים יחד.</div></div></details><details class="sec"><summary><span>5. ביטול הסכמה אינו מוחק את העוגיות <span class="badge no">לא תוקן</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <p>לאחר אישור מלא נוצרות 9 עוגיות מדידה (<code>_fbp</code>, <code>__hstc</code>, <code>__hssrc</code>, <code>__hssc</code>, <code>li_sugr</code>, <code>bcookie</code>, <code>lidc</code>, <code>UserMatchHistory</code>, <code>bscookie</code>). לאחר ביטול ההסכמה במסך ההגדרות סטטוס ההסכמה מתעדכן נכון ל-<code>,C0001,</code>, אך <b>כל תשע העוגיות נשארות בדפדפן</b>, גם מיד לאחר הביטול וגם לאחר רענון.</p>
 <p class="note">הליקוי זהה לזה שבאתר הראשי ומקורו באותה הגדרת OneTrust, ולכן תיקון אחד יטפל בשני האתרים.</p>
-<div class="action"><b>הפעולה הנדרשת:</b> להפעיל ב-OneTrust את מחיקת העוגיות בעת ביטול הסכמה, ולוודא שרשימת העוגיות מתרוקנת מיד עם הביטול.</div></div></details><details class="sec"><summary><span>6. שגיאת JavaScript - לא קיימת באתר זה <span class="badge ok">תוקן</span></span><span class="chev">&#9664;</span></summary><div class="body">
-<p>הקריאה באתר הסייבר כתובה נכון: <code>gtag('config', 'G-J953T0BX2T')</code> - מזהה מצוטט כמחרוזת. לא נצפתה שגיאת <code>ReferenceError</code> באף אחד מהתרחישים.</p>
-<div class="action"><b>הפעולה הנדרשת:</b> אין פעולה נדרשת.</div></div></details><details class="sec"><summary><span>7. תקלות נוספות בקוד המדידה <span class="badge no">ממצא חדש</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="action"><b>הפעולה הנדרשת:</b> להפעיל ב-OneTrust את מחיקת העוגיות בעת ביטול הסכמה, ולוודא שרשימת העוגיות מתרוקנת מיד עם הביטול.</div></div></details><details class="sec"><summary><span>6. תקלות נוספות בקוד המדידה <span class="badge no">ממצא חדש</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <ul>
 <li><b>תגיות כפולות בתג ה-GA4:</b> מאפייני <code>type</code> ו-<code>class</code> מופיעים פעמיים באותה תגית טעינה. בבדיקה בפועל החסימה עדיין עובדת, אך זו כתיבה שגויה שעלולה להישבר בעדכון עתידי.</li>
 <li><b>Google Ads פועל תחת הסכמה חסומה:</b> קטע ההמרה הייעודי <code>AW-974622154</code> אמנם מושבת בהערה פעמיים, אך בבדיקה בפועל נצפו בקשות ל-<code>AW-974622154</code> דרך המכולה, גם הן עם <code>gcs=G100</code>. כלומר גם מדידת הפרסום מגיעה לגוגל במצב חסום, ולא רק ה-GA4.</li>
 <li><b>נכס GA4 נפרד וללא גישה:</b> אתר הסייבר מדווח לנכס <code>G-J953T0BX2T</code>, שאינו בחשבון שברשותנו. לכן לא ניתן לאמת מהצד של גוגל אם נתונים אכן נקלטים, ולא נוכל לנטר את האתר הזה בדוחות החודשיים.</li>
 </ul>
-<div class="action"><b>הפעולה הנדרשת:</b> לנקות את התגית הכפולה, להכריע אם קוד ההמרות של Google Ads אמור לפעול, ולהעניק לנו הרשאת צפייה לנכס GA4 של אתר הסייבר.</div></div></details><details class="sec"><summary><span>8. סביבת הבדיקה אינה נגישה לבדיקה <span class="badge na">לא ניתן לבדיקה</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="action"><b>הפעולה הנדרשת:</b> לנקות את התגית הכפולה, להכריע אם קוד ההמרות של Google Ads אמור לפעול, ולהעניק לנו הרשאת צפייה לנכס GA4 של אתר הסייבר.</div></div></details><details class="sec"><summary><span>7. סביבת הבדיקה אינה נגישה לבדיקה <span class="badge na">לא ניתן לבדיקה</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <p>לא קיימת סביבת בדיקה נפרדת לאתר הסייבר. הכתובות <code>cyber.experis.co.il</code>, <code>staging.experis.co.il</code> ודומותיהן אינן קיימות כלל ברשומות ה-DNS. הכתובת היחידה הקיימת, <code>dev156.experis.co.il</code>, חוסמת כל גישה חיצונית ומחזירה 403.</p>
 <p>לכן לא ניתן לקבוע אם בוצעו שינויים בסביבת בדיקה כלשהי עבור אתר הסייבר.</p>
 <div class="action"><b>הפעולה הנדרשת:</b> לבקש מצוות הפיתוח הרשאת גישה ל-dev156, ולברר אם קיימת עבור אתר הסייבר סביבת בדיקה כלשהי.</div></div></details></div>
