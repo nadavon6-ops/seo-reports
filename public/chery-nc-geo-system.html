@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<title>NC Digital - מערכת ה-GEO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060913;
+    --card:rgba(255,255,255,.035);
+    --card-border:rgba(255,255,255,.07);
+    --ink:#eef1f8;
+    --ink-2:#aab3c5;
+    --ink-3:#6b7487;
+    --blue:#60a5fa;
+    --purple:#a78bfa;
+    --green:#34d399;
+    --amber:#fbbf24;
+    --cyan:#22d3ee;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Heebo',sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    direction:rtl;
+    overflow-x:hidden;
+  }
+  .slide{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:72px 24px;
+    position:relative;
+    background:
+      radial-gradient(900px 500px at 85% 10%, rgba(99,102,241,.10), transparent 60%),
+      radial-gradient(700px 450px at 10% 85%, rgba(56,189,248,.06), transparent 60%);
+  }
+  .slide-inner{width:100%;max-width:1060px}
+  .chip{
+    display:inline-block;
+    font-size:13px;font-weight:500;
+    color:var(--ink-2);
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--card-border);
+    border-radius:999px;
+    padding:5px 16px;
+    margin-bottom:18px;
+  }
+  h1,h2{font-weight:800;letter-spacing:-.5px}
+  h1{font-size:56px;line-height:1.15}
+  h2{font-size:38px;line-height:1.2;margin-bottom:10px}
+  .grad{
+    background:linear-gradient(90deg,var(--blue),var(--purple));
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  .sub{font-size:18px;color:var(--ink-2);font-weight:400;max-width:760px;margin:0 auto}
+  .center{text-align:center}
+  .cards{display:grid;gap:16px;margin-top:36px}
+  .cards.c2{grid-template-columns:repeat(2,1fr)}
+  .cards.c3{grid-template-columns:repeat(3,1fr)}
+  .cards.c4{grid-template-columns:repeat(4,1fr)}
+  .card{
+    background:var(--card);
+    border:1px solid var(--card-border);
+    border-radius:16px;
+    padding:26px 22px;
+  }
+  .card h3{font-size:19px;font-weight:700;margin-bottom:8px}
+  .card p{font-size:14.5px;color:var(--ink-2);line-height:1.65}
+  .icon{
+    width:44px;height:44px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:16px;
+  }
+  .icon svg{width:22px;height:22px}
+  .i-blue{background:rgba(96,165,250,.12)} .i-blue svg{stroke:var(--blue)}
+  .i-purple{background:rgba(167,139,250,.12)} .i-purple svg{stroke:var(--purple)}
+  .i-green{background:rgba(52,211,153,.12)} .i-green svg{stroke:var(--green)}
+  .i-amber{background:rgba(251,191,36,.12)} .i-amber svg{stroke:var(--amber)}
+  .i-cyan{background:rgba(34,211,238,.12)} .i-cyan svg{stroke:var(--cyan)}
+  .tag{
+    display:inline-block;font-size:12.5px;font-weight:500;
+    border-radius:999px;padding:4px 12px;margin:4px 2px;
+    background:rgba(255,255,255,.05);border:1px solid var(--card-border);color:var(--ink-2);
+  }
+  /* comparison table */
+  .tbl-wrap{overflow-x:auto;margin-top:36px;border:1px solid var(--card-border);border-radius:16px;background:var(--card)}
+  table{width:100%;border-collapse:collapse;min-width:680px}
+  th,td{padding:15px 18px;text-align:right;font-size:15px;border-bottom:1px solid rgba(255,255,255,.05)}
+  tr:last-child td{border-bottom:none}
+  th{font-size:14px;font-weight:600;color:var(--ink-2);background:rgba(255,255,255,.03)}
+  th.nc{color:var(--blue);font-weight:800;font-size:15px}
+  td.feat{font-weight:500;color:var(--ink)}
+  td.c{text-align:center}
+  th.c{text-align:center}
+  .yes,.no,.na{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600}
+  .yes{color:var(--green)} .no{color:var(--ink-3)}
+  .yes svg,.no svg{width:16px;height:16px}
+  td.nc-col{background:rgba(96,165,250,.05)}
+  .note{font-size:12.5px;color:var(--ink-3);margin-top:12px}
+  /* flow loop */
+  .loop{display:flex;align-items:stretch;gap:0;margin-top:36px;flex-wrap:wrap;justify-content:center}
+  .loop .card{flex:1;min-width:200px;margin:0 8px 16px}
+  .loop-num{
+    font-size:13px;font-weight:800;color:var(--purple);
+    background:rgba(167,139,250,.1);border-radius:8px;
+    display:inline-block;padding:2px 10px;margin-bottom:12px;
+  }
+  /* checklist */
+  .checks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 28px;margin-top:30px}
+  .check{display:flex;align-items:flex-start;gap:10px;font-size:15.5px;color:var(--ink-2)}
+  .check svg{width:19px;height:19px;stroke:var(--green);flex-shrink:0;margin-top:3px}
+  /* nav dots */
+  .dots{
+    position:fixed;left:18px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:10px;z-index:10;
+  }
+  .dots a{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15);transition:.2s}
+  .dots a.on{background:var(--blue);box-shadow:0 0 8px rgba(96,165,250,.6)}
+  .brand{
+    font-size:13px;color:var(--ink-3);font-weight:500;
+    position:absolute;bottom:26px;left:0;right:0;text-align:center;
+  }
+  .logo-box{
+    display:inline-flex;align-items:center;gap:10px;
+    background:rgba(255,255,255,.04);border:1px solid var(--card-border);
+    border-radius:14px;padding:10px 22px;margin-bottom:34px;
+  }
+  .logo-box span{font-weight:700;font-size:15px;letter-spacing:.3px}
+  @media(max-width:900px){
+    h1{font-size:38px} h2{font-size:29px}
+    .cards.c3,.cards.c4{grid-template-columns:repeat(2,1fr)}
+    .checks{grid-template-columns:1fr}
+    .dots{display:none}
+  }
+  @media(max-width:560px){
+    .cards.c2,.cards.c3,.cards.c4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav class="dots" id="dots">
+  <a href="#s1"></a><a href="#s2"></a><a href="#s3"></a><a href="#s4"></a><a href="#s5"></a><a href="#s6"></a><a href="#s7"></a>
+</nav>
+
+<!-- 1 · TITLE -->
+<section class="slide" id="s1">
+  <div class="slide-inner center">
+    <div class="logo-box"><span>NC Digital</span></div>
+    <h1><span class="grad">מערכת ה-GEO</span> של NC Digital</h1>
+    <h1 style="font-size:34px;font-weight:600;margin-top:10px">מדידה, ביצוע ותוצאות במנועי ה-AI</h1>
+    <p class="sub" style="margin-top:22px">איך אנחנו עוקבים אחרי הנוכחות של המותג ב-ChatGPT, Gemini,
+    Perplexity ו-AI Overviews של גוגל, ומה מבדיל את המערכת שלנו מפלטפורמות המדידה בשוק</p>
+  </div>
+  <div class="brand">הוכן עבור צ'רי ישראל</div>
+</section>
+
+<!-- 2 · THE NEW CHANNEL -->
+<section class="slide" id="s2">
+  <div class="slide-inner center">
+    <div class="chip">הערוץ החדש</div>
+    <h2>הלקוחות כבר שואלים את <span class="grad">מנועי ה-AI</span></h2>
+    <p class="sub">מסע הרכישה של רכב מתחיל היום גם בשיחה עם ChatGPT או Gemini:
+    השוואות בין דגמים, אמינות, מחירונים והמלצות. מותג שלא מופיע בתשובות האלה פשוט לא נמצא בשלב ההחלטה.</p>
+    <div class="cards c4">
+      <div class="card center">
+        <div class="icon i-blue" style="margin:0 auto 14px"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M8 10h8M8 14h5M21 12a9 9 0 1 1-4-7.5L21 4l-.6 3A9 9 0 0 1 21 12z"/></svg></div>
+        <h3>ChatGPT</h3>
+        <p>ההמלצות שהוא נותן ומאיפה הוא שולף אותן</p>
+      </div>
+      <div class="card center">
+        <div class="icon i-purple" style="margin:0 auto 14px"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 3v3m0 12v3m9-9h-3M6 12H3m14.5-5.5-2 2m-7 7-2 2m11 0-2-2m-7-7-2-2"/></svg></div>
+        <h3>Gemini</h3>
+        <p>משולב ישירות בחוויית החיפוש של גוגל</p>
+      </div>
+      <div class="card center">
+        <div class="icon i-cyan" style="margin:0 auto 14px"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg></div>
+        <h3>Perplexity</h3>
+        <p>תשובות עם מקורות ולינקים ישירים לאתרים</p>
+      </div>
+      <div class="card center">
+        <div class="icon i-green" style="margin:0 auto 14px"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M4 12h10M4 18h7"/></svg></div>
+        <h3>AI Overviews</h3>
+        <p>התקציר של גוגל שמופיע מעל התוצאות הרגילות</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · TWO APPROACHES -->
+<section class="slide" id="s3">
+  <div class="slide-inner center">
+    <div class="chip">שתי גישות בשוק</div>
+    <h2>כלי מדידה מול <span class="grad">מערכת מבצעת</span></h2>
+    <p class="sub">פלטפורמות כמו GoShine ו-Limy הן כלי מדידה טובים: הן מראות איפה המותג מופיע,
+    מנתחות את התשובות וממליצות מה לשפר. אבל שם זה נעצר - את היישום עצמו הן משאירות לצוות שלכם.</p>
+    <div class="cards c2" style="text-align:right">
+      <div class="card">
+        <div class="icon i-amber"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M3 13a9 9 0 1 1 18 0M12 13l4-4"/><circle cx="12" cy="13" r="1.5"/></svg></div>
+        <h3>פלטפורמת מדידה (SaaS)</h3>
+        <p>דשבורד שמודד נראות וממליץ על שיפורים. דורש רישיון חודשי, איש צוות שיתפעל אותו,
+        וספק נוסף שייקח את ההמלצות ויממש אותן בפועל באתר.</p>
+      </div>
+      <div class="card" style="border-color:rgba(96,165,250,.35)">
+        <div class="icon i-blue"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m7-9h2M3 12h2m11.6-4.6 1.4-1.4M6 18l1.4-1.4M18 18l-1.4-1.4M6 6l1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>המערכת של NC Digital</h3>
+        <p>אותה מדידה על בסיס נתוני אמת, ובנוסף ביצוע: אנחנו כותבים את התוכן, מטמיעים את הסכמות
+        ומתקנים את הטכני - ואז מודדים שוב. מעגל סגור, גורם אחד אחראי לתוצאה.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · MEASUREMENT -->
+<section class="slide" id="s4">
+  <div class="slide-inner center">
+    <div class="chip">מדידה</div>
+    <h2>נתוני אמת, <span class="grad">לא הערכות</span></h2>
+    <p class="sub">כל מספר במערכת מגיע ממקור אמיתי ומוצלב מול מקור שני. בלי ציוני נראות שחורים-קופסתיים.</p>
+    <div class="cards c4" style="text-align:right">
+      <div class="card">
+        <div class="icon i-blue"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg></div>
+        <h3>מעקב נראות AI</h3>
+        <p>מודול ה-AI של SE Ranking: אזכורים, קישורים ומיקומים ב-AI Overviews,
+        ChatGPT, Gemini ו-Perplexity, כולל מגמות לאורך זמן.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-green"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 3v18m6-13-6-5-6 5m12 8-6 5-6-5"/></svg></div>
+        <h3>תנועה והמרות</h3>
+        <p>Google Analytics: כמה מבקרים מגיעים בפועל ממנועי ה-AI, ומה שיעור ההמרה שלהם
+        לעומת ממוצע האתר.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-cyan"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg></div>
+        <h3>Search Console</h3>
+        <p>הצלבה מול נתוני החיפוש של גוגל - מקור האמת שמאמת כל מסקנה לפני שהיא מגיעה אליכם.</p>
+      </div>
+      <div class="card">
+        <div class="icon i-purple"><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><path stroke-linecap="round" d="M9 20h6m-3-4v4M8 9h2m4 0h2"/></svg></div>
+        <h3>מעקב בוטים בשרת</h3>
+        <p>ניתוח לוגים שמזהה מתי מנועי ה-AI שולפים עמודים מהאתר כדי לענות למשתמשים - האינדיקטור המקדים לנראות.</p>
+      </div>
+    </div>
+    <div style="margin-top:26px">
+      <span class="tag">SE Ranking AI</span><span class="tag">Google Analytics 4</span><span class="tag">Google Search Console</span><span class="tag">Server Logs</span>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · EXECUTION LOOP -->
+<section class="slide" id="s5">
+  <div class="slide-inner center">
+    <div class="chip">ביצוע</div>
+    <h2>מהתובנה <span class="grad">ליישום באתר</span></h2>
+    <p class="sub">זה החלק שאף פלטפורמת מדידה לא עושה בשבילכם - ואצלנו הוא מובנה בשירות.</p>
+    <div class="loop">
+      <div class="card" style="text-align:right">
+        <span class="loop-num">01</span>
+        <h3>מדידה</h3>
+        <p>איפה צ'רי מופיעה בתשובות, אילו עמודים נשלפים, ואיפה המתחרים מופיעים במקומנו.</p>
+      </div>
+      <div class="card" style="text-align:right">
+        <span class="loop-num">02</span>
+        <h3>תוכן בר-ציטוט</h3>
+        <p>כתיבה בעברית, בנויה כך שמנועי AI יבחרו לצטט אותה: תשובות ישירות, נתונים מדויקים ומבנה ברור.</p>
+      </div>
+      <div class="card" style="text-align:right">
+        <span class="loop-num">03</span>
+        <h3>סכמות וטכני</h3>
+        <p>הטמעת נתונים מובנים, פתיחת גישה לבוטים של מנועי ה-AI ותיקוני עומק באתר עצמו.</p>
+      </div>
+      <div class="card" style="text-align:right">
+        <span class="loop-num">04</span>
+        <h3>מדידה מחדש</h3>
+        <p>כל שינוי נמדד מול הנתונים שאחריו. מה שעבד מורחב, מה שלא - מתוקן.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · COMPARISON -->
+<section class="slide" id="s6">
+  <div class="slide-inner center">
+    <div class="chip">השוואה</div>
+    <h2>מה מקבלים <span class="grad">בכל מערכת</span></h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>יכולת</th>
+            <th class="c">GoShine</th>
+            <th class="c">Limy</th>
+            <th class="c nc">NC Digital</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feat">מעקב נראות במנועי AI</td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">זיהוי שליפות של בוטים מהאתר</td>
+            <td class="c"><span class="no">לא פורסם</span></td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">קישור תנועת AI להמרות בפועל</td>
+            <td class="c"><span class="no">לא פורסם</span></td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">המלצות אופטימיזציה</td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">יישום בפועל: כתיבת תוכן, סכמות ותיקונים באתר</td>
+            <td class="c"><span class="no">באחריותכם</span></td>
+            <td class="c"><span class="no">באחריותכם</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כלול</span></td>
+          </tr>
+          <tr>
+            <td class="feat">ביצוע בעברית, מותאם לשוק הישראלי</td>
+            <td class="c"><span class="no">-</span></td>
+            <td class="c"><span class="no">-</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">משולב בקידום האורגני שכבר רץ על האתר</td>
+            <td class="c"><span class="no">-</span></td>
+            <td class="c"><span class="no">-</span></td>
+            <td class="c nc-col"><span class="yes"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg>כן</span></td>
+          </tr>
+          <tr>
+            <td class="feat">מודל עבודה</td>
+            <td class="c" style="font-size:13.5px;color:var(--ink-2)">רישיון SaaS חודשי</td>
+            <td class="c" style="font-size:13.5px;color:var(--ink-2)">רישיון SaaS חודשי</td>
+            <td class="c nc-col" style="font-size:13.5px;color:var(--ink)">שירות במסגרת הליווי הקיים</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">ההשוואה מבוססת על המידע הפומבי באתרי GoShine ו-Limy נכון לאוגוסט 2026.</p>
+  </div>
+</section>
+
+<!-- 7 · WHAT YOU GET -->
+<section class="slide" id="s7">
+  <div class="slide-inner center">
+    <div class="chip">השורה התחתונה</div>
+    <h2>מה צ'רי <span class="grad">מקבלת</span></h2>
+    <p class="sub">לא עוד דשבורד לתפעל - שותף אחד שאחראי גם על המדידה וגם על התוצאה.</p>
+    <div class="checks" style="max-width:820px;margin-right:auto;margin-left:auto;text-align:right">
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>מעקב נראות שוטף ב-ChatGPT, Gemini, Perplexity ו-AI Overviews</span></div>
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>ניתוח לוגים: אילו עמודים מנועי ה-AI שולפים ואילו נחסמים</span></div>
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>דוח תקופתי עם נתוני אמת: נראות, תנועה מ-AI והמרות</span></div>
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>תוכן בעברית שנכתב כדי להיות מצוטט בתשובות</span></div>
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>הטמעת סכמות ותיקונים טכניים ישירות באתר</span></div>
+      <div class="check"><svg fill="none" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m5 13 4 4L19 7"/></svg><span>GEO ו-SEO ביד אחת: אותם עמודים, אותה אסטרטגיה, אותו צוות</span></div>
+    </div>
+  </div>
+  <div class="brand">NC Digital</div>
+</section>
+
+<script>
+  // he lang detection for translate widget compatibility
+  document.documentElement.lang = 'he';
+  // side nav active state
+  const slides=[...document.querySelectorAll('.slide')];
+  const dots=[...document.querySelectorAll('#dots a')];
+  const obs=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        const i=slides.indexOf(e.target);
+        dots.forEach((d,j)=>d.classList.toggle('on',i===j));
+      }
+    });
+  },{threshold:.5});
+  slides.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
