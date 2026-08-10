@@ -62,9 +62,9 @@ footer{margin-top:44px;color:#5d6b84;font-size:.85em;text-align:center;border-to
 <details class="sec"><summary><span>1. גישה לסביבה שבה בוצעו התיקונים</span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <p>התיקונים שדווחו בוצעו בסביבת הפיתוח, ואין לנו אפשרות למדוד אותה. לכן לא ניתן לאשר אף אחד מהם.</p>
-<div class="evidence">נבדק היום: <code>dev156.experis.co.il</code> ו-<code>dev156.experis.co.il/cyber/</code> מחזירים 403 לכל גישה חיצונית. הכתובות <code>cyber.experis.co.il</code>, <code>staging.experis.co.il</code>, <code>dev.experis.co.il</code>, <code>preprod.experis.co.il</code> ודומות אינן קיימות ברשומות ה-DNS. לא נמצאה אף כתובת חיצונית שבה ניתן לבדוק את גרסת ההשקה.</div>
-<p>כל הממצאים בדוח זה נמדדו על האתר החי <span class="ltr">experis.co.il/cyber/</span>, שהוא המצב שיעלה לאוויר אם גרסת ההשקה לא תכלול את התיקונים. כולם היו פתוחים גם בדוח הקודם.</p>
-<div class="action"><b>הפעולה הנדרשת:</b> לפתוח גישה חיצונית לכתובת גרסת ההשקה (הוספת כתובות ה-IP שלנו ל-Allowlist ב-WAF, או כתובת תצוגה מקדימה זמנית), ולעדכן באיזו כתובת בדיוק נמצאת הגרסה המתוקנת. עם קבלת הגישה נריץ את מטריצת הבדיקות המלאה ונאשר פריט-פריט.</div>
+<div class="evidence">נבדק היום: <code>dev156.experis.co.il</code> ו-<code>dev156.experis.co.il/cyber/</code> מחזירים 403 לכל גישה חיצונית, מדף חסימה של Cloudflare ("Attention Required"), כלומר החסימה היא בשכבת ה-WAF ולא בשרת עצמו. הכתובות <code>cyber.experis.co.il</code>, <code>staging.experis.co.il</code>, <code>dev.experis.co.il</code>, <code>preprod.experis.co.il</code> ודומות אינן קיימות ברשומות ה-DNS. לא נמצאה אף כתובת חיצונית שבה ניתן לבדוק את גרסת ההשקה.</div>
+<p>כל הממצאים בדוח זה נמדדו על האתר החי <span class="ltr">experis.co.il/cyber/</span>, שהוא המצב שיעלה לאוויר אם גרסת ההשקה לא תכלול את התיקונים. רובם דווחו כבר בדוח הקודם ונמצאו היום ללא שינוי; ממצא הסרטון המוטמע (סעיף 3) עלה בבדיקה הנוכחית ולא הופיע בדוח הקודם.</p>
+<div class="action"><b>הפעולה הנדרשת:</b> לפתוח גישה חיצונית לכתובת גרסת ההשקה (הוספת כתובות ה-IP שלנו ל-Allowlist בכללי ה-WAF של Cloudflare, או כתובת תצוגה מקדימה זמנית), ולעדכן באיזו כתובת בדיוק נמצאת הגרסה המתוקנת. עם קבלת הגישה נריץ את מטריצת הבדיקות המלאה ונאשר פריט-פריט.</div>
 <div class="test"><b>בדיקת קבלה:</b> הכתובת נטענת מבחוץ ומחזירה 200, כולל הבאנר של OneTrust והקריאות החיצוניות.</div>
 </div></div></details><details class="sec"><summary><span>2. GA4 אינו סופר את הגולש גם באישור מלא</span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
@@ -95,7 +95,7 @@ footer{margin-top:44px;color:#5d6b84;font-size:.85em;text-align:center;border-to
 <div class="test"><b>בדיקת קבלה:</b> טעינה עם JavaScript מושבת מייצרת אפס בקשות מדידה ואפס עוגיות.</div>
 </div></div></details><details class="sec"><summary><span>5. אין אפשרות סירוב - לא בבאנר ולא במסך ההגדרות</span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
-<div class="evidence">הבאנר מציג היום שני כפתורים בלבד: הגדרות קובצי Cookie · קבל את כל קובצי ה-Cookie. בתצורת OneTrust שנקראה ישירות היום: <code>BannerShowRejectAllButton = False</code> וגם <code>PCenterShowRejectAllButton = False</code>, בשלושת קובצי השפה (he-il, he, en). המיקום בבאנר כבר שמור לכפתור (<code>BannerBPOSecondPosition = REJECT_ALL</code>) והיכולת כלולה ברישיון.</div>
+<div class="evidence">הבאנר מציג היום שני כפתורים בלבד: הגדרות קובצי Cookie · קבל את כל קובצי ה-Cookie. נפתח גם מסך ההגדרות עצמו בבדיקה בעברית, והכפתורים היחידים בו הם "מידע נוסף", "אפשר הכל" ו"אשר הבחירות שלי" - אין בו אפשרות סירוב. בתצורת OneTrust שנקראה ישירות היום: <code>BannerShowRejectAllButton = False</code> וגם <code>PCenterShowRejectAllButton = False</code>, בשלושת קובצי השפה (he-il, he, en). המיקום בבאנר כבר שמור לכפתור (<code>BannerBPOSecondPosition = REJECT_ALL</code>) והיכולת כלולה ברישיון.</div>
 <p>זו הגדרת תצורה ברמת החשבון, לא קוד: היא חלה על אתר הסייבר ועל האתר הראשי כאחד, ולכן הבעיה תיוותר בעינה גם בגרסה החדשה ללא קשר לתיקוני הקוד.</p>
 <div class="action"><b>הפעולה הנדרשת:</b> להפעיל ב-OneTrust את שתי הגדרות הסירוב ולפרסם מחדש את התצורה. שינוי אחד מטפל בשני האתרים.</div>
 <div class="test"><b>בדיקת קבלה:</b> כפתור סירוב בעברית מופיע בבאנר ובמסך ההגדרות, ולחיצה עליו מחזירה את סטטוס ההסכמה ל-C0001 בלבד.</div>
