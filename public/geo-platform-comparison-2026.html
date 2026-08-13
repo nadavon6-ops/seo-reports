@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>השוואת פלטפורמות GEO - iGEO, Otterly.ai, GeckoCheck</title>
+<style>
+html, body { background:#0f172a !important; margin:0 !important; padding:0 !important; }
+body { background:linear-gradient(180deg,#0f172a 0%,#1e293b 50%,#0f172a 100%) !important; min-height:100vh !important; }
+html { direction:rtl !important; }
+* { box-sizing:border-box; margin:0; padding:0; }
+.ult-container { direction:rtl; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:linear-gradient(180deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); min-height:100vh; color:#e2e8f0; font-size:16px; line-height:1.65; overflow-x:hidden; }
+.ult-wrapper { max-width:1500px; width:100%; margin:0 auto; padding:20px 16px 40px; }
+.ult-header { background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 50%,#1e293b 100%); padding:46px 25px; text-align:center; position:relative; overflow:hidden; border-radius:0 0 30px 30px; margin-bottom:22px; }
+.ult-header .version-badge { position:absolute; top:15px; left:15px; background:linear-gradient(135deg,#22d3ee,#06b6d4); color:#1e293b; padding:6px 16px; border-radius:20px; font-weight:700; font-size:0.8em; }
+.ult-header .client-name { font-size:2.5em; font-weight:800; color:#fff; text-shadow:2px 4px 12px rgba(0,0,0,0.3); margin-bottom:10px; }
+.ult-header h1 { font-size:1.35em; color:rgba(255,255,255,0.95); margin-bottom:8px; font-weight:600; }
+.ult-header .period-badge { display:inline-block; background:rgba(255,255,255,0.2); padding:10px 26px; border-radius:30px; font-weight:600; border:2px solid rgba(255,255,255,0.3); margin-top:8px; font-size:0.95em; }
+
+.toolbar { display:flex; flex-wrap:wrap; gap:12px; justify-content:flex-start; align-items:center; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:14px 18px; margin-bottom:22px; }
+.toolbar button { background:linear-gradient(135deg,#0ea5e9,#0369a1); color:#fff; font-weight:700; padding:10px 22px; border:none; border-radius:10px; cursor:pointer; font-size:0.92em; font-family:inherit; }
+.toolbar button.ghost { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); }
+.toolbar .hint { color:#64748b; font-size:0.88em; margin-right:auto; }
+
+.accordion-item { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:18px; margin-bottom:16px; overflow:hidden; }
+.accordion-header { cursor:pointer; padding:22px 24px; font-size:1.18em; font-weight:700; color:#fff; list-style:none; display:flex; align-items:center; gap:12px; border-right:4px solid #0ea5e9; }
+.accordion-header::-webkit-details-marker { display:none; }
+.accordion-header::after { content:'+'; margin-right:auto; color:#22d3ee; font-size:1.4em; font-weight:800; }
+details[open] > .accordion-header::after { content:'\2212'; }
+details[open] > .accordion-header { border-bottom:1px solid rgba(255,255,255,0.08); }
+.accordion-body { padding:24px; }
+.accordion-body > p { margin-bottom:14px; color:#cbd5e1; }
+
+.ltr { direction:ltr; unicode-bidi:isolate; display:inline-block; }
+.num { direction:ltr; unicode-bidi:isolate; display:inline-block; font-weight:700; }
+
+table.cmp { width:100%; border-collapse:collapse; margin:10px 0 6px; font-size:0.93em; }
+table.cmp th { text-align:right; padding:14px 12px; color:#fff; background:rgba(59,130,246,0.18); border-bottom:2px solid rgba(14,165,233,0.4); font-weight:700; vertical-align:top; }
+table.cmp th.dim { width:200px; background:rgba(255,255,255,0.04); }
+table.cmp td { padding:14px 12px; border-bottom:1px solid rgba(255,255,255,0.07); vertical-align:top; color:#cbd5e1; }
+table.cmp td.dim { font-weight:700; color:#fff; background:rgba(255,255,255,0.03); }
+table.cmp tr:hover td { background:rgba(255,255,255,0.02); }
+.tbl-scroll { overflow-x:auto; }
+
+.tag { display:inline-block; padding:3px 11px; border-radius:12px; font-size:0.8em; font-weight:700; white-space:nowrap; }
+.tag.yes { background:rgba(34,197,94,0.2); color:#4ade80; }
+.tag.no { background:rgba(239,68,68,0.18); color:#f87171; }
+.tag.part { background:rgba(245,158,11,0.2); color:#fbbf24; }
+.tag.unk { background:rgba(100,116,139,0.25); color:#94a3b8; }
+
+.rec-box { background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.3); border-right:4px solid #0ea5e9; border-radius:14px; padding:20px 22px; margin:18px 0; }
+.rec-box .rec-title { font-weight:800; color:#22d3ee; margin-bottom:10px; font-size:1.05em; }
+.rec-box p { color:#d6e6f2; margin:0 0 10px; }
+.rec-box p:last-child { margin-bottom:0; }
+.warn-box { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-right:4px solid #f59e0b; border-radius:14px; padding:20px 22px; margin:18px 0; }
+.warn-box .rec-title { font-weight:800; color:#fbbf24; margin-bottom:10px; font-size:1.05em; }
+.warn-box p { color:#e8dcc4; margin:0 0 10px; }
+.warn-box p:last-child { margin-bottom:0; }
+
+.verdict-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:18px 0 6px; }
+.verdict-card { border-radius:16px; padding:22px; border:1px solid rgba(255,255,255,0.1); background:rgba(0,0,0,0.2); }
+.verdict-card.win { background:linear-gradient(135deg,rgba(34,197,94,0.16),rgba(16,185,129,0.08)); border-color:rgba(34,197,94,0.45); }
+.verdict-card.maybe { background:linear-gradient(135deg,rgba(245,158,11,0.14),rgba(217,119,6,0.07)); border-color:rgba(245,158,11,0.4); }
+.verdict-card.out { background:rgba(100,116,139,0.12); border-color:rgba(100,116,139,0.35); }
+.verdict-card .vname { font-size:1.3em; font-weight:800; color:#fff; margin-bottom:6px; direction:ltr; text-align:right; }
+.verdict-card .vrole { font-size:0.9em; font-weight:700; margin-bottom:12px; }
+.verdict-card.win .vrole { color:#4ade80; }
+.verdict-card.maybe .vrole { color:#fbbf24; }
+.verdict-card.out .vrole { color:#94a3b8; }
+.verdict-card p { font-size:0.92em; color:#cbd5e1; margin:0; }
+
+ul.rules { list-style:none; margin:12px 0 0; padding:0; }
+ul.rules li { position:relative; padding-right:26px; margin-bottom:11px; color:#cbd5e1; }
+ul.rules li::before { content:''; position:absolute; right:4px; top:11px; width:9px; height:9px; border-radius:50%; background:#22d3ee; }
+ul.rules li strong { color:#fff; }
+ul.rules.warn li::before { background:#f59e0b; }
+ul.rules.bad li::before { background:#f87171; }
+
+a { color:#7dd3fc; }
+a:hover { color:#bae6fd; }
+code.inline { font-family:'Courier New',monospace; color:#7dd3fc; background:rgba(8,47,73,0.6); padding:3px 9px; border-radius:8px; border:1px solid rgba(34,211,238,0.25); direction:ltr; display:inline-block; font-size:0.88em; }
+
+.ult-footer { text-align:center; padding:30px 20px; margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size:1.25em; font-weight:700; background:linear-gradient(135deg,#0ea5e9 0%,#06b6d4 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.ult-footer .info { color:#64748b; font-size:0.88em; }
+
+@media (max-width:1024px) { .verdict-grid { grid-template-columns:1fr; } table.cmp { font-size:0.86em; } table.cmp th.dim { width:130px; } }
+@media (max-width:768px) { .ult-header .client-name { font-size:1.8em; } .accordion-header { font-size:1.03em; padding:18px 16px; } .accordion-body { padding:18px 14px; } }
+</style>
+</head>
+<body>
+<div class="ult-container">
+<div class="ult-wrapper">
+
+<div class="ult-header">
+  <div class="version-badge">NC Digital</div>
+  <div class="client-name">השוואת פלטפורמות GEO</div>
+  <h1><span class="ltr">iGEO</span> מול <span class="ltr">Otterly.ai</span> מול <span class="ltr">GeckoCheck</span></h1>
+  <div class="period-badge">בדיקה נכון ל-<span class="num">13.08.2026</span></div>
+</div>
+
+<div class="toolbar">
+  <button onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">פתח הכל</button>
+  <button class="ghost" onclick="document.querySelectorAll('details').forEach(d=>d.open=false)">סגור הכל</button>
+  <span class="hint">כל סעיף נפתח בלחיצה</span>
+</div>
+
+<details class="accordion-item" open>
+  <summary class="accordion-header">ההמלצה</summary>
+  <div class="accordion-body">
+
+    <div class="verdict-grid">
+      <div class="verdict-card win">
+        <div class="vname">Otterly.ai</div>
+        <div class="vrole">להתחיל בו עכשיו</div>
+        <p>הפלטפורמה היחידה מהשלוש שבה אימתנו ישראל כמדינת מעקב רשמית, פרומפטים בעברית ללא הגבלה, נתונים אמיתיים מתועדים, מחירון פומבי, ניסיון חינם ו-<span class="ltr">MCP</span> שמזרים נתונים ישירות לדוחות שלנו.</p>
+      </div>
+      <div class="verdict-card maybe">
+        <div class="vname">GeckoCheck</div>
+        <div class="vrole">לקבוע דמו במקביל</div>
+        <p>המועמד היחיד עם תוכנית שותפים אמיתית לסוכנויות: <span class="ltr">white-label</span> מלא על הפלטפורמה והדוחות, ניהול רב-לקוחות ו-<span class="ltr">revenue share</span>. מייסדים ישראלים בכירים. אין מחיר פומבי ואין אף ביקורת חיצונית.</p>
+      </div>
+      <div class="verdict-card out">
+        <div class="vname">iGEO</div>
+        <div class="vrole">לא בשלב הזה</div>
+        <p>התמחור הוא לכל מותג בנפרד, מה שהופך אותו ליקר פי כמה מהחלופות בהיקף שלנו. חברה בת שנה, <span class="num">1-10</span> עובדים, וכמעט ללא ביקורות בלתי תלויות.</p>
+      </div>
+    </div>
+
+    <div class="rec-box">
+      <div class="rec-title">מה עושים בפועל</div>
+      <p><strong>שלב א:</strong> לפתוח ניסיון של <span class="num">7</span> ימים ב-<span class="ltr">Otterly</span> ללא כרטיס אשראי, ולהעלות פרומפטים בעברית של שני לקוחות אמיתיים עם מיקוד ישראל. זו הבדיקה שתכריע, לא המפרט.</p>
+      <p><strong>שלב ב:</strong> במקביל, לקבוע דמו ב-<span class="ltr">GeckoCheck</span> ולבקש שלושה דברים מפורשות: מחירון, האם עברית וישראל נתמכות בפועל, והאם ה-<span class="ltr">white-label</span> כולל דומיין משלנו.</p>
+      <p><strong>שלב ג:</strong> אם <span class="ltr">Otterly</span> עובד בעברית, לעלות למסלול <span class="ltr">Standard</span> ולהגיש בקשה למעמד <span class="ltr">Agency Partner</span> לפני הרכישה. לפי סקירות חיצוניות המעמד הזה מגדיל את מכסת הפרומפטים ופותח דוחות ממותגים.</p>
+    </div>
+
+    <div class="warn-box">
+      <div class="rec-title">התנאי שהופך את ההמלצה</div>
+      <p>אם הלקוחות דורשים דשבורד שנושא את המותג של <span class="ltr">NC Digital</span> ולא את המותג של הספק, <span class="ltr">Otterly</span> לא עונה על זה במוצר עצמו. הפתרון שלו הוא מחבר <span class="ltr">Looker Studio</span>, כלומר בנייה שלנו. במקרה כזה <span class="ltr">GeckoCheck</span> הופך למועמד המוביל, בכפוף למחיר ולאימות עברית בדמו.</p>
+    </div>
+
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">טבלת ההשוואה המלאה</summary>
+  <div class="accordion-body">
+    <p>כל שורה מציינת מה נמצא במקור הרשמי של הספק. שדות שסומנו כלא ידוע הם שדות שהספק לא מפרסם, ולא הערכה שלנו.</p>
+    <div class="tbl-scroll">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th class="dim">קריטריון</th>
+          <th><span class="ltr">Otterly.ai</span></th>
+          <th><span class="ltr">iGEO</span></th>
+          <th><span class="ltr">GeckoCheck</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim">חברה ומקור</td>
+          <td>ותיקה בקטגוריה, מעל <span class="num">40,000</span> משתמשי שיווק מוצהרים</td>
+          <td>משרד ראשי בקפריסין ומשרד בתל אביב. הוקמה ביוני <span class="num">2025</span>, <span class="ltr">pre-seed</span>, <span class="num">1-10</span> עובדים. מייסד: <span class="ltr">Orel Ohayon</span></td>
+          <td><span class="ltr">GeckoCheck Technologies Inc.</span> מייסדים: <span class="ltr">Elad Goldenberg</span> (לשעבר מנהל <span class="ltr">eBay</span> ישראל) ו-<span class="ltr">Dr. Kira Radinsky</span> (מדענית ראשית לשעבר <span class="ltr">eBay</span> ישראל, טכניון)</td>
+        </tr>
+        <tr>
+          <td class="dim">מחיר חודשי</td>
+          <td><span class="ltr">Lite $29</span> / <span class="ltr">Standard $189</span> / <span class="ltr">Premium $489</span> / <span class="ltr">Enterprise</span> מותאם, מ-<span class="ltr">$1,000</span>. שנתי: <span class="num">15%</span> הנחה</td>
+          <td><span class="ltr">Grow $175</span> / <span class="ltr">Pro $290</span> <strong>לכל מותג</strong>. שנתי: <span class="ltr">$140</span> / <span class="ltr">$232</span> למותג</td>
+          <td><span class="tag unk">לא מפורסם</span> דמו בלבד, אין רכישה עצמית ואין דף מחירים</td>
+        </tr>
+        <tr>
+          <td class="dim">כמות פרומפטים</td>
+          <td><span class="num">15</span> / <span class="num">100</span> / <span class="num">400</span>. תוספת <span class="num">100</span> פרומפטים: <span class="ltr">$99</span> לחודש</td>
+          <td><span class="num">50</span> / <span class="num">150</span> / <span class="num">300+</span></td>
+          <td><span class="tag unk">לא מפורסם</span></td>
+        </tr>
+        <tr>
+          <td class="dim">תדירות בדיקה</td>
+          <td><span class="tag yes">יומית</span> בכל המסלולים</td>
+          <td><span class="tag yes">יומית</span> בכל המסלולים</td>
+          <td>מוצהר <span class="ltr">real-time</span>, ללא פירוט תדירות</td>
+        </tr>
+        <tr>
+          <td class="dim">מנועי AI כלולים</td>
+          <td><span class="ltr">ChatGPT</span>, <span class="ltr">Google AI Overviews</span>, <span class="ltr">Perplexity</span>, <span class="ltr">Copilot</span></td>
+          <td>מוצהר: <span class="ltr">ChatGPT</span>, <span class="ltr">Gemini</span>, <span class="ltr">Claude</span>, <span class="ltr">Perplexity</span>, <span class="ltr">SGE</span>, <span class="ltr">Bing Chat</span>, <span class="ltr">Grok</span>, <span class="ltr">DeepSeek</span>, <span class="ltr">Llama</span>. <span class="ltr">Track all LLMs</span> מסומן ל-<span class="ltr">Enterprise</span> בלבד</td>
+          <td><span class="ltr">ChatGPT</span>, <span class="ltr">Gemini</span>, <span class="ltr">Perplexity</span>, <span class="ltr">Claude</span></td>
+        </tr>
+        <tr>
+          <td class="dim">מנועים בתוספת תשלום</td>
+          <td><span class="tag part">כן</span> <span class="ltr">Claude</span> בין <span class="ltr">$29</span> ל-<span class="ltr">$439</span> לחודש, <span class="ltr">Gemini</span> ו-<span class="ltr">Google AI Mode</span> בין <span class="ltr">$9</span> ל-<span class="ltr">$149</span> לכל מנוע</td>
+          <td><span class="tag yes">לא</span> נכללים במסלול</td>
+          <td><span class="tag yes">לא</span> ארבעת המנועים מוצגים כחלק מהמוצר</td>
+        </tr>
+        <tr>
+          <td class="dim">חסר במנועים</td>
+          <td><span class="ltr">Grok</span>, <span class="ltr">DeepSeek</span></td>
+          <td><span class="ltr">Copilot</span></td>
+          <td><strong>אין <span class="ltr">Google AI Overviews</span> ואין <span class="ltr">AI Mode</span></strong>, אין <span class="ltr">Copilot</span></td>
+        </tr>
+        <tr>
+          <td class="dim">ישראל כמדינת מעקב</td>
+          <td><span class="tag yes">מאומת</span> ישראל מופיעה ברשימת <span class="num">65+</span> המדינות הרשמית, עם תמיכה בכל שבעת המנועים</td>
+          <td><span class="tag part">חלקי</span> באתר יש בורר שפה עברית. המסלולים מגבילים <span class="num">3</span>/<span class="num">6</span>/<span class="num">10+</span> אזורים, והאזורים אינם מפורטים</td>
+          <td><span class="tag unk">לא ידוע</span> מוצהרת השוואה לפי שוק ושפה, ללא רשימה</td>
+        </tr>
+        <tr>
+          <td class="dim">פרומפטים בעברית</td>
+          <td><span class="tag yes">כן</span> התיעוד קובע תמיכה בכל השפות לניטור. כלי מחקר הפרומפטים הנפרד מוגבל לרשימת שפות</td>
+          <td><span class="tag unk">לא מתועד</span></td>
+          <td><span class="tag unk">לא מתועד</span></td>
+        </tr>
+        <tr>
+          <td class="dim">נתונים אמיתיים או הערכה</td>
+          <td><span class="tag yes">אמיתי</span> שולח שאילתות למנועים מדי יום כמשתמש נייטרלי לא מותאם אישית, ושומר את מלוא טקסט התשובה</td>
+          <td><span class="tag part">לא חד משמעי</span> הניסוח הרשמי הוא <span class="ltr">simulates real customer queries</span></td>
+          <td><span class="tag part">טענה חזקה, לא מאומתת</span> מוצהר איסוף תגובות בזמן אמת מאינטראקציות צרכנים ולא רק מ-<span class="ltr">API</span></td>
+        </tr>
+        <tr>
+          <td class="dim">מושבים ומשתמשים</td>
+          <td><span class="tag yes">בלתי מוגבל</span> בכל המסלולים</td>
+          <td>דף המחירים מצהיר בלתי מוגבל, אך מסלולי <span class="ltr">AppSumo</span> מגבילים <span class="num">1</span>/<span class="num">2</span>/<span class="num">3</span>/<span class="num">10</span>. סתירה שדורשת בירור</td>
+          <td><span class="tag unk">לא מפורסם</span></td>
+        </tr>
+        <tr>
+          <td class="dim">סביבות עבודה לרב-לקוחות</td>
+          <td><span class="num">1</span> ב-<span class="ltr">Lite</span>, בלתי מוגבל מ-<span class="ltr">Standard</span></td>
+          <td>התמחור הוא לכל מותג, כלומר כל לקוח הוא מנוי נפרד</td>
+          <td>מוצהר ניהול רב-לקוחות מדשבורד מרכזי בתוכנית השותפים</td>
+        </tr>
+        <tr>
+          <td class="dim">White-label</td>
+          <td><span class="tag no">אין</span> מספר סקירות בלתי תלויות מאשרות. עוקף דרך מחבר <span class="ltr">Looker Studio</span> ממסלול <span class="ltr">Standard</span></td>
+          <td><span class="tag unk">לא מוצהר</span> מופיע <span class="ltr">Custom brand style</span> שאינו מוגדר</td>
+          <td><span class="tag yes">כן</span> מיתוג מלא של הפלטפורמה והדוחות בלוגו ובצבעים של הסוכנות, כולל ייצוא <span class="ltr">PDF</span> ממותג</td>
+        </tr>
+        <tr>
+          <td class="dim">API</td>
+          <td><span class="num">2,000</span> קריאות לחודש ב-<span class="ltr">Standard</span>, <span class="num">5,000</span> ב-<span class="ltr">Premium</span>. אימות <span class="ltr">Bearer token</span>. <strong>אינו זמין ב-<span class="ltr">Lite</span></strong></td>
+          <td>מוצהר בכל המסלולים, ללא מגבלות קצב מפורסמות</td>
+          <td><span class="tag no">לא מוזכר</span> באף עמוד באתר</td>
+        </tr>
+        <tr>
+          <td class="dim">MCP</td>
+          <td><span class="num">11</span> כלים לקריאה בלבד, <span class="ltr">OAuth 2.0</span>, <span class="ltr">streamable HTTP</span>. מכסה: <span class="num">2,000</span> ב-<span class="ltr">Standard</span>, <span class="num">5,000</span> ב-<span class="ltr">Premium</span>. <strong>אינו זמין ב-<span class="ltr">Lite</span></strong></td>
+          <td>שרת <span class="ltr">MCP</span> בכל המסלולים. מחובר ל-<span class="ltr">Claude</span>, <span class="ltr">ChatGPT</span>, <span class="ltr">Cursor</span>, <span class="ltr">n8n</span>, <span class="ltr">Slack</span>, <span class="ltr">Google Sheets</span>. ללא מגבלות מפורסמות</td>
+          <td><span class="tag no">לא קיים</span></td>
+        </tr>
+        <tr>
+          <td class="dim">מגבלת המכשירים</td>
+          <td>אין מגבלת מכשירים מפורסמת. המגבלה האמיתית היא מכסת הפרומפטים ומכסת ה-<span class="ltr">API</span></td>
+          <td>אין מגבלת מכשירים מפורסמת. המגבלה האמיתית היא מספר המותגים והאזורים</td>
+          <td><span class="tag unk">לא ידוע</span></td>
+        </tr>
+        <tr>
+          <td class="dim">פונקציות נוספות</td>
+          <td>ביקורת <span class="ltr">GEO</span> לכתובות: <span class="num">1,000</span>/<span class="num">5,000</span>/<span class="num">10,000</span> לחודש. <span class="ltr">Agent Analytics</span>: <span class="num">200</span> אלף עד מיליון אירועים. מעקב <span class="ltr">ChatGPT Ads</span>. ניתוח סנטימנט. מחבר <span class="ltr">Looker Studio</span></td>
+          <td><span class="ltr">Prompt Builder</span>, <span class="ltr">iGEO Agents</span>, אנליטיקת תנועת <span class="ltr">AI</span>, שוק תוכן להפצה, המלצות חודשיות <span class="num">4</span>/<span class="num">8</span>/<span class="num">20+</span>, <span class="ltr">SSO/SAML</span> ו-<span class="ltr">SOC 2</span> בכל המסלולים</td>
+          <td>ארבעה מוצרים: <span class="ltr">Brand Intelligence</span> לניטור מותג, <span class="ltr">Store Sight</span> לזחילת חנות וסכמה, <span class="ltr">Catalog Peak</span> לאינדוקס מוצרים, <span class="ltr">GeckoAssistant</span> להמלצות. סנטימנט, אשכול שאילתות, בונה דוחות</td>
+        </tr>
+        <tr>
+          <td class="dim">קהל היעד של המוצר</td>
+          <td>שיווק כללי, סוכנויות וצוותי תוכן</td>
+          <td>מסחר אלקטרוני, מותגים וסוכנויות</td>
+          <td><strong>סוחרים ומסחר אלקטרוני</strong>. שניים מארבעת המוצרים נשענים על קטלוג מוצרים וחנות</td>
+        </tr>
+        <tr>
+          <td class="dim">ניסיון חינם</td>
+          <td><span class="tag yes">כן</span> <span class="num">7</span> ימים ללא כרטיס אשראי</td>
+          <td>מוצע ניסיון באתר. קיימת חלופת <span class="ltr">AppSumo</span> בתשלום חד פעמי עם החזר עד <span class="num">60</span> יום</td>
+          <td><span class="tag no">אין</span> דמו מול נציג בלבד</td>
+        </tr>
+        <tr>
+          <td class="dim">ביקורות בלתי תלויות</td>
+          <td><span class="tag yes">חזק</span> דירוג <span class="num">4.8</span> מתוך <span class="num">5</span> ב-<span class="ltr">G2</span> על בסיס מעל <span class="num">250</span> ביקורות מאומתות</td>
+          <td><span class="tag part">דל</span> שתי ביקורות ב-<span class="ltr">AppSumo</span> בדירוג <span class="num">4.0</span> ומספר בודד ב-<span class="ltr">G2</span></td>
+          <td><span class="tag no">אין</span> לא נמצאה ולו ביקורת אחת באף פלטפורמה או סקירה השוואתית</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">עלות אמיתית לפי היקף הלקוחות</summary>
+  <div class="accordion-body">
+    <p>זה החישוב שמכריע את ההחלטה, לא מחיר המדף. <span class="ltr">Otterly</span> מוכר מאגר פרומפטים משותף לכל הלקוחות. <span class="ltr">iGEO</span> מוכר מנוי נפרד לכל מותג. ההפרש נפתח דרמטית ככל שהרוסטר גדל.</p>
+    <div class="tbl-scroll">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th class="dim">היקף</th>
+          <th><span class="ltr">Otterly.ai</span></th>
+          <th><span class="ltr">iGEO</span> (<span class="ltr">Grow</span>, שנתי)</th>
+          <th>פער</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim"><span class="num">5</span> לקוחות</td>
+          <td><span class="ltr">Standard $189</span> לחודש, <span class="num">100</span> פרומפטים, <span class="num">20</span> לכל לקוח</td>
+          <td><span class="num">5</span> × <span class="ltr">$140</span> = <span class="ltr">$700</span> לחודש</td>
+          <td><span class="ltr">iGEO</span> יקר פי <span class="num">3.7</span></td>
+        </tr>
+        <tr>
+          <td class="dim"><span class="num">12</span> לקוחות</td>
+          <td><span class="ltr">Standard $189</span> לחודש, <span class="num">8</span> פרומפטים לכל לקוח. עם תוספת <span class="num">100</span> פרומפטים: <span class="ltr">$288</span></td>
+          <td><span class="num">12</span> × <span class="ltr">$140</span> = <span class="ltr">$1,680</span> לחודש</td>
+          <td><span class="ltr">iGEO</span> יקר פי <span class="num">5.8</span> מול <span class="ltr">$288</span></td>
+        </tr>
+        <tr>
+          <td class="dim"><span class="num">31</span> לקוחות</td>
+          <td><span class="ltr">Premium $489</span> לחודש, <span class="num">400</span> פרומפטים, <span class="num">13</span> לכל לקוח</td>
+          <td><span class="num">31</span> × <span class="ltr">$140</span> = <span class="ltr">$4,340</span> לחודש</td>
+          <td><span class="ltr">iGEO</span> יקר פי <span class="num">8.9</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="warn-box">
+      <div class="rec-title">המלכודת בתמחור של Otterly</div>
+      <p>מחיר המדף אינו המחיר הסופי. שלושה מנועים נמכרים כתוספת, וברמת <span class="ltr">Premium</span> התוספות הן היקרות ביותר. כיסוי מלא של כל שבעת המנועים ברמת <span class="ltr">Premium</span> מגיע לכ-<span class="ltr">$1,226</span> לחודש לפי הטווחים המפורסמים, כלומר יותר מפי שניים ממחיר המדף.</p>
+      <p>המשמעות המעשית: לרוב הלקוחות בישראל <span class="ltr">Google AI Overviews</span> ו-<span class="ltr">ChatGPT</span> הם המנועים שקובעים, ושניהם כלולים במסלול הבסיס. <span class="ltr">Claude</span> אינו נמדד בישראל בכלים אחרים ממילא, ולכן התוספת היקרה ביותר היא גם הפחות נחוצה. יש לאמת את המחיר המדויק של כל תוספת בעמוד התשלום לפני רכישה.</p>
+    </div>
+
+    <div class="rec-box">
+      <div class="rec-title">דרך זולה לבחון את iGEO בלי מנוי</div>
+      <p>ל-<span class="ltr">iGEO</span> קיימת מכירת <span class="ltr">lifetime</span> ב-<span class="ltr">AppSumo</span>: <span class="ltr">$69</span> עבור <span class="num">10</span> פרומפטים ועד <span class="ltr">$689</span> עבור <span class="num">100</span> פרומפטים, <span class="num">20</span> אזורים ו-<span class="num">10</span> מושבים, בתשלום חד פעמי עם החזר עד <span class="num">60</span> יום. זו הדרך הזולה לבדוק האם המנוע שלו בכלל עובד על עברית, בלי להתחייב לתמחור לכל מותג.</p>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">עברית וישראל</summary>
+  <div class="accordion-body">
+    <p>זה הקריטריון שפוסל או מכשיר, כי כמעט כל ההשוואות שפורסמו ברשת נבדקו באנגלית ובשוק האמריקאי. כלי שמצטיין באנגלית חסר ערך אם אינו מריץ שאילתה בעברית מול מיקוד ישראלי.</p>
+
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span></strong> ישראל מופיעה במפורש ברשימת המדינות הרשמית של מעל <span class="num">65</span> מדינות, עם תמיכה בכל שבעת המנועים. התיעוד קובע שניטור פרומפטים תומך בכל השפות. זו התמיכה היחידה מבין השלוש שאומתה מול מקור רשמי של הספק.</li>
+      <li><strong><span class="ltr">iGEO</span></strong> באתר קיים בורר שפה עם עברית, ויש משרד בתל אביב. אלה סימנים מעודדים אך אינם הוכחה שהמנוע מריץ פרומפט עברי במיקוד ישראל. המסלולים מגבילים אזורים למספר קבוע, והרשימה אינה מפורסמת. חובה לברר האם ישראל היא אחד מהם.</li>
+      <li><strong><span class="ltr">GeckoCheck</span></strong> עמוד המוצר מצהיר על השוואת נראות וסנטימנט לפי שוק ושפה, בלי לפרט אילו. המייסדים ישראלים והחברה בנויה מהשוק הישראלי, ולכן סביר שיש תמיכה, אבל סבירות אינה אימות. יש לשאול זאת ישירות בדמו.</li>
+    </ul>
+
+    <div class="warn-box">
+      <div class="rec-title">מה עדיין לא נבדק באף אחד מהשלושה</div>
+      <p>אף אחד מהספקים אינו מפרסם מדד איכות לעברית. תמיכה בשפה פירושה שהמערכת מקבלת את המחרוזת, לא שהיא מזהה נכון אזכור מותג בעברית, מפרידה בין וריאציות כתיב, או מטפלת נכון בטקסט דו-כיווני. את זה אפשר לגלות רק בהרצה אמיתית על לקוח קיים, ולכן שלב הניסיון אינו פורמליות.</p>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">נתונים אמיתיים מול נתונים מוערכים</summary>
+  <div class="accordion-body">
+    <p>הכלל הפנימי שלנו אוסר להציג נתון נראות שאינו מגובה בתשובה מתועדת של מנוע <span class="ltr">AI</span>. ספק שמציג הערכה במקום מדידה אינו יכול לשמש מקור ראשי, גם אם הדשבורד שלו מרשים.</p>
+
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span> מודד</strong> התיעוד מפורש: המערכת שולחת את הפרומפטים למנועים מדי יום, כמשתמש נייטרלי ולא מותאם אישית, ושומרת את מלוא טקסט התשובה ולא רק קטע. משמעות מעשית: אפשר להראות ללקוח את הציטוט עצמו.</li>
+      <li><strong><span class="ltr">iGEO</span> לא חד משמעי</strong> הניסוח החוזר הוא שהמערכת מדמה שאילתות של לקוחות אמיתיים ומעריכה את תגובות המודלים. המילה מדמה אינה זהה למילה שולחת, ואין באתר הצהרה שמפרידה בין השתיים. עד לבירור, אין לסווג אותו כמקור מדידה.</li>
+      <li><strong><span class="ltr">GeckoCheck</span> טוען לחזק ביותר</strong> העמוד קובע שהטכנולוגיה אוספת תגובות בזמן אמת מאינטראקציות צרכנים אמיתיות ולא רק מ-<span class="ltr">API</span>. אם זה מדויק זו יתרון משמעותי על שני האחרים, כי נתוני <span class="ltr">API</span> אינם זהים למה שמשתמש אמיתי רואה. הטענה אינה מגובה בשום מקור חיצוני ויש לדרוש הסבר מתודולוגי בדמו.</li>
+    </ul>
+
+    <div class="rec-box">
+      <div class="rec-title">הערה על עומק הדגימה</div>
+      <p>כל שלושת הספקים מדגימים כל פרומפט פעם ביום. מודלים גנרטיביים מחזירים תשובות שונות לאותה שאלה, ולכן דגימה בודדת ביום היא אינדיקציה ולא מדידה סטטיסטית. מתחרים בקטגוריה שמדגימים כל פרומפט עשרות פעמים לכל מודל מציגים זאת כהבדל מהותי, וזה שיקול אמיתי בכל הצגה של אחוז נראות ללקוח.</p>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">דשבורד ללקוח, מושבים והרשאות</summary>
+  <div class="accordion-body">
+    <p>זו הסיבה שבגללה הנושא עלה מלכתחילה. השאלה אינה האם יש דשבורד, אלא מה הלקוח רואה כשהוא נכנס אליו ובאיזה מותג הוא נושא.</p>
+
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span></strong> מושבים בלתי מוגבלים בכל המסלולים וסביבות עבודה בלתי מוגבלות ממסלול <span class="ltr">Standard</span>. אפשר לפתוח לכל לקוח סביבה משלו ולתת לו גישה בלי עלות נוספת. אין <span class="ltr">white-label</span>: הלקוח יראה את המותג <span class="ltr">Otterly</span>. הדרך לדוח ממותג היא מחבר <span class="ltr">Looker Studio</span> שזמין ממסלול <span class="ltr">Standard</span>, כלומר אנחנו בונים את הדשבורד ורק מושכים ממנו נתונים.</li>
+      <li><strong><span class="ltr">iGEO</span></strong> דף המחירים מצהיר על מושבים בלתי מוגבלים, אך מסלולי <span class="ltr">AppSumo</span> של אותו מוצר מגבילים למושב אחד עד עשרה. אלה שתי הצהרות סותרות על אותה יכולת, ואי אפשר לתכנן גישת לקוחות עד שהיא תיושב. מעבר לכך, מכיוון שהתמחור הוא לכל מותג, כל לקוח הוא חשבון נפרד ואין תצוגת על.</li>
+      <li><strong><span class="ltr">GeckoCheck</span></strong> תוכנית השותפים היא הצעה שנבנתה לסוכנויות ולא הותאמה בדיעבד: ניהול רב-לקוחות מדשבורד אחד, מיתוג מלא של הפלטפורמה והדוחות בלוגו ובצבעים שלנו, ייצוא <span class="ltr">PDF</span> ממותג, מנהל שותפים ייעודי, תוכנית הסמכה וחלוקת הכנסות מתמשכת על כל לקוח שנביא. זו התשובה הישירה ביותר לדרישה של הלקוחות, ומכיוון שיש חלוקת הכנסות היא גם היחידה שיכולה להחזיר חלק מהעלות.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">API ו-MCP: מה אפשר למשוך לדוחות שלנו</summary>
+  <div class="accordion-body">
+    <p>מכיוון שכל הדוחות שלנו נבנים בעברית בתבנית שלנו, היכולת למשוך נתונים החוצה שווה יותר מאיכות הדשבורד של הספק.</p>
+
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span></strong> שרת <span class="ltr">MCP</span> עם <span class="num">11</span> כלים לקריאה בלבד, אימות <span class="ltr">OAuth 2.0</span> מעל <span class="ltr">streamable HTTP</span>, ותאימות ל-<span class="ltr">Claude Code</span>, <span class="ltr">Claude.ai</span>, <span class="ltr">ChatGPT</span>, <span class="ltr">n8n</span> ו-<span class="ltr">Cursor</span>. הכלים מכסים סביבות עבודה ומנועים, היסטוריית כיסוי מותג עם סנטימנט, פרומפטים וציטוטים ברמת כתובת, ובדיקות תוכן וזחילה. בנוסף <span class="ltr">API</span> ציבורי עם אימות <span class="ltr">Bearer</span>.</li>
+      <li><strong>המגבלה שחשוב להכיר</strong> מכסת <span class="ltr">API</span> ומכסת <span class="ltr">MCP</span> הן נפרדות, <span class="num">2,000</span> קריאות כל אחת ב-<span class="ltr">Standard</span> ו-<span class="num">5,000</span> ב-<span class="ltr">Premium</span>. שתיהן אינן קיימות במסלול <span class="ltr">Lite</span>. כלומר המסלול של <span class="ltr">$29</span> אינו רלוונטי לזרימת עבודה אוטומטית, רק לבדיקה ידנית.</li>
+      <li><strong><span class="ltr">iGEO</span></strong> מציע <span class="ltr">API</span> ושרת <span class="ltr">MCP</span> בכל המסלולים, כולל חיבור ל-<span class="ltr">Google Sheets</span> ול-<span class="ltr">n8n</span>. לא מפורסמות מגבלות קצב או מכסות, מה שנוח בהתחלה ומסוכן בהמשך, כי מגבלה לא מפורסמת עדיין יכולה להיאכף.</li>
+      <li><strong><span class="ltr">GeckoCheck</span></strong> אין אזכור ל-<span class="ltr">API</span> ואין אזכור ל-<span class="ltr">MCP</span> בשום עמוד באתר. אם אין ממשק תכנותי, כל הזרמת נתון לדוחות שלנו תהיה ידנית או דרך ייצוא. זו הסתייגות מהותית מול היתרון של ה-<span class="ltr">white-label</span>, וצריך לשאול על כך במפורש.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">איך נבדקים הפרומפטים</summary>
+  <div class="accordion-body">
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span></strong> בונים ספריית פרומפטים של שאלות שלקוחות באמת שואלים, המערכת מריצה אותן אוטומטית מדי יום מול כל המנועים במסלול, ושומרת את מלוא התשובה. אפשר לתייג פרומפטים כמותג או לא מותג ולפי שלב במשפך, ולסנן את הדוח לפיהם. הפרומפט הוא יחידת התמחור, ולכן הוא גם יחידת התכנון.</li>
+      <li><strong><span class="ltr">iGEO</span></strong> יש <span class="ltr">Prompt Builder</span> שמארגן פרומפטים לפי נושא, כוונה, סנטימנט ואזור, ומעקב יומי. הפרומפט הוא יחידת התמחור, בנוסף למכסה נפרדת של המלצות חודשיות.</li>
+      <li><strong><span class="ltr">GeckoCheck</span></strong> המוצר מדבר על אשכול שאילתות ועל מעקב אחר קטעי תשובה, אך אינו חושף מודל פרומפטים, מכסה או תדירות. לא ניתן להעריך תכנון פרומפטים לפני דמו.</li>
+    </ul>
+    <div class="rec-box">
+      <div class="rec-title">חשבון הפרומפטים שצריך לעשות לפני הרכישה</div>
+      <p>ברוסטר של <span class="num">31</span> לקוחות, מסלול <span class="ltr">Premium</span> של <span class="ltr">Otterly</span> נותן כ-<span class="num">13</span> פרומפטים ללקוח. זה מספיק לשאלות הליבה של כל לקוח, לא למחקר רוחב. הדרך הנכונה לעבוד בהיקף הזה היא להתחיל מהלקוחות שביקשו דשבורד, לתת לכל אחד <span class="num">15</span> עד <span class="num">20</span> פרומפטים אמיתיים, ולהרחיב לפי ביקוש ולא לפרוס דק על כולם.</p>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">ביקורות ועדויות ברשת</summary>
+  <div class="accordion-body">
+    <ul class="rules">
+      <li><strong><span class="ltr">Otterly.ai</span></strong> דירוג <span class="num">4.8</span> מתוך <span class="num">5</span> ב-<span class="ltr">G2</span> על בסיס מעל <span class="num">250</span> ביקורות מאומתות. הנושאים החוזרים בשבחים: תובנות בעלות ערך, התקנה מהירה, ממשק אינטואיטיבי ותמיכה יוצאת דופן. סוקרים מציינים שהגיעו לניטור ראשון תוך שעה. הביקורת השלילית עקבית וממוקדת: תמחור לפי פרומפט מתייקר מהר, שלושה מתוך שישה מנועים בתוספת תשלום, אין <span class="ltr">white-label</span>, וניתוח הסנטימנט פחות אמין ממה שהתיעוד מבטיח.</li>
+      <li><strong><span class="ltr">iGEO</span></strong> שתי ביקורות ב-<span class="ltr">AppSumo</span> בדירוג <span class="num">4.0</span> ומספר בודד ב-<span class="ltr">G2</span>, חיוביות אך כלליות. הכלי אינו מופיע באף אחת מסקירות ההשוואה המובילות של <span class="num">2026</span> שנבדקו. עבור החלטת רכש זה אומר שאין בסיס חיצוני להעריך יציבות, דיוק או שירות לאורך זמן.</li>
+      <li><strong><span class="ltr">GeckoCheck</span></strong> לא נמצאה ולו ביקורת אחת: לא ב-<span class="ltr">G2</span>, לא ב-<span class="ltr">Capterra</span>, לא ב-<span class="ltr">AppSumo</span> ולא באף סקירה השוואתית של הקטגוריה. מנגד, רקע המייסדים הוא האות החיצוני החזק ביותר מבין השלושה: מנהל <span class="ltr">eBay</span> ישראל לשעבר, ומדענית ראשית לשעבר של <span class="ltr">eBay</span> ישראל שהיא גם מנכ״לית <span class="ltr">Diagnostic Robotics</span> ופרופסורית אורחת בטכניון.</li>
+    </ul>
+
+    <div class="warn-box">
+      <div class="rec-title">מלכודת שיש להיזהר ממנה בבדיקת iGEO</div>
+      <p>חיפוש <span class="ltr">iGEO</span> ב-<span class="ltr">Capterra</span> וב-<span class="ltr">Software Advice</span> מחזיר דירוגים וביקורות רבות, אך הן שייכות לחברה אחרת לגמרי: מערכת <span class="ltr">ERP</span> ספרדית לשירותי שטח באותו שם. אלה אינן ביקורות על <span class="ltr">igeo.ai</span> ואין לייחס אותן לו.</p>
+    </div>
+  </div>
+</details>
+
+<details class="accordion-item">
+  <summary class="accordion-header">מה לא ניתן היה לאמת</summary>
+  <div class="accordion-body">
+    <p>הרשימה הזו אינה הערת שוליים. כל פריט בה הוא שאלה שצריכה להישאל מול הספק לפני חתימה.</p>
+
+    <ul class="rules bad">
+      <li><strong><span class="ltr">GeckoCheck</span> מחיר</strong> אין דף מחירים ואין רכישה עצמית. כל מודל העלות לא ידוע, כולל האם יש מינימום לקוחות בתוכנית השותפים ומהו אחוז חלוקת ההכנסות.</li>
+      <li><strong><span class="ltr">GeckoCheck</span> עברית וישראל</strong> מוצהרת השוואה לפי שוק ושפה, בלי רשימה. לא ידוע אם עברית נתמכת בפועל.</li>
+      <li><strong><span class="ltr">GeckoCheck</span> מושבים ותדירות</strong> לא מפורסמים. גם לא ידוע האם קיים <span class="ltr">API</span> כלשהו.</li>
+      <li><strong><span class="ltr">iGEO</span> סתירת המושבים</strong> דף המחירים מצהיר בלתי מוגבל, <span class="ltr">AppSumo</span> מגביל לעשרה. לא ניתן לתכנן גישת לקוחות עד שזה ייושב.</li>
+      <li><strong><span class="ltr">iGEO</span> רשימת האזורים</strong> המסלולים מוכרים <span class="num">3</span>, <span class="num">6</span> או <span class="num">10+</span> אזורים בלי לפרט אילו. אם ישראל אינה כלולה, כל השאר לא רלוונטי.</li>
+      <li><strong><span class="ltr">iGEO</span> שיטת המדידה</strong> לא הצלחנו לקבוע האם המערכת שולחת שאילתות אמיתיות למודלים או מדמה אותן. זו השאלה שקובעת אם מותר להשתמש בו כמקור נתונים ראשי.</li>
+      <li><strong><span class="ltr">Otterly</span> מחיר התוספות המדויק</strong> טווחי התוספות מפורסמים כטווח ולא כמחיר לכל מסלול. יש לאמת בעמוד התשלום.</li>
+      <li><strong><span class="ltr">Otterly</span> מעמד Agency Partner</strong> סקירות חיצוניות מדווחות שהמעמד מגדיל את מכסת הפרומפטים ופותח דוחות ממותגים ב-<span class="ltr">Looker Studio</span>. הפרטים אינם מופיעים בעמוד רשמי של הספק ויש לאשר אותם מולו.</li>
+      <li><strong>איכות עברית בכל השלושה</strong> אף ספק אינו מפרסם מדד לזיהוי אזכורי מותג בעברית. ניתן לגלות זאת רק בהרצה על לקוח אמיתי.</li>
+    </ul>
+  </div>
+</details>
+
+<div class="ult-footer">
+  <div class="brand">NC Digital</div>
+  <div class="info">השוואת פלטפורמות GEO · נתונים נאספו ואומתו ב-<span class="num">13.08.2026</span></div>
+</div>
+
+</div>
+</div>
+</body>
+</html>
