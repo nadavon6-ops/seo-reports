@@ -188,9 +188,17 @@ in the graph points at this one by <code>@id</code>, so it is the first thing to
 ListItems</span>. The homepage emits exactly one, <span class="q">Home</span>, so it cannot meet that
 and is not valid breadcrumb markup. It is suppressed on the homepage only. Every other page keeps the
 breadcrumb it already has, and those are correct.</p>
+<p>Both halves of this are needed. Yoast adds the <code>breadcrumb</code> reference to the WebPage node
+unconditionally, skipping it only on a 404, so removing the piece without also removing the reference
+would leave the homepage pointing at an <code>@id</code> that no longer exists.</p>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
 	return ( &#x27;/&#x27; === qmd_schema_path() ) ? false : $needed;
-} );</code></pre></div>
+} );
+
+// and, in the wpseo_schema_webpage filter, drop the now-dangling reference:
+if ( &#x27;/&#x27; === $path ) {
+	unset( $data[&#x27;breadcrumb&#x27;] );
+}</code></pre></div>
 <div class="yield"><div class="y-col y-yes"><span class="lbl">What this produces</span><ul><li>Correct company name in Google's entity understanding, replacing the site title.</li><li>Four verified company addresses, ten named facilities and seven contact points attached to the company.</li><li>Knowledge panel eligibility signals. The logo is already 931 by 229 pixels, which clears Google's 112 pixel minimum on both sides.</li><li><code>knowsAbout</code> states the manufacturing competencies and the six clinical areas the site covers, once, on the company.</li></ul></div><div class="y-col y-no"><span class="lbl">What it does not produce</span><ul><li>No rich result of its own. Organization data feeds entity understanding and the knowledge panel, neither of which is a SERP feature you can trigger on demand.</li><li><code>knowsAbout</code> and <code>location</code> are schema.org properties that Google does not list under Organization. They are kept because they are accurate, not because they earn a feature.</li></ul></div></div>
 </div></details>
 <details class="sec"><summary><span class="num">03</span>
@@ -2458,6 +2466,14 @@ add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
 	if ( isset( $mains[ $path ] ) ) {
 		$data[&#x27;mainEntity&#x27;] = array( &#x27;@id&#x27; =&gt; $mains[ $path ] );
 	}
+
+	// The homepage Breadcrumb piece is removed below. Yoast&#x27;s WebPage generator adds the
+	// &#x27;breadcrumb&#x27; reference unconditionally (it only skips it on a 404), so the reference
+	// has to be removed here too or the homepage would point at an @id that no longer exists.
+	if ( &#x27;/&#x27; === $path ) {
+		unset( $data[&#x27;breadcrumb&#x27;] );
+	}
+
 	return $data;
 } );
 
