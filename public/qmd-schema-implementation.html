@@ -181,7 +181,7 @@ in the graph points at this one by <code>@id</code>, so it is the first thing to
   ],
   &quot;address&quot;: &quot;[ 4 PostalAddress objects, see section 3 ]&quot;,
   &quot;location&quot;: &quot;[ 10 Place objects, see section 3 ]&quot;,
-  &quot;contactPoint&quot;: &quot;[ 6 ContactPoint objects, see section 4 ]&quot;
+  &quot;contactPoint&quot;: &quot;[ 7 ContactPoint objects, see section 4 ]&quot;
 }</code></pre></div>
 <p class="sub">One breadcrumb correction, homepage only</p>
 <p>Google’s requirement is to <span class="q">define a BreadcrumbList that contains at least two
@@ -191,7 +191,7 @@ breadcrumb it already has, and those are correct.</p>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
 	return ( &#x27;/&#x27; === qmd_schema_path() ) ? false : $needed;
 } );</code></pre></div>
-<div class="yield"><div class="y-col y-yes"><span class="lbl">What this produces</span><ul><li>Correct company name in Google's entity understanding, replacing the site title.</li><li>Four verified company addresses, ten named facilities and six named sales contacts attached to the company.</li><li>Knowledge panel eligibility signals. The logo is already 931 by 229 pixels, which clears Google's 112 pixel minimum on both sides.</li><li><code>knowsAbout</code> states the manufacturing competencies and the six clinical areas the site covers, once, on the company.</li></ul></div><div class="y-col y-no"><span class="lbl">What it does not produce</span><ul><li>No rich result of its own. Organization data feeds entity understanding and the knowledge panel, neither of which is a SERP feature you can trigger on demand.</li><li><code>knowsAbout</code> and <code>location</code> are schema.org properties that Google does not list under Organization. They are kept because they are accurate, not because they earn a feature.</li></ul></div></div>
+<div class="yield"><div class="y-col y-yes"><span class="lbl">What this produces</span><ul><li>Correct company name in Google's entity understanding, replacing the site title.</li><li>Four verified company addresses, ten named facilities and seven contact points attached to the company.</li><li>Knowledge panel eligibility signals. The logo is already 931 by 229 pixels, which clears Google's 112 pixel minimum on both sides.</li><li><code>knowsAbout</code> states the manufacturing competencies and the six clinical areas the site covers, once, on the company.</li></ul></div><div class="y-col y-no"><span class="lbl">What it does not produce</span><ul><li>No rich result of its own. Organization data feeds entity understanding and the knowledge panel, neither of which is a SERP feature you can trigger on demand.</li><li><code>knowsAbout</code> and <code>location</code> are schema.org properties that Google does not list under Organization. They are kept because they are accurate, not because they earn a feature.</li></ul></div></div>
 </div></details>
 <details class="sec"><summary><span class="num">03</span>
 <span class="stitle">Facility addresses and places</span></summary><div class="body">
@@ -274,7 +274,6 @@ Once QMD confirms the ownership relationships they can be promoted to <code>subO
       &quot;@id&quot;: &quot;https://qmd.net/#address-regensburg&quot;
     },
     &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
-    &quot;email&quot;: &quot;de-info@qmd.net&quot;,
     &quot;faxNumber&quot;: &quot;+49-941-830-536-29&quot;
   },
   {
@@ -340,7 +339,6 @@ Once QMD confirms the ownership relationships they can be promoted to <code>subO
       &quot;addressCountry&quot;: &quot;IL&quot;
     },
     &quot;telephone&quot;: &quot;+972-4-6755100&quot;,
-    &quot;email&quot;: &quot;ds@degania-medical.com&quot;,
     &quot;faxNumber&quot;: &quot;+972-4-6709182&quot;
   },
   {
@@ -378,8 +376,13 @@ Once QMD confirms the ownership relationships they can be promoted to <code>subO
 <details class="sec"><summary><span class="num">04</span>
 <span class="stitle">Sales contact points</span></summary><div class="body">
 <p>The contact page names six people with a role, a direct phone number in most cases and an email
-address. Each becomes a <code>ContactPoint</code> on the Organization, with the region they cover.</p>
-<div class="targets"><span class="lbl">Target pages</span><ul><li><a href="https://qmd.net/contact/" target="_blank" rel="noopener">/contact/</a></li></ul></div>
+address. Each becomes a <code>ContactPoint</code> on the Organization, with the region they cover.
+A seventh is the German customer service desk, which the locations page publishes with its own
+number and address.</p>
+<p>The Degania Silicone email on the locations page is deliberately left out. It sits on a
+different domain, <code>degania-medical.com</code>, and belongs to a separately named company, so
+marking it up as a QMD contact point would assert a relationship the site does not state.</p>
+<div class="targets"><span class="lbl">Target pages</span><ul><li><a href="https://qmd.net/contact/" target="_blank" rel="noopener">/contact/</a></li><li><a href="https://qmd.net/locations/" target="_blank" rel="noopener">/locations/</a></li></ul></div>
 <p class="where"><span class="lbl">Where it goes</span>Part of the Organization node. The contact page itself is also retyped, see section 5.</p>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
   {
@@ -448,6 +451,18 @@ address. Each becomes a <code>ContactPoint</code> on the Organization, with the 
     &quot;areaServed&quot;: &quot;International (Arthesys)&quot;,
     &quot;availableLanguage&quot;: [
       &quot;en&quot;
+    ]
+  },
+  {
+    &quot;@type&quot;: &quot;ContactPoint&quot;,
+    &quot;contactType&quot;: &quot;customer service&quot;,
+    &quot;name&quot;: &quot;QMD Europe Customer Service Center&quot;,
+    &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
+    &quot;email&quot;: &quot;de-info@qmd.net&quot;,
+    &quot;areaServed&quot;: &quot;Europe&quot;,
+    &quot;availableLanguage&quot;: [
+      &quot;en&quot;,
+      &quot;de&quot;
     ]
   }
 ]</code></pre></div>
@@ -1104,7 +1119,6 @@ function qmd_schema_organization_data() {
 					&#x27;@id&#x27; =&gt; &#x27;https://qmd.net/#address-regensburg&#x27;,
 				],
 				&#x27;telephone&#x27; =&gt; &#x27;+49-941-830-536-0&#x27;,
-				&#x27;email&#x27; =&gt; &#x27;de-info@qmd.net&#x27;,
 				&#x27;faxNumber&#x27; =&gt; &#x27;+49-941-830-536-29&#x27;,
 			],
 			[
@@ -1170,7 +1184,6 @@ function qmd_schema_organization_data() {
 					&#x27;addressCountry&#x27; =&gt; &#x27;IL&#x27;,
 				],
 				&#x27;telephone&#x27; =&gt; &#x27;+972-4-6755100&#x27;,
-				&#x27;email&#x27; =&gt; &#x27;ds@degania-medical.com&#x27;,
 				&#x27;faxNumber&#x27; =&gt; &#x27;+972-4-6709182&#x27;,
 			],
 			[
@@ -1270,6 +1283,18 @@ function qmd_schema_organization_data() {
 				&#x27;areaServed&#x27; =&gt; &#x27;International (Arthesys)&#x27;,
 				&#x27;availableLanguage&#x27; =&gt; [
 					&#x27;en&#x27;,
+				],
+			],
+			[
+				&#x27;@type&#x27; =&gt; &#x27;ContactPoint&#x27;,
+				&#x27;contactType&#x27; =&gt; &#x27;customer service&#x27;,
+				&#x27;name&#x27; =&gt; &#x27;QMD Europe Customer Service Center&#x27;,
+				&#x27;telephone&#x27; =&gt; &#x27;+49-941-830-536-0&#x27;,
+				&#x27;email&#x27; =&gt; &#x27;de-info@qmd.net&#x27;,
+				&#x27;areaServed&#x27; =&gt; &#x27;Europe&#x27;,
+				&#x27;availableLanguage&#x27; =&gt; [
+					&#x27;en&#x27;,
+					&#x27;de&#x27;,
 				],
 			],
 		],
