@@ -371,8 +371,9 @@ Model Comparisons</pre></div>
 function allOpen(s){document.querySelectorAll("details").forEach(function(d){d.open=s;});}
 function doCopy(txt,btn,label){
  var done=function(){var o=btn.textContent;btn.textContent=label||"הועתק";btn.classList.add("done");setTimeout(function(){btn.textContent=o;btn.classList.remove("done");},1600);};
- if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done);}
- else{var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);done();}
+ var legacy=function(){var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(e){}document.body.removeChild(ta);done();};
+ if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done).catch(legacy);}
+ else{legacy();}
 }
 function cp(btn){doCopy(btn.parentElement.querySelector("pre").innerText,btn);}
 function copyEverything(btn){
