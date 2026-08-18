@@ -63,37 +63,37 @@ footer{margin-top:44px;color:#5d6b84;font-size:.85em;text-align:center;border-to
 <tr><td>סטטיסטיקה בלבד (C0002)</td><td>0</td><td class='ltr'>-</td><td>לא</td></tr><tr><td>פונקציונלי בלבד (C0003)</td><td>0</td><td class='ltr'>-</td><td>לא</td></tr><tr><td>שיווק בלבד (C0004)</td><td>3</td><td class='ltr'>G110</td><td>לא</td></tr><tr><td>סטטיסטיקה + שיווק</td><td>3</td><td class='ltr'>G111</td><td>כן</td></tr><tr><td>סטטיסטיקה + פונקציונלי</td><td>0</td><td class='ltr'>-</td><td>לא</td></tr><tr><td>אישור מלא</td><td>3</td><td class='ltr'>G100, G111</td><td>כן</td></tr>
 </table></div>
 <div class="evidence">התג מופעל רק כאשר קטגוריית השיווק מאושרת, ומצב ההסכמה שנשלח נגזר מקטגוריית הסטטיסטיקה. לכן באישור שיווק ללא סטטיסטיקה הבקשות יוצאות עם <code>gcs=G110</code> ואינן נספרות, ובאישור סטטיסטיקה בלבד לא יוצאת אף בקשה. גולש שמאשר מדידה סטטיסטית בלבד אינו מופיע בדוחות. שורת "שיווק בלבד" נבדקה בשלוש הרצות נפרדות שהחזירו תוצאה זהה.</div>
-<p class="note">באתר הסייבר אותה בדיקה מחזירה את התוצאה הנכונה: אישור סטטיסטיקה בלבד מייצר בקשה עם <code>gcs=G101</code> ועוגיות <code>_ga</code>. ניתן להעתיק משם את תנאי ההפעלה.</p>
+<p class="note">תנאי ההפעלה המקביל בקונטיינר של אתר הסייבר מותנה בקטגוריית הסטטיסטיקה, וניתן להעתיק אותו.</p>
 <div class="action"><b>הפעולה הנדרשת:</b> לשנות בקונטיינר את תנאי ההפעלה של תג ה-GA4 כך שיהיה מותנה בקטגוריית הסטטיסטיקה (C0002) בלבד, ללא תלות בקטגוריית השיווק.</div>
 <div class="test"><b>בדיקת קבלה:</b> אישור סטטיסטיקה בלבד מייצר בקשות GA4 עם <code>gcs=G101</code> ועוגיית <code>_ga</code>.</div>
 </div></div></details><details class="sec"><summary><span>2. חסימת פיקסל פייסבוק לאחר סירוב<span class="env env-dev">dev156 - אתר ראשי</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <div class="evidence">לאחר לחיצה על "דחה הכול" בבאנר ורענון העמוד, סטטוס ההסכמה מתעדכן נכון ל-<code>C0001</code> בלבד, אך עדיין נטענים קובצי פיקסל הפייסבוק ונשלחת פנייה לשרתי פייסבוק: <code>connect.facebook.net/en_US/fbevents.js</code> ו-<code>connect.facebook.net/signals/config/685020149615789</code>. הבדיקה חזרה על עצמה בשתי הרצות נפרדות.</div>
-<p>בשלב זה לא נוצרות עוגיות, ובקשת ה-GA4 היוצאת נושאת <code>gcs=G100</code> (איתות ללא אחסון, התנהגות תקינה של Consent Mode). הפער הוא בטעינת רכיב השיווק עצמו לאחר סירוב מפורש.</p>
+<p>בשלב זה לא נוצרות עוגיות. הפער הוא בטעינת רכיב השיווק עצמו לאחר סירוב מפורש.</p>
 <div class="action"><b>הפעולה הנדרשת:</b> הפיקסל אינו מוטמע בקוד העמוד אלא מופעל דרך הקונטיינר <code>GTM-TMHMZBL</code> (מזהה הפיקסל <code>685020149615789</code> נמצא בקונטיינר). לכן התיקון נעשה בקונטיינר: להוסיף לתג דרישת הסכמה נוספת לקטגוריית השיווק, או להתנות את הטריגר שלו באישור הקטגוריה, כך שלא ייטען לפני קבלת הסכמה ולא לאחר סירוב.</div>
 <div class="test"><b>בדיקת קבלה:</b> לאחר סירוב ורענון אין אף פנייה ל-connect.facebook.net.</div>
 </div></div></details><details class="sec"><summary><span>3. טעינת נגן הווידאו בעמוד הבית לפני קבלת ההסכמה<span class="env env">סייבר - ייצור</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <div class="evidence">בטעינה נקייה של עמוד הבית, לפני כל פעולה בבאנר, נשלחות 12 בקשות: www.youtube.com (8) · googleads.g.doubleclick.net (2) · static.doubleclick.net (1) · i.ytimg.com (1), ונוצרות 5 עוגיות מעקב של גוגל: VISITOR_INFO1_LIVE, VISITOR_PRIVACY_METADATA, YSC, __Secure-ROLLOUT_TOKEN, __Secure-YNID. אותה תוצאה מתקבלת גם בטעינה ללא JavaScript (12 בקשות) וגם לאחר לחיצה על "דחה הכול".</div>
-<p>מנגנון ההסכמה עצמו תקין: בעמוד פנימי ללא הסרטון נמדדו אפס בקשות ואפס עוגיות, גם עם JavaScript מושבת. כל התעבורה שנותרה מגיעה מה-iframe של הסרטון.</p>
+<p>הממצא ממוקד בעמוד הבית בלבד: בעמוד פנימי ללא הסרטון נמדדו אפס בקשות ואפס עוגיות, גם עם JavaScript מושבת. כלומר מקור התעבורה הוא ה-iframe של הסרטון.</p>
 <div class="evidence">ההטמעה הנוכחית היא <code>www.youtube.com/embed/…</code> ללא דחיית טעינה: אין <code>youtube-nocookie</code> ואין <code>data-src</code> בקוד העמוד.</div>
 <div class="action"><b>הפעולה הנדרשת:</b> להחליף את ההטמעה ל-<code>youtube-nocookie.com</code> ולטעון את ה-iframe רק לאחר אישור הקטגוריה המתאימה: לשמור את הכתובת ב-<code>data-src</code> ולהעבירה ל-<code>src</code> לאחר האישור, או להציג תמונה ממוזערת מקומית שמפעילה את הנגן בלחיצה.</div>
 <div class="test"><b>בדיקת קבלה:</b> טעינה נקייה של עמוד הבית מייצרת אפס בקשות ואפס עוגיות, כפי שקורה כבר בעמודים הפנימיים.</div>
 </div></div></details><details class="sec"><summary><span>4. אפשרות סירוב במסך ההגדרות<span class="env env">שני האתרים</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
-<p>כפתור הסירוב נוסף לבאנר בשני האתרים ופועל כנדרש: לחיצה עליו מעדכנת את סטטוס ההסכמה ל-<code>C0001</code> בלבד. במסך ההגדרות עצמו עדיין אין אפשרות סירוב.</p>
-<div class="evidence">אתר הסייבר, כפתורי הבאנר: הגדרות קובצי Cookie · דחה הכול · קבל את כל קובצי ה-Cookie. כפתורי מסך ההגדרות: מידע נוסף · אפשר הכל · אשר הבחירות שלי. סביבת ה-QA של האתר הראשי: המצב זהה. בתצורת OneTrust שנקראה היום: <code>BannerShowRejectAllButton = True</code> אך <code>PCenterShowRejectAllButton = False</code>, בשלושת קובצי השפה.</div>
+<p>במסך ההגדרות אין אפשרות סירוב, בשני האתרים.</p>
+<div class="evidence">הכפתורים במסך ההגדרות באתר הסייבר: מידע נוסף · אפשר הכל · אשר הבחירות שלי. בסביבת ה-QA של האתר הראשי המצב זהה. בתצורת OneTrust שנקראה היום: <code>PCenterShowRejectAllButton = False</code>, בשלושת קובצי השפה.</div>
 <div class="action"><b>הפעולה הנדרשת:</b> להפעיל ב-OneTrust גם את <code>PCenterShowRejectAllButton</code> ולפרסם מחדש את התצורה. שינוי אחד מטפל בשני האתרים.</div>
 <div class="test"><b>בדיקת קבלה:</b> כפתור סירוב מופיע גם במסך ההגדרות, ולחיצה עליו מחזירה את סטטוס ההסכמה ל-C0001 בלבד.</div>
 </div></div></details><details class="sec"><summary><span>5. עוגיות צד שלישי הנותרות לאחר ביטול הסכמה<span class="env env">שני האתרים</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
-<p>מחיקת עוגיות הדומיין פועלת כעת כנדרש בשני האתרים: לאחר ביטול הסכמה לא נותרה אף עוגיית מדידה של הדומיין. נותרו עוגיות שנוצרו בדומיינים חיצוניים, שאינן בתחום המחיקה של האתר.</p>
+<p>לאחר ביטול הסכמה נותרות עוגיות שנוצרו בדומיינים חיצוניים, שאינן בתחום המחיקה של האתר.</p>
 <div class="evidence">אתר הסייבר: 12 עוגיות חיצוניות נותרו (AnalyticsSyncHistory, IDE, UserMatchHistory, VISITOR_INFO1_LIVE, VISITOR_PRIVACY_METADATA, YSC, __Secure-ROLLOUT_TOKEN, __Secure-YNID). סביבת ה-QA של האתר הראשי: 15 עוגיות חיצוניות, ובהן עוגיות של LinkedIn, Microsoft Clarity ו-Bing.</div>
 <div class="action"><b>הפעולה הנדרשת:</b> הפתרון הוא מניעה ולא מחיקה: יש לוודא שכל רכיב חיצוני נטען אך ורק לאחר אישור הקטגוריה המתאימה לו, כך שהעוגיות לא ייווצרו מלכתחילה. ברשימה נכללים גם רכיבים שאותרו בסעיפים 2 ו-3.</div>
 <div class="test"><b>בדיקת קבלה:</b> לאחר אישור מלא ואז ביטול, רשימת העוגיות אינה כוללת עוגיות מעקב, ורענון אינו מחזיר אותן.</div>
 </div></div></details><details class="sec"><summary><span>6. הרשאת צפייה לנכס ה-GA4 של אתר הסייבר<span class="env env">סייבר</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
-<div class="evidence">אתר הסייבר מדווח לנכס <code>G-J953T0BX2T</code>. בבדיקת רשימת הנכסים בחשבון שלנו היום הנכס עדיין אינו מופיע. כעת, לאחר שהמדידה באתר הסייבר פועלת כנדרש, זו הבדיקה האחרונה שנותרה כדי לאשר שהנתונים אכן נקלטים בצד גוגל ולא רק נשלחים מהדפדפן.</div>
+<div class="evidence">אתר הסייבר מדווח לנכס <code>G-J953T0BX2T</code>. בבדיקת רשימת הנכסים בחשבון שלנו היום הנכס עדיין אינו מופיע. ההרשאה נדרשת כדי לאמת שהנתונים נקלטים בצד גוגל ולא רק נשלחים מהדפדפן.</div>
 <div class="action"><b>הפעולה הנדרשת:</b> להעניק לנו הרשאת צפייה לנכס, ולאמת קליטת נתונים ב-DebugView או בדוח בזמן אמת.</div>
 <div class="test"><b>בדיקת קבלה:</b> הנכס מופיע ברשימת הנכסים שלנו ומציג משתמשים פעילים בזמן אמת.</div>
 </div></div></details>
