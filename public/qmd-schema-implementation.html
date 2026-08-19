@@ -124,1452 +124,29 @@ footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);
     <button type="button" id="closeAll">Collapse all</button>
   </div>
 </header>
-<div class="part part-start"><h2>Start here</h2><span class="pcount">1 section</span><p class="pblurb">How the whole thing is installed.</p></div>
-<details class="sec"><summary><span class="num">00</span><span class="stitle">How to install everything in this report</span><span class="badge">read first</span></summary><div class="body">
+<div class="part part-start"><h2>Install</h2><span class="pcount">2 sections</span><p class="pblurb">What to install, and how. Start here.</p></div>
+<details class="sec"><summary><span class="num">01</span><span class="stitle">How to install it</span><span class="badge">read first</span></summary><div class="body">
 <p>All of it ships as one file. The site already outputs a Yoast schema graph on every page, and
 every block below refers to the company node inside that graph by <code>@id</code>. Adding a second
 company node would describe QMD twice, so nothing here is pasted as a separate script. The file
 extends the graph that is already there.</p>
 <div class="spec"><div class="srow"><span class="sk">Install as</span><span class="sv"><code>wp-content/mu-plugins/qmd-schema.php</code></span></div><div class="srow"><span class="sk">No file access?</span><span class="sv">Paste the same code as a <strong>PHP snippet</strong> in WPCode or Code Snippets, running site-wide on the front end. Drop the plugin header comment and the <code>ABSPATH</code> guard, keep the rest.</span></div><div class="srow"><span class="sk">Do not put it in</span><span class="sv">The theme <code>functions.php</code>, the footer, an Elementor HTML widget, or Tag Manager.</span></div><div class="srow"><span class="sk">After installing</span><span class="sv">Purge the WP Rocket cache. Nothing changes in the served HTML until you do.</span></div></div>
 <ol class="steps">
-<li>Fill in whichever values from section 08 QMD can confirm. Leave the rest out.</li>
-<li>Install the file (section 09 has the whole thing).</li>
+<li>Fill in whichever values from section 10 QMD can confirm. Leave the rest out.</li>
+<li>Install the file (section 02 is the whole thing).</li>
 <li>Purge WP Rocket.</li>
 <li>Load any page, view source, confirm there is still exactly <strong>one</strong> JSON-LD script.</li>
 </ol>
-<p class="warn"><strong>The JSON in sections 01 to 07 is not for pasting.</strong> It is shown so the
+<p class="warn"><strong>The JSON in sections 03 to 09 is not for pasting.</strong> It is shown so the
 output can be read and checked before it goes live. Every block is already inside the file in
-section 09, and they share one set of <code>@id</code> references, so installing some by hand and
+section 02, and they share one set of <code>@id</code> references, so installing some by hand and
 some through the file would break the links between them. Install the file, then use those sections
 to verify what it produced.</p>
 <p class="warn">The code matches pages by request path, for example <code>/about/</code>. If you
 test on a staging copy in a <em>subdirectory</em>, every path carries that prefix and nothing will
 match. A staging subdomain is fine, the paths are identical.</p>
 </div></details>
-<div class="part part-essential"><h2>Essential: implement these first</h2><span class="pcount">4 sections</span><p class="pblurb">Four items, in the order they should be done.</p></div>
-<details class="sec"><summary><span class="num">01</span><span class="stitle">Organization</span><span class="badge">highest value</span></summary><div class="body">
-<p>This is the root of everything. Every other block points at it, and it is currently wrong: the
-company <code>name</code> is the site title, <span class="q">QMD: Silicone &amp; Polyisoprene
-Elastomer Manufacturer</span>. That string is what Google reads as the company's name today. Fixing
-it is the single highest-value change in this document.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Once, site-wide.</strong> One node for the entire website.</span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page. Yoast serialises the same company node into each page's graph.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>You configure it once.</strong> The values live in one place and Yoast repeats the node automatically. Never copy it onto individual pages, and never add a second one.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, but with only 5 properties. <strong>Enrich it, do not replace it.</strong> A second Organization node would split the company entity in two.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_organization</code> filter. Nothing is pasted onto a page.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">No rich result. This feeds entity understanding and knowledge-panel eligibility.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Any page still has exactly one JSON-LD graph containing exactly one Organization, and its <code>name</code> reads <code>QMD</code>. Two Organization nodes means it was pasted somewhere instead of filtered.</span></div></div>
-<p>The block below carries the whole company in one place: the corrected name, the description from
-the about page, the four addresses that are QMD's own, all ten facilities as named places with their
-own phone numbers, and the seven contact points from the contact and locations pages.</p>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>{
-  &quot;@type&quot;: &quot;Organization&quot;,
-  &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-  &quot;name&quot;: &quot;QMD&quot;,
-  &quot;url&quot;: &quot;https://qmd.net/&quot;,
-  &quot;description&quot;: &quot;We provide a full range of products and services to help OEMs bring medical devices to market. Specializing in silicone and other elastomerics, we manufacture a broad array of high-performance single-use devices as well as precision components and subassemblies. Our end-to-end services include engineering &amp; development, regulatory affairs, quality assurance, and supply chain support. Our global team partners with OEMs to provide tailored solutions to meet your needs.&quot;,
-  &quot;logo&quot;: {
-    &quot;@id&quot;: &quot;https://qmd.net/#/schema/logo/image/&quot;
-  },
-  &quot;image&quot;: {
-    &quot;@id&quot;: &quot;https://qmd.net/#/schema/logo/image/&quot;
-  },
-  &quot;telephone&quot;: &quot;+1-262-833-1571&quot;,
-  &quot;address&quot;: [
-    {
-      &quot;@type&quot;: &quot;PostalAddress&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#address-hq&quot;,
-      &quot;streetAddress&quot;: &quot;30100 Chagrin Blvd., Suite 201&quot;,
-      &quot;addressLocality&quot;: &quot;Pepper Pike&quot;,
-      &quot;addressRegion&quot;: &quot;OH&quot;,
-      &quot;postalCode&quot;: &quot;44124&quot;,
-      &quot;addressCountry&quot;: &quot;US&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;PostalAddress&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#address-sturtevant&quot;,
-      &quot;streetAddress&quot;: &quot;1810 Renaissance Blvd&quot;,
-      &quot;addressLocality&quot;: &quot;Sturtevant&quot;,
-      &quot;addressRegion&quot;: &quot;WI&quot;,
-      &quot;postalCode&quot;: &quot;53177&quot;,
-      &quot;addressCountry&quot;: &quot;US&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;PostalAddress&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#address-regensburg&quot;,
-      &quot;streetAddress&quot;: &quot;Stadtamhof 18&quot;,
-      &quot;addressLocality&quot;: &quot;Regensburg&quot;,
-      &quot;postalCode&quot;: &quot;D-93059&quot;,
-      &quot;addressCountry&quot;: &quot;DE&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;PostalAddress&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#address-hatzor&quot;,
-      &quot;streetAddress&quot;: &quot;Industrial Area&quot;,
-      &quot;addressLocality&quot;: &quot;Hatzor HaGlili&quot;,
-      &quot;addressCountry&quot;: &quot;IL&quot;
-    }
-  ],
-  &quot;location&quot;: [
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-hq&quot;,
-      &quot;name&quot;: &quot;QMD Global Headquarters&quot;,
-      &quot;address&quot;: {
-        &quot;@id&quot;: &quot;https://qmd.net/#address-hq&quot;
-      },
-      &quot;telephone&quot;: &quot;+1-262-833-1571&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-sturtevant&quot;,
-      &quot;name&quot;: &quot;QMD USA Customer Service&quot;,
-      &quot;address&quot;: {
-        &quot;@id&quot;: &quot;https://qmd.net/#address-sturtevant&quot;
-      },
-      &quot;telephone&quot;: &quot;+1-262-833-1571&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-regensburg&quot;,
-      &quot;name&quot;: &quot;QMD Europe Customer Service Center, Germany&quot;,
-      &quot;address&quot;: {
-        &quot;@id&quot;: &quot;https://qmd.net/#address-regensburg&quot;
-      },
-      &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
-      &quot;faxNumber&quot;: &quot;+49-941-830-536-29&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-saclay&quot;,
-      &quot;name&quot;: &quot;Arthesys S.A, France&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-saclay&quot;,
-        &quot;streetAddress&quot;: &quot;4 Rue René Razel, Cosmos Building&quot;,
-        &quot;addressLocality&quot;: &quot;Saclay&quot;,
-        &quot;postalCode&quot;: &quot;91400&quot;,
-        &quot;addressCountry&quot;: &quot;FR&quot;
-      },
-      &quot;telephone&quot;: &quot;+33 (0)1-41-11-87-77&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-arthesys-samorin&quot;,
-      &quot;name&quot;: &quot;Arthesys S.R.O.&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-arthesys-samorin&quot;,
-        &quot;streetAddress&quot;: &quot;Vicenzy 16&quot;,
-        &quot;addressLocality&quot;: &quot;Samorin&quot;,
-        &quot;postalCode&quot;: &quot;93101&quot;,
-        &quot;addressCountry&quot;: &quot;SK&quot;
-      },
-      &quot;telephone&quot;: &quot;+421 31 2851810&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-biometrix-samorin&quot;,
-      &quot;name&quot;: &quot;Biometrix S.R.O.&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-biometrix-samorin&quot;,
-        &quot;streetAddress&quot;: &quot;Vicenzy 16&quot;,
-        &quot;addressLocality&quot;: &quot;Samorin&quot;,
-        &quot;postalCode&quot;: &quot;93101&quot;,
-        &quot;addressCountry&quot;: &quot;SK&quot;
-      },
-      &quot;telephone&quot;: &quot;+421 31 2851810&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-hatzor&quot;,
-      &quot;name&quot;: &quot;QMD Shomrat – Hatzor HaGlili, Israel&quot;,
-      &quot;address&quot;: {
-        &quot;@id&quot;: &quot;https://qmd.net/#address-hatzor&quot;
-      },
-      &quot;telephone&quot;: &quot;+972-4-6801270&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-degania-bet&quot;,
-      &quot;name&quot;: &quot;Degania Silicone Ltd, Israel&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-degania-bet&quot;,
-        &quot;addressLocality&quot;: &quot;Degania Bet&quot;,
-        &quot;postalCode&quot;: &quot;1513000&quot;,
-        &quot;addressCountry&quot;: &quot;IL&quot;
-      },
-      &quot;telephone&quot;: &quot;+972-4-6755100&quot;,
-      &quot;faxNumber&quot;: &quot;+972-4-6709182&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-jerusalem&quot;,
-      &quot;name&quot;: &quot;Biometrix Ltd, Israel&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-jerusalem&quot;,
-        &quot;streetAddress&quot;: &quot;POB 45057&quot;,
-        &quot;addressLocality&quot;: &quot;Jerusalem&quot;,
-        &quot;postalCode&quot;: &quot;91450&quot;,
-        &quot;addressCountry&quot;: &quot;IL&quot;
-      },
-      &quot;telephone&quot;: &quot;+972-2-5861241&quot;
-    },
-    {
-      &quot;@type&quot;: &quot;Place&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#place-gurgaon&quot;,
-      &quot;name&quot;: &quot;Degania Medical Devices Pvt. Ltd, India&quot;,
-      &quot;address&quot;: {
-        &quot;@type&quot;: &quot;PostalAddress&quot;,
-        &quot;@id&quot;: &quot;https://qmd.net/#address-gurgaon&quot;,
-        &quot;streetAddress&quot;: &quot;251, Sec.-6, IMT Manesar&quot;,
-        &quot;addressLocality&quot;: &quot;Gurgaon&quot;,
-        &quot;addressRegion&quot;: &quot;Haryana&quot;,
-        &quot;postalCode&quot;: &quot;122050&quot;,
-        &quot;addressCountry&quot;: &quot;IN&quot;
-      },
-      &quot;telephone&quot;: &quot;+91-124-4367115&quot;
-    }
-  ],
-  &quot;contactPoint&quot;: [
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Shawn Moran, US Business Development Director&quot;,
-      &quot;telephone&quot;: &quot;+1 (216) 978-4342&quot;,
-      &quot;email&quot;: &quot;smoran@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;North America&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Ido Dafni, Head of Sales – Middle East &amp; North Africa&quot;,
-      &quot;telephone&quot;: &quot;+421 947936859&quot;,
-      &quot;email&quot;: &quot;idafni@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;Middle East and North Africa&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Jason Malone, Business Development Manager&quot;,
-      &quot;telephone&quot;: &quot;+353-87 822 3783&quot;,
-      &quot;email&quot;: &quot;jmalone@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;Europe&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Mercedes Matias, Global Business Development Manager&quot;,
-      &quot;telephone&quot;: [
-        &quot;+972 73-2257145&quot;,
-        &quot;+972 52-3617000&quot;
-      ],
-      &quot;email&quot;: &quot;mmatias@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;International (Biometrix)&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Veronique Ben Simhoun, Business Development Manager&quot;,
-      &quot;email&quot;: &quot;vbensimhoun@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;Industrial Silicone Products&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;sales&quot;,
-      &quot;name&quot;: &quot;Cyril ISOARD, OEM Business Development Director&quot;,
-      &quot;telephone&quot;: &quot;+33 (0)6 50 67 20 46&quot;,
-      &quot;email&quot;: &quot;cisoard@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;International (Arthesys)&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;ContactPoint&quot;,
-      &quot;contactType&quot;: &quot;customer service&quot;,
-      &quot;name&quot;: &quot;QMD Europe Customer Service Center&quot;,
-      &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
-      &quot;email&quot;: &quot;de-info@qmd.net&quot;,
-      &quot;areaServed&quot;: &quot;Europe&quot;,
-      &quot;availableLanguage&quot;: [
-        &quot;en&quot;,
-        &quot;de&quot;
-      ]
-    }
-  ],
-  &quot;areaServed&quot;: [
-    &quot;US&quot;,
-    &quot;IL&quot;,
-    &quot;DE&quot;,
-    &quot;FR&quot;,
-    &quot;SK&quot;,
-    &quot;IN&quot;
-  ],
-  &quot;knowsAbout&quot;: [
-    &quot;Medical device contract manufacturing&quot;,
-    &quot;Silicone and polyisoprene elastomer molding&quot;,
-    &quot;Medical-grade silicone extrusion&quot;,
-    &quot;Balloon catheter design and manufacturing&quot;,
-    &quot;Complete device and kit assembly&quot;,
-    &quot;Packaging and sterilization&quot;,
-    &quot;Surgical devices&quot;,
-    &quot;Urology devices&quot;,
-    &quot;Vascular devices&quot;,
-    &quot;Gastroenterology and enteral feeding devices&quot;,
-    &quot;Critical care devices&quot;,
-    &quot;Single-use devices and precision components&quot;
-  ]
-}</code></pre></div>
-</div></details>
-<details class="sec"><summary><span class="num">02</span><span class="stitle">BreadcrumbList</span><span class="badge">already live &middot; 1 fix</span></summary><div class="body">
-<p><strong>Breadcrumbs already work on this site.</strong> Yoast outputs a correct four-level trail
-on product pages, for example Home &rsaquo; Products &rsaquo; Arthesys&trade; Products &rsaquo; PTCA
-Catheters. Do not add breadcrumb markup, and do not touch the inner pages: duplicating it would be
-worse than leaving it alone.</p>
-<p>There is exactly one defect. On the homepage the trail contains a single item,
-<span class="q">Home</span>, and Google's requirement is to <span class="q">define a BreadcrumbList
-that contains at least two ListItems</span>. A one-item trail cannot qualify, so it is removed on
-the homepage only.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One fix, homepage only.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page already. Only <code>https://qmd.net/</code> changes.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. Yoast already generates the trail dynamically per page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, and correct everywhere except the homepage.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09: the <code>wpseo_schema_needs_breadcrumb</code> filter, plus two lines inside the single <code>wpseo_schema_webpage</code> callback that section 05 also uses. There is one such callback in the file, not two.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">Inner pages already carry valid breadcrumb markup, which is what makes them eligible. This fix removes an invalid trail; it does not change inner pages.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The homepage source contains no <code>BreadcrumbList</code> and no leftover <code>breadcrumb</code> reference, while a product page still shows its four-level trail.</span></div></div>
-<p class="warn">Both halves are required. Yoast attaches the <code>breadcrumb</code> reference to
-the WebPage node unconditionally, skipping it only on a 404. Removing the piece without also
-removing the reference would leave the homepage pointing at an <code>@id</code> that no longer
-exists.</p>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>// 1. stop Yoast emitting the one-item breadcrumb on the homepage
-add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
-	return ( &#x27;/&#x27; === qmd_schema_path() ) ? false : $needed;
-} );
-
-// 2. remove the reference that would otherwise point at the deleted node
-//    (inside the wpseo_schema_webpage filter)
-if ( &#x27;/&#x27; === $path ) {
-	unset( $data[&#x27;breadcrumb&#x27;] );
-}</code></pre></div>
-</div></details>
-<details class="sec"><summary><span class="num">03</span><span class="stitle">Product and MedicalDevice</span><span class="badge">14 pages</span></summary><div class="body">
-<p>Fourteen product pages carry no product markup at all. They are the pages that describe what QMD
-actually makes, and between them they draw roughly 840 organic clicks a year. Each gets one node
-typed as both <code>Product</code> and <code>MedicalDevice</code>, built from that page's own
-heading, opening paragraph, image and specification table.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 14 product detail pages only. Not the three brand hubs, not <code>/product/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 14 separate nodes</strong>, each with its own name, description, image and specs. They are not interchangeable.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No. Nothing product-related exists today.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter, matched on the request path.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>None today</strong>, and none is possible while the pages carry no price and no reviews. Read the note below before you test.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Each of the 14 pages carries exactly one Product node. The three brand hubs and <code>/product/</code> carry none. No price, availability or rating appears anywhere.</span></div></div>
-<div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/product/arthesys-products/aspiration-catheters/" target="_blank" rel="noopener">/product/arthesys-products/aspiration-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/" target="_blank" rel="noopener">/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/</a></li><li><a href="https://qmd.net/product/arthesys-products/pta-catheters/" target="_blank" rel="noopener">/product/arthesys-products/pta-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/ptca-catheters/" target="_blank" rel="noopener">/product/arthesys-products/ptca-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/y-connectors-accessories/" target="_blank" rel="noopener">/product/arthesys-products/y-connectors-accessories/</a></li><li><a href="https://qmd.net/product/biometrix-products/arterial-catheters/" target="_blank" rel="noopener">/product/biometrix-products/arterial-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/central-venous-catheters/" target="_blank" rel="noopener">/product/biometrix-products/central-venous-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/rapid-infusion-catheters/" target="_blank" rel="noopener">/product/biometrix-products/rapid-infusion-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/" target="_blank" rel="noopener">/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/enteral-feeding/" target="_blank" rel="noopener">/product/degania-products/enteral-feeding/</a></li><li><a href="https://qmd.net/product/degania-products/silicone-tubing/" target="_blank" rel="noopener">/product/degania-products/silicone-tubing/</a></li><li><a href="https://qmd.net/product/degania-products/urinary-catheters/" target="_blank" rel="noopener">/product/degania-products/urinary-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/vessel-loops/" target="_blank" rel="noopener">/product/degania-products/vessel-loops/</a></li><li><a href="https://qmd.net/product/degania-products/wound-drainage/" target="_blank" rel="noopener">/product/degania-products/wound-drainage/</a></li></ul></div>
-<p class="warn"><strong>Read this before running the Rich Results Test.</strong> These blocks carry
-no <code>offers</code>, no <code>review</code> and no <code>aggregateRating</code>, because QMD
-publishes no prices, no reviews and no ratings. Google's rule is explicit: <span class="q">Product
-snippets require either review or aggregateRating or offers.</span> So the Rich Results Test will
-report the product item as ineligible and Search Console may list these pages as invalid under
-Product snippets. <strong>That is the expected outcome, not a defect.</strong> Do not add a zero
-price, a placeholder currency, an availability value or an invented rating to clear it. That would
-state something false about a quote-based business.</p>
-<p>What the markup is for here is entity understanding: it states that QMD manufactures these
-devices and which of the three acquired brands each belongs to. For a contract manufacturer, that
-relationship is the commercial proposition, and no other schema type expresses it.</p>
-<p class="sub">All fourteen blocks</p>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/#product&quot;,
-    &quot;name&quot;: &quot;PEGASE Aspiration Catheters&quot;,
-    &quot;description&quot;: &quot;Designed for simple and effective thrombus aspiration procedures.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/aspiration-catheters.jpeg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Arthesys&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;,
-    &quot;additionalProperty&quot;: [
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;04030105 – DESCRIPTION&quot;,
-        &quot;value&quot;: &quot;Pegase HYDRO 6F S Stiff&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;04030105 – INNER DIAMETER&quot;,
-        &quot;value&quot;: &quot;1.10mm&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;04030106 – DESCRIPTION&quot;,
-        &quot;value&quot;: &quot;Pegase HYDRO 7F S Stiff&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;04030106 – INNER DIAMETER&quot;,
-        &quot;value&quot;: &quot;1.40mm&quot;
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/#product&quot;,
-    &quot;name&quot;: &quot;CYGNUS II Cobalt Chromium Stent&quot;,
-    &quot;description&quot;: &quot;Uncompromising strength, outstanding flexibility, and a reliable performer.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/cygnus-ii-cobalt-chromium-stent.jpeg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Arthesys&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/#product&quot;,
-    &quot;name&quot;: &quot;PTA Catheters&quot;,
-    &quot;description&quot;: &quot;Next generation technology backed by decades of expertise, the Arthesys™ LYNX PTA Balloon Catheters are customized, turnkey PTA solutions designed by engineering authorities for brighter outcomes.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/pta-catheters.jpeg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Arthesys&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/#product&quot;,
-    &quot;name&quot;: &quot;PTCA Catheters&quot;,
-    &quot;description&quot;: &quot;QMD™ combines 4 generations of PTCA catheter development and 2 decades of global market insights with exceptional capabilities to serve the complex needs of OEMs, hospitals and doctors every day.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/arthesys-ptca-catheter.png&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Arthesys&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/#product&quot;,
-    &quot;name&quot;: &quot;Hemostatic Valves &amp; Accessories&quot;,
-    &quot;description&quot;: &quot;Arthesys Hemostasis Valves are engineered to deliver secure vascular access management during interventional and diagnostic procedures.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/y-connectors.jpeg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Arthesys&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/#product&quot;,
-    &quot;name&quot;: &quot;Arterial Catheters&quot;,
-    &quot;description&quot;: &quot;Biometrix™ arterial catheters are generally used to provide access for arterial blood pressure monitoring and administration of medication and/or anesthesia. Designed to improve patient safety, the catheters decrease the risk of complications associated with insertion techniques and provide optimal diagnostics, leading to effective treatment for patients.Biometrix arterial catheters feature anti-kink polyurethane catheters and complete Seldinger kits that provide an all-in-one solution for performing femoral and radial arterial catheterizations.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-arterial-catheters.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Biometrix&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/#product&quot;,
-    &quot;name&quot;: &quot;Central Venous Catheters&quot;,
-    &quot;description&quot;: &quot;QMD™ introduces its Biometrix™ Central Venous Catheter Program, engineered to ensure safety and performance. The Central Venous Catheter Program offers a variety of patient sizes (pediatric and adult), insertion sites and applications. A comprehensive portfolio includes kits for both adult and pediatric patients which are used in various acute settings in Hospitals.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-Biometrix%E2%84%A2-Products-min.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Biometrix&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/#product&quot;,
-    &quot;name&quot;: &quot;Rapid Infusion Catheters&quot;,
-    &quot;description&quot;: &quot;Biometrix™ rapid infusion catheters are used for faster, large-bore venous access and provide a safe and efficient solution during trauma cases.Biometrix rapid infusion catheters improve emergency fluid resuscitation with higher flow rates and the fastest guide wire insertion technique.Central Venous AccessA catheter sheath dilator and assembly with unique anti-kink neck design enables fast insertion into central veins. The thin wall of the 8FR lumen facilitates a high flow of fluids and blood to a critically ill patient.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/catheter-lumen-design.png&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Biometrix&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/#product&quot;,
-    &quot;name&quot;: &quot;Temperature Sensing (TSC) Foley Catheters&quot;,
-    &quot;description&quot;: &quot;Biometrix™ temperature sensing Foley catheters allow continuous drainage of urine and continuous measurement of body temperature. Accurate and reliable, Biometrix TSCs are suitable for use in multiple clinical settings, including operating rooms, emergency departments, intensive care areas, post-anesthesia care units and on general care floors.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-temperature-sensing-min.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Biometrix&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/#product&quot;,
-    &quot;name&quot;: &quot;Enteral Feeding&quot;,
-    &quot;description&quot;: &quot;Degania™ Enteral Feeding products are designed with the goal of making life simpler, safer and more comfortable for patients, while providing excellent clinical functionality. The innovative Degania Enteral Feeding line includes standard and specialty items for adults and children, a variety of materials and a comprehensive range of sizes to provide individual solutions to meet each patient’s unique needs.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-enteral-feeding-min-1.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Degania&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/#product&quot;,
-    &quot;name&quot;: &quot;Silicone Tubing&quot;,
-    &quot;description&quot;: &quot;Manufactured in Class 8 clean rooms in compliance with ISO 13485 quality standards, Degania™ Silicone Tubing meets the requirements of the medical and biotech industry.Custom-made specific solutions are available outside our standard product portfolio: ID/OD sizing, labeling, and a variety of packaging options including bulk, double packed, spooled and cut-to-length.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/04/silicone-tube.png&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Degania&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;,
-    &quot;additionalProperty&quot;: [
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Material: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;100% Silicone&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Curing: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;Platinum Cured&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Hardness: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;55-65 shore A&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Biocompatibility: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;ISO 10993-1&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Certificates: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;FDA 510K / CE mark&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Standards: – Comprehensive range ofsizes (in the following table)&quot;,
-        &quot;value&quot;: &quot;ISO 13485&quot;
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/#product&quot;,
-    &quot;name&quot;: &quot;Urinary Catheters&quot;,
-    &quot;description&quot;: &quot;Expertise you can trust, Degania™ transurethral and supra-pubic Foley balloon catheters are manufactured with the high standards for urinary drainage and irrigation in mind. We strive for perfection throughout the production process so we can deliver the quality catheters medical professionals, hospitals and patients deserve.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-urinary-catheters-min.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Degania&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/#product&quot;,
-    &quot;name&quot;: &quot;Vessel Loops&quot;,
-    &quot;description&quot;: &quot;Degania™ Vessel Loops are designed to provide flexible, semi-elastic retraction for soft and delicate tissues including blood vessels, nerves and tendons, in order to allow their temporary shift during a surgical procedure and enable improved visibility and access to underlying anatomical parts.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-surgical-vessel-loops-min-1.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Degania&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;,
-    &quot;additionalProperty&quot;: [
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Mini – Vessel Loops – WIDTH (MM)&quot;,
-        &quot;value&quot;: &quot;1.3&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Mini – Vessel Loops – THICKNESS (MM)&quot;,
-        &quot;value&quot;: &quot;0.9&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Maxi – Vessel Loops – WIDTH (MM)&quot;,
-        &quot;value&quot;: &quot;2.4&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Maxi – Vessel Loops – THICKNESS (MM)&quot;,
-        &quot;value&quot;: &quot;1.1&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Super Maxi – Vessel Loops – WIDTH (MM)&quot;,
-        &quot;value&quot;: &quot;4.7&quot;
-      },
-      {
-        &quot;@type&quot;: &quot;PropertyValue&quot;,
-        &quot;name&quot;: &quot;Super Maxi – Vessel Loops – THICKNESS (MM)&quot;,
-        &quot;value&quot;: &quot;1.3&quot;
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: [
-      &quot;Product&quot;,
-      &quot;MedicalDevice&quot;
-    ],
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/#product&quot;,
-    &quot;name&quot;: &quot;Wound Drainage&quot;,
-    &quot;description&quot;: &quot;Elevate the standard of care, improve outcomes and drive value with Degania™ Advanced Wound Drainage Solutions. Backed by decades of experience and unparalleled expertise, Degania product designs support optimal patient outcomes and ensure surgeons have the right solutions for the right procedures.&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-wound-drainage-min.jpg&quot;,
-    &quot;brand&quot;: {
-      &quot;@type&quot;: &quot;Brand&quot;,
-      &quot;name&quot;: &quot;Degania&quot;
-    },
-    &quot;manufacturer&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    },
-    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
-  }
-]</code></pre></div>
-</div></details>
-<details class="sec"><summary><span class="num">04</span><span class="stitle">ProfilePage and Person</span><span class="badge">12 pages</span></summary><div class="body">
-<p>Twelve executives each have their own page, and all twelve already average a top-ten position.
-Google supports <code>ProfilePage</code> and names <span class="q">an employee page on a company
-website</span> as a valid use of it, with the person carried in <code>mainEntity</code>. Of
-everything new in this document, this is the only markup eligible for a type Google supports.
-Eligibility is not a promise that an enhancement report will appear.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 12 <code>/leadership/{{slug}}/</code> pages only. Not the hub, not the archive.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 12 separate nodes</strong>, each with its own name, title, photo and bio.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09: <code>wpseo_schema_webpage</code> sets the page type, <code>wpseo_schema_graph</code> adds the Person node.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>Profile page.</strong> Person on its own has no rich result, which is why it is wrapped this way.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">All 12 profiles report <code>ProfilePage</code> with <code>mainEntity</code> pointing at that page's Person. The <code>/leadership/</code> archive and its second page carry none.</span></div></div>
-<div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/leadership/david-lustig/" target="_blank" rel="noopener">/leadership/david-lustig/</a></li><li><a href="https://qmd.net/leadership/amitai-pollak/" target="_blank" rel="noopener">/leadership/amitai-pollak/</a></li><li><a href="https://qmd.net/leadership/kelly-marie-dureiko/" target="_blank" rel="noopener">/leadership/kelly-marie-dureiko/</a></li><li><a href="https://qmd.net/leadership/maya-naftali/" target="_blank" rel="noopener">/leadership/maya-naftali/</a></li><li><a href="https://qmd.net/leadership/jean-romuald-bonnin/" target="_blank" rel="noopener">/leadership/jean-romuald-bonnin/</a></li><li><a href="https://qmd.net/leadership/vikas-bhardwaj/" target="_blank" rel="noopener">/leadership/vikas-bhardwaj/</a></li><li><a href="https://qmd.net/leadership/ariela-rubinchik/" target="_blank" rel="noopener">/leadership/ariela-rubinchik/</a></li><li><a href="https://qmd.net/leadership/tali-raz/" target="_blank" rel="noopener">/leadership/tali-raz/</a></li><li><a href="https://qmd.net/leadership/vikas-jund/" target="_blank" rel="noopener">/leadership/vikas-jund/</a></li><li><a href="https://qmd.net/leadership/hartesh-juneja/" target="_blank" rel="noopener">/leadership/hartesh-juneja/</a></li><li><a href="https://qmd.net/leadership/hagit-gavish/" target="_blank" rel="noopener">/leadership/hagit-gavish/</a></li><li><a href="https://qmd.net/leadership/peter-vajo/" target="_blank" rel="noopener">/leadership/peter-vajo/</a></li></ul></div>
-<p class="warn"><strong>One page is not what its URL says.</strong>
-<code>/leadership/hartesh-juneja/</code> is <strong>Atul Malik</strong>. The page title, the bio, the
-photo and Yoast's own breadcrumb all say Atul Malik; only the slug says otherwise. The block below
-uses the person the page is actually about. Generating this from the slug would publish a person who
-does not work at QMD.</p>
-<p class="note">Separately from the markup: these twelve URLs are in no sitemap. That is a Yoast
-settings fix, not a schema one, and it is in section 11.</p>
-<p class="sub">All twelve blocks</p>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/david-lustig/#person&quot;,
-    &quot;name&quot;: &quot;David Lustig&quot;,
-    &quot;jobTitle&quot;: &quot;President&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/david-lustig/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/David.jpg&quot;,
-    &quot;description&quot;: &quot;David has over 25 years of global leadership in pharma and medical devices. He served in executive roles at Teva Pharmaceuticals—including SVP of Global Operations—before joining QMD .&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/amitai-pollak/#person&quot;,
-    &quot;name&quot;: &quot;Amitai Pollak&quot;,
-    &quot;jobTitle&quot;: &quot;Chief Information Officer (CIO)&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/amitai-pollak/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Amitai.jpg&quot;,
-    &quot;description&quot;: &quot;Amitai brings 25+ years in IT leadership, including senior roles such as SVP AWS Managed Services at AllCloud and SVP Business Applications at Yael Group. He also served as CIO for international markets at Teva Pharmaceuticals.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/#person&quot;,
-    &quot;name&quot;: &quot;Kelly Marie Dureiko&quot;,
-    &quot;jobTitle&quot;: &quot;Chief Financial Officer (CFO)&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Kelly.jpg&quot;,
-    &quot;description&quot;: &quot;Kelly brings more than 35 years of expertise in finance, process optimization, and audit oversight. Before QMD, she held multiple leadership roles including CFO of the GE LED Lighting business during her 16-year tenure at General Electric.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/maya-naftali/#person&quot;,
-    &quot;name&quot;: &quot;Maya Naftali&quot;,
-    &quot;jobTitle&quot;: &quot;EVP, Degania &amp; Biometrix Commercial Business Units&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/maya-naftali/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Maya-1.jpg&quot;,
-    &quot;description&quot;: &quot;Maya leads QMD’s Degania and Biometrix Commercial Business Units, overseeing strategy, sales, marketing, and customer partnerships. With over 17 years of experience in the medical device industry, she has held diverse leadership roles across product management, business development, and commercial operations at Lumenis, Syneron and other Medical Devices companies.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/#person&quot;,
-    &quot;name&quot;: &quot;Jean Romuald Bonnin&quot;,
-    &quot;jobTitle&quot;: &quot;EVP, Arthesys Commercial Business Unit&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Jean.jpg&quot;,
-    &quot;description&quot;: &quot;Jean leads QMD’s Arthesys Commercial and R&amp;D Business Unit. With over 25 years of experience in the medical device industry, he has held diverse leadership roles at B. Braun Medical, Climdal, and other leading healthcare companies.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/#person&quot;,
-    &quot;name&quot;: &quot;Vikas Bhardwaj&quot;,
-    &quot;jobTitle&quot;: &quot;EVP, Global Supply Chain &amp; Strategic Operations&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/vikas-2.jpg&quot;,
-    &quot;description&quot;: &quot;With nearly three decades of leadership across automotive, lighting, consumer electronics, and medical devices, Vikas first joined QMD as Plant Manager in India before ascending to his current global role. Earlier, he held Plant Manager role at Schneider Electric and Operation head at Philips Lighting.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/#person&quot;,
-    &quot;name&quot;: &quot;Ariela Rubinchik&quot;,
-    &quot;jobTitle&quot;: &quot;VP Global HR&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/ariela.jpg&quot;,
-    &quot;description&quot;: &quot;With over 25 years of experience, Ariela leads QMD’s global HR team, supporting associates across multiple sites. She is dedicated to aligning people strategies with business purpose and performance. Prior to QMD, she served as VP of HR at Afimilk, driving HR strategy through an international expansion phase.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/tali-raz/#person&quot;,
-    &quot;name&quot;: &quot;Tali Raz&quot;,
-    &quot;jobTitle&quot;: &quot;VP Global QA/RA – Degania and Biometrix Business Units&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/tali-raz/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Tali.jpg&quot;,
-    &quot;description&quot;: &quot;Tali leads the Global Quality Assurance and Regulatory Affairs functions for QMD’s Degania and Biometrix BUs. She brings extensive experience in QA/RA leadership across both the medical device and pharmaceutical industries. Prior to joining QMD, Tali held leadership roles at Teva Pharmaceuticals and Medimor – Contract Manufacturing.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-jund/#person&quot;,
-    &quot;name&quot;: &quot;Vikas Jund&quot;,
-    &quot;jobTitle&quot;: &quot;VP Operations India&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/vikas-jund/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/vj-2.jpg&quot;,
-    &quot;description&quot;: &quot;Vikas brings 25+ years of operational leadership, quality management, project execution, and lean transformation. Before QMD, he held senior positions at Philips and Schneider Electric.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/#person&quot;,
-    &quot;name&quot;: &quot;Atul Malik&quot;,
-    &quot;jobTitle&quot;: &quot;VP Global QA/RA – Arthesys Business Unit&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/atul-1.jpg&quot;,
-    &quot;description&quot;: &quot;Atul joined QMD in 2018 as a Project Manager, later served as Engineering Manager and he was recently appointed to QMD Global QA/RA Leader for the ARTHESYS Business Unit.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/hagit-gavish/#person&quot;,
-    &quot;name&quot;: &quot;Hagit Gavish&quot;,
-    &quot;jobTitle&quot;: &quot;VP Operations Israel&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/hagit-gavish/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/share_1757497657109.png&quot;,
-    &quot;description&quot;: &quot;Hagit has 25+ years in manufacturing leadership, with a strong focus on operations management, quality systems, lean culture, and continuous improvement. She previously held director-level roles at Spuntech Industries, Palram Americas, and Nilit Ltd.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  },
-  {
-    &quot;@type&quot;: &quot;Person&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/leadership/peter-vajo/#person&quot;,
-    &quot;name&quot;: &quot;Peter Vajo&quot;,
-    &quot;jobTitle&quot;: &quot;VP Operations Slovakia&quot;,
-    &quot;url&quot;: &quot;https://qmd.net/leadership/peter-vajo/&quot;,
-    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/peter-1.jpg&quot;,
-    &quot;description&quot;: &quot;Peter offers over 28 years of experience in engineering, project management, and plant operations in the automotive and food industries. He currently serves as Operations Director for QMD Slovakia (Arthesys and Biometrix). Previously, he led initiatives at Plastic Omnium and Mondelez.&quot;,
-    &quot;worksFor&quot;: {
-      &quot;@type&quot;: &quot;Organization&quot;,
-      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-      &quot;name&quot;: &quot;QMD&quot;,
-      &quot;url&quot;: &quot;https://qmd.net/&quot;
-    }
-  }
-]</code></pre></div>
-</div></details>
-<div class="part part-additional"><h2>Additional: once the essentials are live</h2><span class="pcount">3 sections</span><p class="pblurb">Worth having, none of it urgent, none of it produces a Google rich result.</p></div>
-<details class="sec"><summary><span class="num">05</span><span class="stitle">Page types</span></summary><div class="body">
-<p>Three pages are typed as a generic <code>WebPage</code> when a more specific type applies. This
-adds no node, it refines the one already there, so the <code>@id</code> and every existing
-relationship stay intact.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Three specific pages.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/about/</code>, <code>/contact/</code>, <code>/qmd-leadership/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. One mapping covers all three.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">The WebPage node exists; only its <code>@type</code> changes.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, in the same single <code>wpseo_schema_webpage</code> callback used by section 02.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. These are descriptive types, not SERP features.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Those three pages report the new <code>@type</code>; every other page still reports <code>WebPage</code>.</span></div></div>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
-	$path = qmd_schema_path();
-	$types = array(
-		&#x27;/about/&#x27;           =&gt; &#x27;AboutPage&#x27;,
-		&#x27;/contact/&#x27;         =&gt; &#x27;ContactPage&#x27;,
-		&#x27;/qmd-leadership/&#x27;  =&gt; &#x27;CollectionPage&#x27;,
-	);
-	if ( isset( $types[ $path ] ) ) {
-		$data[&#x27;@type&#x27;] = $types[ $path ];
-	}
-	return $data;
-} );</code></pre></div>
-</div></details>
-<details class="sec"><summary><span class="num">06</span><span class="stitle">ItemList</span></summary><div class="body">
-<p>Four listing pages state their contents by reference: the leadership hub points at the twelve
-profile pages, and each brand hub points at its own product pages. Each entry is a bare
-<code>@id</code> pointing at the identifier used on the detail page, so the person and product data
-is written once, on the page it belongs to, and never duplicated onto the hub.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per listing page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/qmd-leadership/</code> and the three <code>/product/{{brand}}-products/</code> hubs.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">Yes, 4 nodes, one per listing page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. ItemList produces a carousel only for types this site does not have.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The leadership hub lists 12 entries. Each brand hub lists only its own product pages.</span></div></div>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
-  {
-    &quot;@type&quot;: &quot;ItemList&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/qmd-leadership/#leadership-list&quot;,
-    &quot;name&quot;: &quot;QMD Leadership&quot;,
-    &quot;numberOfItems&quot;: 12,
-    &quot;itemListElement&quot;: [
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 1,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/david-lustig/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 2,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/amitai-pollak/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 3,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 4,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/maya-naftali/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 5,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 6,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 7,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 8,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/tali-raz/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 9,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-jund/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 10,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 11,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/hagit-gavish/#person&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 12,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/leadership/peter-vajo/#person&quot;
-        }
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: &quot;ItemList&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/#product-list&quot;,
-    &quot;name&quot;: &quot;Arthesys™ Products&quot;,
-    &quot;numberOfItems&quot;: 5,
-    &quot;itemListElement&quot;: [
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 1,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 2,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 3,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 4,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 5,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/#product&quot;
-        }
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: &quot;ItemList&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/#product-list&quot;,
-    &quot;name&quot;: &quot;Degania™ Products&quot;,
-    &quot;numberOfItems&quot;: 5,
-    &quot;itemListElement&quot;: [
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 1,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 2,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 3,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 4,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 5,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/#product&quot;
-        }
-      }
-    ]
-  },
-  {
-    &quot;@type&quot;: &quot;ItemList&quot;,
-    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/#product-list&quot;,
-    &quot;name&quot;: &quot;Biometrix™ Products&quot;,
-    &quot;numberOfItems&quot;: 4,
-    &quot;itemListElement&quot;: [
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 1,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 2,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 3,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/#product&quot;
-        }
-      },
-      {
-        &quot;@type&quot;: &quot;ListItem&quot;,
-        &quot;position&quot;: 4,
-        &quot;item&quot;: {
-          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/#product&quot;
-        }
-      }
-    ]
-  }
-]</code></pre></div>
-</div></details>
-<details class="sec"><summary><span class="num">07</span><span class="stitle">Service and OfferCatalog</span></summary><div class="body">
-<p>The capabilities page prints fifteen named services in two groups: nine under Engineering and
-Development, six under Manufacturing. Those exact names become a catalogue of services with QMD as
-provider.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node, one page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/capabilities/</code> only.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. There is no service rich result in Google Search.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv"><code>/capabilities/</code> carries one catalogue containing 15 services, 9 and 6, with no <code>Offer</code> price.</span></div></div>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>{
-  &quot;@type&quot;: &quot;OfferCatalog&quot;,
-  &quot;@id&quot;: &quot;https://qmd.net/capabilities/#catalog&quot;,
-  &quot;name&quot;: &quot;End-to-End Medical Device Products &amp; Services&quot;,
-  &quot;itemListElement&quot;: [
-    {
-      &quot;@type&quot;: &quot;OfferCatalog&quot;,
-      &quot;name&quot;: &quot;Engineering &amp; Development&quot;,
-      &quot;itemListElement&quot;: [
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Ideation and Prototyping&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Material Research and Development&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Engineering Assistance&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Design Verification and Risk Management&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Production Optimization&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Cross Functional Review of Manufacturing Process&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Molds and Tooling Design for Manufacturability&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Automation&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Customized Testing and Analysis&quot;,
-            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        }
-      ]
-    },
-    {
-      &quot;@type&quot;: &quot;OfferCatalog&quot;,
-      &quot;name&quot;: &quot;Manufacturing&quot;,
-      &quot;itemListElement&quot;: [
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Extrusion&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Molding&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Secondary Operations&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Value-added Subassembly&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Complete Device &amp; Kit Assembly&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        },
-        {
-          &quot;@type&quot;: &quot;Offer&quot;,
-          &quot;itemOffered&quot;: {
-            &quot;@type&quot;: &quot;Service&quot;,
-            &quot;name&quot;: &quot;Packaging &amp; Sterilization&quot;,
-            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
-            &quot;provider&quot;: {
-              &quot;@type&quot;: &quot;Organization&quot;,
-              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
-              &quot;name&quot;: &quot;QMD&quot;,
-              &quot;url&quot;: &quot;https://qmd.net/&quot;
-            }
-          }
-        }
-      ]
-    }
-  ]
-}</code></pre></div>
-</div></details>
-<div class="part part-finish"><h2>To finish</h2><span class="pcount">5 sections</span><p class="pblurb">The file itself, what the client owes, and how to check it worked.</p></div>
-<details class="sec"><summary><span class="num">08</span><span class="stitle">Eight values only QMD can supply</span><span class="badge">needs the client</span></summary><div class="body">
-<p>These belong on the Organization node but appear nowhere on the site, so they are not in the
-code. An absent property is correct; a guessed one is not. None is required, and the markup is valid
-and useful without any of them.</p>
-<p class="where"><span class="lbl">Where they go</span>Inside
-<code>qmd_schema_organization_data()</code> in the file in section 09, as additional array entries
-alongside <code>'name'</code> and <code>'description'</code>. Nowhere else.</p>
-<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>// inside qmd_schema_organization_data(), alongside the entries already there:
-&#x27;legalName&#x27;         =&gt; &#x27;QMD Holdings Inc.&#x27;,            // a plain string
-&#x27;foundingDate&#x27;      =&gt; &#x27;1998&#x27;,                          // YYYY or YYYY-MM-DD
-&#x27;sameAs&#x27;            =&gt; [ &#x27;https://www.linkedin.com/company/…&#x27; ],   // an array, even for one
-&#x27;numberOfEmployees&#x27; =&gt; [ &#x27;@type&#x27; =&gt; &#x27;QuantitativeValue&#x27;, &#x27;value&#x27; =&gt; 450 ],
-// The values above are placeholders showing the SHAPE only.
-// Use QMD&#x27;s real values, and delete any line QMD cannot confirm.</code></pre></div>
-<table class="tbl"><thead><tr><th>Property</th><th>What is needed</th></tr></thead>
-<tbody><tr><td><code>legalName</code></td><td>The registered company name, if it differs from QMD.</td></tr><tr><td><code>alternateName</code></td><td>Any other name the company is known by. Leave out if there is none.</td></tr><tr><td><code>sameAs</code></td><td>The official LinkedIn company page, and any other profile QMD owns. The site links to no social profile anywhere, so there is nothing to verify a candidate against. It has to come from QMD.</td></tr><tr><td><code>foundingDate</code></td><td>Year founded, as YYYY or YYYY-MM-DD.</td></tr><tr><td><code>numberOfEmployees</code></td><td>A number or a range.</td></tr><tr><td><code>naics</code></td><td>NAICS industry code.</td></tr><tr><td><code>duns</code></td><td>Dun and Bradstreet number.</td></tr><tr><td><code>vatID</code></td><td>VAT identification number.</td></tr></tbody></table>
-</div></details>
-<details class="sec"><summary><span class="num">09</span><span class="stitle">The complete file</span><span class="badge">paste-ready</span></summary><div class="body">
+<details class="sec"><summary><span class="num">02</span><span class="stitle">The complete file</span><span class="badge">paste-ready</span></summary><div class="body">
 <p>Everything above in one file. It reads the request path, enriches the Organization node, refines
 the page type where one applies, appends that page's nodes to the existing graph, and fixes the
 homepage breadcrumb. Nothing else on the site changes.</p>
@@ -3096,7 +1673,1433 @@ add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
  */
 </code></pre></div>
 </div></details>
-<details class="sec"><summary><span class="num">10</span><span class="stitle">Checks after deployment</span></summary><div class="body">
+<div class="part part-essential"><h2>Essential: implement these first</h2><span class="pcount">4 sections</span><p class="pblurb">Four items, in the order they should be done.</p></div>
+<details class="sec"><summary><span class="num">03</span><span class="stitle">Organization</span><span class="badge">highest value</span></summary><div class="body">
+<p>This is the root of everything. Every other block points at it, and it is currently wrong: the
+company <code>name</code> is the site title, <span class="q">QMD: Silicone &amp; Polyisoprene
+Elastomer Manufacturer</span>. That string is what Google reads as the company's name today. Fixing
+it is the single highest-value change in this document.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Once, site-wide.</strong> One node for the entire website.</span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page. Yoast serialises the same company node into each page's graph.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>You configure it once.</strong> The values live in one place and Yoast repeats the node automatically. Never copy it onto individual pages, and never add a second one.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, but with only 5 properties. <strong>Enrich it, do not replace it.</strong> A second Organization node would split the company entity in two.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02, through the <code>wpseo_schema_organization</code> filter. Nothing is pasted onto a page.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">No rich result. This feeds entity understanding and knowledge-panel eligibility.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Any page still has exactly one JSON-LD graph containing exactly one Organization, and its <code>name</code> reads <code>QMD</code>. Two Organization nodes means it was pasted somewhere instead of filtered.</span></div></div>
+<p>The block below carries the whole company in one place: the corrected name, the description from
+the about page, the four addresses that are QMD's own, all ten facilities as named places with their
+own phone numbers, and the seven contact points from the contact and locations pages.</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>{
+  &quot;@type&quot;: &quot;Organization&quot;,
+  &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+  &quot;name&quot;: &quot;QMD&quot;,
+  &quot;url&quot;: &quot;https://qmd.net/&quot;,
+  &quot;description&quot;: &quot;We provide a full range of products and services to help OEMs bring medical devices to market. Specializing in silicone and other elastomerics, we manufacture a broad array of high-performance single-use devices as well as precision components and subassemblies. Our end-to-end services include engineering &amp; development, regulatory affairs, quality assurance, and supply chain support. Our global team partners with OEMs to provide tailored solutions to meet your needs.&quot;,
+  &quot;logo&quot;: {
+    &quot;@id&quot;: &quot;https://qmd.net/#/schema/logo/image/&quot;
+  },
+  &quot;image&quot;: {
+    &quot;@id&quot;: &quot;https://qmd.net/#/schema/logo/image/&quot;
+  },
+  &quot;telephone&quot;: &quot;+1-262-833-1571&quot;,
+  &quot;address&quot;: [
+    {
+      &quot;@type&quot;: &quot;PostalAddress&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#address-hq&quot;,
+      &quot;streetAddress&quot;: &quot;30100 Chagrin Blvd., Suite 201&quot;,
+      &quot;addressLocality&quot;: &quot;Pepper Pike&quot;,
+      &quot;addressRegion&quot;: &quot;OH&quot;,
+      &quot;postalCode&quot;: &quot;44124&quot;,
+      &quot;addressCountry&quot;: &quot;US&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;PostalAddress&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#address-sturtevant&quot;,
+      &quot;streetAddress&quot;: &quot;1810 Renaissance Blvd&quot;,
+      &quot;addressLocality&quot;: &quot;Sturtevant&quot;,
+      &quot;addressRegion&quot;: &quot;WI&quot;,
+      &quot;postalCode&quot;: &quot;53177&quot;,
+      &quot;addressCountry&quot;: &quot;US&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;PostalAddress&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#address-regensburg&quot;,
+      &quot;streetAddress&quot;: &quot;Stadtamhof 18&quot;,
+      &quot;addressLocality&quot;: &quot;Regensburg&quot;,
+      &quot;postalCode&quot;: &quot;D-93059&quot;,
+      &quot;addressCountry&quot;: &quot;DE&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;PostalAddress&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#address-hatzor&quot;,
+      &quot;streetAddress&quot;: &quot;Industrial Area&quot;,
+      &quot;addressLocality&quot;: &quot;Hatzor HaGlili&quot;,
+      &quot;addressCountry&quot;: &quot;IL&quot;
+    }
+  ],
+  &quot;location&quot;: [
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-hq&quot;,
+      &quot;name&quot;: &quot;QMD Global Headquarters&quot;,
+      &quot;address&quot;: {
+        &quot;@id&quot;: &quot;https://qmd.net/#address-hq&quot;
+      },
+      &quot;telephone&quot;: &quot;+1-262-833-1571&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-sturtevant&quot;,
+      &quot;name&quot;: &quot;QMD USA Customer Service&quot;,
+      &quot;address&quot;: {
+        &quot;@id&quot;: &quot;https://qmd.net/#address-sturtevant&quot;
+      },
+      &quot;telephone&quot;: &quot;+1-262-833-1571&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-regensburg&quot;,
+      &quot;name&quot;: &quot;QMD Europe Customer Service Center, Germany&quot;,
+      &quot;address&quot;: {
+        &quot;@id&quot;: &quot;https://qmd.net/#address-regensburg&quot;
+      },
+      &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
+      &quot;faxNumber&quot;: &quot;+49-941-830-536-29&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-saclay&quot;,
+      &quot;name&quot;: &quot;Arthesys S.A, France&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-saclay&quot;,
+        &quot;streetAddress&quot;: &quot;4 Rue René Razel, Cosmos Building&quot;,
+        &quot;addressLocality&quot;: &quot;Saclay&quot;,
+        &quot;postalCode&quot;: &quot;91400&quot;,
+        &quot;addressCountry&quot;: &quot;FR&quot;
+      },
+      &quot;telephone&quot;: &quot;+33 (0)1-41-11-87-77&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-arthesys-samorin&quot;,
+      &quot;name&quot;: &quot;Arthesys S.R.O.&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-arthesys-samorin&quot;,
+        &quot;streetAddress&quot;: &quot;Vicenzy 16&quot;,
+        &quot;addressLocality&quot;: &quot;Samorin&quot;,
+        &quot;postalCode&quot;: &quot;93101&quot;,
+        &quot;addressCountry&quot;: &quot;SK&quot;
+      },
+      &quot;telephone&quot;: &quot;+421 31 2851810&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-biometrix-samorin&quot;,
+      &quot;name&quot;: &quot;Biometrix S.R.O.&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-biometrix-samorin&quot;,
+        &quot;streetAddress&quot;: &quot;Vicenzy 16&quot;,
+        &quot;addressLocality&quot;: &quot;Samorin&quot;,
+        &quot;postalCode&quot;: &quot;93101&quot;,
+        &quot;addressCountry&quot;: &quot;SK&quot;
+      },
+      &quot;telephone&quot;: &quot;+421 31 2851810&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-hatzor&quot;,
+      &quot;name&quot;: &quot;QMD Shomrat – Hatzor HaGlili, Israel&quot;,
+      &quot;address&quot;: {
+        &quot;@id&quot;: &quot;https://qmd.net/#address-hatzor&quot;
+      },
+      &quot;telephone&quot;: &quot;+972-4-6801270&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-degania-bet&quot;,
+      &quot;name&quot;: &quot;Degania Silicone Ltd, Israel&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-degania-bet&quot;,
+        &quot;addressLocality&quot;: &quot;Degania Bet&quot;,
+        &quot;postalCode&quot;: &quot;1513000&quot;,
+        &quot;addressCountry&quot;: &quot;IL&quot;
+      },
+      &quot;telephone&quot;: &quot;+972-4-6755100&quot;,
+      &quot;faxNumber&quot;: &quot;+972-4-6709182&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-jerusalem&quot;,
+      &quot;name&quot;: &quot;Biometrix Ltd, Israel&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-jerusalem&quot;,
+        &quot;streetAddress&quot;: &quot;POB 45057&quot;,
+        &quot;addressLocality&quot;: &quot;Jerusalem&quot;,
+        &quot;postalCode&quot;: &quot;91450&quot;,
+        &quot;addressCountry&quot;: &quot;IL&quot;
+      },
+      &quot;telephone&quot;: &quot;+972-2-5861241&quot;
+    },
+    {
+      &quot;@type&quot;: &quot;Place&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#place-gurgaon&quot;,
+      &quot;name&quot;: &quot;Degania Medical Devices Pvt. Ltd, India&quot;,
+      &quot;address&quot;: {
+        &quot;@type&quot;: &quot;PostalAddress&quot;,
+        &quot;@id&quot;: &quot;https://qmd.net/#address-gurgaon&quot;,
+        &quot;streetAddress&quot;: &quot;251, Sec.-6, IMT Manesar&quot;,
+        &quot;addressLocality&quot;: &quot;Gurgaon&quot;,
+        &quot;addressRegion&quot;: &quot;Haryana&quot;,
+        &quot;postalCode&quot;: &quot;122050&quot;,
+        &quot;addressCountry&quot;: &quot;IN&quot;
+      },
+      &quot;telephone&quot;: &quot;+91-124-4367115&quot;
+    }
+  ],
+  &quot;contactPoint&quot;: [
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Shawn Moran, US Business Development Director&quot;,
+      &quot;telephone&quot;: &quot;+1 (216) 978-4342&quot;,
+      &quot;email&quot;: &quot;smoran@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;North America&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Ido Dafni, Head of Sales – Middle East &amp; North Africa&quot;,
+      &quot;telephone&quot;: &quot;+421 947936859&quot;,
+      &quot;email&quot;: &quot;idafni@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;Middle East and North Africa&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Jason Malone, Business Development Manager&quot;,
+      &quot;telephone&quot;: &quot;+353-87 822 3783&quot;,
+      &quot;email&quot;: &quot;jmalone@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;Europe&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Mercedes Matias, Global Business Development Manager&quot;,
+      &quot;telephone&quot;: [
+        &quot;+972 73-2257145&quot;,
+        &quot;+972 52-3617000&quot;
+      ],
+      &quot;email&quot;: &quot;mmatias@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;International (Biometrix)&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Veronique Ben Simhoun, Business Development Manager&quot;,
+      &quot;email&quot;: &quot;vbensimhoun@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;Industrial Silicone Products&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;sales&quot;,
+      &quot;name&quot;: &quot;Cyril ISOARD, OEM Business Development Director&quot;,
+      &quot;telephone&quot;: &quot;+33 (0)6 50 67 20 46&quot;,
+      &quot;email&quot;: &quot;cisoard@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;International (Arthesys)&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;contactType&quot;: &quot;customer service&quot;,
+      &quot;name&quot;: &quot;QMD Europe Customer Service Center&quot;,
+      &quot;telephone&quot;: &quot;+49-941-830-536-0&quot;,
+      &quot;email&quot;: &quot;de-info@qmd.net&quot;,
+      &quot;areaServed&quot;: &quot;Europe&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;en&quot;,
+        &quot;de&quot;
+      ]
+    }
+  ],
+  &quot;areaServed&quot;: [
+    &quot;US&quot;,
+    &quot;IL&quot;,
+    &quot;DE&quot;,
+    &quot;FR&quot;,
+    &quot;SK&quot;,
+    &quot;IN&quot;
+  ],
+  &quot;knowsAbout&quot;: [
+    &quot;Medical device contract manufacturing&quot;,
+    &quot;Silicone and polyisoprene elastomer molding&quot;,
+    &quot;Medical-grade silicone extrusion&quot;,
+    &quot;Balloon catheter design and manufacturing&quot;,
+    &quot;Complete device and kit assembly&quot;,
+    &quot;Packaging and sterilization&quot;,
+    &quot;Surgical devices&quot;,
+    &quot;Urology devices&quot;,
+    &quot;Vascular devices&quot;,
+    &quot;Gastroenterology and enteral feeding devices&quot;,
+    &quot;Critical care devices&quot;,
+    &quot;Single-use devices and precision components&quot;
+  ]
+}</code></pre></div>
+</div></details>
+<details class="sec"><summary><span class="num">04</span><span class="stitle">BreadcrumbList</span><span class="badge">already live &middot; 1 fix</span></summary><div class="body">
+<p><strong>Breadcrumbs already work on this site.</strong> Yoast outputs a correct four-level trail
+on product pages, for example Home &rsaquo; Products &rsaquo; Arthesys&trade; Products &rsaquo; PTCA
+Catheters. Do not add breadcrumb markup, and do not touch the inner pages: duplicating it would be
+worse than leaving it alone.</p>
+<p>There is exactly one defect. On the homepage the trail contains a single item,
+<span class="q">Home</span>, and Google's requirement is to <span class="q">define a BreadcrumbList
+that contains at least two ListItems</span>. A one-item trail cannot qualify, so it is removed on
+the homepage only.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One fix, homepage only.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page already. Only <code>https://qmd.net/</code> changes.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. Yoast already generates the trail dynamically per page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, and correct everywhere except the homepage.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02: the <code>wpseo_schema_needs_breadcrumb</code> filter, plus two lines inside the single <code>wpseo_schema_webpage</code> callback that section 07 also uses. There is one such callback in the file, not two.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">Inner pages already carry valid breadcrumb markup, which is what makes them eligible. This fix removes an invalid trail; it does not change inner pages.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The homepage source contains no <code>BreadcrumbList</code> and no leftover <code>breadcrumb</code> reference, while a product page still shows its four-level trail.</span></div></div>
+<p class="warn">Both halves are required. Yoast attaches the <code>breadcrumb</code> reference to
+the WebPage node unconditionally, skipping it only on a 404. Removing the piece without also
+removing the reference would leave the homepage pointing at an <code>@id</code> that no longer
+exists.</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>// 1. stop Yoast emitting the one-item breadcrumb on the homepage
+add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
+	return ( &#x27;/&#x27; === qmd_schema_path() ) ? false : $needed;
+} );
+
+// 2. remove the reference that would otherwise point at the deleted node
+//    (inside the wpseo_schema_webpage filter)
+if ( &#x27;/&#x27; === $path ) {
+	unset( $data[&#x27;breadcrumb&#x27;] );
+}</code></pre></div>
+</div></details>
+<details class="sec"><summary><span class="num">05</span><span class="stitle">Product and MedicalDevice</span><span class="badge">14 pages</span></summary><div class="body">
+<p>Fourteen product pages carry no product markup at all. They are the pages that describe what QMD
+actually makes, and between them they draw roughly 840 organic clicks a year. Each gets one node
+typed as both <code>Product</code> and <code>MedicalDevice</code>, built from that page's own
+heading, opening paragraph, image and specification table.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 14 product detail pages only. Not the three brand hubs, not <code>/product/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 14 separate nodes</strong>, each with its own name, description, image and specs. They are not interchangeable.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No. Nothing product-related exists today.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02, through the <code>wpseo_schema_graph</code> filter, matched on the request path.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>None today</strong>, and none is possible while the pages carry no price and no reviews. Read the note below before you test.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Each of the 14 pages carries exactly one Product node. The three brand hubs and <code>/product/</code> carry none. No price, availability or rating appears anywhere.</span></div></div>
+<div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/product/arthesys-products/aspiration-catheters/" target="_blank" rel="noopener">/product/arthesys-products/aspiration-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/" target="_blank" rel="noopener">/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/</a></li><li><a href="https://qmd.net/product/arthesys-products/pta-catheters/" target="_blank" rel="noopener">/product/arthesys-products/pta-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/ptca-catheters/" target="_blank" rel="noopener">/product/arthesys-products/ptca-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/y-connectors-accessories/" target="_blank" rel="noopener">/product/arthesys-products/y-connectors-accessories/</a></li><li><a href="https://qmd.net/product/biometrix-products/arterial-catheters/" target="_blank" rel="noopener">/product/biometrix-products/arterial-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/central-venous-catheters/" target="_blank" rel="noopener">/product/biometrix-products/central-venous-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/rapid-infusion-catheters/" target="_blank" rel="noopener">/product/biometrix-products/rapid-infusion-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/" target="_blank" rel="noopener">/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/enteral-feeding/" target="_blank" rel="noopener">/product/degania-products/enteral-feeding/</a></li><li><a href="https://qmd.net/product/degania-products/silicone-tubing/" target="_blank" rel="noopener">/product/degania-products/silicone-tubing/</a></li><li><a href="https://qmd.net/product/degania-products/urinary-catheters/" target="_blank" rel="noopener">/product/degania-products/urinary-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/vessel-loops/" target="_blank" rel="noopener">/product/degania-products/vessel-loops/</a></li><li><a href="https://qmd.net/product/degania-products/wound-drainage/" target="_blank" rel="noopener">/product/degania-products/wound-drainage/</a></li></ul></div>
+<p class="warn"><strong>Read this before running the Rich Results Test.</strong> These blocks carry
+no <code>offers</code>, no <code>review</code> and no <code>aggregateRating</code>, because QMD
+publishes no prices, no reviews and no ratings. Google's rule is explicit: <span class="q">Product
+snippets require either review or aggregateRating or offers.</span> So the Rich Results Test will
+report the product item as ineligible and Search Console may list these pages as invalid under
+Product snippets. <strong>That is the expected outcome, not a defect.</strong> Do not add a zero
+price, a placeholder currency, an availability value or an invented rating to clear it. That would
+state something false about a quote-based business.</p>
+<p>What the markup is for here is entity understanding: it states that QMD manufactures these
+devices and which of the three acquired brands each belongs to. For a contract manufacturer, that
+relationship is the commercial proposition, and no other schema type expresses it.</p>
+<p class="sub">All fourteen blocks</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/#product&quot;,
+    &quot;name&quot;: &quot;PEGASE Aspiration Catheters&quot;,
+    &quot;description&quot;: &quot;Designed for simple and effective thrombus aspiration procedures.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/aspiration-catheters.jpeg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Arthesys&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;,
+    &quot;additionalProperty&quot;: [
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;04030105 – DESCRIPTION&quot;,
+        &quot;value&quot;: &quot;Pegase HYDRO 6F S Stiff&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;04030105 – INNER DIAMETER&quot;,
+        &quot;value&quot;: &quot;1.10mm&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;04030106 – DESCRIPTION&quot;,
+        &quot;value&quot;: &quot;Pegase HYDRO 7F S Stiff&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;04030106 – INNER DIAMETER&quot;,
+        &quot;value&quot;: &quot;1.40mm&quot;
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/#product&quot;,
+    &quot;name&quot;: &quot;CYGNUS II Cobalt Chromium Stent&quot;,
+    &quot;description&quot;: &quot;Uncompromising strength, outstanding flexibility, and a reliable performer.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/cygnus-ii-cobalt-chromium-stent.jpeg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Arthesys&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/#product&quot;,
+    &quot;name&quot;: &quot;PTA Catheters&quot;,
+    &quot;description&quot;: &quot;Next generation technology backed by decades of expertise, the Arthesys™ LYNX PTA Balloon Catheters are customized, turnkey PTA solutions designed by engineering authorities for brighter outcomes.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/pta-catheters.jpeg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Arthesys&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/#product&quot;,
+    &quot;name&quot;: &quot;PTCA Catheters&quot;,
+    &quot;description&quot;: &quot;QMD™ combines 4 generations of PTCA catheter development and 2 decades of global market insights with exceptional capabilities to serve the complex needs of OEMs, hospitals and doctors every day.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/arthesys-ptca-catheter.png&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Arthesys&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/#product&quot;,
+    &quot;name&quot;: &quot;Hemostatic Valves &amp; Accessories&quot;,
+    &quot;description&quot;: &quot;Arthesys Hemostasis Valves are engineered to deliver secure vascular access management during interventional and diagnostic procedures.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/05/y-connectors.jpeg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Arthesys&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Cardiovascular medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/#product&quot;,
+    &quot;name&quot;: &quot;Arterial Catheters&quot;,
+    &quot;description&quot;: &quot;Biometrix™ arterial catheters are generally used to provide access for arterial blood pressure monitoring and administration of medication and/or anesthesia. Designed to improve patient safety, the catheters decrease the risk of complications associated with insertion techniques and provide optimal diagnostics, leading to effective treatment for patients.Biometrix arterial catheters feature anti-kink polyurethane catheters and complete Seldinger kits that provide an all-in-one solution for performing femoral and radial arterial catheterizations.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-arterial-catheters.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Biometrix&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/#product&quot;,
+    &quot;name&quot;: &quot;Central Venous Catheters&quot;,
+    &quot;description&quot;: &quot;QMD™ introduces its Biometrix™ Central Venous Catheter Program, engineered to ensure safety and performance. The Central Venous Catheter Program offers a variety of patient sizes (pediatric and adult), insertion sites and applications. A comprehensive portfolio includes kits for both adult and pediatric patients which are used in various acute settings in Hospitals.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-Biometrix%E2%84%A2-Products-min.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Biometrix&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/#product&quot;,
+    &quot;name&quot;: &quot;Rapid Infusion Catheters&quot;,
+    &quot;description&quot;: &quot;Biometrix™ rapid infusion catheters are used for faster, large-bore venous access and provide a safe and efficient solution during trauma cases.Biometrix rapid infusion catheters improve emergency fluid resuscitation with higher flow rates and the fastest guide wire insertion technique.Central Venous AccessA catheter sheath dilator and assembly with unique anti-kink neck design enables fast insertion into central veins. The thin wall of the 8FR lumen facilitates a high flow of fluids and blood to a critically ill patient.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/catheter-lumen-design.png&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Biometrix&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/#product&quot;,
+    &quot;name&quot;: &quot;Temperature Sensing (TSC) Foley Catheters&quot;,
+    &quot;description&quot;: &quot;Biometrix™ temperature sensing Foley catheters allow continuous drainage of urine and continuous measurement of body temperature. Accurate and reliable, Biometrix TSCs are suitable for use in multiple clinical settings, including operating rooms, emergency departments, intensive care areas, post-anesthesia care units and on general care floors.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/qmd-temperature-sensing-min.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Biometrix&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Vascular access and critical care medical devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/#product&quot;,
+    &quot;name&quot;: &quot;Enteral Feeding&quot;,
+    &quot;description&quot;: &quot;Degania™ Enteral Feeding products are designed with the goal of making life simpler, safer and more comfortable for patients, while providing excellent clinical functionality. The innovative Degania Enteral Feeding line includes standard and specialty items for adults and children, a variety of materials and a comprehensive range of sizes to provide individual solutions to meet each patient’s unique needs.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-enteral-feeding-min-1.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Degania&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/#product&quot;,
+    &quot;name&quot;: &quot;Silicone Tubing&quot;,
+    &quot;description&quot;: &quot;Manufactured in Class 8 clean rooms in compliance with ISO 13485 quality standards, Degania™ Silicone Tubing meets the requirements of the medical and biotech industry.Custom-made specific solutions are available outside our standard product portfolio: ID/OD sizing, labeling, and a variety of packaging options including bulk, double packed, spooled and cut-to-length.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/04/silicone-tube.png&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Degania&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;,
+    &quot;additionalProperty&quot;: [
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Material: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;100% Silicone&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Curing: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;Platinum Cured&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Hardness: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;55-65 shore A&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Biocompatibility: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;ISO 10993-1&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Certificates: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;FDA 510K / CE mark&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Standards: – Comprehensive range ofsizes (in the following table)&quot;,
+        &quot;value&quot;: &quot;ISO 13485&quot;
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/#product&quot;,
+    &quot;name&quot;: &quot;Urinary Catheters&quot;,
+    &quot;description&quot;: &quot;Expertise you can trust, Degania™ transurethral and supra-pubic Foley balloon catheters are manufactured with the high standards for urinary drainage and irrigation in mind. We strive for perfection throughout the production process so we can deliver the quality catheters medical professionals, hospitals and patients deserve.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-urinary-catheters-min.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Degania&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/#product&quot;,
+    &quot;name&quot;: &quot;Vessel Loops&quot;,
+    &quot;description&quot;: &quot;Degania™ Vessel Loops are designed to provide flexible, semi-elastic retraction for soft and delicate tissues including blood vessels, nerves and tendons, in order to allow their temporary shift during a surgical procedure and enable improved visibility and access to underlying anatomical parts.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-surgical-vessel-loops-min-1.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Degania&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;,
+    &quot;additionalProperty&quot;: [
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Mini – Vessel Loops – WIDTH (MM)&quot;,
+        &quot;value&quot;: &quot;1.3&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Mini – Vessel Loops – THICKNESS (MM)&quot;,
+        &quot;value&quot;: &quot;0.9&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Maxi – Vessel Loops – WIDTH (MM)&quot;,
+        &quot;value&quot;: &quot;2.4&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Maxi – Vessel Loops – THICKNESS (MM)&quot;,
+        &quot;value&quot;: &quot;1.1&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Super Maxi – Vessel Loops – WIDTH (MM)&quot;,
+        &quot;value&quot;: &quot;4.7&quot;
+      },
+      {
+        &quot;@type&quot;: &quot;PropertyValue&quot;,
+        &quot;name&quot;: &quot;Super Maxi – Vessel Loops – THICKNESS (MM)&quot;,
+        &quot;value&quot;: &quot;1.3&quot;
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: [
+      &quot;Product&quot;,
+      &quot;MedicalDevice&quot;
+    ],
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/#product&quot;,
+    &quot;name&quot;: &quot;Wound Drainage&quot;,
+    &quot;description&quot;: &quot;Elevate the standard of care, improve outcomes and drive value with Degania™ Advanced Wound Drainage Solutions. Backed by decades of experience and unparalleled expertise, Degania product designs support optimal patient outcomes and ensure surgeons have the right solutions for the right procedures.&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2024/06/degania-wound-drainage-min.jpg&quot;,
+    &quot;brand&quot;: {
+      &quot;@type&quot;: &quot;Brand&quot;,
+      &quot;name&quot;: &quot;Degania&quot;
+    },
+    &quot;manufacturer&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    },
+    &quot;category&quot;: &quot;Urology, wound drainage, enteral feeding and surgical silicone devices&quot;
+  }
+]</code></pre></div>
+</div></details>
+<details class="sec"><summary><span class="num">06</span><span class="stitle">ProfilePage and Person</span><span class="badge">12 pages</span></summary><div class="body">
+<p>Twelve executives each have their own page, and all twelve already average a top-ten position.
+Google supports <code>ProfilePage</code> and names <span class="q">an employee page on a company
+website</span> as a valid use of it, with the person carried in <code>mainEntity</code>. Of
+everything new in this document, this is the only markup eligible for a type Google supports.
+Eligibility is not a promise that an enhancement report will appear.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 12 <code>/leadership/{{slug}}/</code> pages only. Not the hub, not the archive.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 12 separate nodes</strong>, each with its own name, title, photo and bio.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02: <code>wpseo_schema_webpage</code> sets the page type, <code>wpseo_schema_graph</code> adds the Person node.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>Profile page.</strong> Person on its own has no rich result, which is why it is wrapped this way.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">All 12 profiles report <code>ProfilePage</code> with <code>mainEntity</code> pointing at that page's Person. The <code>/leadership/</code> archive and its second page carry none.</span></div></div>
+<div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/leadership/david-lustig/" target="_blank" rel="noopener">/leadership/david-lustig/</a></li><li><a href="https://qmd.net/leadership/amitai-pollak/" target="_blank" rel="noopener">/leadership/amitai-pollak/</a></li><li><a href="https://qmd.net/leadership/kelly-marie-dureiko/" target="_blank" rel="noopener">/leadership/kelly-marie-dureiko/</a></li><li><a href="https://qmd.net/leadership/maya-naftali/" target="_blank" rel="noopener">/leadership/maya-naftali/</a></li><li><a href="https://qmd.net/leadership/jean-romuald-bonnin/" target="_blank" rel="noopener">/leadership/jean-romuald-bonnin/</a></li><li><a href="https://qmd.net/leadership/vikas-bhardwaj/" target="_blank" rel="noopener">/leadership/vikas-bhardwaj/</a></li><li><a href="https://qmd.net/leadership/ariela-rubinchik/" target="_blank" rel="noopener">/leadership/ariela-rubinchik/</a></li><li><a href="https://qmd.net/leadership/tali-raz/" target="_blank" rel="noopener">/leadership/tali-raz/</a></li><li><a href="https://qmd.net/leadership/vikas-jund/" target="_blank" rel="noopener">/leadership/vikas-jund/</a></li><li><a href="https://qmd.net/leadership/hartesh-juneja/" target="_blank" rel="noopener">/leadership/hartesh-juneja/</a></li><li><a href="https://qmd.net/leadership/hagit-gavish/" target="_blank" rel="noopener">/leadership/hagit-gavish/</a></li><li><a href="https://qmd.net/leadership/peter-vajo/" target="_blank" rel="noopener">/leadership/peter-vajo/</a></li></ul></div>
+<p class="warn"><strong>One page is not what its URL says.</strong>
+<code>/leadership/hartesh-juneja/</code> is <strong>Atul Malik</strong>. The page title, the bio, the
+photo and Yoast's own breadcrumb all say Atul Malik; only the slug says otherwise. The block below
+uses the person the page is actually about. Generating this from the slug would publish a person who
+does not work at QMD.</p>
+<p class="note"><strong>If you correct that slug to <code>/leadership/atul-malik/</code></strong>
+with a 301, the file already registers both paths so the markup keeps working immediately. Three
+values still need updating by hand afterwards: <code>"url"</code> and <code>"@id"</code> on that
+Person node, and the matching entry in the leadership <code>ItemList</code>. One find and replace of
+<code>hartesh-juneja</code> to <code>atul-malik</code>.</p>
+<p class="sub">All twelve blocks</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/david-lustig/#person&quot;,
+    &quot;name&quot;: &quot;David Lustig&quot;,
+    &quot;jobTitle&quot;: &quot;President&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/david-lustig/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/David.jpg&quot;,
+    &quot;description&quot;: &quot;David has over 25 years of global leadership in pharma and medical devices. He served in executive roles at Teva Pharmaceuticals—including SVP of Global Operations—before joining QMD .&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/amitai-pollak/#person&quot;,
+    &quot;name&quot;: &quot;Amitai Pollak&quot;,
+    &quot;jobTitle&quot;: &quot;Chief Information Officer (CIO)&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/amitai-pollak/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Amitai.jpg&quot;,
+    &quot;description&quot;: &quot;Amitai brings 25+ years in IT leadership, including senior roles such as SVP AWS Managed Services at AllCloud and SVP Business Applications at Yael Group. He also served as CIO for international markets at Teva Pharmaceuticals.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/#person&quot;,
+    &quot;name&quot;: &quot;Kelly Marie Dureiko&quot;,
+    &quot;jobTitle&quot;: &quot;Chief Financial Officer (CFO)&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Kelly.jpg&quot;,
+    &quot;description&quot;: &quot;Kelly brings more than 35 years of expertise in finance, process optimization, and audit oversight. Before QMD, she held multiple leadership roles including CFO of the GE LED Lighting business during her 16-year tenure at General Electric.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/maya-naftali/#person&quot;,
+    &quot;name&quot;: &quot;Maya Naftali&quot;,
+    &quot;jobTitle&quot;: &quot;EVP, Degania &amp; Biometrix Commercial Business Units&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/maya-naftali/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Maya-1.jpg&quot;,
+    &quot;description&quot;: &quot;Maya leads QMD’s Degania and Biometrix Commercial Business Units, overseeing strategy, sales, marketing, and customer partnerships. With over 17 years of experience in the medical device industry, she has held diverse leadership roles across product management, business development, and commercial operations at Lumenis, Syneron and other Medical Devices companies.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/#person&quot;,
+    &quot;name&quot;: &quot;Jean Romuald Bonnin&quot;,
+    &quot;jobTitle&quot;: &quot;EVP, Arthesys Commercial Business Unit&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Jean.jpg&quot;,
+    &quot;description&quot;: &quot;Jean leads QMD’s Arthesys Commercial and R&amp;D Business Unit. With over 25 years of experience in the medical device industry, he has held diverse leadership roles at B. Braun Medical, Climdal, and other leading healthcare companies.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/#person&quot;,
+    &quot;name&quot;: &quot;Vikas Bhardwaj&quot;,
+    &quot;jobTitle&quot;: &quot;EVP, Global Supply Chain &amp; Strategic Operations&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/vikas-2.jpg&quot;,
+    &quot;description&quot;: &quot;With nearly three decades of leadership across automotive, lighting, consumer electronics, and medical devices, Vikas first joined QMD as Plant Manager in India before ascending to his current global role. Earlier, he held Plant Manager role at Schneider Electric and Operation head at Philips Lighting.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/#person&quot;,
+    &quot;name&quot;: &quot;Ariela Rubinchik&quot;,
+    &quot;jobTitle&quot;: &quot;VP Global HR&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/ariela.jpg&quot;,
+    &quot;description&quot;: &quot;With over 25 years of experience, Ariela leads QMD’s global HR team, supporting associates across multiple sites. She is dedicated to aligning people strategies with business purpose and performance. Prior to QMD, she served as VP of HR at Afimilk, driving HR strategy through an international expansion phase.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/tali-raz/#person&quot;,
+    &quot;name&quot;: &quot;Tali Raz&quot;,
+    &quot;jobTitle&quot;: &quot;VP Global QA/RA – Degania and Biometrix Business Units&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/tali-raz/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/Tali.jpg&quot;,
+    &quot;description&quot;: &quot;Tali leads the Global Quality Assurance and Regulatory Affairs functions for QMD’s Degania and Biometrix BUs. She brings extensive experience in QA/RA leadership across both the medical device and pharmaceutical industries. Prior to joining QMD, Tali held leadership roles at Teva Pharmaceuticals and Medimor – Contract Manufacturing.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-jund/#person&quot;,
+    &quot;name&quot;: &quot;Vikas Jund&quot;,
+    &quot;jobTitle&quot;: &quot;VP Operations India&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/vikas-jund/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/vj-2.jpg&quot;,
+    &quot;description&quot;: &quot;Vikas brings 25+ years of operational leadership, quality management, project execution, and lean transformation. Before QMD, he held senior positions at Philips and Schneider Electric.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/#person&quot;,
+    &quot;name&quot;: &quot;Atul Malik&quot;,
+    &quot;jobTitle&quot;: &quot;VP Global QA/RA – Arthesys Business Unit&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/atul-1.jpg&quot;,
+    &quot;description&quot;: &quot;Atul joined QMD in 2018 as a Project Manager, later served as Engineering Manager and he was recently appointed to QMD Global QA/RA Leader for the ARTHESYS Business Unit.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/hagit-gavish/#person&quot;,
+    &quot;name&quot;: &quot;Hagit Gavish&quot;,
+    &quot;jobTitle&quot;: &quot;VP Operations Israel&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/hagit-gavish/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/share_1757497657109.png&quot;,
+    &quot;description&quot;: &quot;Hagit has 25+ years in manufacturing leadership, with a strong focus on operations management, quality systems, lean culture, and continuous improvement. She previously held director-level roles at Spuntech Industries, Palram Americas, and Nilit Ltd.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  },
+  {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/leadership/peter-vajo/#person&quot;,
+    &quot;name&quot;: &quot;Peter Vajo&quot;,
+    &quot;jobTitle&quot;: &quot;VP Operations Slovakia&quot;,
+    &quot;url&quot;: &quot;https://qmd.net/leadership/peter-vajo/&quot;,
+    &quot;image&quot;: &quot;https://qmd.net/wp-content/uploads/2025/07/peter-1.jpg&quot;,
+    &quot;description&quot;: &quot;Peter offers over 28 years of experience in engineering, project management, and plant operations in the automotive and food industries. He currently serves as Operations Director for QMD Slovakia (Arthesys and Biometrix). Previously, he led initiatives at Plastic Omnium and Mondelez.&quot;,
+    &quot;worksFor&quot;: {
+      &quot;@type&quot;: &quot;Organization&quot;,
+      &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+      &quot;name&quot;: &quot;QMD&quot;,
+      &quot;url&quot;: &quot;https://qmd.net/&quot;
+    }
+  }
+]</code></pre></div>
+</div></details>
+<div class="part part-additional"><h2>Additional: once the essentials are live</h2><span class="pcount">3 sections</span><p class="pblurb">Worth having, none of it urgent, none of it produces a Google rich result.</p></div>
+<details class="sec"><summary><span class="num">07</span><span class="stitle">Page types</span></summary><div class="body">
+<p>Three pages are typed as a generic <code>WebPage</code> when a more specific type applies. This
+adds no node, it refines the one already there, so the <code>@id</code> and every existing
+relationship stay intact.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Three specific pages.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/about/</code>, <code>/contact/</code>, <code>/qmd-leadership/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. One mapping covers all three.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">The WebPage node exists; only its <code>@type</code> changes.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02, in the same single <code>wpseo_schema_webpage</code> callback used by section 04.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. These are descriptive types, not SERP features.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Those three pages report the new <code>@type</code>; every other page still reports <code>WebPage</code>.</span></div></div>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
+	$path = qmd_schema_path();
+	$types = array(
+		&#x27;/about/&#x27;           =&gt; &#x27;AboutPage&#x27;,
+		&#x27;/contact/&#x27;         =&gt; &#x27;ContactPage&#x27;,
+		&#x27;/qmd-leadership/&#x27;  =&gt; &#x27;CollectionPage&#x27;,
+	);
+	if ( isset( $types[ $path ] ) ) {
+		$data[&#x27;@type&#x27;] = $types[ $path ];
+	}
+	return $data;
+} );</code></pre></div>
+</div></details>
+<details class="sec"><summary><span class="num">08</span><span class="stitle">ItemList</span></summary><div class="body">
+<p>Four listing pages state their contents by reference: the leadership hub points at the twelve
+profile pages, and each brand hub points at its own product pages. Each entry is a bare
+<code>@id</code> pointing at the identifier used on the detail page, so the person and product data
+is written once, on the page it belongs to, and never duplicated onto the hub.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per listing page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/qmd-leadership/</code> and the three <code>/product/{{brand}}-products/</code> hubs.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">Yes, 4 nodes, one per listing page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. ItemList produces a carousel only for types this site does not have.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The leadership hub lists 12 entries. Each brand hub lists only its own product pages.</span></div></div>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
+  {
+    &quot;@type&quot;: &quot;ItemList&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/qmd-leadership/#leadership-list&quot;,
+    &quot;name&quot;: &quot;QMD Leadership&quot;,
+    &quot;numberOfItems&quot;: 12,
+    &quot;itemListElement&quot;: [
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 1,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/david-lustig/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 2,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/amitai-pollak/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 3,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/kelly-marie-dureiko/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 4,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/maya-naftali/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 5,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/jean-romuald-bonnin/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 6,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-bhardwaj/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 7,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/ariela-rubinchik/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 8,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/tali-raz/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 9,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/vikas-jund/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 10,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/hartesh-juneja/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 11,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/hagit-gavish/#person&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 12,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/leadership/peter-vajo/#person&quot;
+        }
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: &quot;ItemList&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/#product-list&quot;,
+    &quot;name&quot;: &quot;Arthesys™ Products&quot;,
+    &quot;numberOfItems&quot;: 5,
+    &quot;itemListElement&quot;: [
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 1,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/aspiration-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 2,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 3,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/pta-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 4,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/ptca-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 5,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/arthesys-products/y-connectors-accessories/#product&quot;
+        }
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: &quot;ItemList&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/#product-list&quot;,
+    &quot;name&quot;: &quot;Degania™ Products&quot;,
+    &quot;numberOfItems&quot;: 5,
+    &quot;itemListElement&quot;: [
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 1,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/enteral-feeding/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 2,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/silicone-tubing/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 3,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/urinary-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 4,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/vessel-loops/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 5,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/degania-products/wound-drainage/#product&quot;
+        }
+      }
+    ]
+  },
+  {
+    &quot;@type&quot;: &quot;ItemList&quot;,
+    &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/#product-list&quot;,
+    &quot;name&quot;: &quot;Biometrix™ Products&quot;,
+    &quot;numberOfItems&quot;: 4,
+    &quot;itemListElement&quot;: [
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 1,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/arterial-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 2,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/central-venous-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 3,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/rapid-infusion-catheters/#product&quot;
+        }
+      },
+      {
+        &quot;@type&quot;: &quot;ListItem&quot;,
+        &quot;position&quot;: 4,
+        &quot;item&quot;: {
+          &quot;@id&quot;: &quot;https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/#product&quot;
+        }
+      }
+    ]
+  }
+]</code></pre></div>
+</div></details>
+<details class="sec"><summary><span class="num">09</span><span class="stitle">Service and OfferCatalog</span></summary><div class="body">
+<p>The capabilities page prints fifteen named services in two groups: nine under Engineering and
+Development, six under Manufacturing. Those exact names become a catalogue of services with QMD as
+provider.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node, one page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/capabilities/</code> only.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 02, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. There is no service rich result in Google Search.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv"><code>/capabilities/</code> carries one catalogue containing 15 services, 9 and 6, with no <code>Offer</code> price.</span></div></div>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>{
+  &quot;@type&quot;: &quot;OfferCatalog&quot;,
+  &quot;@id&quot;: &quot;https://qmd.net/capabilities/#catalog&quot;,
+  &quot;name&quot;: &quot;End-to-End Medical Device Products &amp; Services&quot;,
+  &quot;itemListElement&quot;: [
+    {
+      &quot;@type&quot;: &quot;OfferCatalog&quot;,
+      &quot;name&quot;: &quot;Engineering &amp; Development&quot;,
+      &quot;itemListElement&quot;: [
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Ideation and Prototyping&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Material Research and Development&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Engineering Assistance&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Design Verification and Risk Management&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Production Optimization&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Cross Functional Review of Manufacturing Process&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Molds and Tooling Design for Manufacturability&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Automation&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Customized Testing and Analysis&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        }
+      ]
+    },
+    {
+      &quot;@type&quot;: &quot;OfferCatalog&quot;,
+      &quot;name&quot;: &quot;Manufacturing&quot;,
+      &quot;itemListElement&quot;: [
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Extrusion&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Molding&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Secondary Operations&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Value-added Subassembly&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Complete Device &amp; Kit Assembly&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Packaging &amp; Sterilization&quot;,
+            &quot;serviceType&quot;: &quot;Manufacturing and assembly&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        }
+      ]
+    }
+  ]
+}</code></pre></div>
+</div></details>
+<div class="part part-prepost"><h2>Before and after you install</h2><span class="pcount">2 sections</span><p class="pblurb">One thing to collect from QMD first, and how to verify the result afterwards.</p></div>
+<details class="sec"><summary><span class="num">10</span><span class="stitle">Before you install: eight values only QMD can supply</span><span class="badge">needs the client</span></summary><div class="body">
+<p>These belong on the Organization node but appear nowhere on the site, so they are not in the
+code. An absent property is correct; a guessed one is not. None is required, and the markup is valid
+and useful without any of them.</p>
+<p class="where"><span class="lbl">Where they go</span>Inside
+<code>qmd_schema_organization_data()</code> in the file in section 02, as additional array entries
+alongside <code>'name'</code> and <code>'description'</code>. Nowhere else.</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>// inside qmd_schema_organization_data(), alongside the entries already there:
+&#x27;legalName&#x27;         =&gt; &#x27;QMD Holdings Inc.&#x27;,            // a plain string
+&#x27;foundingDate&#x27;      =&gt; &#x27;1998&#x27;,                          // YYYY or YYYY-MM-DD
+&#x27;sameAs&#x27;            =&gt; [ &#x27;https://www.linkedin.com/company/…&#x27; ],   // an array, even for one
+&#x27;numberOfEmployees&#x27; =&gt; [ &#x27;@type&#x27; =&gt; &#x27;QuantitativeValue&#x27;, &#x27;value&#x27; =&gt; 450 ],
+// The values above are placeholders showing the SHAPE only.
+// Use QMD&#x27;s real values, and delete any line QMD cannot confirm.</code></pre></div>
+<table class="tbl"><thead><tr><th>Property</th><th>What is needed</th></tr></thead>
+<tbody><tr><td><code>legalName</code></td><td>The registered company name, if it differs from QMD.</td></tr><tr><td><code>alternateName</code></td><td>Any other name the company is known by. Leave out if there is none.</td></tr><tr><td><code>sameAs</code></td><td>The official LinkedIn company page, and any other profile QMD owns. The site links to no social profile anywhere, so there is nothing to verify a candidate against. It has to come from QMD.</td></tr><tr><td><code>foundingDate</code></td><td>Year founded, as YYYY or YYYY-MM-DD.</td></tr><tr><td><code>numberOfEmployees</code></td><td>A number or a range.</td></tr><tr><td><code>naics</code></td><td>NAICS industry code.</td></tr><tr><td><code>duns</code></td><td>Dun and Bradstreet number.</td></tr><tr><td><code>vatID</code></td><td>VAT identification number.</td></tr></tbody></table>
+</div></details>
+<details class="sec"><summary><span class="num">11</span><span class="stitle">After you install: what to check</span></summary><div class="body">
 <ol class="steps">
 <li>Purge WP Rocket, load a product page, view source. There must still be exactly one
 <code>&lt;script type="application/ld+json"&gt;</code>. Two means the code was installed as
@@ -3108,69 +3111,13 @@ the validator does report something, compare the live page against the block in 
 changing anything, so you can tell whether the markup was altered on the way to the page.</li>
 <li>Run the Rich Results Test on a leadership profile. It should detect <code>Profile page</code>.</li>
 <li>Run the Rich Results Test on a product page. It will report the product item as ineligible.
-That is expected, see section 03.</li>
+That is expected, see section 05.</li>
 <li>Check the homepage no longer emits a BreadcrumbList, and that a product page still does.</li>
 <li>In Search Console, inspect the homepage and one leadership profile and request indexing.
 Enhancement reports take a few weeks to catch up.</li>
 </ol>
 </div></details>
-<details class="sec"><summary><span class="num">11</span><span class="stitle">Two fixes outside the schema</span></summary><div class="body">
-<p>Neither is markup, but both affect what the markup describes.</p>
-<ul class="plain">
-<li><strong>A profile URL carries the wrong name.</strong> <code>/leadership/hartesh-juneja/</code>
-is Atul Malik's page. Change the slug to <code>/leadership/atul-malik/</code> with a 301 from the old
-path.
-<br><span class="inline-warn">If you do the rename, the schema needs two edits.</span> The file
-matches pages by request path, and a 301 does not make the new path match the old key. The file
-already registers <strong>both</strong> paths, so the markup keeps working the moment the slug
-changes. What it does not do automatically is update the person's own identifiers: change
-<code>"url"</code> and <code>"@id"</code> on that Person node, and the matching entry in the
-leadership <code>ItemList</code>, from <code>hartesh-juneja</code> to <code>atul-malik</code>. Three
-values, one find and replace.</li>
-<li><strong>Sixteen live URLs are in no sitemap.</strong> The sitemap index lists only
-<code>page-sitemap.xml</code> and <code>product-sitemap.xml</code>. All sixteen return 200, are
-indexable and draw search traffic. They split into two different fixes:
-<ul class="plain2">
-<li><strong>Thirteen are a settings change.</strong> In Yoast, Search Appearance &rsaquo; Content
-Types, set the leadership post type to show in search results, which adds the twelve profiles. In
-Search Appearance &rsaquo; Taxonomies, do the same for the product category taxonomy, which adds
-<code>/product-category/coronary-products/</code>.</li>
-<li><strong>Three are a decision, not a setting.</strong> <code>/leadership/</code>,
-<code>/leadership/page/2/</code> and <code>/product/</code> are archive and pagination URLs. Yoast's
-content-type settings do not add them. Decide whether each should be indexed and included, or
-noindexed and left out. They currently sit in between: indexable but undiscoverable from the
-sitemap.</li>
-</ul></li>
-</ul>
-</div></details>
-<details class="sec"><summary><span class="num">12</span><span class="stitle">What is deliberately not included</span></summary><div class="body">
-<p>Each of these was considered and left out. None is an oversight.</p>
-<table class="tbl"><thead><tr><th>Not included</th><th>Why</th></tr></thead><tbody>
-<tr><td><code>Offer</code>, price, availability, <code>Review</code>, <code>AggregateRating</code></td>
-<td>None of it exists on the site. Inventing any of it to satisfy a validator would state something
-false about a quote-based business.</td></tr>
-<tr><td><code>FAQPage</code></td>
-<td>Google stopped showing FAQ rich results on 7 May 2026 and removed the documentation on
-15 June 2026. The site also has no visible question-and-answer content to mirror.</td></tr>
-<tr><td><code>LocalBusiness</code></td>
-<td>It describes a location customers visit. One of the ten facilities is a PO box and the site does
-not say which of the others receive visitors. They are modelled as named places instead. If QMD
-confirms specific sites are visitable branches, those can be upgraded later.</td></tr>
-<tr><td>A second <code>Organization</code> node</td>
-<td>Yoast already owns the company node and every block here references it. A second one would split
-the company into two entities that drift apart.</td></tr>
-<tr><td><code>sameAs</code> social profiles</td>
-<td>The site links to no social profile anywhere, so there is nothing to verify a candidate against.
-It has to come from QMD. See section 08.</td></tr>
-<tr><td>Tag Manager, Elementor HTML widgets, theme header injection, client-side JavaScript</td>
-<td>Schema added that way is harder to audit and easy to lose. Everything here is server-side, in one
-file.</td></tr>
-<tr><td>Removing the Yoast <code>SearchAction</code></td>
-<td>Google retired the sitelinks search box in November 2024 so it earns nothing, but it is harmless
-and not worth a deployment.</td></tr>
-</tbody></table>
-</div></details>
-<footer><span>NC Digital</span><span>QMD Schema Implementation &middot; 16 August 2026</span></footer>
+<footer><span>NC Digital</span><span>QMD Schema Implementation &middot; August 2026</span></footer>
 </div>
 <script>
 document.getElementById('openAll').onclick=function(){
