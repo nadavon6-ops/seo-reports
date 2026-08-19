@@ -12,8 +12,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Heebo',Arial,sans-serif;background:#0d1321;color:#e8ecf4;line-height:1.6}
-.deck{height:100vh;overflow-y:auto;scroll-snap-type:y mandatory}
-.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:56px 7vw;position:relative;border-bottom:1px solid #1c2740}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+.deck{height:100vh;overflow:hidden}
+.track{transition:transform .65s cubic-bezier(.65,0,.35,1);will-change:transform}
+.slide{height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:56px 7vw;position:relative;border-bottom:1px solid #1c2740}
+.slide::before,.slide::after{content:"";flex:1 0 0}
+.dots{position:fixed;left:22px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:6}
+.dots button{width:10px;height:10px;border-radius:50%;border:1px solid #4a5f8c;background:transparent;cursor:pointer;padding:0}
+.dots button.on{background:#f5b83d;border-color:#f5b83d}
+a.card{display:block;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s;cursor:pointer}
+a.card:hover{border-color:#f5b83d;transform:translateY(-3px)}
+a.card .open-hint{color:#f5b83d;font-size:.82rem;font-weight:600;margin-top:12px;display:block}
 .kicker{color:#7da2e3;font-weight:600;letter-spacing:.06em;font-size:.85rem;margin-bottom:14px}
 h1{font-size:clamp(1.9rem,4.4vw,3.2rem);font-weight:800;line-height:1.25;margin-bottom:18px}
 h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;margin-bottom:10px}
@@ -49,6 +58,7 @@ footer{padding:26px 7vw;color:#5b6a8c;font-size:.85rem;border-top:1px solid #1c2
 </head>
 <body>
 <div class="deck">
+<div class="track">
 
 <section class="slide">
   <div class="brand">NC Digital</div>
@@ -150,14 +160,66 @@ footer{padding:26px 7vw;color:#5b6a8c;font-size:.85rem;border-top:1px solid #1c2
   <h2>הקופי המלא זמין לעריכה</h2>
   <p class="sub">כל הקופי המומלץ, כולל Title, Meta Description ו-H1 לכל עמוד, נמצא במסמך Google Docs משותף וניתן לעריכה ישירה. הנימוקים המלאים לבחירת ביטויי המפתח מפורטים בדוח הנימוקים, וכלל החומרים, המחקרים והעבודה שבוצעה מרוכזים בדוח המרכז.</p>
   <div class="grid3">
-    <div class="card"><h3>מסמך הקופי</h3><p>קופי מלא לשלושת העמודים, פתוח לעריכת הלקוח.</p></div>
-    <div class="card"><h3>דוח נימוקים</h3><p>הסבר מבוסס נתונים לבחירת המיקוד של כל עמוד.</p></div>
-    <div class="card"><h3>דוח מרכז</h3><p>כל מחקרי המילים, ההמלצות והעבודה שבוצעה, במקום אחד.</p></div>
+    <a class="card" href="https://docs.google.com/document/d/1_sH0XKwKuajpPRlYYdV32deaTcK1ghmvlqwBl_jtIf8" target="_blank" rel="noopener"><h3>מסמך הקופי</h3><p>קופי מלא לשלושת העמודים, פתוח לעריכת הלקוח.</p><span class="open-hint">לפתיחת המסמך</span></a>
+    <a class="card" href="https://report.n-c.digital/manpower-tbo-keyword-focus-report.html" target="_blank" rel="noopener"><h3>דוח נימוקים</h3><p>הסבר מבוסס נתונים לבחירת המיקוד של כל עמוד.</p><span class="open-hint">לפתיחת הדוח</span></a>
+    <a class="card" href="https://report.n-c.digital/manpower-tbo-consolidated-report.html" target="_blank" rel="noopener"><h3>דוח מרכז</h3><p>כל מחקרי המילים, ההמלצות והעבודה שבוצעה, במקום אחד.</p><span class="open-hint">לפתיחת הדוח</span></a>
   </div>
+  <p class="note">NC Digital | Manpower TBO | אוגוסט 2026</p>
 </section>
 
 </div>
-<footer>NC Digital | Manpower TBO - קופי מומלץ לשלושת עמודי השירות | אוגוסט 2026</footer>
-<div class="navhint">גללו למעבר בין השקפים</div>
+</div>
+<div class="dots" id="dots"></div>
+<div class="navhint">גללו, החליקו או השתמשו בחיצים למעבר בין השקפים</div>
+<script>
+(function(){
+var track=document.querySelector('.track');
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var dotsBox=document.getElementById('dots');
+var idx=0, lock=false;
+slides.forEach(function(_,i){
+  var b=document.createElement('button');
+  b.setAttribute('aria-label','שקף '+(i+1));
+  b.onclick=function(){go(i);};
+  dotsBox.appendChild(b);
+});
+function paint(){[].slice.call(dotsBox.children).forEach(function(d,i){d.className=i===idx?'on':'';});}
+function go(i){
+  if(i<0||i>=slides.length||lock)return;
+  idx=i;lock=true;
+  track.style.transform='translateY(-'+(idx*100)+'vh)';
+  paint();
+  setTimeout(function(){lock=false;},700);
+}
+function canScrollInside(el,dy){
+  if(el.scrollHeight<=el.clientHeight+2)return false;
+  if(dy>0)return el.scrollTop+el.clientHeight<el.scrollHeight-2;
+  return el.scrollTop>2;
+}
+window.addEventListener('wheel',function(e){
+  var s=slides[idx];
+  if(canScrollInside(s,e.deltaY)){return;}
+  e.preventDefault();
+  if(lock||Math.abs(e.deltaY)<12)return;
+  go(idx+(e.deltaY>0?1:-1));
+},{passive:false});
+window.addEventListener('keydown',function(e){
+  if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(idx+1);}
+  else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();go(idx-1);}
+  else if(e.key==='Home'){e.preventDefault();go(0);}
+  else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+});
+var ty=null;
+window.addEventListener('touchstart',function(e){ty=e.touches[0].clientY;},{passive:true});
+window.addEventListener('touchend',function(e){
+  if(ty===null)return;
+  var dy=ty-e.changedTouches[0].clientY;ty=null;
+  var s=slides[idx];
+  if(Math.abs(dy)<50||canScrollInside(s,dy))return;
+  go(idx+(dy>0?1:-1));
+},{passive:true});
+paint();
+})();
+</script>
 </body>
 </html>
