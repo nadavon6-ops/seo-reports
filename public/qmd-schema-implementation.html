@@ -97,6 +97,9 @@ h1{margin:0 0 14px;font-size:37px;line-height:1.16;font-weight:700;letter-spacin
 .steps{padding-left:19px;max-width:82ch}
 .steps li{margin-bottom:9px}
 .plain{padding-left:19px;max-width:82ch}
+.plain2{padding-left:19px;margin:9px 0 0}
+.plain2 li{margin-bottom:8px}
+.inline-warn{color:var(--warn);font-weight:600}
 .plain li{margin-bottom:11px}
 code{font-family:'JetBrains Mono',monospace;font-size:.9em;background:#4da3ff14;
   padding:1.5px 5px;border-radius:4px;color:#a9cdf5}
@@ -148,13 +151,13 @@ to verify what it produced.</p>
 test on a staging copy in a <em>subdirectory</em>, every path carries that prefix and nothing will
 match. A staging subdomain is fine, the paths are identical.</p>
 </div></details>
-<div class="part part-essential"><h2>Essential — implement these first</h2><span class="pcount">4 sections</span><p class="pblurb">Four items, in order. Everything the site genuinely needs.</p></div>
+<div class="part part-essential"><h2>Essential: implement these first</h2><span class="pcount">4 sections</span><p class="pblurb">Four items, in the order they should be done.</p></div>
 <details class="sec"><summary><span class="num">01</span><span class="stitle">Organization</span><span class="badge">highest value</span></summary><div class="body">
 <p>This is the root of everything. Every other block points at it, and it is currently wrong: the
 company <code>name</code> is the site title, <span class="q">QMD: Silicone &amp; Polyisoprene
 Elastomer Manufacturer</span>. That string is what Google reads as the company's name today. Fixing
 it is the single highest-value change in this document.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Once, site-wide.</strong> One node for the entire website.</span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page. It is defined once and Yoast already prints it everywhere.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>No.</strong> Never copy this onto individual pages.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, but with only 5 properties. <strong>Enrich it, do not replace it.</strong> A second Organization node would split the company entity in two.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv">The <code>wpseo_schema_organization</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">No rich result. This feeds entity understanding and knowledge-panel eligibility.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Any page still has exactly one JSON-LD graph containing exactly one Organization, and its <code>name</code> reads <code>QMD</code>. Two Organization nodes means it was pasted somewhere instead of filtered.</span></div></div>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Once, site-wide.</strong> One node for the entire website.</span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page. Yoast serialises the same company node into each page's graph.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>You configure it once.</strong> The values live in one place and Yoast repeats the node automatically. Never copy it onto individual pages, and never add a second one.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, but with only 5 properties. <strong>Enrich it, do not replace it.</strong> A second Organization node would split the company entity in two.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_organization</code> filter. Nothing is pasted onto a page.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">No rich result. This feeds entity understanding and knowledge-panel eligibility.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Any page still has exactly one JSON-LD graph containing exactly one Organization, and its <code>name</code> reads <code>QMD</code>. Two Organization nodes means it was pasted somewhere instead of filtered.</span></div></div>
 <p>The block below carries the whole company in one place: the corrected name, the description from
 the about page, the four addresses that are QMD's own, all ten facilities as named places with their
 own phone numbers, and the seven contact points from the contact and locations pages.</p>
@@ -445,7 +448,7 @@ worse than leaving it alone.</p>
 <span class="q">Home</span>, and Google's requirement is to <span class="q">define a BreadcrumbList
 that contains at least two ListItems</span>. A one-item trail cannot qualify, so it is removed on
 the homepage only.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One fix, homepage only.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page already. Only <code>https://qmd.net/</code> changes.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. Yoast already generates the trail dynamically per page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, and correct everywhere except the homepage.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv"><code>wpseo_schema_needs_breadcrumb</code>, plus one line inside <code>wpseo_schema_webpage</code>.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">Breadcrumb rich result. Already earned on inner pages, unaffected by this fix.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The homepage source contains no <code>BreadcrumbList</code> and no leftover <code>breadcrumb</code> reference, while a product page still shows its four-level trail.</span></div></div>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One fix, homepage only.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">Every page already. Only <code>https://qmd.net/</code> changes.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. Yoast already generates the trail dynamically per page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">Yes, and correct everywhere except the homepage.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09: the <code>wpseo_schema_needs_breadcrumb</code> filter, plus two lines inside the single <code>wpseo_schema_webpage</code> callback that section 05 also uses. There is one such callback in the file, not two.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">Inner pages already carry valid breadcrumb markup, which is what makes them eligible. This fix removes an invalid trail; it does not change inner pages.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The homepage source contains no <code>BreadcrumbList</code> and no leftover <code>breadcrumb</code> reference, while a product page still shows its four-level trail.</span></div></div>
 <p class="warn">Both halves are required. Yoast attaches the <code>breadcrumb</code> reference to
 the WebPage node unconditionally, skipping it only on a 404. Removing the piece without also
 removing the reference would leave the homepage pointing at an <code>@id</code> that no longer
@@ -462,11 +465,11 @@ if ( &#x27;/&#x27; === $path ) {
 }</code></pre></div>
 </div></details>
 <details class="sec"><summary><span class="num">03</span><span class="stitle">Product and MedicalDevice</span><span class="badge">14 pages</span></summary><div class="body">
-<p>Fourteen product pages carry no product markup at all, and between them they are the largest
-non-homepage traffic block on the site. Each gets one node typed as both <code>Product</code> and
-<code>MedicalDevice</code>, built from that page's own heading, opening paragraph, image and
-specification table.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 14 product detail pages only. Not the three brand hubs, not <code>/product/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 14 separate nodes</strong>, each with its own name, description, image and specs. They are not interchangeable.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No. Nothing product-related exists today.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv">The <code>wpseo_schema_graph</code> filter, matched on the request path.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>None today</strong>, and none is possible while the pages carry no price and no reviews. Read the note below before you test.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Each of the 14 pages carries exactly one Product node. The three brand hubs and <code>/product/</code> carry none. No price, availability or rating appears anywhere.</span></div></div>
+<p>Fourteen product pages carry no product markup at all. They are the pages that describe what QMD
+actually makes, and between them they draw roughly 840 organic clicks a year. Each gets one node
+typed as both <code>Product</code> and <code>MedicalDevice</code>, built from that page's own
+heading, opening paragraph, image and specification table.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 14 product detail pages only. Not the three brand hubs, not <code>/product/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 14 separate nodes</strong>, each with its own name, description, image and specs. They are not interchangeable.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No. Nothing product-related exists today.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter, matched on the request path.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>None today</strong>, and none is possible while the pages carry no price and no reviews. Read the note below before you test.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Each of the 14 pages carries exactly one Product node. The three brand hubs and <code>/product/</code> carry none. No price, availability or rating appears anywhere.</span></div></div>
 <div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/product/arthesys-products/aspiration-catheters/" target="_blank" rel="noopener">/product/arthesys-products/aspiration-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/" target="_blank" rel="noopener">/product/arthesys-products/cygnus-ii-cobalt-chromium-stent/</a></li><li><a href="https://qmd.net/product/arthesys-products/pta-catheters/" target="_blank" rel="noopener">/product/arthesys-products/pta-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/ptca-catheters/" target="_blank" rel="noopener">/product/arthesys-products/ptca-catheters/</a></li><li><a href="https://qmd.net/product/arthesys-products/y-connectors-accessories/" target="_blank" rel="noopener">/product/arthesys-products/y-connectors-accessories/</a></li><li><a href="https://qmd.net/product/biometrix-products/arterial-catheters/" target="_blank" rel="noopener">/product/biometrix-products/arterial-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/central-venous-catheters/" target="_blank" rel="noopener">/product/biometrix-products/central-venous-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/rapid-infusion-catheters/" target="_blank" rel="noopener">/product/biometrix-products/rapid-infusion-catheters/</a></li><li><a href="https://qmd.net/product/biometrix-products/temperature-sensing-tsc-foley-catheters/" target="_blank" rel="noopener">/product/biometrix-products/temperature-sensing-tsc-foley-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/enteral-feeding/" target="_blank" rel="noopener">/product/degania-products/enteral-feeding/</a></li><li><a href="https://qmd.net/product/degania-products/silicone-tubing/" target="_blank" rel="noopener">/product/degania-products/silicone-tubing/</a></li><li><a href="https://qmd.net/product/degania-products/urinary-catheters/" target="_blank" rel="noopener">/product/degania-products/urinary-catheters/</a></li><li><a href="https://qmd.net/product/degania-products/vessel-loops/" target="_blank" rel="noopener">/product/degania-products/vessel-loops/</a></li><li><a href="https://qmd.net/product/degania-products/wound-drainage/" target="_blank" rel="noopener">/product/degania-products/wound-drainage/</a></li></ul></div>
 <p class="warn"><strong>Read this before running the Rich Results Test.</strong> These blocks carry
 no <code>offers</code>, no <code>review</code> and no <code>aggregateRating</code>, because QMD
@@ -883,7 +886,7 @@ Google supports <code>ProfilePage</code> and names <span class="q">an employee p
 website</span> as a valid use of it, with the person carried in <code>mainEntity</code>. Of
 everything new in this document, this is the only markup eligible for a type Google supports.
 Eligibility is not a promise that an enhancement report will appear.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 12 <code>/leadership/{{slug}}/</code> pages only. Not the hub, not the archive.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 12 separate nodes</strong>, each with its own name, title, photo and bio.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv"><code>wpseo_schema_webpage</code> for the page type, <code>wpseo_schema_graph</code> for the Person node.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>Profile page.</strong> Person on its own has no rich result, which is why it is wrapped this way.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">All 12 profiles report <code>ProfilePage</code> with <code>mainEntity</code> pointing at that page's Person. The <code>/leadership/</code> archive and its second page carry none.</span></div></div>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv">The 12 <code>/leadership/{{slug}}/</code> pages only. Not the hub, not the archive.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv"><strong>Yes. 12 separate nodes</strong>, each with its own name, title, photo and bio.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09: <code>wpseo_schema_webpage</code> sets the page type, <code>wpseo_schema_graph</code> adds the Person node.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv"><strong>Profile page.</strong> Person on its own has no rich result, which is why it is wrapped this way.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">All 12 profiles report <code>ProfilePage</code> with <code>mainEntity</code> pointing at that page's Person. The <code>/leadership/</code> archive and its second page carry none.</span></div></div>
 <div class="targets"><span class="lbl">Exact pages</span><ul><li><a href="https://qmd.net/leadership/david-lustig/" target="_blank" rel="noopener">/leadership/david-lustig/</a></li><li><a href="https://qmd.net/leadership/amitai-pollak/" target="_blank" rel="noopener">/leadership/amitai-pollak/</a></li><li><a href="https://qmd.net/leadership/kelly-marie-dureiko/" target="_blank" rel="noopener">/leadership/kelly-marie-dureiko/</a></li><li><a href="https://qmd.net/leadership/maya-naftali/" target="_blank" rel="noopener">/leadership/maya-naftali/</a></li><li><a href="https://qmd.net/leadership/jean-romuald-bonnin/" target="_blank" rel="noopener">/leadership/jean-romuald-bonnin/</a></li><li><a href="https://qmd.net/leadership/vikas-bhardwaj/" target="_blank" rel="noopener">/leadership/vikas-bhardwaj/</a></li><li><a href="https://qmd.net/leadership/ariela-rubinchik/" target="_blank" rel="noopener">/leadership/ariela-rubinchik/</a></li><li><a href="https://qmd.net/leadership/tali-raz/" target="_blank" rel="noopener">/leadership/tali-raz/</a></li><li><a href="https://qmd.net/leadership/vikas-jund/" target="_blank" rel="noopener">/leadership/vikas-jund/</a></li><li><a href="https://qmd.net/leadership/hartesh-juneja/" target="_blank" rel="noopener">/leadership/hartesh-juneja/</a></li><li><a href="https://qmd.net/leadership/hagit-gavish/" target="_blank" rel="noopener">/leadership/hagit-gavish/</a></li><li><a href="https://qmd.net/leadership/peter-vajo/" target="_blank" rel="noopener">/leadership/peter-vajo/</a></li></ul></div>
 <p class="warn"><strong>One page is not what its URL says.</strong>
 <code>/leadership/hartesh-juneja/</code> is <strong>Atul Malik</strong>. The page title, the bio, the
@@ -1076,12 +1079,12 @@ settings fix, not a schema one, and it is in section 11.</p>
   }
 ]</code></pre></div>
 </div></details>
-<div class="part part-additional"><h2>Additional — once the essentials are live</h2><span class="pcount">3 sections</span><p class="pblurb">Worth having, none of it urgent, none of it produces a Google rich result.</p></div>
+<div class="part part-additional"><h2>Additional: once the essentials are live</h2><span class="pcount">3 sections</span><p class="pblurb">Worth having, none of it urgent, none of it produces a Google rich result.</p></div>
 <details class="sec"><summary><span class="num">05</span><span class="stitle">Page types</span></summary><div class="body">
 <p>Three pages are typed as a generic <code>WebPage</code> when a more specific type applies. This
 adds no node, it refines the one already there, so the <code>@id</code> and every existing
 relationship stay intact.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Three specific pages.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/about/</code>, <code>/contact/</code>, <code>/qmd-leadership/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. One mapping covers all three.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">The WebPage node exists; only its <code>@type</code> changes.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv">The <code>wpseo_schema_webpage</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. These are descriptive types, not SERP features.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Those three pages report the new <code>@type</code>; every other page still reports <code>WebPage</code>.</span></div></div>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>Three specific pages.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/about/</code>, <code>/contact/</code>, <code>/qmd-leadership/</code>.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No. One mapping covers all three.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">The WebPage node exists; only its <code>@type</code> changes.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, in the same single <code>wpseo_schema_webpage</code> callback used by section 02.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. These are descriptive types, not SERP features.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Those three pages report the new <code>@type</code>; every other page still reports <code>WebPage</code>.</span></div></div>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
 	$path = qmd_schema_path();
 	$types = array(
@@ -1097,9 +1100,10 @@ relationship stay intact.</p>
 </div></details>
 <details class="sec"><summary><span class="num">06</span><span class="stitle">ItemList</span></summary><div class="body">
 <p>Four listing pages state their contents by reference: the leadership hub points at the twelve
-profile pages, and each brand hub points at its own product pages. The items are referenced by
-<code>@id</code>, never repeated, so there is one copy of each person and product in the graph.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per listing page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/qmd-leadership/</code> and the three <code>/product/{{brand}}-products/</code> hubs.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">Yes, 4 nodes, one per listing page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv">The <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. ItemList produces a carousel only for types this site does not have.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The leadership hub lists 12 entries. Each brand hub lists only its own product pages.</span></div></div>
+profile pages, and each brand hub points at its own product pages. Each entry is a bare
+<code>@id</code> pointing at the identifier used on the detail page, so the person and product data
+is written once, on the page it belongs to, and never duplicated onto the hub.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node per listing page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/qmd-leadership/</code> and the three <code>/product/{{brand}}-products/</code> hubs.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">Yes, 4 nodes, one per listing page.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. ItemList produces a carousel only for types this site does not have.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">The leadership hub lists 12 entries. Each brand hub lists only its own product pages.</span></div></div>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>[
   {
     &quot;@type&quot;: &quot;ItemList&quot;,
@@ -1318,9 +1322,10 @@ profile pages, and each brand hub points at its own product pages. The items are
 ]</code></pre></div>
 </div></details>
 <details class="sec"><summary><span class="num">07</span><span class="stitle">Service and OfferCatalog</span></summary><div class="body">
-<p>The capabilities page prints fourteen named services in two groups, Engineering and Development
-and Manufacturing. Those exact names become a catalogue of services with QMD as provider.</p>
-<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node, one page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/capabilities/</code> only.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Where the code goes</span><span class="sv">The <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. There is no service rich result in Google Search.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv"><code>/capabilities/</code> carries one catalogue containing 14 services, with no <code>Offer</code> price.</span></div></div>
+<p>The capabilities page prints fifteen named services in two groups: nine under Engineering and
+Development, six under Manufacturing. Those exact names become a catalogue of services with QMD as
+provider.</p>
+<div class="spec"><div class="srow"><span class="sk">Scope</span><span class="sv"><strong>One node, one page.</strong></span></div><div class="srow"><span class="sk">Appears on</span><span class="sv"><code>/capabilities/</code> only.</span></div><div class="srow"><span class="sk">Repeat per page</span><span class="sv">No.</span></div><div class="srow"><span class="sk">Already on the site</span><span class="sv">No.</span></div><div class="srow"><span class="sk">How it is implemented</span><span class="sv">In the file in section 09, through the <code>wpseo_schema_graph</code> filter.</span></div><div class="srow"><span class="sk">Google result</span><span class="sv">None. There is no service rich result in Google Search.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv"><code>/capabilities/</code> carries one catalogue containing 15 services, 9 and 6, with no <code>Offer</code> price.</span></div></div>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code json"><code>{
   &quot;@type&quot;: &quot;OfferCatalog&quot;,
   &quot;@id&quot;: &quot;https://qmd.net/capabilities/#catalog&quot;,
@@ -1419,6 +1424,20 @@ and Manufacturing. Those exact names become a catalogue of services with QMD as 
           &quot;itemOffered&quot;: {
             &quot;@type&quot;: &quot;Service&quot;,
             &quot;name&quot;: &quot;Molds and Tooling Design for Manufacturability&quot;,
+            &quot;serviceType&quot;: &quot;Engineering and development&quot;,
+            &quot;provider&quot;: {
+              &quot;@type&quot;: &quot;Organization&quot;,
+              &quot;@id&quot;: &quot;https://qmd.net/#organization&quot;,
+              &quot;name&quot;: &quot;QMD&quot;,
+              &quot;url&quot;: &quot;https://qmd.net/&quot;
+            }
+          }
+        },
+        {
+          &quot;@type&quot;: &quot;Offer&quot;,
+          &quot;itemOffered&quot;: {
+            &quot;@type&quot;: &quot;Service&quot;,
+            &quot;name&quot;: &quot;Automation&quot;,
             &quot;serviceType&quot;: &quot;Engineering and development&quot;,
             &quot;provider&quot;: {
               &quot;@type&quot;: &quot;Organization&quot;,
@@ -1540,8 +1559,18 @@ and Manufacturing. Those exact names become a catalogue of services with QMD as 
 <div class="part part-finish"><h2>To finish</h2><span class="pcount">5 sections</span><p class="pblurb">The file itself, what the client owes, and how to check it worked.</p></div>
 <details class="sec"><summary><span class="num">08</span><span class="stitle">Eight values only QMD can supply</span><span class="badge">needs the client</span></summary><div class="body">
 <p>These belong on the Organization node but appear nowhere on the site, so they are not in the
-code. Add the ones QMD confirms and leave the rest out. An absent property is correct; a guessed one
-is not. None of them is required, and the markup is valid and useful without any of them.</p>
+code. An absent property is correct; a guessed one is not. None is required, and the markup is valid
+and useful without any of them.</p>
+<p class="where"><span class="lbl">Where they go</span>Inside
+<code>qmd_schema_organization_data()</code> in the file in section 09, as additional array entries
+alongside <code>'name'</code> and <code>'description'</code>. Nowhere else.</p>
+<div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>// inside qmd_schema_organization_data(), alongside the entries already there:
+&#x27;legalName&#x27;         =&gt; &#x27;QMD Holdings Inc.&#x27;,            // a plain string
+&#x27;foundingDate&#x27;      =&gt; &#x27;1998&#x27;,                          // YYYY or YYYY-MM-DD
+&#x27;sameAs&#x27;            =&gt; [ &#x27;https://www.linkedin.com/company/…&#x27; ],   // an array, even for one
+&#x27;numberOfEmployees&#x27; =&gt; [ &#x27;@type&#x27; =&gt; &#x27;QuantitativeValue&#x27;, &#x27;value&#x27; =&gt; 450 ],
+// The values above are placeholders showing the SHAPE only.
+// Use QMD&#x27;s real values, and delete any line QMD cannot confirm.</code></pre></div>
 <table class="tbl"><thead><tr><th>Property</th><th>What is needed</th></tr></thead>
 <tbody><tr><td><code>legalName</code></td><td>The registered company name, if it differs from QMD.</td></tr><tr><td><code>alternateName</code></td><td>Any other name the company is known by. Leave out if there is none.</td></tr><tr><td><code>sameAs</code></td><td>The official LinkedIn company page, and any other profile QMD owns. The site links to no social profile anywhere, so there is nothing to verify a candidate against. It has to come from QMD.</td></tr><tr><td><code>foundingDate</code></td><td>Year founded, as YYYY or YYYY-MM-DD.</td></tr><tr><td><code>numberOfEmployees</code></td><td>A number or a range.</td></tr><tr><td><code>naics</code></td><td>NAICS industry code.</td></tr><tr><td><code>duns</code></td><td>Dun and Bradstreet number.</td></tr><tr><td><code>vatID</code></td><td>VAT identification number.</td></tr></tbody></table>
 </div></details>
@@ -2814,6 +2843,20 @@ function qmd_schema_nodes() {
 								&#x27;@type&#x27; =&gt; &#x27;Offer&#x27;,
 								&#x27;itemOffered&#x27; =&gt; [
 									&#x27;@type&#x27; =&gt; &#x27;Service&#x27;,
+									&#x27;name&#x27; =&gt; &#x27;Automation&#x27;,
+									&#x27;serviceType&#x27; =&gt; &#x27;Engineering and development&#x27;,
+									&#x27;provider&#x27; =&gt; [
+										&#x27;@type&#x27; =&gt; &#x27;Organization&#x27;,
+										&#x27;@id&#x27; =&gt; &#x27;https://qmd.net/#organization&#x27;,
+										&#x27;name&#x27; =&gt; &#x27;QMD&#x27;,
+										&#x27;url&#x27; =&gt; &#x27;https://qmd.net/&#x27;,
+									],
+								],
+							],
+							[
+								&#x27;@type&#x27; =&gt; &#x27;Offer&#x27;,
+								&#x27;itemOffered&#x27; =&gt; [
+									&#x27;@type&#x27; =&gt; &#x27;Service&#x27;,
 									&#x27;name&#x27; =&gt; &#x27;Customized Testing and Analysis&#x27;,
 									&#x27;serviceType&#x27; =&gt; &#x27;Engineering and development&#x27;,
 									&#x27;provider&#x27; =&gt; [
@@ -2919,6 +2962,23 @@ function qmd_schema_nodes() {
 				],
 			],
 		],
+		&#x27;/leadership/atul-malik/&#x27; =&gt; [
+			[
+				&#x27;@type&#x27; =&gt; &#x27;Person&#x27;,
+				&#x27;@id&#x27; =&gt; &#x27;https://qmd.net/leadership/hartesh-juneja/#person&#x27;,
+				&#x27;name&#x27; =&gt; &#x27;Atul Malik&#x27;,
+				&#x27;jobTitle&#x27; =&gt; &#x27;VP Global QA/RA – Arthesys Business Unit&#x27;,
+				&#x27;url&#x27; =&gt; &#x27;https://qmd.net/leadership/hartesh-juneja/&#x27;,
+				&#x27;image&#x27; =&gt; &#x27;https://qmd.net/wp-content/uploads/2025/07/atul-1.jpg&#x27;,
+				&#x27;description&#x27; =&gt; &#x27;Atul joined QMD in 2018 as a Project Manager, later served as Engineering Manager and he was recently appointed to QMD Global QA/RA Leader for the ARTHESYS Business Unit.&#x27;,
+				&#x27;worksFor&#x27; =&gt; [
+					&#x27;@type&#x27; =&gt; &#x27;Organization&#x27;,
+					&#x27;@id&#x27; =&gt; &#x27;https://qmd.net/#organization&#x27;,
+					&#x27;name&#x27; =&gt; &#x27;QMD&#x27;,
+					&#x27;url&#x27; =&gt; &#x27;https://qmd.net/&#x27;,
+				],
+			],
+		],
 	];
 }
 
@@ -2940,6 +3000,7 @@ function qmd_schema_page_types() {
 		&#x27;/leadership/hartesh-juneja/&#x27; =&gt; &#x27;ProfilePage&#x27;,
 		&#x27;/leadership/hagit-gavish/&#x27; =&gt; &#x27;ProfilePage&#x27;,
 		&#x27;/leadership/peter-vajo/&#x27; =&gt; &#x27;ProfilePage&#x27;,
+		&#x27;/leadership/atul-malik/&#x27; =&gt; &#x27;ProfilePage&#x27;,
 	];
 }
 
@@ -2958,6 +3019,7 @@ function qmd_schema_main_entities() {
 		&#x27;/leadership/hartesh-juneja/&#x27; =&gt; &#x27;https://qmd.net/leadership/hartesh-juneja/#person&#x27;,
 		&#x27;/leadership/hagit-gavish/&#x27; =&gt; &#x27;https://qmd.net/leadership/hagit-gavish/#person&#x27;,
 		&#x27;/leadership/peter-vajo/&#x27; =&gt; &#x27;https://qmd.net/leadership/peter-vajo/#person&#x27;,
+		&#x27;/leadership/atul-malik/&#x27; =&gt; &#x27;https://qmd.net/leadership/hartesh-juneja/#person&#x27;,
 		&#x27;/qmd-leadership/&#x27; =&gt; &#x27;https://qmd.net/qmd-leadership/#leadership-list&#x27;,
 	];
 }
@@ -3046,9 +3108,9 @@ add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needed ) {
 something that prints its own block instead of going through the filters.</li>
 <li>Run the Schema Markup Validator at <code>validator.schema.org</code> on the homepage, a
 leadership profile, a product page, a brand hub and the capabilities page. Expect zero errors.
-Every block here was checked property by property against the schema.org vocabulary before
-delivery, so anything it reports points to the markup not reaching the page intact rather than to a
-fault in the block.</li>
+Every block was checked property by property against the schema.org vocabulary before delivery. If
+the validator does report something, compare the live page against the block in this report before
+changing anything, so you can tell whether the markup was altered on the way to the page.</li>
 <li>Run the Rich Results Test on a leadership profile. It should detect <code>Profile page</code>.</li>
 <li>Run the Rich Results Test on a product page. It will report the product item as ineligible.
 That is expected, see section 03.</li>
@@ -3062,14 +3124,28 @@ Enhancement reports take a few weeks to catch up.</li>
 <ul class="plain">
 <li><strong>A profile URL carries the wrong name.</strong> <code>/leadership/hartesh-juneja/</code>
 is Atul Malik's page. Change the slug to <code>/leadership/atul-malik/</code> with a 301 from the old
-path. The markup already uses the correct person, so it keeps working either way, but the URL
-currently publishes a name that is not on the page.</li>
+path.
+<br><span class="inline-warn">If you do the rename, the schema needs two edits.</span> The file
+matches pages by request path, and a 301 does not make the new path match the old key. The file
+already registers <strong>both</strong> paths, so the markup keeps working the moment the slug
+changes. What it does not do automatically is update the person's own identifiers: change
+<code>"url"</code> and <code>"@id"</code> on that Person node, and the matching entry in the
+leadership <code>ItemList</code>, from <code>hartesh-juneja</code> to <code>atul-malik</code>. Three
+values, one find and replace.</li>
 <li><strong>Sixteen live URLs are in no sitemap.</strong> The sitemap index lists only
-<code>page-sitemap.xml</code> and <code>product-sitemap.xml</code>. The twelve leadership profiles,
-the leadership archive and its second page, <code>/product/</code> and
-<code>/product-category/coronary-products/</code> all return 200, are indexable and draw search
-traffic, but appear in neither file. Add the leadership post type and the product category taxonomy
-to the Yoast sitemap settings.</li>
+<code>page-sitemap.xml</code> and <code>product-sitemap.xml</code>. All sixteen return 200, are
+indexable and draw search traffic. They split into two different fixes:
+<ul class="plain2">
+<li><strong>Thirteen are a settings change.</strong> In Yoast, Search Appearance &rsaquo; Content
+Types, set the leadership post type to show in search results, which adds the twelve profiles. In
+Search Appearance &rsaquo; Taxonomies, do the same for the product category taxonomy, which adds
+<code>/product-category/coronary-products/</code>.</li>
+<li><strong>Three are a decision, not a setting.</strong> <code>/leadership/</code>,
+<code>/leadership/page/2/</code> and <code>/product/</code> are archive and pagination URLs. Yoast's
+content-type settings do not add them. Decide whether each should be indexed and included, or
+noindexed and left out. They currently sit in between: indexable but undiscoverable from the
+sitemap.</li>
+</ul></li>
 </ul>
 </div></details>
 <details class="sec"><summary><span class="num">12</span><span class="stitle">What is deliberately not included</span></summary><div class="body">
