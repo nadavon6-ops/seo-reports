@@ -647,7 +647,15 @@ function blankBorrower(){return{
   incOtherSrc:"",incOtherAmt:"",
   oblLoanM:"",oblLoanB:"",oblMortM:"",oblMortB:"",oblRent:"",oblAlimony:"",
   oblOtherName:"",oblOtherM:"",oblOtherB:"",attachment:"לא",
-  kyc:"חסר", isOwner:"", otherIncome:"", incWorkSelf:"", hasRealEstate:""
+  kyc:"חסר", isOwner:"", otherIncome:"", incWorkSelf:"", hasRealEstate:"",
+  /* מגדל · הכר את הלקוח — one block per borrower, printed on page 4 */
+  mk:{originCountry:"",residenceLocation:"",occupationField:"",seniorityYears:"",
+      restricted:"",bankrupt:"",criminal:"",criminalDetail:"",
+      businessName:"",incorporationCountry:"",activityCountry:"",
+      fatcaSign:"",usPerson:"",otherTaxResidency:"",taxCountries:"",
+      cpaConfirm:"",fundsSource:"",publicFigure:"",seniorIntl:"",
+      accountRelation:"",accountRelationOther:"",accountReason:"",
+      equitySource:"",equityProof:"",proofType:""}
 };}
 function blankCollateral(){return{
   gush:"",helka:"",sub:"",builtArea:"",lotArea:"",street:"",num:"",apt:"",city:"",
@@ -1258,6 +1266,59 @@ function step5(){
       <ul>${r.caveats.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>`;
   }
 
+  if(r.lender==="מגדל"){
+    h += sec("הכר את הלקוח — מגדל","טופס נפרד לכל לווה",
+      `<div class="note info">מגדל דורשת בלוק «הכר את הלקוח» לכל לווה. המערכת מדפיסה עותק של עמוד 4 לכל לווה שמולא.</div>`
+      + S.data.borrowers.map((b,i)=>`<article class="row"><div class="row-h"><i>${i+1}</i><b>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</b></div><div class="row-b">
+        <div class="grid">
+          ${fInput(`borrowers.${i}.mk.originCountry`,"ארץ מוצא")}
+          ${fInput(`borrowers.${i}.mk.residenceLocation`,"מיקום מגורים")}
+          ${fInput(`borrowers.${i}.mk.occupationField`,"תחום עיסוק")}
+          ${fInput(`borrowers.${i}.mk.seniorityYears`,"ותק במקום העבודה (בשנים)",{type:"number"})}
+        </div>
+        <div class="grid" style="margin-top:14px">
+          ${fRadio(`borrowers.${i}.mk.restricted`,"האם הלקוח מוגבל?",["לא","כן"])}
+          ${fRadio(`borrowers.${i}.mk.bankrupt`,"האם הלקוח פושט רגל?",["לא","כן"])}
+        </div>
+        <div class="grid" style="margin-top:14px">
+          ${fRadio(`borrowers.${i}.mk.criminal`,"מתנהלים או התנהלו נגדך הליכים פליליים בעבירות שוחד, שחיתות או הלבנת הון?",["לא","כן"],{wide:true})}
+        </div>
+        ${when(b.mk.criminal==="כן",fInput(`borrowers.${i}.mk.criminalDetail`,"פרט אילו הליכים",{wide:true}))}
+        ${when(b.employment==="עצמאי/ת",`<hr class="rule"><div class="subhead">כאשר הלקוח עצמאי</div><div class="grid">
+          ${fInput(`borrowers.${i}.mk.businessName`,"שם העסק")}
+          ${fInput(`borrowers.${i}.mk.incorporationCountry`,"מדינת התאגדות של העסק")}
+          ${fInput(`borrowers.${i}.mk.activityCountry`,"מדינת הפעילות של העסק")}
+        </div>`)}
+        <hr class="rule"><div class="subhead">נתוני חבות מס</div>
+        <div class="grid">
+          ${fRadio(`borrowers.${i}.mk.fatcaSign`,"יחתום על הצהרת תושבות מס (FATCA ו־CRS)",["כן","לא"])}
+          ${fRadio(`borrowers.${i}.mk.usPerson`,"אזרח/תושב אמריקאי לצרכי מס?",["לא","כן"])}
+          ${fRadio(`borrowers.${i}.mk.otherTaxResidency`,"תושבות מס נוספת פרט לישראל?",["לא","כן"])}
+        </div>
+        <div class="grid" style="margin-top:14px">
+          ${fInput(`borrowers.${i}.mk.taxCountries`,"באילו מדינות הלקוח חייב במס?")}
+          ${fRadio(`borrowers.${i}.mk.cpaConfirm`,"התקבל אישור רו\"ח לגבי חבויות המס?",["לא","כן"])}
+          ${fInput(`borrowers.${i}.mk.fundsSource`,"מקור הכספים שיופקדו בחשבון")}
+        </div>
+        <hr class="rule"><div class="subhead">תפקיד ציבורי</div>
+        <div class="grid">
+          ${fRadio(`borrowers.${i}.mk.publicFigure`,"הלקוח או בן משפחה בעל תפקיד ציבורי, או שותף עסקי של איש ציבור?",["לא","כן"],{wide:true})}
+          ${fRadio(`borrowers.${i}.mk.seniorIntl`,"הלקוח או בן משפחה בעל תפקיד בכיר בתאגיד בינלאומי או ארגון בין־ממשלתי?",["לא","כן"],{wide:true})}
+        </div>
+        <hr class="rule"><div class="subhead">מידע כללי והון עצמי</div>
+        <div class="grid">
+          ${fRadio(`borrowers.${i}.mk.accountRelation`,"הקשר בין בעלי החשבון",["בני זוג","אחים","הורה/ילד","שותפים","אחר"],{wide:true})}
+        </div>
+        ${when(b.mk.accountRelation==="אחר",fInput(`borrowers.${i}.mk.accountRelationOther`,"פרט את הקשר",{wide:true}))}
+        <div class="grid" style="margin-top:14px">
+          ${fInput(`borrowers.${i}.mk.accountReason`,"הסיבה לפתיחת חשבון בהרכב זה")}
+          ${fInput(`borrowers.${i}.mk.equitySource`,"מקור ההון העצמי")}
+          ${fRadio(`borrowers.${i}.mk.equityProof`,"הוצגו אסמכתאות להון העצמי?",["לא","כן"])}
+          ${fInput(`borrowers.${i}.mk.proofType`,"סוג האסמכתא")}
+        </div>
+      </div></article>`).join(""));
+  }
+
   h += sec("הסכמות והצהרות","",
     `<div class="opts stack">
       ${fCheck("consents.insurance","הלווים מסכימים להעברת פרטי הקשר לצורך קבלת הצעות לביטוח הנכס המשועבד")}
@@ -1742,7 +1803,36 @@ async function buildPdf(){
     }
     kycFor = 0;
   }
+
+  /* Migdal's KYC is page 4 of its own document and it states a separate form is
+     required per borrower. Page 4 was already overlaid for borrower 1 above, so
+     append one further copy per additional borrower. */
+  if(r.pdfFile==="migdal" && S.data.borrowers.length>1){
+    for(let i=1;i<S.data.borrowers.length;i++){
+      kycFor = i;
+      const k = await PDFDocument.load(await template("migdal"));
+      await overlayPages(k,"migdal",["4"]);
+      const [copied] = await doc.copyPages(k,[3]);
+      doc.addPage(copied);
+    }
+    kycFor = 0;
+  }
   return await doc.save();
+}
+
+/* overlay only the named pages of a map — used for the per-borrower KYC copies */
+async function overlayPages(doc,mapKey,pages){
+  const map = FIELD_MAP[mapKey]||{};
+  const pg = doc.getPages();
+  for(const pageNo of pages){
+    if(!map[pageNo]) continue;
+    const page = pg[+pageNo-1];
+    if(!page) continue;
+    const {width,height} = page.getSize();
+    const png = await drawOverlay(map[pageNo],width,height);
+    const img = await doc.embedPng(png);
+    page.drawImage(img,{x:0,y:0,width,height});
+  }
 }
 let kycFor = 0;
 
@@ -1920,6 +2010,13 @@ function bankLine(d){ const b=d.bank||{};
 
 function resolveVal(it){
   if(it.fnKey){
+    // "mk:field" reads the Migdal KYC block of whichever borrower this copy is for
+    if(it.fnKey.indexOf("mk:")===0){
+      const k=it.fnKey.slice(3);
+      const v=((S.data.borrowers[kycFor]||{}).mk||{})[k];
+      if(it.arg!==undefined) return v===it.arg;
+      return v==null?"":v;
+    }
     const f=FN[it.fnKey];
     return f ? f(S.data,R(),it.arg) : "";
   }
@@ -2086,6 +2183,17 @@ function demoData(){
   Object.assign(ct,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",
     address:"סוקולוב 4, הרצליה 4635004",phone:"054-8812267",
     email:"y.benavraham@example.co.il",relation:"בן",gender:"זכר",birthDate:"1976-11-02"});
+
+  // Migdal's KYC block, so the new page-4 fields are exercised by the demo
+  const MK=(o)=>Object.assign({originCountry:"ישראל",residenceLocation:"ישראל",
+    occupationField:"",seniorityYears:"",restricted:"לא",bankrupt:"לא",criminal:"לא",
+    criminalDetail:"",businessName:"",incorporationCountry:"",activityCountry:"",
+    fatcaSign:"כן",usPerson:"לא",otherTaxResidency:"לא",taxCountries:"ישראל",
+    cpaConfirm:"לא",fundsSource:"חסכונות ופנסיה",publicFigure:"לא",seniorIntl:"לא",
+    accountRelation:"הורה/ילד",accountRelationOther:"",accountReason:"סיוע ברכישת דירה לבן",
+    equitySource:"חסכונות והורים",equityProof:"כן",proofType:"תדפיסי בנק"},o);
+  b1.mk=MK({occupationField:"גמלאית"});
+  b2.mk=MK({occupationField:"מנהל פיתוח",seniorityYears:"7"});
 
   const r=R();
   const d={
