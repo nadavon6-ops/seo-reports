@@ -464,10 +464,10 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 <div class="bar">
   <div class="mark"><b>אנבר</b><span>טפסי משכנתא</span></div>
   <div class="bar-rule"></div>
-  <span class="pill">אב־טיפוס · נתוני דמו בלבד</span>
+  <span class="pill" id="demoPill" hidden>מצב הדגמה</span>
   <div class="bar-sp"></div>
-  <button type="button" class="ghost" id="loadDemo">טען נתוני דמו</button>
-  <button type="button" class="ghost" id="clearAll">נקה</button>
+  <button type="button" class="ghost" id="loadDemo" hidden>טען נתוני דמו</button>
+  <button type="button" class="ghost" id="clearAll" hidden>נקה</button>
 </div>
 
 <div class="app">
@@ -475,10 +475,13 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
   <main class="work" id="main"></main>
   <aside class="docpane" id="docpane"></aside>
 </div>
-<div class="foot">NC Digital · אב־טיפוס עבור אנבר משכנתאות · הדף אינו מאונדקס, אינו שומר מידע ואינו שולח דבר. אין להזין פרטי לקוח אמיתיים.</div>
+<div class="foot">אנבר משכנתאות · הטופס נמלא בדפדפן שלך בלבד — המידע אינו נשמר בשרת ואינו נשלח לאף גורם עד שתורידו את הקובץ ותשלחו אותו.</div>
 
 <div class="mask" id="mask"><div class="modal" id="modal"></div></div>
 
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="/anbar-form/assets/anbar-field-map.js"></script>
 <script>
 /* ============================================================================
    ANBAR — multi-lender mortgage application console
@@ -495,6 +498,7 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
    ======================================================================== */
 const ROUTES = {
   "clal-reverse": {
+    pdfFile:"clal-reverse", pdfReady:true,
     lender:"כלל", lenderShort:"כלל", product:"reverse", productLabel:"משכנתא הפוכה",
     doc:"1875", ver:"07/25", pages:9, maxBorrowers:2, maxCollateral:2, maxOther:2, maxTracks:2,  
     annexes:[
@@ -515,6 +519,7 @@ const ROUTES = {
     note:"עד 2 לווים · כולל איש קשר לטיפול בהחזר · ללא בלוק תעסוקה.",
   },
   "clal-regular": {
+    pdfFile:"clal-regular", pdfReady:true,
     lender:"כלל", lenderShort:"כלל", product:"regular", productLabel:"משכנתא רגילה",
     doc:"119", ver:"5/25", pages:8, maxBorrowers:4, maxCollateral:2, maxOther:2, maxTracks:3, 
     annexes:[
@@ -536,6 +541,7 @@ const ROUTES = {
     note:"עד 4 לווים · כולל בלוק תעסוקה · אין צורך בפרטי איש קשר לטיפול בהחזר.",
   },
   "ayalon-reverse": {
+    pdfFile:"ayalon-reverse", pdfReady:true,
     lender:"איילון", lenderShort:"איילון", product:"reverse", productLabel:"משכנתא הפוכה",
     doc:"—", ver:"—", pages:12, maxBorrowers:2, maxCollateral:1, maxOther:2, maxTracks:1,  maxContacts:2,
     annexes:[
@@ -559,7 +565,26 @@ const ROUTES = {
     lender:"איילון", lenderShort:"איילון", product:"regular", productLabel:"משכנתא רגילה",
     unavailable:true, reason:"טרם התקבל טופס מהחברה"
   },
+  "migdal-reverse": {
+    lender:"מגדל", lenderShort:"מגדל", product:"reverse", productLabel:"משכנתא הפוכה",
+    doc:"—", ver:"—", pages:10, maxBorrowers:3, maxCollateral:1, maxOther:2, maxTracks:3,
+    pdfFile:"migdal", pdfReady:true,
+    annexes:[{t:"הצהרות והתחייבויות הלווים", d:"כלול בטופס"},
+             {t:"ייפוי כוח / הרשאה", d:"כלול בטופס"}],
+    sections:["borrowers","residence","household","income","obligations","bank",
+              "collateral","other","purpose","tracks","consents","annexes"],
+    residenceOpts:["הנכס המוצע לשעבוד","דירה אחרת בבעלותי","בשכירות","אצל בן משפחה","דיור מוגן","אחר"],
+    childrenLabel:"מספר ילדים",
+    relationOpts:["בן/בת זוג","בן, בת או הורה","אח או אחות","אבא/אמא","אחר"],
+    rateOpts:["קבועה צמודה","קבועה לא צמודה (קל\"צ)","משתנה פריים"],
+    repayOpts:["שפיצר","גרייס חלקי","בלון חלקי","משולב"],
+    purposeOpts:["עזרה לבן משפחה","מחיה, הוצאות שוטפות וטיפול רפואי","מיחזור משכנתא מבנק או גורם חוץ בנקאי",
+                 "מעבר לדיור מוגן","סילוק הלוואה או התחייבות אחרת","שיפוץ","מטרה אחרת"],
+    propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
+    note:"עד 3 לווים · מסלול משולב · כולל שאלת דיירים נוספים בנכס."
+  },
   "credit360-both": {
+    pdfFile:"credit360", pdfReady:true,
     lender:"קרדיט 360", lenderShort:"360", product:"both", productLabel:"רגילה והפוכה",
     doc:"1001", ver:"—", pages:12, maxBorrowers:2, maxCollateral:3, maxOther:3, maxTracks:3,  spansBoth:true,
     annexes:[
@@ -585,6 +610,7 @@ const ROUTES = {
 const MATRIX = [
   {lender:"כלל",     regular:"clal-regular",   reverse:"clal-reverse"},
   {lender:"איילון",  regular:"ayalon-regular", reverse:"ayalon-reverse"},
+  {lender:"מגדל",     span:"migdal-reverse"},
   {lender:"קרדיט 360", span:"credit360-both"}
 ];
 
@@ -699,10 +725,8 @@ function renderDocPane(){
   const el=$("#docpane");
   if(S.step===0){
     el.innerHTML=`<div class="eyebrow">מה מופק בסוף</div>
-      <div class="dp"><div class="dp-sec"><div class="dp-k">טופס אנבר</div>
-        <ul class="dp-list">${DOCSECS.map(([t])=>`<li><span>${esc(t)}</span></li>`).join("")}</ul></div>
-      <div class="dp-sec"><div class="dp-k">פלט</div>
-        <div class="dp-list" style="font-size:12.5px">PDF עם טקסט עברי מלא — ניתן לחיפוש והעתקה, מוכן לחתימה ב־iSign.</div></div></div>`;
+      <div class="dp"><div class="dp-sec"><div class="dp-k">הפלט</div>
+        <div class="dp-list" style="font-size:13.5px">הטופס המקורי של החברה שנבחרה, ממולא ומוכן להגשה ולחתימה.</div></div></div>`;
     return;
   }
   if(!S.route){
@@ -735,8 +759,8 @@ function renderDocPane(){
       </div>
       ${(r.caveats||[]).length?`<div class="dp-sec"><div class="dp-k">לתשומת לב</div>
         <div class="dp-warn">${esc(r.caveats[0])}</div></div>`:""}
-      <div class="dp-sec"><div class="dp-k">מבנה טופס אנבר</div>
-        <ul class="dp-list">${docSections().map(x=>`<li><span>${esc(x)}</span></li>`).join("")}</ul></div>
+      <div class="dp-sec"><div class="dp-k">הפלט</div>
+        <div class="dp-list" style="font-size:13.5px">הטופס המקורי של ${esc(r.lender)} — ${r.pages} עמודים, במתכונת המקורית, מוכן להגשה.</div></div>
     </div>`;
   const ch=$("#dpChange"); if(ch) ch.onclick=()=>go(0);
 }
@@ -799,7 +823,7 @@ function step0(){
       <p>הבחירה נעשית כאן, לפני מילוי הנתונים — היא קובעת אילו שדות נאספים, כמה לווים מותרים
          ואילו הצהרות ייכללו בטופס.</p>
     </div>
-    <div class="note info">היועץ ממלא את הבקשה, והמערכת מפיקה <b>טופס אחד של אנבר</b> — מסמך אחיד שנבנה על בסיס טפסי החברות. הלקוח מקבל אותו מוכן וחותם עליו ב־iSign.</div>
+    <div class="note info">הבקשה נמלאת כאן, והמערכת מפיקה את <b>הטופס המקורי של החברה</b> — ממולא, במתכונת המקורית, מוכן להגשה ישירה ולחתימה ב־iSign.</div>
     ${groups}
     ${S.route?`<div class="nav"><div class="sp"></div><button class="btn p" data-nav="1">המשך למילוי ←</button></div>`:""}`;
 }
@@ -1285,28 +1309,24 @@ function step6(){
 
   h += `<div class="send"><div class="send-h">הפקת המסמך ושליחה לחתימה</div><div class="send-b">
     <div class="flow">
-      <div class="fl"><i>1</i><div><b>הפקת טופס אנבר</b>
-        <p>הנתונים מורכבים לטופס הבקשה של אנבר — מסמך אחיד לכל החברות, שנבנה על בסיס הטפסים של ${esc(r.lender)} ושאר הגורמים המממנים.</p></div></div>
-      <div class="fl"><i>2</i><div><b>בדיקה והדפסה ל־PDF</b>
-        <p>המסמך נפתח כאן לבדיקה. «שמור כ־PDF» בחלון ההדפסה מפיק קובץ עם טקסט עברי מלא — ניתן לחיפוש, לסימון ולהעתקה.</p></div></div>
-      <div class="fl pending"><i>3</i><div><b>שליחה ב־iSign</b>
-        <p>הקובץ נטען ל־iSign ונשלח ללקוח לחתימה בדוא"ל או ב־SMS.</p></div></div>
+      <div class="fl"><i>1</i><div><b>מילוי טופס ${esc(r.lender)}</b>
+        <p>הנתונים מוטבעים על גבי הטופס המקורי של ${esc(r.lender)} — ${r.pages} עמודים, ללא שינוי בנוסח, בהצהרות או בעיצוב. המסמך ניתן להגשה ישירה לחברה.</p></div></div>
+      <div class="fl"><i>2</i><div><b>בדיקה</b>
+        <p>תצוגה מקדימה של המסמך המופק, עמוד אחר עמוד, מול הטופס המקורי.</p></div></div>
+      <div class="fl pending"><i>3</i><div><b>חתימה ב־iSign</b>
+        <p>המסמך נשלח ללקוח לחתימה. שדות החתימה והתאריך מסומנים בטופס.</p></div></div>
     </div>
 
     <div class="nav" style="margin:0;padding:0;border:0">
-      <button class="btn n" id="genDoc" ${missing.length?"disabled":""}>הפק את הטופס</button>
-      <button class="btn g" id="printDoc" disabled>שמור כ־PDF / הדפס</button>
+      <button class="btn n" id="genPdf" ${missing.length?"disabled":""}>הפק את טופס ${esc(r.lender)}</button>
+      <button class="btn g" id="dlPdf" disabled>הורד PDF</button>
       <div class="sp"></div>
       <button class="btn p" id="sendISign" disabled>שלח לחתימה ב־iSign</button>
       ${missing.length?`<span style="font-size:13.5px;color:var(--warn);align-self:center">יש להשלים ${missing.length} שדות</span>`:""}
     </div>
-  </div></div>
 
-  <div id="docArea" style="margin-top:14px"></div>`;
-
-  h += `<div class="note warn" style="margin-top:16px"><b>על שילוב iSign:</b> אתר isign.co.il אינו מפרסם API או תיעוד למפתחים.
-    לכן האב־טיפוס מפיק את המסמך המדויק ומעביר אותו לחתימה בנתיב שעובד היום — הורדה, או תיקיית Google Drive / Dropbox שה־iSign כבר מחובר אליה.
-    הכפתור לא ידמה שליחה מוצלחת שלא קרתה. החלפה ל־API אמיתי היא פונקציה אחת.</div>`;
+    <div id="pdfArea" class="pv" style="margin-top:16px">לחץ «הפק את טופס ${esc(r.lender)}» כדי להטביע את הנתונים על גבי המסמך המקורי.</div>
+  </div></div>`;
 
   h += `<div class="nav"><button class="btn g" data-nav="-1">→ הקודם</button></div>`;
   return h;
@@ -1626,309 +1646,366 @@ $("#mask").onclick=e=>{ if(e.target.id==="mask") closeModal(); };
 /* Hebrew is laid out by the browser itself, so bidi and digit order are
    correct by construction and the printed PDF keeps selectable text. */
 /* ===========================================================================
-   10. SEND STEP — build Anbar's document, print it, hand off to iSign
+   10. OUTPUT — fill the company's own form
    ======================================================================== */
+/* Hebrew is drawn by the browser (which does full bidi) into a canvas, and
+   pdf-lib only embeds that canvas as an image over the untouched original
+   page — so the company's own form, wording and layout are never redrawn.
+   ======================================================================== */
+const PDF_DIR = "/anbar-form/pdf/";
+const templates = {};                 // file -> ArrayBuffer, fetched once
+let pdfState = {pages:0, cur:1, out:null};
+
+async function template(file){
+  if(!templates[file]){
+    const res=await fetch(PDF_DIR+file+".pdf");
+    if(!res.ok) throw new Error("template "+file);
+    templates[file]=await res.arrayBuffer();
+  }
+  return templates[file];
+}
+
 function bindSend(){
-  const g=$("#genDoc"), pr=$("#printDoc"), si=$("#sendISign");
-  if(g) g.onclick=()=>{
-    const area=$("#docArea");
-    area.innerHTML=`<div class="docwrap">${buildDocument()}</div>`;
-    pr.disabled=false; si.disabled=false;
-    area.scrollIntoView({behavior:"smooth",block:"start"});
+  const g=$("#genPdf"), d=$("#dlPdf"), s=$("#sendISign");
+  if(g) g.onclick=generate;
+  if(d) d.onclick=()=>{
+    if(!pdfState.out) return;
+    const b=new Blob([pdfState.out],{type:"application/pdf"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(b);
+    a.download=`${R().lenderShort}-${R().product==="reverse"?"הפוכה":"רגילה"}-${(S.data.borrowers[0].lastName||"טופס")}.pdf`;
+    a.click(); URL.revokeObjectURL(a.href);
   };
-  if(pr) pr.onclick=()=>window.print();
-  if(si) si.onclick=()=>openModal("שליחה לחתימה ב־iSign",
-    `<div class="note warn"><b>ל־iSign אין API ציבורי.</b> אתר isign.co.il אינו מפרסם תיעוד למפתחים,
-      והשליחה מתבצעת מתוך המערכת עצמה (דוא"ל או SMS).</div>
+  if(s) s.onclick=()=>openModal("שליחה לחתימה ב־iSign",
+    `<div class="note warn"><b>אין API ציבורי ל־iSign.</b> אתר isign.co.il אינו מפרסם תיעוד למפתחים,
+      והשליחה מתבצעת מממשק המערכת עצמה (דוא"ל או SMS).</div>
      <div style="font-weight:700;color:var(--navy);margin:14px 0 6px">הנתיב שעובד היום</div>
      <ul class="dl">
-       <li><span class="b">1</span><span>«שמור כ־PDF» — הקובץ נשמר עם טקסט עברי מלא, ניתן לחיפוש ולהעתקה.</span></li>
-       <li><span class="b">2</span><span>העלה אותו ב־iSign, או שמור בתיקיית Google Drive / Dropbox שה־iSign מחובר אליה.</span></li>
-       <li><span class="b">3</span><span>שלח ללקוח לחתימה, והוסף את שדות החתימה במקומות המסומנים בטבלת החתימות.</span></li>
+       <li><span class="b">1</span><span>הורד את המסמך שהופק (הוא זהה למסמך המקור של החברה, עם הנתונים מוטבעים).</span></li>
+       <li><span class="b">2</span><span>העלה אותו ב־iSign, או שמור אותו בתיקיית Google Drive / Dropbox שה־iSign כבר מחובר אליה.</span></li>
+       <li><span class="b">3</span><span>שלח ללקוח לחתימה מתוך iSign, לדוא"ל או ל־SMS.</span></li>
      </ul>
-     <div class="note info" style="margin-top:14px">אם אנבר יקבלו גישת API — ההחלפה כאן היא פונקציית מתאם אחת.</div>`,
+     <div class="note info" style="margin-top:14px">אם אנבר יקבלו גישת API (או יעברו לספק שמפרסם אחד),
+       ההחלפה כאן היא פונקציית מתאם אחת — שאר המערכת לא משתנה.</div>`,
     [{t:"סגור",cls:"g",fn:closeModal}]);
 }
 
-/* ===========================================================================
-   ANBAR APPLICATION DOCUMENT
-   Anbar's own form — informed by the lender documents, not overlaid on them.
-   Rendered as real HTML so the Hebrew is laid out by the browser (correct bidi
-   by construction) and the printed PDF keeps selectable, searchable text.
-   ======================================================================== */
-function today(){
-  const n=new Date();
-  return `${String(n.getDate()).padStart(2,"0")}/${String(n.getMonth()+1).padStart(2,"0")}/${n.getFullYear()}`;
+async function generate(){
+  const area=$("#pdfArea");
+  area.innerHTML=`<div><div class="spin"></div>מפיק את המסמך…</div>`;
+  $("#genPdf").disabled=true;
+  try{
+    const out=await buildPdf();
+    pdfState.out=out;
+    await preview(out);
+    $("#dlPdf").disabled=false;
+    $("#sendISign").disabled=false;
+  }catch(err){
+    area.innerHTML=`<div style="color:var(--err)">לא ניתן היה להפיק את המסמך: ${esc(err.message||err)}</div>`;
+  }finally{ $("#genPdf").disabled=false; }
 }
 
-const DOC = {
-  /* ---- small builders ------------------------------------------------ */
-  esc: s => esc(s),
-  val: v => (v===""||v==null) ? '<span class="d-none">—</span>' : esc(String(v)),
-  money: v => (v===""||v==null||isNaN(v)) ? '<span class="d-none">—</span>'
-              : `<span class="tnum">${Number(v).toLocaleString("en-US")}</span> ₪`,
-  date: v => v ? `<span class="tnum">${fmtDate(v)}</span>` : '<span class="d-none">—</span>',
+/* --- overlay: browser draws the Hebrew, pdf-lib only merges --- */
+async function overlay(doc,mapKey){
+  const map = FIELD_MAP[mapKey]||{};
+  const pages = doc.getPages();
+  for(const pageNo of Object.keys(map)){
+    const pg = pages[+pageNo-1];
+    if(!pg) continue;
+    const {width,height} = pg.getSize();
+    const png = await drawOverlay(map[pageNo],width,height);
+    const img = await doc.embedPng(png);
+    pg.drawImage(img,{x:0,y:0,width,height});
+  }
+}
 
-  /* a definition grid: [[label, value], …] */
-  dl(pairs, cols){
-    const rows = pairs.filter(p=>p).map(([k,v])=>
-      `<div class="d-k">${esc(k)}</div><div class="d-v">${v==null||v===""?'<span class="d-none">—</span>':v}</div>`).join("");
-    return `<div class="d-dl${cols===2?" two":""}">${rows}</div>`;
-  },
-  /* a real table for repeating records */
-  table(head, rows){
-    if(!rows.length) return `<p class="d-empty">לא נמסרו פרטים.</p>`;
-    return `<table class="d-tbl"><thead><tr>${head.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead>
-      <tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c==null||c===""?'<span class="d-none">—</span>':c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-  },
-  sec(no, title, body, note){
-    return `<section class="d-sec"><h2><span class="d-no">${no}</span>${esc(title)}</h2>
-      ${note?`<p class="d-note">${esc(note)}</p>`:""}${body}</section>`;
-  },
-  /* checkbox row that prints the full option list with the chosen one marked —
-     mirrors how the lender forms present a choice, and keeps the unchosen
-     options visible so the signed document is self-explanatory */
-  choice(label, options, chosen){
-    const list = options.map(o=>{
-      const on = Array.isArray(chosen) ? chosen.includes(o) : chosen===o;
-      return `<span class="d-opt${on?" on":""}"><i aria-hidden="true"></i>${esc(o)}</span>`;
-    }).join("");
-    return `<div class="d-k">${esc(label)}</div><div class="d-v"><div class="d-opts">${list}</div></div>`;
+/* Fill the selected lender document, then append one filled KYC page per
+   borrower for the routes whose annex list calls for it. */
+async function buildPdf(){
+  const {PDFDocument} = PDFLib;
+  const r = R();
+  const doc = await PDFDocument.load(await template(r.pdfFile));
+  await overlay(doc, r.pdfFile);   // map keys are the file names, not the route ids
+
+  if((r.annexes||[]).some(a=>a.perBorrower) && FIELD_MAP["clal-kyc"]){
+    for(let i=0;i<S.data.borrowers.length;i++){
+      kycFor = i;                                   // which borrower this copy is for
+      const k = await PDFDocument.load(await template("clal-kyc"));
+      await overlay(k,"clal-kyc");
+      const [pg] = await doc.copyPages(k,[0]);
+      doc.addPage(pg);
+    }
+    kycFor = 0;
+  }
+  return await doc.save();
+}
+let kycFor = 0;
+
+// Render one page's values into a transparent canvas at 3x, using the browser's
+// own text engine so bidi and digit order are correct by construction.
+function drawOverlay(items,w,h){
+  return new Promise(resolve=>{
+    const SC=3;
+    const cv=document.createElement("canvas");
+    cv.width=Math.round(w*SC); cv.height=Math.round(h*SC);
+    const ctx=cv.getContext("2d");
+    ctx.scale(SC,SC);
+    ctx.direction="rtl";
+    ctx.textBaseline="alphabetic";
+    ctx.fillStyle="#0b1a3a";
+    items.forEach(it=>{
+      const v=resolveVal(it);
+      if(v===""||v==null||v===false) return;
+      if(it.ring){                       // ring a printed choice (360 prints the option list)
+        ctx.save();
+        ctx.strokeStyle="#0b1a3a"; ctx.lineWidth=1.1;
+        ctx.beginPath();
+        ctx.ellipse(it.x,h-it.y,(it.rw||24)/2,(it.rh||10)/2,0,0,Math.PI*2);
+        ctx.stroke(); ctx.restore();
+        return;
+      }
+      if(it.mark){                       // checkbox / radio tick
+        ctx.save();
+        ctx.strokeStyle="#0b1a3a"; ctx.lineWidth=1.6; ctx.lineCap="round";
+        const x=it.x, y=h-it.y;
+        ctx.beginPath();
+        ctx.moveTo(x-3,y-1); ctx.lineTo(x-1,y+2); ctx.lineTo(x+3.5,y-4.5);
+        ctx.stroke(); ctx.restore();
+        return;
+      }
+      ctx.font=`${it.size||9}px Assistant, Arial, sans-serif`;
+      ctx.textAlign=it.align||"right";
+      const text=String(v);
+      // shrink to fit the slot rather than overflow into the next label
+      let size=it.size||9;
+      if(it.w){
+        while(ctx.measureText(text).width>it.w && size>5.5){
+          size-=0.4; ctx.font=`${size}px Assistant, Arial, sans-serif`;
+        }
+      }
+      ctx.fillText(text,it.x,h-it.y);
+    });
+    // wait a frame so the webfont is definitely applied before serialising
+    requestAnimationFrame(()=>{
+      const b=atob(cv.toDataURL("image/png").split(",")[1]);
+      const u=new Uint8Array(b.length);
+      for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i);
+      resolve(u);
+    });
+  });
+}
+
+/* Values the map can request that are not a plain field path. */
+const FN = {
+  collateralTotal: d => { const t=d.collateral.reduce((a,c)=>a+(+c.value||0),0); return t?t.toLocaleString("en-US"):""; },
+  notes:           d => d.purpose.notes||"",
+  borrowerName0:   d => nameOf(d.borrowers[0]),
+  borrowerName1:   d => nameOf(d.borrowers[1]),
+  borrowerName2:   d => nameOf(d.borrowers[2]),
+  borrowerName3:   d => nameOf(d.borrowers[3]),
+  otherIncome0:    d => otherIncome(d.borrowers[0]),
+  otherIncome1:    d => otherIncome(d.borrowers[1]),
+  bankName0:       d => (d.bank||{}).name||"",
+  bankName1:       d => "",
+  trackTotal:      d => { const t=d.tracks.reduce((a,x)=>a+(+x.amount||0),0);
+                          return t?t.toLocaleString("en-US"):""; },
+  today:           () => { const n=new Date(); return `${String(n.getDate()).padStart(2,"0")}/${String(n.getMonth()+1).padStart(2,"0")}/${n.getFullYear()}`; },
+  agentName:       d => (d.agent||{}).name||"",
+  agentPhone:      d => (d.agent||{}).phone||"",
+  agentNumber:     d => (d.agent||{}).number||"",
+  agentNotes:      d => (d.agent||{}).notes||"",
+  purposeHas:    (d,_,arg) => (d.purpose.list||[]).includes(arg),
+
+  /* composite strings the table-based documents want in a single cell */
+  addr0: d => addrOf(d.borrowers[0]),
+  addr1: d => addrOf(d.borrowers[1]),
+  bankLine:  d => bankLine(d),
+  bankLine0: d => bankLine(d),
+  bankLine1: d => "",
+  gushHelka: d => { const c=d.collateral[0]||{};
+    return [c.gush&&`גוש ${c.gush}`,c.helka&&`חלקה ${c.helka}`,c.sub&&`תת ${c.sub}`].filter(Boolean).join(" · "); },
+  propAddr0: d => propAddr(d.collateral[0]),
+  propAddr1: d => propAddr(d.collateral[1]),
+  propAddr2: d => propAddr(d.collateral[2]),
+  contactName0: d => nameOf(d.contacts[0]),
+  contactName1: d => nameOf(d.contacts[1]),
+  dealRank:  d => d.deal.rank||"",
+  otherAddr0: d => (d.other[0]||{}).address||"",
+  otherAddr1: d => (d.other[1]||{}).address||"",
+  purposeLine: d => (d.purpose.list||[]).join(", "),
+  occupantsLine: d => d.occupants.map(o=>`${nameOf(o)}${o.relation?" ("+o.relation+")":""}`).filter(Boolean).join("; "),
+  /* only label the row when that borrower actually carries the obligation */
+  oblName0_0: d => (d.borrowers[0]||{}).oblLoanM ? "הלוואה שאינה משכנתא":"",
+  oblName0_1: d => (d.borrowers[1]||{}).oblLoanM ? "הלוואה שאינה משכנתא":"",
+  oblName1_0: d => (d.borrowers[0]||{}).oblMortM ? "משכנתא":"",
+  oblName1_1: d => (d.borrowers[1]||{}).oblMortM ? "משכנתא":"",
+  /* 360 · bank-account table rows (only one account is collected today) */
+  bankRowName0:  d => (d.bank||{}).name||"",   bankRowName1: ()=>"", bankRowName2: ()=>"",
+  bankRowBranch0:d => (d.bank||{}).branch||"", bankRowBranch1:()=>"",bankRowBranch2:()=>"",
+  bankRowAcct0:  d => (d.bank||{}).account||"",bankRowAcct1: ()=>"", bankRowAcct2: ()=>"",
+  bankRowOwner0: d => (d.bank||{}).owner||"",  bankRowOwner1:()=>"", bankRowOwner2:()=>"",
+  /* 360 · liabilities table, flattened from every borrower */
+  ...oblRows(),
+  /* 360 · one property table holds the collateral AND the additional properties */
+  ...propRows(),
+
+  /* KYC annex — identity comes from the borrower this copy belongs to */
+  kycLastName:  d => (d.borrowers[kycFor]||{}).lastName||"",
+  kycFirstName: d => (d.borrowers[kycFor]||{}).firstName||"",
+  kycId:        d => (d.borrowers[kycFor]||{}).id||"",
+  kycBirth:     d => fmtDate((d.borrowers[kycFor]||{}).birthDate),
+  kycResidency: d => (d.borrowers[kycFor]||{}).residency||"",
+  kycPhone:     d => (d.borrowers[kycFor]||{}).phone||"",
+  kycMobile:    d => (d.borrowers[kycFor]||{}).phone||"",
+  kycGender:  (d,_,arg) => {
+    const g=(d.borrowers[kycFor]||{}).gender;
+    return (arg==="ז"&&g==="זכר")||(arg==="נ"&&g==="נקבה");
   }
 };
-
-function buildDocument(){
-  const d=S.data, r=R();
-  const B=d.borrowers, n=B.length;
-  const ref = "AN-" + new Date().getFullYear() + "-" + String(Math.abs(hashRef())%100000).padStart(5,"0");
-  const per = (fn) => B.map((b,i)=>[`לווה ${i+1}`, fn(b,i)]);
-
-  /* ---- 1 · borrowers -------------------------------------------------- */
-  const s1 = DOC.table(
-    ["", "שם מלא", "ת.ז", "תאריך לידה", "מגדר", "מצב משפחתי", "טלפון", "דוא\"ל", "תושבות"],
-    B.map((b,i)=>[`<b>${i+1}</b>`, esc(`${b.firstName} ${b.lastName}`.trim()),
-      b.id?`<span class="tnum">${esc(b.id)}</span>`:"", DOC.date(b.birthDate), DOC.val(b.gender),
-      DOC.val(b.marital), b.phone?`<span class="tnum">${esc(b.phone)}</span>`:"", DOC.val(b.email),
-      DOC.val(b.residency)])
-  ) + DOC.table(["", "כתובת מגורים", "ישוב", "מיקוד", "הקרבה ללווה 1"],
-    B.map((b,i)=>[`<b>${i+1}</b>`, DOC.val(b.street), DOC.val(b.city),
-      b.zip?`<span class="tnum">${esc(b.zip)}</span>`:"",
-      i===0?'<span class="d-none">—</span>':DOC.val(b.relation==="אחר"?`אחר — ${b.relationOther||""}`:b.relation)]));
-
-  /* ---- 2 · residence & household -------------------------------------- */
-  let s2 = B.map((b,i)=>`<div class="d-sub"><h3>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</h3>
-    <div class="d-dl">
-      ${DOC.choice("מקום מגורי", r.residenceOpts, b.residence)}
-      ${b.residence==="אחר"?`<div class="d-k">פירוט</div><div class="d-v">${DOC.val(b.residenceOther)}</div>`:""}
-      ${DOC.choice("גר איתי בנכס בן/בת זוג שאינו אחד הלווים", ["לא","כן"], b.spouseInProperty)}
-      ${b.spouseInProperty==="כן"?`<div class="d-k">שם בן/בת הזוג</div><div class="d-v">${DOC.val(b.spouseName)}</div>`:""}
-      <div class="d-k">${esc(r.childrenLabel)}</div><div class="d-v">${b.children?`<span class="tnum">${esc(b.children)}</span>`:'<span class="d-none">—</span>'}</div>
-    </div></div>`).join("");
-  s2 += `<div class="d-sub"><h3>מי עוד גר בנכס</h3>${DOC.table(
-    ["שם פרטי","שם משפחה","ת.ז / דרכון","תאריך לידה","מצב משפחתי","הקשר ללווה"],
-    d.occupants.map(o=>[DOC.val(o.firstName),DOC.val(o.lastName),
-      o.id?`<span class="tnum">${esc(o.id)}</span>`:"",DOC.date(o.birthDate),DOC.val(o.marital),DOC.val(o.relation)]))}</div>`;
-  if(has("contact")){
-    s2 += `<div class="d-sub"><h3>איש קשר לטיפול בהחזר ההלוואה</h3>${DOC.table(
-      ["שם פרטי","שם משפחה","ת.ז","טלפון","דוא\"ל","קרבה ללווים","כתובת"],
-      d.contacts.map(c=>[DOC.val(c.firstName),DOC.val(c.lastName),
-        c.id?`<span class="tnum">${esc(c.id)}</span>`:"",
-        c.phone?`<span class="tnum">${esc(c.phone)}</span>`:"",DOC.val(c.email),DOC.val(c.relation),DOC.val(c.address)]))}</div>`;
+function nameOf(x){ return x?`${x.firstName||""} ${x.lastName||""}`.trim():""; }
+/* Flatten every borrower's obligations into the rows 360 prints. */
+function allObligations(d){
+  const out=[];
+  d.borrowers.forEach((b,i)=>{
+    const who=b.lastName?` (${b.lastName})`:"";
+    if(b.oblLoanM||b.oblLoanB) out.push(["הלוואה שאינה משכנתא"+who,b.oblLoanM,b.oblLoanB]);
+    if(b.oblMortM||b.oblMortB) out.push(["משכנתא"+who,b.oblMortM,b.oblMortB]);
+    if(b.oblOtherM)            out.push([(b.oblOtherName||"אחר")+who,b.oblOtherM,b.oblOtherB]);
+  });
+  return out;
+}
+function oblRows(){
+  const o={};
+  for(let r=0;r<6;r++){
+    o["oblSource"+r] =d=>(allObligations(d)[r]||[])[0]||"";
+    o["oblMonthly"+r]=d=>{const v=(allObligations(d)[r]||[])[1]; return v?Number(v).toLocaleString("en-US"):"";};
+    o["oblBalance"+r]=d=>{const v=(allObligations(d)[r]||[])[2]; return v?Number(v).toLocaleString("en-US"):"";};
   }
-
-  /* ---- 3 · employment (only where the product needs it) --------------- */
-  let s3="";
-  if(has("employment")){
-    s3 = DOC.table(["","מקום עבודה ראשי","ישוב","ותק","מצב תעסוקתי","תפקיד / תחום עיסוק","הכנסה חודשית נטו"],
-      B.map((b,i)=>[`<b>${i+1}</b>`,DOC.val(b.workplace),DOC.val(b.workCity),
-        DOC.val(b.seniority==="מעל שנה"?`${b.seniorityYears||""} שנים`:b.seniority),
-        DOC.val(b.employment==="אחר"?`אחר — ${b.employmentOther||""}`:b.employment),
-        DOC.val(b.role),DOC.money(b.netIncome)]));
+  return o;
+}
+/* Collateral first, then any additional property — 360 lists them in one table. */
+function allProperties(d){
+  return d.collateral.map(c=>({addr:propAddr(c),reg:c.registry,val:c.value,to:c.mortgagedTo,bal:c.mortgageBalance}))
+    .concat(d.other.map(o=>({addr:o.address,reg:"",val:o.value,to:o.mortgagedTo,bal:o.mortgageBalance})));
+}
+function propRows(){
+  const o={};
+  for(let i=0;i<3;i++){
+    o["propAddrAll"+i]=d=>(allProperties(d)[i]||{}).addr||"";
+    o["propRegistry"+i]=d=>(allProperties(d)[i]||{}).reg||"";
+    o["propValue"+i]  =d=>{const v=(allProperties(d)[i]||{}).val; return v?Number(v).toLocaleString("en-US"):"";};
+    o["propMortTo"+i] =d=>(allProperties(d)[i]||{}).to||"";
+    o["propMortBal"+i]=d=>{const v=(allProperties(d)[i]||{}).bal; return v?Number(v).toLocaleString("en-US"):"";};
   }
+  return o;
+}
+function addrOf(b){ return b?[b.street,b.city,b.zip].filter(Boolean).join(", "):""; }
+function propAddr(c){ return c?[c.street,c.num,c.apt&&`דירה ${c.apt}`,c.city].filter(Boolean).join(" "):""; }
+function otherIncome(b){
+  if(!b) return "";
+  return [b.incAllowance&&`קצבה ${(+b.incAllowance).toLocaleString("en-US")}`,
+          b.incRent&&`שכ"ד ${(+b.incRent).toLocaleString("en-US")}`,
+          b.incAlimony&&`מזונות ${(+b.incAlimony).toLocaleString("en-US")}`].filter(Boolean).join(" · ");
+}
+function bankLine(d){ const b=d.bank||{};
+  return [b.name,b.branch&&`סניף ${b.branch}`,b.account&&`חשבון ${b.account}`].filter(Boolean).join(" · "); }
 
-  /* ---- 4 · income & obligations --------------------------------------- */
-  const s4 = `<div class="d-sub"><h3>הכנסות חודשיות</h3>${DOC.table(
-      ["","מעבודה","מקצבה","משכר דירה","מפנסיה","ממזונות","ממקור אחר","סה\"כ"],
-      B.map((b,i)=>{
-        const tot=["incWork","incAllowance","incRent","incPension","incAlimony","incOtherAmt"]
-          .reduce((a,k)=>a+(+b[k]||0),0);
-        return [`<b>${i+1}</b>`,DOC.money(b.incWork),DOC.money(b.incAllowance),DOC.money(b.incRent),
-          DOC.money(b.incPension),DOC.money(b.incAlimony),
-          b.incOtherAmt?`${esc(b.incOtherSrc||"אחר")} · ${DOC.money(b.incOtherAmt)}`:"",
-          `<b>${tot?DOC.money(tot):"—"}</b>`];
-      }))}</div>
-    <div class="d-sub"><h3>התחייבויות</h3>${DOC.table(
-      ["","סוג","תשלום חודשי","יתרה לסילוק"],
-      B.flatMap((b,i)=>{
-        const rows=[];
-        if(b.oblLoanM||b.oblLoanB) rows.push([`<b>${i+1}</b>`,"הלוואה שאינה משכנתא",DOC.money(b.oblLoanM),DOC.money(b.oblLoanB)]);
-        if(b.oblMortM||b.oblMortB) rows.push([`<b>${i+1}</b>`,"משכנתא",DOC.money(b.oblMortM),DOC.money(b.oblMortB)]);
-        if(b.oblRent) rows.push([`<b>${i+1}</b>`,"שכר דירה",DOC.money(b.oblRent),""]);
-        if(b.oblAlimony) rows.push([`<b>${i+1}</b>`,"מזונות",DOC.money(b.oblAlimony),""]);
-        if(b.oblOtherM) rows.push([`<b>${i+1}</b>`,esc(b.oblOtherName||"אחר"),DOC.money(b.oblOtherM),DOC.money(b.oblOtherB)]);
-        return rows;
-      }))}
-      <div class="d-dl">${B.map((b,i)=>DOC.choice(`עיקול / תיק הוצל"פ — לווה ${i+1}`,["לא","כן"],b.attachment)).join("")}</div></div>
-    <div class="d-sub"><h3>חשבון בנק</h3>${DOC.dl([
-      ["שם הבנק",DOC.val(d.bank.name)],["מספר סניף",d.bank.branch?`<span class="tnum">${esc(d.bank.branch)}</span>`:""],
-      ["מספר חשבון",d.bank.account?`<span class="tnum">${esc(d.bank.account)}</span>`:""],
-      ["שם בעל החשבון",DOC.val(d.bank.owner)]],2)}</div>`;
-
-  /* ---- 5 · properties -------------------------------------------------- */
-  const collTotal = d.collateral.reduce((a,c)=>a+(+c.value||0),0);
-  const s5 = `<div class="d-sub"><h3>נכסים המוצעים לשעבוד</h3>${
-    d.collateral.map((c,i)=>`<div class="d-card"><h4>נכס ${i+1}</h4>${DOC.dl([
-      ["גוש / חלקה / תת חלקה",[c.gush,c.helka,c.sub].filter(Boolean).map(x=>`<span class="tnum">${esc(x)}</span>`).join(" / ")],
-      ["כתובת",esc([c.street,c.num,c.apt&&`דירה ${c.apt}`,c.city].filter(Boolean).join(" "))],
-      ["שטח בנוי",c.builtArea?`<span class="tnum">${esc(c.builtArea)}</span> מ"ר`:""],
-      ["שטח מגרש",c.lotArea?`<span class="tnum">${esc(c.lotArea)}</span> מ"ר`:""],
-      ["סוג הנכס",DOC.val(c.type)],["שווי להערכת הלווים",DOC.money(c.value)],
-      c.registry?["רישום הנכס",DOC.val(c.registry)]:null
-    ],2)}
-    <div class="d-dl">
-      ${DOC.choice("האם ממושכן כיום",["לא","כן"],c.mortgaged)}
-      ${c.mortgaged==="כן"?`<div class="d-k">ממושכן לטובת</div><div class="d-v">${DOC.val(c.mortgagedTo)}</div>
-        <div class="d-k">יתרת המשכנתא לסילוק</div><div class="d-v">${DOC.money(c.mortgageBalance)}</div>`:""}
-      ${DOC.choice("האם מעוקל כיום",["לא","כן"],c.seized)}
-      ${c.seized==="כן"?`<div class="d-k">מעוקל לטובת</div><div class="d-v">${DOC.val(c.seizedTo)}</div>
-        <div class="d-k">יתרת החוב לסילוק</div><div class="d-v">${DOC.money(c.seizedBalance)}</div>`:""}
-      ${DOC.choice("האם מושכר כיום",["לא","כן"],c.rented)}
-      ${c.rented==="כן"?`<div class="d-k">דמי שכירות חודשיים</div><div class="d-v">${DOC.money(c.rentAmount)}</div>`:""}
-    </div></div>`).join("")}
-    <p class="d-total">סה"כ שווי הנכסים המוצעים לשעבוד: <b>${collTotal?DOC.money(collTotal):"—"}</b></p></div>
-    <div class="d-sub"><h3>נכסים נוספים בבעלות — שאינם מיועדים לשיעבוד בבקשה זו</h3>${DOC.table(
-      ["תיאור הנכס","כתובת","שווי משוער","הכנסה משכר דירה","אם ממושכן — למי","יתרת משכנתא"],
-      d.other.map(o=>[DOC.val(o.type),DOC.val(o.address),DOC.money(o.value),DOC.money(o.rentIncome),
-        DOC.val(o.mortgagedTo),DOC.money(o.mortgageBalance)]))}</div>
-    ${r.lender==="כלל"?`<div class="d-dl">${DOC.choice('יש לנו משכנתא קיימת ב"כלל"',["לא","כן"],d.clal.existingMortgage)}
-      ${d.clal.existingMortgage==="כן"?DOC.choice("המשכנתא הקיימת היא על אחד הנכסים המפורטים בבקשה זו",["לא","כן"],d.clal.existingOnListed):""}</div>`:""}`;
-
-  /* ---- 6 · the loan ---------------------------------------------------- */
-  const p=d.purpose, pu=d.purchase;
-  const trackSum=d.tracks.reduce((a,t)=>a+(+t.amount||0),0);
-  let s6 = `<div class="d-dl">
-      ${r.spansBoth?DOC.choice("מטרת העסקה",r.dealPurpose,d.deal.rank):""}
-      ${DOC.choice("מטרת ההלוואה", r.purposeOpts, p.list||[])}
-      ${p.investDetail?`<div class="d-k">פרטי ההשקעה</div><div class="d-v">${DOC.val(p.investDetail)}</div>`:""}
-      ${p.payoffDetail?`<div class="d-k">סילוק הלוואה / התחייבות</div><div class="d-v">${esc(p.payoffDetail)} · יתרת חוב ${DOC.money(p.payoffBalance)}</div>`:""}
-      ${p.otherDetail?`<div class="d-k">מטרה אחרת</div><div class="d-v">${DOC.val(p.otherDetail)}</div>`:""}
-      <div class="d-k">סכום ההלוואה המבוקש</div><div class="d-v"><b>${DOC.money(p.amount)}</b></div>
-      ${r.hasAnnuity?`<div class="d-k">סכום האנונה (הלוואה חודשית) המבוקש</div><div class="d-v">${DOC.money(p.annuity)}</div>`:""}
-    </div>`;
-  if(pu.kind||pu.hand||pu.fromSale||pu.equityAmount||pu.fromLoan||pu.sellerRelation){
-    s6 += `<div class="d-sub"><h3>רכישת נכס</h3><div class="d-dl">
-      ${DOC.choice("הנכס הוא",["דירה יחידה","דירה חלופית","דירה להשקעה"],pu.kind)}
-      ${DOC.choice("אופן הרכישה",["הנכס יירכש מקבלן (יד ראשונה)","הנכס יירכש מיד שניה"],pu.hand)}
-      <div class="d-k">ממכירת נכס קיים</div><div class="d-v">${DOC.money(pu.fromSale)}</div>
-      <div class="d-k">מהון עצמי${pu.equitySource?` — שמקורו ${esc(pu.equitySource)}`:""}</div><div class="d-v">${DOC.money(pu.equityAmount)}</div>
-      <div class="d-k">מההלוואה המבוקשת</div><div class="d-v">${DOC.money(pu.fromLoan)}</div>
-      ${DOC.choice("קשר משפחתי בין הלווה למוכר הנכס",["אין","יש"],pu.sellerRelation)}
-      ${pu.sellerRelation==="יש"?`<div class="d-k">פירוט הקשר</div><div class="d-v">${DOC.val(pu.sellerDetail)}</div>`:""}
-    </div></div>`;
+function resolveVal(it){
+  if(it.fnKey){
+    const f=FN[it.fnKey];
+    return f ? f(S.data,R(),it.arg) : "";
   }
-  s6 += `<div class="d-sub"><h3>מסלולי ההלוואה המבוקשים</h3>${DOC.table(
-      ["מסלול","סכום","תקופה","סוג ריבית","אופן ההחזר"],
-      d.tracks.map((t,i)=>[`<b>${i+1}</b>`,DOC.money(t.amount),
-        t.years?`<span class="tnum">${esc(t.years)}</span> שנים`:"",DOC.val(t.rate),
-        DOC.val(t.repay==="גרייס חלקי"&&t.graceMonths?`גרייס חלקי ל-${t.graceMonths} חודשים`:t.repay)]))}
-      <p class="d-total">סך המסלולים: <b>${trackSum?DOC.money(trackSum):"—"}</b>${
-        (+p.amount||0)&&trackSum!==(+p.amount||0)?` <span class="d-warn">— אינו תואם לסכום המבוקש</span>`:""}</p></div>`;
-  if(has("insurance")){
-    s6 += `<div class="d-sub"><h3>ביטוח מבנה</h3><div class="d-dl">
-      ${DOC.choice("האם קיים ביטוח מבנה",["כן","לא"],d.insurance.exists)}
-      ${d.insurance.exists==="לא"?DOC.choice("מעוניינים בהצעת פוליסה מסוכנות הביטוח של החברה",["כן","לא"],d.insurance.wantOffer):""}
-    </div></div>`;
+  const v=getv(it.p);
+  if(it.mark||it.ring){
+    // eq === null  → tick whenever the field carries a value
+    // eq defined   → tick only on an exact match
+    if(it.eq===null||it.eq===undefined) return v!==""&&v!=null&&v!==false;
+    return v===it.eq;
   }
-
-  /* ---- 7 · KYC --------------------------------------------------------- */
-  const k=d.kyc;
-  const s7 = `<div class="d-dl">
-      ${DOC.choice("מטרת נטילת ההלוואה",["רכישת דירה","בנייה עצמית","שיפוצים","מיחזור","אחר"],k.purpose)}
-      ${DOC.choice("מקור הכסף להחזר ההלוואה",["משכורת","אחר"],k.repaySource)}
-      <div class="d-k">פירוט נכסים ששכר הדירה שלהם ישמש להחזר</div><div class="d-v">${DOC.val(k.assets)}</div>
-      ${DOC.choice("האם גוף מוסדי או בנק סירב לפתוח חשבון מטעמי איסור הלבנת הון",["לא","כן"],k.refused)}
-    </div>
-    ${DOC.table(["לווה","שם מלא","ת.ז","מצב השלמת השאלון"],
-      B.map((b,i)=>[`<b>${i+1}</b>`,esc(`${b.firstName} ${b.lastName}`.trim()),
-        b.id?`<span class="tnum">${esc(b.id)}</span>`:"",
-        `<span class="d-badge ${b.kyc==="הושלם"?"ok":b.kyc==="חסר"?"bad":"warn"}">${esc(b.kyc)}</span>`]))}`;
-
-  /* ---- 8 · declarations ------------------------------------------------ */
-  const cs=d.consents;
-  const s8 = `<ol class="d-decl">
-      <li>הפרטים שמסרנו בבקשה זו נכונים, מלאים ומדויקים, וכל מסמך שצורף על ידינו הוא שלם ובר תוקף.</li>
-      <li>ידוע לנו כי בקשה זו אינה מהווה התחייבות של הגורם המממן להעמדת ההלוואה, וכי אישורה כפוף לשיקול דעתו ולנהליו.</li>
-      <li>ידוע לנו כי לצורך בחינת הבקשה יתקבלו נתוני אשראי לגבינו, לרבות פנייה ללשכת אשראי בהתאם לחוק נתוני אשראי, התשע"ו-2016.</li>
-      <li>אנו מתחייבים לשאת בכל ההוצאות הכרוכות בהליך ההלוואה.</li>
-      <li>ידוע לנו כי תנאי להעמדת ההלוואה הוא קיומו של ביטוח מבנה לנכס המשועבד בהתאם להנחיות הגורם המממן.</li>
-      <li>אין ולא היו בחשבונותינו מגבלות לפי חוק שיקים ללא כיסוי, התשמ"א-1981, ולא מתנהלים נגדנו הליכי פשיטת רגל או חדלות פירעון.</li>
-      <li>אין לצד שלישי זכויות בנכס המוצע לשיעבוד, ולא קיימת מניעה לשעבודו.</li>
-      <li>ידוע לנו כי בטרם נטילת ההלוואה ניתן להתייעץ עם בן משפחה, עורך דין או גורם מקצועי אחר.</li>
-    </ol>
-    <div class="d-dl">
-      ${[["הסכמה להעברת פרטי הקשר לצורך קבלת הצעה לביטוח הנכס",cs.insurance],
-         ["נמסרה ההודעה בנוגע לקבלת חיווי אשראי",cs.credit],
-         ["הלווים אישרו את ההצהרות המפורטות לעיל",cs.declarations],
-         ["נמסרה הודעת הפרטיות והשימוש במידע",cs.privacy]]
-        .map(([t,on])=>`<div class="d-k">${esc(t)}</div><div class="d-v">
-          <span class="d-opt${on?" on":""}"><i aria-hidden="true"></i>${on?"אושר":"לא אושר"}</span></div>`).join("")}
-    </div>
-    ${p.notes?`<div class="d-sub"><h3>הערות</h3><p class="d-free">${esc(p.notes)}</p></div>`:""}`;
-
-  /* ---- 9 · signatures --------------------------------------------------- */
-  const s9 = `<table class="d-tbl d-sign"><thead><tr>
-      <th style="width:2.4rem">לווה</th><th>שם מלא</th><th>ת.ז</th><th style="width:32%">חתימה</th><th style="width:18%">תאריך</th>
-    </tr></thead><tbody>
-      ${B.map((b,i)=>`<tr><td><b>${i+1}</b></td><td>${esc(`${b.firstName} ${b.lastName}`.trim())}</td>
-        <td>${b.id?`<span class="tnum">${esc(b.id)}</span>`:""}</td><td class="d-sigcell"></td><td class="d-sigcell"></td></tr>`).join("")}
-    </tbody></table>
-    <p class="d-note">החתימה מתבצעת דיגיטלית באמצעות iSign. שדות החתימה והתאריך נותרים ריקים במסמך זה ומתמלאים בתהליך החתימה.</p>
-    <div class="d-adv">
-      <div><span>שם יועץ המשכנתאות</span><b>${esc(d.agent.name)}</b></div>
-      <div><span>מספר סוכן</span><b class="tnum">${esc(d.agent.number)}</b></div>
-      <div><span>טלפון</span><b class="tnum">${esc(d.agent.phone)}</b></div>
-    </div>`;
-
-  /* ---- assemble --------------------------------------------------------- */
-  let no=0;
-  const secs = [
-    ["פרטי הלווים", s1, null],
-    ["מקום מגורים ומשק בית", s2, null],
-    has("employment") ? ["תעסוקה", s3, null] : null,
-    ["הכנסות, התחייבויות וחשבון בנק", s4, null],
-    ["נכסים", s5, null],
-    ["ההלוואה המבוקשת", s6, null],
-    ["הכר את הלקוח", s7, "נדרש על פי צו איסור הלבנת הון, התשע\"ז-2017."],
-    ["הצהרות הלווים והסכמות", s8, null],
-    ["חתימות", s9, null]
-  ].filter(Boolean).map(([t,b,note])=>DOC.sec(++no,t,b,note)).join("");
-
-  return `<article class="sheet" id="anbarDoc" dir="rtl">
-    <header class="d-head">
-      <div class="d-brand"><b>אנבר</b><span>משכנתאות · הלוואות · ביטוח</span></div>
-      <div class="d-meta">
-        <div><span>מספר בקשה</span><b class="tnum">${ref}</b></div>
-        <div><span>תאריך</span><b class="tnum">${today()}</b></div>
-      </div>
-    </header>
-    <div class="d-title">
-      <h1>בקשה לקבלת הלוואת משכנתא</h1>
-      <p class="d-route">מיועד ל־<b>${esc(r.lender)}</b> · ${esc(r.productLabel)}</p>
-    </div>
-    ${secs}
-    <footer class="d-foot">
-      <span>אנבר משכנתאות · ${esc(d.agent.name)} · ${esc(d.agent.phone)}</span>
-      <span class="tnum">${ref}</span>
-    </footer>
-  </article>`;
+  if(it.money) return v===""||v==null?"":Number(v).toLocaleString("en-US");
+  if(it.date)  return fmtDate(v);
+  return v;
 }
 
-/* stable-ish reference from the application content */
-function hashRef(){
-  const s=JSON.stringify(S.data.borrowers.map(b=>b.id+b.lastName))+S.route;
-  let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h+s.charCodeAt(i))|0; }
-  return h;
+/* --- preview via pdf.js --- */
+async function preview(bytes){
+  const area=$("#pdfArea");
+  if(!window.pdfjsLib){ area.innerHTML="המסמך הופק. תצוגה מקדימה אינה זמינה."; return; }
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  const task=pdfjsLib.getDocument({data:bytes.slice(0)});
+  const pdf=await task.promise;
+  pdfState.pages=pdf.numPages; pdfState.cur=1;
+  const render=async n=>{
+    const page=await pdf.getPage(n);
+    const vp=page.getViewport({scale:1.35});
+    const cv=document.createElement("canvas");
+    cv.width=vp.width; cv.height=vp.height;
+    await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
+    area.innerHTML="";
+    area.appendChild(cv);
+    const bar=document.createElement("div");
+    bar.className="pgnav";
+    bar.innerHTML=`<button ${n>=pdf.numPages?"disabled":""} data-d="1">‹</button>
+      <span>עמוד ${n} מתוך ${pdf.numPages}</span>
+      <button ${n<=1?"disabled":""} data-d="-1">›</button>`;
+    area.appendChild(bar);
+    bar.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>render(n+(+b.dataset.d)));
+  };
+  await render(1);
 }
+
+/* Which sections this lender's map actually PRINTS. Derived from the map at
+   runtime — the page can therefore never claim coverage it does not have. */
+const SECGROUPS=[
+  ["פרטי הלווים",["firstName","lastName",".id",".gender",".marital",".phone",".email",".residence"]],
+  ["תעסוקה",["workplace","seniority",".employment",".role","netIncome"]],
+  ["הכנסות",["incWork","incAllowance","incPension","otherIncome","incWorkSelf"]],
+  ["התחייבויות",["oblLoanM","oblMortM",".attachment","oblSource","oblName"]],
+  ["חשבון בנק",["bank.","bankLine","bankRow"]],
+  ["נכס לשעבוד",["collateral.","gushHelka","propAddr"]],
+  ["נכסים נוספים",["other.","otherAddr","propAddrAll"]],
+  ["מי עוד גר בנכס",["occupants.","occupantsLine"]],
+  ["איש קשר",["contacts.","contactName"]],
+  ["מטרת ההלוואה",["purpose.list","purposeHas","dealRank","purposeLine"]],
+  ["פרטי רכישה",["purchase."]],
+  ["מסלולים",["tracks."]],
+  ["הצהרות / הכר את הלקוח",["consents.","kyc"]]
+];
+/* Sections the lender's document genuinely does not contain — verified page by
+   page against each source PDF. Everything else must be mapped. */
+const NO_SLOT={
+  "clal-reverse":["תעסוקה"],
+  "clal-regular":["מי עוד גר בנכס","איש קשר"],
+  "ayalon-reverse":["תעסוקה","פרטי רכישה","הצהרות / הכר את הלקוח"],
+  "credit360":["איש קשר","מי עוד גר בנכס","פרטי רכישה","הצהרות / הכר את הלקוח"]
+};
+function coverage(file){
+  const map=FIELD_MAP[file]||{};
+  const blob=Object.values(map).flat().map(i=>i.p||i.fnKey||"").join(" ");
+  const on=[],off=[];
+  SECGROUPS.forEach(([name,keys])=>{ (keys.some(k=>blob.includes(k))?on:off).push(name); });
+  return {on,off};
+}
+/* sections this route COLLECTS but the lender's document has no slot for */
+function collectedNotPrinted(){
+  const r=R(); if(!r.pdfFile) return [];
+  let {off}=coverage(r.pdfFile);
+  // the KYC annex is appended for routes that carry it, so it IS printed
+  if((r.annexes||[]).some(a=>a.perBorrower)) off=off.filter(x=>x!=="הצהרות / הכר את הלקוח");
+  const collected={"תעסוקה":has("employment"),"הכנסות":true,"התחייבויות":true,"חשבון בנק":true,
+    "נכס לשעבוד":true,"נכסים נוספים":S.data.other.length>0,"מי עוד גר בנכס":S.data.occupants.length>0,
+    "איש קשר":has("contact")&&S.data.contacts.length>0,"מטרת ההלוואה":true,
+    "פרטי רכישה":has("purchase"),"מסלולים":true,"הצהרות / הכר את הלקוח":true,"פרטי הלווים":true};
+  return off.filter(x=>collected[x]);
+}
+
+/* ===========================================================================
+   10. FIELD MAP — explicit page/x/y per value. Never name-matching.
+   Coordinates are PDF points, origin bottom-left, generated from the real
+   label positions in the source document.
+   ======================================================================== */
+const FIELD_MAP = window.ANBAR_FIELD_MAP || {};
+
 
 /* ===========================================================================
    11. DEMO DATA — synthetic only. Chosen to stress the Hebrew PDF path:
@@ -2036,6 +2113,12 @@ $("#clearAll").onclick=()=>{
    12. BOOT
    ======================================================================== */
 if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",number:"4390"};
+
+/* Public link by default: the demo tools only appear with ?demo=1, so the same
+   URL can be handed to a client, an advisor, or anyone else. */
+const DEMO = new URLSearchParams(location.search).has("demo");
+if(DEMO){ ["loadDemo","clearAll","demoPill"].forEach(id=>{const e=document.getElementById(id); if(e) e.hidden=false;}); }
+
 render();
 
 })();
