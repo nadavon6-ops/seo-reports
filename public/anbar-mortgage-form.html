@@ -575,7 +575,7 @@ const ROUTES = {
     pdfFile:"migdal", pdfReady:true,
     annexes:[{t:"הצהרות והתחייבויות הלווים", d:"כלול בטופס"},
              {t:"ייפוי כוח / הרשאה", d:"כלול בטופס"}],
-    sections:["borrowers","residence","household","income","obligations","bank",
+    sections:["borrowers","residence","household","contact","employment","income","obligations","bank",
               "collateral","other","purpose","tracks","consents","annexes"],
     residenceOpts:["הנכס המוצע לשעבוד","דירה אחרת בבעלותי","בשכירות","אצל בן משפחה","דיור מוגן","אחר"],
     childrenLabel:"מספר ילדים",
@@ -659,7 +659,7 @@ function blankCollateral(){return{
 function blankOther(){return{type:"",address:"",value:"",rentIncome:"",mortgagedTo:"",mortgageBalance:""};}
 function blankTrack(){return{amount:"",years:"",rate:"",repay:"",graceMonths:""};}
 function blankOccupant(){return{firstName:"",lastName:"",id:"",birthDate:"",marital:"",relation:""};}
-function blankContact(){return{firstName:"",lastName:"",id:"",address:"",phone:"",email:"",relation:"",gender:""};}
+function blankContact(){return{firstName:"",lastName:"",id:"",address:"",phone:"",email:"",relation:"",gender:"",birthDate:""};}
 
 const R = ()=>ROUTES[S.route]||{};
 const has = s => (R().sections||[]).includes(s);
@@ -984,6 +984,7 @@ function step1(){
         ${fInput(`contacts.${i}.firstName`,"שם פרטי")}
         ${fInput(`contacts.${i}.lastName`,"שם משפחה")}
         ${fInput(`contacts.${i}.id`,"תעודת זהות",{maxlength:9})}
+        ${fInput(`contacts.${i}.birthDate`,"תאריך לידה",{type:"date"})}
         ${fInput(`contacts.${i}.phone`,"טלפון",{type:"tel"})}
         ${fInput(`contacts.${i}.email`,"דוא\"ל",{type:"email"})}
         ${fInput(`contacts.${i}.relation`,"קרבה ללווים")}
@@ -1861,9 +1862,12 @@ const FN = {
   kycResidency: d => (d.borrowers[kycFor]||{}).residency||"",
   kycPhone:     d => (d.borrowers[kycFor]||{}).phone||"",
   kycMobile:    d => (d.borrowers[kycFor]||{}).phone||"",
+  kycEmployment: (d,_,arg) => (d.borrowers[kycFor]||{}).employment===arg,
   kycGender:  (d,_,arg) => {
     const g=(d.borrowers[kycFor]||{}).gender;
-    return (arg==="ז"&&g==="זכר")||(arg==="נ"&&g==="נקבה");
+    if(!g) return false;
+    const male = arg==="ז"||arg==="זכר", female = arg==="נ"||arg==="נקבה";
+    return (male&&g==="זכר")||(female&&g==="נקבה");
   }
 };
 function nameOf(x){ return x?`${x.firstName||""} ${x.lastName||""}`.trim():""; }
@@ -2011,6 +2015,38 @@ function collectedNotPrinted(){
 const FIELD_MAP = window.ANBAR_FIELD_MAP || {};
 
 
+/* Verification hook: for the selected route, report how many mapped slots
+   actually resolve to a value, and which collected fields are never placed. */
+window.__anbarAudit = function(){
+  const norm = x => String(x).replace(/\.\d+(\.|$)/g,".#$1");
+  const r=R(), map=FIELD_MAP[r.pdfFile]||{};
+  const items=Object.values(map).flat();
+  const placed=new Set();
+  let filled=0;
+  items.forEach(it=>{
+    if(it.p) placed.add(norm(it.p));
+    const v=resolveVal(it);
+    if(!(v===""||v==null||v===false)) filled++;
+  });
+  // fnKey placements cover composite values; list them so they are not counted missing
+  const fnCovered=new Set(items.filter(i=>i.fnKey).map(i=>i.fnKey));
+  const missing=[];
+  const walk=(obj,pre)=>{
+    Object.keys(obj||{}).forEach(k=>{
+      const v=obj[k], path=pre?pre+"."+k:k;
+      if(Array.isArray(v)) return v.forEach((x,i)=>walk(x,path+"."+i));
+      if(v&&typeof v==="object") return walk(v,path);
+      if(v===""||v==null||v===false) return;
+      if(/^(agent|demoNote)/.test(path)) return;
+      if(!placed.has(norm(path))) missing.push(norm(path));
+    });
+  };
+  walk(S.data,"");
+  return {pages:Object.keys(map).length, slots:items.length, filled,
+          fnKeys:[...fnCovered].length,
+          carriesDataButNotPlaced:[...new Set(missing)].sort()};
+};
+
 /* ===========================================================================
    11. DEMO DATA — synthetic only. Chosen to stress the Hebrew PDF path:
    long Hebrew names, Hebrew mixed with digits, ₪ amounts, and full addresses.
@@ -2049,7 +2085,7 @@ function demoData(){
   const ct=blankContact();
   Object.assign(ct,{firstName:"יהושע",lastName:"בן־אברהם",id:"301234563",
     address:"סוקולוב 4, הרצליה 4635004",phone:"054-8812267",
-    email:"y.benavraham@example.co.il",relation:"בן",gender:"זכר"});
+    email:"y.benavraham@example.co.il",relation:"בן",gender:"זכר",birthDate:"1976-11-02"});
 
   const r=R();
   const d={
