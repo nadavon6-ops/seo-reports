@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<meta name="robots" content="noindex, nofollow">
+<title>ספץ - ניתוח תנועה אוטומטית באתר service.spetz.co.il | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--card-2:#273548;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--accent:#0891b2;--accent-light:#22d3ee;--green:#10b981;--amber:#f59e0b;--purple:#a78bfa;--line:#475569}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;direction:rtl}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,#0c4a6e 0%,#164e63 50%,#1e293b 100%);border:1px solid var(--border);border-radius:16px;padding:40px 32px;margin-bottom:22px;text-align:center}
+.header .brand{color:var(--accent-light);font-weight:800;letter-spacing:.08em;font-size:.85rem;margin-bottom:10px}
+.header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent-light),var(--accent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.35}
+.header .meta{margin-top:14px;color:var(--muted);font-size:.9rem}
+.toolbar{display:flex;gap:10px;justify-content:flex-end;margin-bottom:18px;flex-wrap:wrap}
+.toolbar button{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:9px 18px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
+.toolbar button:hover{background:var(--card-2);border-color:var(--accent)}
+.lead{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--accent);border-radius:12px;padding:18px 24px;margin-bottom:22px}
+.lead p{color:var(--muted);font-size:.95rem} .lead strong{color:var(--text)}
+details.sec{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden}
+details.sec>summary{padding:20px 24px;cursor:pointer;font-size:1.14rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:14px;list-style:none;transition:.18s}
+details.sec>summary::-webkit-details-marker{display:none} details.sec>summary::marker{content:""}
+details.sec>summary:hover{background:var(--card-2)}
+details.sec>summary .ttl{flex:1}
+.chev{width:22px;height:22px;flex:0 0 22px;border-radius:6px;background:rgba(34,211,238,.12);display:flex;align-items:center;justify-content:center;transition:transform .22s}
+.chev::before{content:"";width:7px;height:7px;border-left:2px solid var(--accent-light);border-bottom:2px solid var(--accent-light);transform:rotate(-45deg);margin-top:-3px}
+details.sec[open]>summary .chev{transform:rotate(-180deg)}
+.secnum{color:var(--accent);font-weight:800;font-size:.94rem;background:rgba(8,145,178,.14);padding:3px 11px;border-radius:8px}
+.secbody{padding:4px 24px 26px}
+.verdict{background:rgba(16,185,129,.08);border-right:3px solid var(--green);border-radius:8px;padding:14px 16px;margin-bottom:18px}
+.verdict .lbl{font-size:.76rem;font-weight:800;color:var(--green);letter-spacing:.04em;margin-bottom:4px}
+.verdict p{font-size:.98rem}
+.find{border-top:1px solid var(--border);padding-top:20px;margin-top:20px}
+.find:first-of-type{border-top:none;padding-top:4px;margin-top:0}
+.find h3{font-size:1.04rem;font-weight:700;color:var(--accent-light);margin-bottom:10px}
+.find p,.find li{font-size:.94rem;color:var(--text)}
+.find p+p{margin-top:8px}
+.find ul,.find ol{margin:6px 18px 0 0} .find li{margin-bottom:6px}
+.note{background:rgba(148,163,184,.07);border-right:3px solid var(--line);border-radius:8px;padding:12px 15px;margin-top:12px}
+.do{background:rgba(8,145,178,.08);border-right:3px solid var(--accent);border-radius:8px;padding:12px 15px;margin-top:12px}
+.soft{color:var(--muted)}
+table.data{width:100%;border-collapse:collapse;background:var(--card-2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin:12px 0 16px;font-size:.9rem}
+table.data thead th{background:#16324a;color:var(--accent-light);font-weight:700;padding:11px 13px;text-align:right;font-size:.84rem}
+table.data td{padding:10px 13px;border-top:1px solid var(--border);vertical-align:top}
+table.data tbody tr:hover{background:#2d3d52}
+.tblwrap{overflow-x:auto}
+.num{color:var(--accent-light);font-weight:700}
+.ltr{direction:ltr;display:inline-block;unicode-bidi:isolate}
+code{background:#0b1220;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;color:var(--accent-light);direction:ltr;display:inline-block;unicode-bidi:isolate}
+.chartbox{background:#0b1220;border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0 18px;height:320px;position:relative}
+.chartbox canvas{width:100%!important;height:100%!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.grid2{grid-template-columns:1fr} .header h1{font-size:1.5rem} .secbody{padding:4px 14px 20px} .chartbox{height:260px}}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.76rem;font-weight:700;white-space:nowrap;margin-right:6px}
+.p-s{background:rgba(34,211,238,.12);color:var(--accent-light);border:1px solid rgba(34,211,238,.3)}
+.p-m{background:rgba(167,139,250,.14);color:var(--purple);border:1px solid rgba(167,139,250,.32)}
+.p-g{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.35)}
+.footer{text-align:center;color:var(--muted);font-size:.85rem;padding:26px 0 10px;border-top:1px solid var(--border);margin-top:26px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div class="brand">NC DIGITAL</div>
+  <h1>ספץ: ניתוח התנועה האוטומטית באתר service.spetz.co.il</h1>
+  <div class="meta">מענה לשאלות שעלו בעקבות דוח יולי 2026 · אוגוסט 2026 · נתוני GA4 (שני הנכסים), Search Console והקבצים שהועברו אלינו לתקופה מאי עד אוגוסט 2026</div>
+</div>
+
+<div class="toolbar"><button onclick="toggleAll(true)">הרחב הכל</button><button onclick="toggleAll(false)">כווץ הכל</button></div>
+
+<div class="lead">
+<p>בדוח יולי סומנה תנועת Direct באתר השירות כתנועה אוטומטית. בעקבות השאלה שהעברתם, בדקנו את הנושא לעומק על פני שלושה חודשים: בשני נכסי ה-GA4, בנתוני Search Console ובקבצים ששלחתם. הדוח בנוי לפי שלוש השאלות שנשאלו, ובכל סעיף מופיעה תחילה התשובה ואחריה הראיות.</p>
+</div>
+
+<!-- ===================== 1 ===================== -->
+<details class="sec">
+<summary><span class="secnum">1</span><span class="ttl">מה זיהינו</span><span class="chev"></span></summary>
+<div class="secbody">
+<div class="verdict"><div class="lbl">התשובה</div>
+<p>באתר service.spetz.co.il נכנסו מאז 1 ביולי שלושה גלים של תנועה אוטומטית (סורקים הפועלים בדפדפן ללא משתמש אנושי), כולם מחוץ לישראל, שסורקים באופן שיטתי את דפי הערים והקטגוריות. סך הכל כ-<span class="num">27,178</span> סשנים בערוץ Direct מחוץ לישראל בין 25.05 ל-22.08, ועוד כ-1,903 סשנים מאותו סוג ב-6 ביוני שנרשמו כתנועה אורגנית (מפורט בהמשך). התנועה הזו לא יצרה אף פנייה אחת. הגל האחרון החל ב-20.08 ועדיין פעיל במועד שליפת הנתונים.</p></div>
+
+<div class="find"><h3>הסימן שעלה בדוח יולי, ומה קרה אחריו</h3>
+<p>ערוץ Direct באתר השירות עמד על <span class="num">387</span> סשנים ביוני, קפץ ל-<span class="num">20,692</span> ביולי (פי 53.5) ועומד על <span class="num">6,998</span> מתחילת אוגוסט ועד 22.08. הקו הבסיסי של הערוץ לפני יולי היה 11 סשנים ביום (חציון מאי-יוני). התנועה לא הגיעה ברצף אלא בגלים:</p>
+<div class="tblwrap"><table class="data"><thead><tr><th>גל</th><th>תאריכים</th><th>ימים</th><th>סשנים</th></tr></thead><tbody><tr><td>גל 1</td><td><span class='ltr'>01.07 - 09.07</span></td><td>9</td><td class='num'>8,196</td></tr><tr><td>גל 2</td><td><span class='ltr'>27.07 - 10.08</span></td><td>15</td><td class='num'>16,944</td></tr><tr><td>גל 3</td><td><span class='ltr'>20.08 - 22.08</span></td><td>3</td><td class='num'>1,085</td></tr></tbody></table></div>
+<p>ימי השיא: <span class="ltr">30.07</span> (4,440 סשנים), <span class="ltr">04.07</span> (4,012) ו-<span class="ltr">29.07</span> (3,279). בין הגלים הערוץ חוזר לרמה של כמה עשרות סשנים ביום.</p>
+<div class="chartbox"><canvas id="chDaily"></canvas></div>
+</div>
+
+<div class="find"><h3>הסימנים המעידים על תנועה אוטומטית ולא על גולשים</h3>
+<p>אף סימן בודד לא מספיק כדי לקבוע שמדובר בבוטים. כאן כל הסימנים מצביעים לאותו כיוון בו זמנית:</p>
+<div class="tblwrap"><table class="data"><thead><tr><th>מאפיין</th><th>מה רואים בסשני Direct (25.05 עד 22.08)</th><th>משמעות הממצא</th></tr></thead><tbody>
+<tr><td>גיאוגרפיה</td><td>166 מדינות שונות; ישראל היא רק 626 סשנים מתוך הערוץ. בראש: ברזיל, ארה"ב, מקסיקו, הונג קונג, סינגפור, צ'ילה, ונצואלה, ארגנטינה, יפן</td><td>אתר שירותי בית בעברית אינו מקבל באופן טבעי תנועה ישירה מ-166 מדינות</td></tr>
+<tr><td>ערים</td><td>הונג קונג, סינגפור, פרנקפורט, אשבורן (וירג'יניה), סנטיאגו, טוקיו</td><td>רובן מוקדי חוות שרתים של ספקי ענן, לא ערי מגורים של לקוחות</td></tr>
+<tr><td>דפדפן ומערכת</td><td>96.9% מהסשנים: Chrome על Windows, מחשב שולחני</td><td>תנועה אנושית באתר היא ברובה מובייל (ב-Search Console: 1,175 קליקים ממובייל מול 413 ממחשב)</td></tr>
+<tr><td>רזולוציית מסך</td><td>96.8% מהסשנים בשתי רזולוציות בלבד: <span class="ltr">1280x1200</span> ו-<span class="ltr">1600x1600</span></td><td>אלה אינן רזולוציות של מסכים צרכניים; הן ברירות מחדל של דפדפנים אוטומטיים (headless)</td></tr>
+<tr><td>שפת הדפדפן</td><td>97.1% אנגלית; עברית רק 385 סשנים</td><td>הגולשים האמיתיים של האתר מגיעים עם דפדפן בעברית</td></tr>
+<tr><td>שעות פעילות</td><td>אחיד לאורך כל היממה: בסיכום התקופה, כל שעת יממה מקבלת בין 880 ל-1,766 סשנים, ללא ירידה בשעות הלילה</td><td>תנועה אנושית יורדת באופן טבעי בשעות הלילה; תנועה אוטומטית פועלת ברציפות</td></tr>
+<tr><td>דפי כניסה</td><td><span class="num">21,382</span> כתובות כניסה שונות, רובן בתבנית <code>/city/עיר/?scat=קטגוריה</code>, וצפיות מפוזרות באופן כמעט שווה על כל דפי הערים (כ-500 עד 750 צפיות לכל דף עיר)</td><td>זו סריקה שיטתית של כל צירופי עיר-קטגוריה, לא התנהגות של אדם שמחפש איש מקצוע</td></tr>
+<tr><td>מעורבות</td><td>זמן מעורבות ממוצע 1.6 שניות, שיעור מעורבות 12.7%</td><td>סשן אנושי ממוצע בישראל באתר: 21.5 שניות, 59.6%</td></tr>
+<tr><td>פניות</td><td><span class="num">0</span> אירועי פנייה (טופס / שיחה) מכל הסשנים מחוץ לישראל בערוץ Direct. כל 142 הפניות שהגיעו מ-Direct בתקופה הן מישראל</td><td>תנועה זו אינה מובילה לאף פעולה עסקית באתר</td></tr>
+</tbody></table></div>
+<p>בנוסף, כ-38% מהגל השני נכנסו דרך הדומיין החלופי <code>www.2144.co.il</code>: <span class="num">6,514</span> סשנים נרשמו תחת שם המארח הזה, כמעט כולם בין <span class="ltr">29.07</span> ל-<span class="ltr">01.08</span> (<span class="ltr">30.07</span> לבדו: 2,785), ואפס פניות. נכון למועד הבדיקה הדומיין הזה מפנה ל-service.spetz.co.il אך מוגש משרת שאינו מאחורי Cloudflare. זה רלוונטי לסעיף הפעולות.</p>
+</div>
+
+<div class="find"><h3>מה מראה קובץ המדינות ששלחתם (אתר השירות)</h3>
+<p>הקובץ מכסה את כל הערוצים יחד ל-25.05 עד 22.08. מתוך <span class="num">126,020</span> משתמשים פעילים, <span class="num">37,969</span> (30.1%) הם מחוץ לישראל, והם אחראים ל-208 אירועי פנייה בלבד מתוך 37,424 (0.6%). 74 מדינות (מתוך אלה עם 20 משתמשים ומעלה) מציגות את אותו פרופיל (שיעור מעורבות מתחת ל-30% וזמן מעורבות מתחת ל-3 שניות), וביחד הן 28,902 משתמשים.</p>
+<div class="tblwrap"><table class="data"><thead><tr><th>מדינה</th><th>משתמשים פעילים</th><th>שיעור מעורבות</th><th>זמן מעורבות ממוצע</th><th>אירועי פנייה</th></tr></thead><tbody>
+<tr><td>ישראל</td><td class="num">88,051</td><td>58.9%</td><td>24.7 שנ'</td><td>37,216</td></tr>
+<tr><td>United States</td><td class='num'>4,916</td><td>45.9%</td><td>20.9 שנ'</td><td>23</td></tr><tr><td>Brazil</td><td class='num'>3,298</td><td>20.3%</td><td>1.4 שנ'</td><td>0</td></tr><tr><td>Mexico</td><td class='num'>2,542</td><td>20.6%</td><td>2.1 שנ'</td><td>0</td></tr><tr><td>Hong Kong</td><td class='num'>1,765</td><td>7.9%</td><td>0.7 שנ'</td><td>0</td></tr><tr><td>Singapore</td><td class='num'>1,765</td><td>7.7%</td><td>0.7 שנ'</td><td>0</td></tr><tr><td>Chile</td><td class='num'>1,681</td><td>27.5%</td><td>1.8 שנ'</td><td>0</td></tr><tr><td>Venezuela</td><td class='num'>1,357</td><td>31.1%</td><td>1.9 שנ'</td><td>0</td></tr><tr><td>Argentina</td><td class='num'>1,270</td><td>18.0%</td><td>1.1 שנ'</td><td>0</td></tr><tr><td>Japan</td><td class='num'>1,118</td><td>7.9%</td><td>0.8 שנ'</td><td>0</td></tr><tr><td>Colombia</td><td class='num'>1,077</td><td>19.8%</td><td>1.2 שנ'</td><td>0</td></tr></tbody></table></div>
+<p class="soft">ארה"ב נראית "טובה" יותר בטבלה הזו (זמן מעורבות 20.9 שניות) משום שהשורה שלה מכילה גם את אירוע 6 ביוני, שמתואר בהמשך.</p>
+</div>
+
+<div class="find"><h3>עדכון להערכה מדוח יולי לגבי הזינוק האורגני של יוני</h3>
+<p>בדוח יולי הוסבר שהזינוק בערוץ Organic ביוני (כ-2,450 סשנים) נבע מ-Google Discover. בפילוח לפי מדינה ושעה מתברר שמדובר באירוע מאותה משפחה: ב-<span class="ltr">06.06</span> נרשמו <span class="num">1,914</span> סשנים אורגניים ביום אחד, מהם <span class="num">1,903</span> מארה"ב, כולם במקור <code>google / organic</code>, כולם בתוך שלוש שעות (18:00 עד 21:00), כולם נחתו בעמוד הבית, מ-1,299 ערים שונות (כמעט כולן בארה"ב), עם דפדפן באנגלית, בלי אף פנייה, וחלקם עם ערכי מסך שאינם רזולוציה אמיתית (למשל <code>admin@nexbuy</code>). הפרופיל הזה אינו של Discover, אלא של תנועה אוטומטית שמזדהה כתנועת חיפוש. המסקנה של דוח יולי לגבי SEO נשארת נכונה ואף מתחזקת: הירידה ב-Organic מיוני ליולי לא הייתה ירידה אמיתית, וה-SEO נמדד ב-Search Console, שבו יולי גדל לעומת יוני.</p>
+</div>
+
+<div class="find"><h3>אתר spetz.co.il (הנכס הראשי)</h3>
+<p>באתר הראשי אין גלים: ערוץ Direct יציב (חציון 123 סשנים ביום, מקסימום 296). יש בו זרם נמוך ורציף מאותו סוג: <span class="num">6,155</span> סשני Direct מחוץ לישראל לאורך התקופה, בראשם סינגפור (1,991 סשנים, 0.7 שניות בממוצע), ארה"ב, סין, הונג קונג וגרמניה. בקובץ המדינות של הנכס הראשי 44.0% מהמשתמשים הם מחוץ לישראל (8,057 מתוך 18,310), אך הם רק 3.8% מאירועי הפנייה (239 מתוך 6,370).</p>
+<div class="tblwrap"><table class="data"><thead><tr><th>מדינה</th><th>משתמשים פעילים</th><th>שיעור מעורבות</th><th>זמן מעורבות ממוצע</th><th>אירועי פנייה</th></tr></thead><tbody>
+<tr><td>ישראל</td><td class="num">10,253</td><td>85.7%</td><td>68.3 שנ'</td><td>6,131</td></tr>
+<tr><td>Singapore</td><td class='num'>2,000</td><td>8.6%</td><td>0.7 שנ'</td><td>0</td></tr><tr><td>United States</td><td class='num'>1,186</td><td>37.8%</td><td>4.8 שנ'</td><td>21</td></tr><tr><td>Iran</td><td class='num'>503</td><td>89.4%</td><td>9.1 שנ'</td><td>0</td></tr><tr><td>China</td><td class='num'>457</td><td>28.5%</td><td>2.6 שנ'</td><td>0</td></tr><tr><td>Germany</td><td class='num'>329</td><td>36.8%</td><td>1.9 שנ'</td><td>0</td></tr><tr><td>Hong Kong</td><td class='num'>270</td><td>8.1%</td><td>0.7 שנ'</td><td>0</td></tr></tbody></table></div>
+</div>
+
+<div class="find"><h3>מה ניתן להסיק מהנתונים ומה דורש בדיקה נוספת</h3>
+<ul>
+<li><strong>מה שנתוני GA4 מראים בבירור:</strong> התנועה אוטומטית, מגיעה משרתים בחו"ל, סורקת את דפי האתר ואינה יוצרת פניות. הדפים שנסרקו הם דפים אמיתיים של האתר (כתובות קיימות, תגית המדידה רצה עליהם, כולל תחת שם המארח www.2144.co.il), ומכאן שהבקשות הגיעו בפועל לאתר ולא "הוזרקו" ל-GA4 מבחוץ.</li>
+<li><strong>לא ניתן לקבוע מ-GA4 בלבד:</strong> כמה עומס זה יצר על השרת ועל Cloudflare, ומאילו רשתות (ASN) בדיוק הגיעו הבקשות. לכך דרושים יומני Cloudflare או האחסון (ראו סעיף 3).</li>
+</ul>
+</div>
+</div>
+</details>
+
+<!-- ===================== 2 ===================== -->
+<details class="sec">
+<summary><span class="secnum">2</span><span class="ttl">איך זה משפיע על הנתונים ועל האתר</span><span class="chev"></span></summary>
+<div class="secbody">
+<div class="verdict"><div class="lbl">התשובה</div>
+<p>ההשפעה היא על נתוני GA4 בלבד: מספרי הסשנים והמשתמשים באתר השירות מנופחים (ביולי פי 1.55), ומדדי המעורבות וההמרה נראים נמוכים מכפי שהם בפועל. אין השפעה על הדירוגים, על נתוני Search Console או על הפניות. כשמסתכלים על ישראל בלבד, יולי היה חודש צמיחה אמיתית: +11.9% סשנים ו-+15.7% פניות לעומת יוני.</p></div>
+
+<div class="find"><h3>אתר השירות: הנתונים הכוללים מול הנתונים מישראל בלבד</h3>
+<div class="tblwrap"><table class="data"><thead><tr><th>חודש</th><th>סשנים, כל המדינות</th><th>סשנים, ישראל בלבד</th><th>שיעור מעורבות (הכל / ישראל)</th><th>זמן מעורבות לסשן (הכל / ישראל)</th><th>פניות (הכל / ישראל)</th><th>מקדם ניפוח</th></tr></thead><tbody><tr><td>יוני</td><td class='num'>36,143</td><td class='num'>33,813</td><td>60.2% / 58.5%</td><td>21.7 / 20.2 שנ'</td><td>11,799 / 11,739</td><td>×1.07</td></tr><tr><td>יולי</td><td class='num'>58,655</td><td class='num'>37,831</td><td>42.4% / 59.6%</td><td>14.4 / 21.5 שנ'</td><td>13,655 / 13,577</td><td>×1.55</td></tr><tr><td>אוגוסט (עד 22.08)</td><td class='num'>33,106</td><td class='num'>25,952</td><td>52.0% / 61.4%</td><td>16.9 / 20.8 שנ'</td><td>9,529 / 9,489</td><td>×1.28</td></tr></tbody></table></div>
+<ul>
+<li><strong>סשנים ומשתמשים:</strong> 35.5% מסשני יולי הגיעו מחוץ לישראל (לעומת 6.4% ביוני). מספר המשתמשים הכולל גדל לכאורה ב-67.1% לעומת יוני (54,216 מול 32,446); הצמיחה האמיתית בישראל היא +10.0% במשתמשים ו-+11.9% בסשנים. הצמיחה קיימת, רק קטנה מהמספר שהופיע.</li>
+<li><strong>שיעור מעורבות וזמן מעורבות:</strong> ביולי ירדו לכאורה ל-42.4% ו-14.4 שניות. בישראל הם נשארו ברמה הרגילה: 59.6% ו-21.5 שניות, כמו ביוני (58.5%, 20.2 שניות).</li>
+<li><strong>שיעור המרה:</strong> ביולי 23.3 פניות ל-100 סשנים בכל המדינות, מול 35.9 בישראל. הפניות עצמן כמעט לא הושפעו (13,655 מול 13,577).</li>
+<li><strong>תמהיל ערוצים:</strong> Direct הפך לכאורה לערוץ השני בגודלו ביולי. בפועל, בישראל, Direct נשאר ערוץ שולי (626 סשנים בכל התקופה).</li>
+<li><strong>אוגוסט:</strong> התופעה נמשכת בעוצמה נמוכה יותר: 21.6% מהסשנים עד 22.08 הם מחוץ לישראל, מקדם ניפוח ×1.28.</li>
+</ul>
+</div>
+
+<div class="find"><h3>מה לא הושפע</h3>
+<ul>
+<li><strong>Search Console ודירוגים:</strong> גוגל לא משתמשת בנתוני GA4 לדירוג, והבוטים לא עברו דרך תוצאות החיפוש. בקובץ Search Console ששלחתם 97.0% מהקליקים (1,550 מתוך 1,598) הם מישראל, ובימי השיא של הבוטים נתוני החיפוש היו רגילים לגמרי: <span class="ltr">04.07</span>: 11 קליקים / 1,847 הופעות; <span class="ltr">30.07</span>: 10 קליקים / 1,917 הופעות. הקליקים מגוגל עלו מ-498 ביוני ל-555 ביולי וההופעות מ-52,237 ל-59,172. זו המדידה הנכונה של ה-SEO והיא נקייה.</li>
+<li><strong>חיפוש ממומן:</strong> 99.6% מסשני Paid Search ו-99.6% מהפניות מהערוץ הזה הם מישראל. התנועה האוטומטית לא נכנסה דרך הקמפיינים ואינה מבזבזת תקציב מדיה.</li>
+<li><strong>פניות ולידים:</strong> אפס פניות מהתנועה האוטומטית. הטפסים והשיחות שנספרים ב-GA4 אינם מושפעים.</li>
+<li><strong>האתר עצמו:</strong> האתר מוגש דרך Cloudflare, ובנתונים שבידינו אין סימן לפגיעה בזמינות (נתוני החיפוש בימי השיא היו רגילים). האם היה עומס חריג על השרת או צריכת משאבים באחסון ניתן לראות רק בלוח הבקרה של Cloudflare וביומני האחסון. זו אחת הבדיקות שמומלץ לבצע (סעיף 3).</li>
+</ul>
+</div>
+
+<div class="find"><h3>הנכס הראשי (spetz.co.il)</h3>
+<p>התנועה הרציפה מחו"ל מנפחת את מספר המשתמשים באתר הראשי ב-44.0% לאורך התקופה, ללא כמעט השפעה על הפניות. ההשוואות החודשיות באתר הראשי פחות מעוותות מאשר באתר השירות כי הזרם יציב ואינו בא בגלים, אך נכון להחיל עליו את אותו פילוח (ישראל בלבד) בדוחות.</p>
+</div>
+</div>
+</details>
+
+<!-- ===================== 3 ===================== -->
+<details class="sec">
+<summary><span class="secnum">3</span><span class="ttl">האם נדרשת פעולה</span><span class="chev"></span></summary>
+<div class="secbody">
+<div class="verdict"><div class="lbl">התשובה</div>
+<p>כן, בשני מסלולים, ושניהם אינם דחופים מבחינת ה-SEO או הפניות. מסלול ראשון: תיקון אופן המדידה והדיווח, באחריותנו, ומיושם כבר מדוח אוגוסט. מסלול שני: חסימת התנועה האוטומטית בשכבת Cloudflare, בביצוע הצוות הטכני שלכם שאחראי על הדומיין והאחסון. מה שלא נדרש: שינוי בפעילות ה-SEO, בקמפיינים או בטפסים.</p></div>
+
+<div class="find"><h3>מסלול א': מדידה ודיווח (NC Digital, מיידי)</h3>
+<ul>
+<li>מדוח אוגוסט ואילך, כל מדדי GA4 יוצגו בשני טורים: כל התנועה, וישראל בלבד. ההשוואות החודשיות (MoM) ייעשו על טור ישראל, שהוא המדד המייצג של הפעילות.</li>
+<li>ניצור ב-GA4 השוואה שמורה (Comparison) של "מדינה = ישראל" בשני הנכסים, כדי שגם בצפייה ישירה בממשק תראו את הנתונים ללא התנועה האוטומטית בלחיצה אחת. <span class="soft">ל-GA4 אין מסנן נתונים לפי מדינה, ולכן הפתרון הוא פילוח בדיווח ולא סינון במקור. החרגת בוטים מוכרים, הפועלת אוטומטית בכל נכס GA4, אינה מזהה תנועה מסוג זה.</span></li>
+<li>נוסיף הערה (Annotation) על התאריכים <span class="ltr">06.06</span>, <span class="ltr">01.07</span> עד <span class="ltr">09.07</span> ו-<span class="ltr">27.07</span> עד <span class="ltr">10.08</span> כדי שכל מי שפותח את הנכס בעתיד יבין את הקפיצות.</li>
+<li>ניקוי קטן נוסף: בנכס של אתר השירות נרשמים גם אירועים מסביבות פיתוח (<code>spetz.shakuf.media</code> ושני דומיינים של Cloudways, יחד 57 סשנים). כאן כן קיים מסנן מתאים ב-GA4 (Admin, Data filters, מסנן מסוג Web hostname) שמונע מהם להיכנס לנתונים מכאן ואילך. נגדיר אותו בתיאום אתכם.</li>
+</ul>
+</div>
+
+<div class="find"><h3>מסלול ב': חסימה בשכבת Cloudflare (מנהל הדומיין / האחסון)</h3>
+<p>האתר כבר מאחורי Cloudflare, כך שאין צורך בשירות חדש. הצעדים המומלצים, מהקל לכבד:</p>
+<ol>
+<li><strong>בדיקת היומנים:</strong> ב-Cloudflare, Security ואז Analytics, לסנן את התאריכים <span class="ltr">04.07</span> עד <span class="ltr">05.07</span> ו-<span class="ltr">29.07</span> עד <span class="ltr">31.07</span>. שם רואים את הבקשות עצמן, את ה-ASN (ספק הרשת) ואת ה-User-Agent. זה מספק מענה לשאלה הפתוחה היחידה (עומס על השרת) ונותן את הזיהוי המדויק לחסימה.</li>
+<li><strong>Bot Fight Mode:</strong> הפעלה של Bot Fight Mode (או Super Bot Fight Mode, לפי התוכנית) בלשונית Security ואז Bots. זה מאתגר דפדפנים אוטומטיים מבלי לפגוע בגולשים.</li>
+<li><strong>כלל WAF ממוקד:</strong> כלל Managed Challenge לבקשות שמגיעות מחוץ לישראל אל נתיבים בתבנית <code>/city/*</code> עם פרמטר <code>scat</code>. זה בדיוק מה שהסורק עושה, וגולש אמיתי מישראל לא יפגוש את האתגר. מומלץ להימנע מחסימה גורפת לפי מדינה, כדי לא לפגוע בישראלים בחו"ל ובכלים לגיטימיים.</li>
+<li><strong>Rate Limiting:</strong> הגבלת קצב לאותה כתובת IP על נתיבי <code>/city/*</code> (לדוגמה, מעל 60 בקשות בדקה), כהגנה כללית גם מול סורקים עתידיים.</li>
+<li><strong>הדומיין <span class="ltr">2144.co.il</span>:</strong> לוודא שגם הוא מוגש דרך Cloudflare (Proxied) או מופנה לאתר השירות כבר בקצה, כך שההגנות חלות גם עליו. הגל השני נכנס דרכו.</li>
+</ol>
+<div class="note"><p>לא נדרש: שינוי בעבודת ה-SEO, שינוי בקמפיינים בגוגל (התנועה לא עברה דרכם), הוספת reCAPTCHA לטפסים (לא התקבלו פניות מזויפות). אם תעדיפו שנעביר את שלושת הצעדים הראשונים ישירות למי שמנהל את Cloudflare אצלכם, נשמח.</p></div>
+</div>
+
+<div class="find"><h3>מה נעקוב אחריו בחודש הקרוב</h3>
+<ul>
+<li>סשני Direct מחוץ לישראל באתר השירות, שבועית. היעד אחרי החסימה: חזרה לרמה של מאי-יוני (עשרות סשנים ביום).</li>
+<li>שיעור המעורבות וזמן המעורבות הכוללים באתר השירות, שאמורים לחזור לרמה של טור ישראל (59.6%, כ-21 שניות) ברגע שהתנועה נחסמת.</li>
+<li>התנועה מחו"ל באתר הראשי, שאינה דורשת טיפול נפרד אך ייבדק באותו פילוח.</li>
+</ul>
+</div>
+</div>
+</details>
+
+<div class="footer">NC Digital · ספץ: ניתוח התנועה האוטומטית באתר service.spetz.co.il · אוגוסט 2026</div>
+</div>
+
+<script>
+function toggleAll(o){document.querySelectorAll('details.sec').forEach(d=>d.open=o);}
+var chartDone=false;
+function drawChart(){
+  if(chartDone||typeof Chart==='undefined')return; chartDone=true;
+  var ctx=document.getElementById('chDaily').getContext('2d');
+  new Chart(ctx,{type:'line',data:{labels:["25.05", "26.05", "27.05", "28.05", "29.05", "30.05", "31.05", "01.06", "02.06", "03.06", "04.06", "05.06", "06.06", "07.06", "08.06", "09.06", "10.06", "11.06", "12.06", "13.06", "14.06", "15.06", "16.06", "17.06", "18.06", "19.06", "20.06", "21.06", "22.06", "23.06", "24.06", "25.06", "26.06", "27.06", "28.06", "29.06", "30.06", "01.07", "02.07", "03.07", "04.07", "05.07", "06.07", "07.07", "08.07", "09.07", "10.07", "11.07", "12.07", "13.07", "14.07", "15.07", "16.07", "17.07", "18.07", "19.07", "20.07", "21.07", "22.07", "23.07", "24.07", "25.07", "26.07", "27.07", "28.07", "29.07", "30.07", "31.07", "01.08", "02.08", "03.08", "04.08", "05.08", "06.08", "07.08", "08.08", "09.08", "10.08", "11.08", "12.08", "13.08", "14.08", "15.08", "16.08", "17.08", "18.08", "19.08", "20.08", "21.08", "22.08"],datasets:[{label:'סשני Direct ליום, service.spetz.co.il',data:[17, 25, 25, 13, 22, 7, 4, 10, 2, 12, 11, 6, 15, 4, 14, 15, 12, 12, 4, 6, 10, 15, 6, 14, 6, 25, 6, 16, 8, 7, 5, 7, 23, 61, 10, 33, 11, 416, 517, 182, 4012, 2417, 227, 153, 125, 147, 9, 13, 17, 12, 37, 67, 107, 106, 90, 100, 103, 107, 130, 107, 72, 78, 66, 514, 683, 3279, 4440, 2651, 1027, 912, 878, 437, 370, 321, 763, 270, 121, 278, 83, 24, 140, 94, 13, 17, 68, 21, 22, 318, 487, 280],borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,.12)',fill:true,tension:.25,pointRadius:2,pointHoverRadius:4,borderWidth:2}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#e2e8f0',font:{family:'Heebo'}},rtl:true},tooltip:{rtl:true,callbacks:{label:function(c){return c.parsed.y.toLocaleString('he-IL')+' סשנים';}}}},
+  scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:14,font:{family:'Heebo'}},grid:{color:'rgba(51,65,85,.5)'}},y:{beginAtZero:true,ticks:{color:'#94a3b8',callback:function(v){return v.toLocaleString('he-IL');}},grid:{color:'rgba(51,65,85,.5)'}}}}});
+}
+document.querySelectorAll('details.sec')[0].addEventListener('toggle',function(ev){if(this.open)setTimeout(drawChart,30);});
+</script>
+</body>
+</html>
