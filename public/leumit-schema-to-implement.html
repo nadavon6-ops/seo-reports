@@ -155,8 +155,18 @@ a:hover { text-decoration:underline; }
 <p><b>מה לעשות.</b> למחוק את הבלוק המוער. קוד מושבת שנשאר בהערה מסתיר את המצב האמיתי מכל בדיקה המסתמכת על קוד המקור, ומקשה על תחזוקה.</p>
 </div>
 
-<p class="blk">הגרף המלא לעמוד הבית לאחר התיקונים</p>
-<p class="why">Organization ו-MedicalOrganization אוחדו לישות אחת בעלת מזהה יציב, במקום שתי ישויות נפרדות המתארות את אותו גוף. השדה <code style="direction:ltr;display:inline-block">sameAs</code> הורחב וכולל כעת את ערוץ היוטיוב הרשמי, ערך הוויקיפדיה העברי וישות הוויקינתונים. שלושתם נבדקו ומחזירים 200.</p>
+<p class="blk">עמוד הבית לאחר התיקונים: מה מחליף מה</p>
+<div class="note" style="border-color:rgba(14,165,233,.35)">
+<b>הבהרה שנוספה בעקבות שאלת צוות הפיתוח.</b> הקוד שלהלן <b>מחליף</b> את שלושת הבלוקים הקיימים כיום בעמוד הבית: Organization, WebSite ו-MedicalOrganization. הוא אינו נוסף עליהם.
+</div>
+<p class="why">בסעיף זה משולבות שלוש החלטות נפרדות, וניתן לאמץ כל אחת מהן בנפרד:</p>
+<div class="tblwrap"><table class="checks"><thead><tr><th>ההחלטה</th><th>מה היא קובעת</th><th>מחייב</th></tr></thead><tbody>
+<tr><td>היקף</td><td>Organization מוגש בעמודי הבית בלבד ולא בכל עמודי האתר, כמפורט בסעיף 1.2</td><td class="ok">כן</td></tr>
+<tr><td>מודל הישות</td><td>Organization ו-MedicalOrganization כצומת אחד, במקום שני צמתים המקושרים ב-parentOrganization</td><td class="mid">מומלץ</td></tr>
+<tr><td>אריזה</td><td>בלוק אחד עם graph@ או מספר בלוקים נפרדים</td><td class="no">לבחירתכם</td></tr>
+</tbody></table></div>
+
+<p class="blk">אפשרות א: בלוק אחד עם graph@</p>
 <pre><code>{
   &quot;@context&quot;: &quot;https://schema.org&quot;,
   &quot;@graph&quot;: [
@@ -228,7 +238,83 @@ a:hover { text-decoration:underline; }
     }
   ]
 }</code></pre>
-<div class="note">שימו לב למזהה <code style="direction:ltr;display:inline-block">https://www.leumit.co.il/#organization</code> עם לוכסן לפני הסולמית. בקוד הקיים המזהה הוא ללא לוכסן. יש לבחור צורה אחת ולהשתמש בה בכל ההפניות, אחרת הקישור בין הישויות לא ייווצר.</div>
+
+<p class="blk">אפשרות ב: בלוקים נפרדים, מקושרים במזהה</p>
+<p class="why">אם מבנה התבניות נוח יותר עם בלוקים נפרדים, זו אפשרות תקפה לחלוטין וגוגל תומך בה במפורש. לשון התיעוד: "Individual items: When each item is a separate block on the same page", ובהמשך: "use @id in both". הקישור בין הבלוקים נוצר באמצעות המזהה, ולא באמצעות הימצאותם באותה תגית סקריפט.</p>
+<p class="why">האתר כבר פועל כך היום: בלוק ה-WebSite הקיים מפנה אל המזהה של Organization הנמצא בתגית סקריפט אחרת, וההפניה עובדת. אין כאן שינוי גישה.</p>
+<pre><code>{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: [
+    &quot;Organization&quot;,
+    &quot;MedicalOrganization&quot;
+  ],
+  &quot;@id&quot;: &quot;https://www.leumit.co.il/#organization&quot;,
+  &quot;name&quot;: &quot;לאומית שירותי בריאות&quot;,
+  &quot;alternateName&quot;: &quot;Leumit Health Services&quot;,
+  &quot;url&quot;: &quot;https://www.leumit.co.il/&quot;,
+  &quot;logo&quot;: {
+    &quot;@type&quot;: &quot;ImageObject&quot;,
+    &quot;@id&quot;: &quot;https://www.leumit.co.il/#logo&quot;,
+    &quot;url&quot;: &quot;https://www.leumit.co.il/media/rwsdhs1u/36467_113985_leumit_website_bnrs_logo_208x52_05.png?width=448&amp;height=112&quot;,
+    &quot;width&quot;: 448,
+    &quot;height&quot;: 112
+  },
+  &quot;image&quot;: {
+    &quot;@id&quot;: &quot;https://www.leumit.co.il/#logo&quot;
+  },
+  &quot;description&quot;: &quot;קופת חולים לאומית - שירותי בריאות, רפואה ראשונית ומתקדמת, ביטוח משלים ושירותים דיגיטליים&quot;,
+  &quot;foundingDate&quot;: &quot;1933&quot;,
+  &quot;telephone&quot;: &quot;*507&quot;,
+  &quot;areaServed&quot;: &quot;IL&quot;,
+  &quot;medicalSpecialty&quot;: [
+    &quot;https://schema.org/PrimaryCare&quot;,
+    &quot;https://schema.org/CommunityHealth&quot;
+  ],
+  &quot;address&quot;: {
+    &quot;@type&quot;: &quot;PostalAddress&quot;,
+    &quot;streetAddress&quot;: &quot;שפרינצק 23&quot;,
+    &quot;addressLocality&quot;: &quot;תל אביב-יפו&quot;,
+    &quot;addressCountry&quot;: &quot;IL&quot;
+  },
+  &quot;contactPoint&quot;: [
+    {
+      &quot;@type&quot;: &quot;ContactPoint&quot;,
+      &quot;telephone&quot;: &quot;*507&quot;,
+      &quot;contactType&quot;: &quot;customer service&quot;,
+      &quot;areaServed&quot;: &quot;IL&quot;,
+      &quot;availableLanguage&quot;: [
+        &quot;he&quot;,
+        &quot;ar&quot;,
+        &quot;ru&quot;,
+        &quot;en&quot;
+      ]
+    }
+  ],
+  &quot;sameAs&quot;: [
+    &quot;https://www.facebook.com/leumit&quot;,
+    &quot;https://www.instagram.com/leumit_healthcare/&quot;,
+    &quot;https://www.youtube.com/@LeumitHealthCare&quot;,
+    &quot;https://he.wikipedia.org/wiki/לאומית_שירותי_בריאות&quot;,
+    &quot;https://www.wikidata.org/wiki/Q2909707&quot;
+  ]
+}</code></pre>
+<pre><code>{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;WebSite&quot;,
+  &quot;@id&quot;: &quot;https://www.leumit.co.il/#website&quot;,
+  &quot;name&quot;: &quot;לאומית שירותי בריאות&quot;,
+  &quot;alternateName&quot;: &quot;Leumit Health Services&quot;,
+  &quot;url&quot;: &quot;https://www.leumit.co.il/&quot;,
+  &quot;inLanguage&quot;: &quot;he-IL&quot;,
+  &quot;publisher&quot;: {
+    &quot;@id&quot;: &quot;https://www.leumit.co.il/#organization&quot;
+  }
+}</code></pre>
+<div class="note">בשתי האפשרויות מספר הצמתים יורד משלושה לשניים, משום ש-Organization ו-MedicalOrganization מתארים את אותו גוף. השארתם כשני צמתים נפרדים תיוותר תקפה מבחינת גוגל, אך שני צמתים בעלי אותו שם, אותה כתובת, אותו לוגו ואותו טלפון מתארים שני ארגונים שונים. השדה parentOrganization נועד ליחסי חברה ובת אמיתיים, ולאומית היא ישות אחת.</div>
+
+<div class="note" style="border-color:rgba(244,63,94,.3)">
+<b>נקודה קריטית בבחירת המזהה.</b> כיום כל הבלוקים באתר משתמשים בצורה ללא לוכסן לפני הסולמית. הקוד שלמעלה משתמש בצורה עם לוכסן, התואמת את הכתובת הקנונית של עמוד הבית. שתי הצורות תקפות, אך חובה שכל ההפניות באתר ישתמשו באותה צורה בדיוק. עדכון חלקי, שבו בלוק אחד משתמש בלוכסן והאחר לא, ינתק את הקישור בין הישויות. אם אינכם מעוניינים לשנות את המזהים הקיימים, השאירו את הצורה ללא לוכסן בכל הבלוקים והתאימו את הקוד בהתאם.
+</div>
 
 </div></details>
 
