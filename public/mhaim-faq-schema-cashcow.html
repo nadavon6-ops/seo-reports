@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Language" content="he">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>המחסן של חיים – הבהרה טכנית: קוד FAQ Schema</title>
+<script>document.documentElement.lang='he';</script>
+<style>
+:root{
+  --bg:#0d1117;--panel:#161b22;--panel2:#1c2129;--border:#2d333b;
+  --text:#e6edf3;--muted:#9aa4b2;--accent:#4da3ff;--good:#3fb950;--warn:#d29922;
+  --code-bg:#0a0e14;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Heebo","Assistant",-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.7;font-size:16px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 60px}
+header{padding:44px 0 26px;border-bottom:1px solid var(--border);margin-bottom:26px}
+header h1{font-size:1.7rem;font-weight:700;line-height:1.35}
+header .sub{color:var(--muted);margin-top:10px;font-size:1rem}
+header .meta{color:var(--muted);margin-top:6px;font-size:.9rem}
+.note{background:var(--panel);border:1px solid var(--border);border-right:3px solid var(--accent);border-radius:8px;padding:14px 18px;margin-bottom:26px;font-size:.97rem}
+details{background:var(--panel);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+summary{cursor:pointer;list-style:none;padding:16px 20px;font-size:1.08rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary .chev{flex:0 0 auto;transition:transform .2s;color:var(--muted);font-size:.85rem}
+details[open] summary .chev{transform:rotate(180deg)}
+.body{padding:4px 20px 20px;border-top:1px solid var(--border)}
+.body p{margin:12px 0}
+.body ul,.body ol{margin:12px 24px 12px 0}
+.body li{margin:7px 0}
+h3{font-size:1.02rem;margin:18px 0 6px;color:var(--accent)}
+pre{direction:ltr;text-align:left;background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.83rem;line-height:1.55;margin:12px 0;white-space:pre}
+code.inline{direction:ltr;unicode-bidi:embed;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;padding:1px 7px;font-family:Menlo,Consolas,monospace;font-size:.85em}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.93rem}
+th,td{border:1px solid var(--border);padding:9px 12px;text-align:right;vertical-align:top}
+th{background:var(--panel2);font-weight:600}
+.ok{color:var(--good);font-weight:600}
+.bad{color:var(--warn);font-weight:600}
+.copybar{display:flex;justify-content:flex-start;margin-bottom:-6px}
+.copybtn{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 12px;font-size:.8rem;cursor:pointer;font-family:inherit}
+.copybtn:hover{color:var(--text)}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--border);color:var(--muted);font-size:.88rem;text-align:center}
+@media(max-width:640px){header h1{font-size:1.3rem}.wrap{padding:0 12px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>הבהרה טכנית: קוד FAQ Schema באתר mhaim1.com</h1>
+  <div class="sub">מענה לבקשת צוות הפיתוח (קאש קאו) להבהרה בנוגע לסעיף 4 בדוח ההמלצות</div>
+  <div class="meta">המחסן של חיים · אוגוסט 2026</div>
+</header>
+
+<div class="note">
+צוות קאש קאו ביקש לדעת מה בדיוק לא תקין בקוד ה־Schema הקיים, איזה קוד נמצא, ומה אמור להחליף אותו. המסמך עונה על שלוש השאלות לפי הסדר, וכולל קוד מוכן להעתקה. הבדיקה בוצעה על 4,324 עמודים מתוך מפת האתר (sitemap), בשילוב רינדור מלא בדפדפן (Chrome headless) לאימות מול מה שגוגל רואה בפועל.
+</div>
+
+<details>
+  <summary>1. הקוד השגוי שנמצא והיכן הוא מופיע<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p>בתוך בלוק ה־CSS המותאם של האתר (קוד שנטען כחלק מתגית <code class="inline">&lt;style&gt;</code> בכל עמוד) מוטמע המקטע הבא, כלשונו:</p>
+    <div class="copybar"><button class="copybtn" onclick="copyCode(this)">העתקה</button></div>
+<pre>&lt;script type="application/ld json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  ...
+}
+&lt;/script&gt;</pre>
+    <p>המקטע מופיע בסוף אחד מבלוקי ה־<code class="inline">&lt;style&gt;</code> של האתר, מיד אחרי חוקי CSS רגילים. מכיוון שמדובר בשדה CSS גלובלי, הקוד נטען בכל עמודי האתר: בסריקה שביצענו הוא נמצא ב־4,324 מתוך 4,324 עמודים שנבדקו, כלומר בכל עמודי האתר ללא יוצא מן הכלל (כל העמודים החזירו סטטוס 200 ונסרקו בהצלחה). התפוצה המלאה מאשרת שהמקור הוא שדה CSS גלובלי אחד.</p>
+  </div>
+</details>
+
+<details>
+  <summary>2. מה לא תקין בקוד<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p>שלושה כשלים נפרדים, שכל אחד מהם לבדו מונע מהקוד לתפקד:</p>
+    <ol>
+      <li><strong>הקוד יושב בתוך תגית <code class="inline">&lt;style&gt;</code>.</strong> דפדפנים ומנועי חיפוש מפרשים את כל התוכן שבתוך style כטקסט CSS. תגית script בתוך style אינה הופכת לאלמנט בעמוד ואינה נקראת כ־Structured Data. אימתנו זאת ברינדור מלא: ב־DOM המורנדר לא קיים אלמנט script כזה, והטקסט נשאר "לכוד" בתוך ה־CSS.</li>
+      <li><strong>סוג התגית שגוי.</strong> נכתב <code class="inline">application/ld json</code> במקום <code class="inline">application/ld+json</code> (חסר סימן החיבור). גם אם הקוד היה מחוץ ל־style, גוגל לא היה מזהה אותו כ־JSON-LD.</li>
+      <li><strong>התוכן הוא שלד ריק.</strong> בגוף הקוד מופיעות שלוש נקודות (<code class="inline">...</code>) במקום שאלות ותשובות. זהו JSON לא חוקי שלא ניתן לפענוח, ללא תוכן בפועל.</li>
+    </ol>
+    <p>המשמעות: הקוד אינו תורם דבר, ובנוסף טקסט שאינו CSS בתוך גיליון הסגנונות עלול לשבש את פענוח חוקי ה־CSS שאחריו באותו בלוק. לכן ההמלצה בדוח היא הסרה.</p>
+  </div>
+</details>
+
+<details>
+  <summary>3. מה אמור להחליף אותו<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p><strong>בתוך ה־CSS: שום דבר.</strong> המקטע פשוט נמחק משדה ה־CSS המותאם, ואין להחליפו שם בקוד אחר. חשוב באותה מידה: אין להעביר גרסה "מתוקנת" של הקוד להזרקה גלובלית (Header כלל־אתרי וכדומה). סימון FAQ חייב להיות פר־עמוד ולשקף אך ורק שאלות ותשובות שמוצגות בפועל באותו עמוד. בלוק אחיד שמוזרק לכל העמודים ייחשב שגוי בכל עמוד שבו התוכן אינו מופיע.</p>
+    <h3>כך נראית הטמעה תקינה (קיימת כבר באתר)</h3>
+    <p>בעמוד הקטגוריה <a href="https://www.mhaim1.com/c/%D7%9B%D7%9C%D7%99_%D7%90%D7%95%D7%9B%D7%9C_%D7%95%D7%A9%D7%AA%D7%99%D7%94_%D7%9C%D7%9B%D7%9C%D7%91%D7%99%D7%9D" target="_blank" rel="noopener">כלי אוכל ושתייה לכלבים</a> קיים כבר בלוק FAQ תקין: תגית <code class="inline">&lt;script type="application/ld+json"&gt;</code> בגוף העמוד, עם JSON חוקי ושש שאלות ותשובות שזהות מילה במילה לתוכן המוצג בעמוד. הבלוק הזה תקין ואין לגעת בו. זהו הפורמט המדויק לכל הטמעה עתידית:</p>
+    <div class="copybar"><button class="copybtn" onclick="copyCode(this)">העתקה</button></div>
+<pre>&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם צריך להשתמש בקערות נפרדות לאוכל ולמים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, מומלץ להפריד. קערה למזון וקערה למים בנפרד מאפשרות לשמור על ניקיון, למנוע ערבוב של שאריות מזון במים ולעקוב אחרי צריכת השתייה של הכלב.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם כל כלב בבית צריך קערת אוכל משלו?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;מומלץ להקצות לכל כלב קערה נפרדת. אכילה מקערה משותפת עלולה ליצור מתח, תחרות או מצב שבו כלב אחד אוכל על חשבון השני. הפרדה עוזרת גם לעקוב אחרי הכמויות שכל כלב אוכל.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר להכניס קערות אוכל לכלבים למדיח?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;תלוי בחומר ובדגם. מרבית קערות הנירוסטה מתאימות למדיח, אבל קערות פלסטיק, משטחי ליקוק ומוצרים עם חלקים אלקטרוניים בדרך כלל דורשים שטיפה ידנית. כדאי לבדוק את הוראות היצרן של כל מוצר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כל כמה זמן כדאי להחליף קערת אוכל לכלב?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כדאי להחליף קערה אם היא סדוקה, שחוקה, חלודה או שהחומר שלה נפגם. קערות נירוסטה בדרך כלל מחזיקות זמן רב, אבל קערות מחומרים אחרים עלולות להישחק מהר יותר. כדי לבדוק מדי פעם את מצב הקערה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין משטח ליקוק לקערת האכלה איטית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;קערת האכלה איטית מיועדת למזון יבש (גרגרים) או רטוב, ומאטה את האכילה באמצעות מבנה פנימי בולט. משטח ליקוק מיועד למריחת מזון רטוב או חטיפים, ומעסיק את הכלב בליקוק ממושך. שני המוצרים מאטים את קצב האכילה, לסוגי מזון שונים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איזה כלי אוכל ושתייה מתאים לנסיעות ולטיולים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לנסיעות עם כלבים מומלץ לבחור קערות מתקפלות או ניידות שקל לקחת, לנקות ולאחסן, למשל קערות סיליקון מתקפלות. חשוב לוודא שהקערה יציבה מספיק לשימוש על משטחים שונים ובנפח מתאים לגודל הכלב.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+    <h3>תבנית לשימוש חוזר (לעמודים נוספים)</h3>
+    <p>אם בעתיד יתווסף תוכן שאלות ותשובות לעמודים נוספים, זו התבנית, כאשר כל שאלה ותשובה חייבות להופיע גם כתוכן גלוי באותו עמוד, באותו נוסח:</p>
+    <div class="copybar"><button class="copybtn" onclick="copyCode(this)">העתקה</button></div>
+<pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "### השאלה כפי שמופיעה בעמוד ###",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "### התשובה כפי שמופיעה בעמוד ###"
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+    <p>אם קאש קאו מעדיפים פתרון פלטפורמה, הדרך הנכונה היא הפקה אוטומטית של הבלוק מאותו מקור נתונים שמציג את האקורדיון בעמוד: בלוק אחד לכל עמוד, נבנה ב־JSON serializer (לא שרשור מחרוזות), ולא נפלט כלל בעמודים ללא שאלות ותשובות גלויות.</p>
+    <h3>תיאום ציפיות</h3>
+    <p>גוגל הפסיקה להציג תוצאות עשירות מסוג FAQ לכלל האתרים במאי 2026. הערך של הסימון כיום הוא תקינות טכנית של העמוד ונגישות התוכן למנועי חיפוש ולעוזרי AI, ולא הופעת שאלות מורחבות בתוצאות החיפוש של גוגל. לכן ברירת המחדל המומלצת היא הסרה בלבד של הקוד השגוי, והשארת הבלוקים התקינים הקיימים.</p>
+  </div>
+</details>
+
+<details>
+  <summary>4. תיקון נקודתי נוסף: בלוק FAQ בשני עמודי קטגוריה<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p>בסריקה המלאה נמצאו גם שני עמודים שבהם קיים בלוק FAQ בפורמט הנכון (script בגוף העמוד עם הסוג התקין), אך ה־JSON שבתוכו אינו עובר פענוח בגלל ירידות שורה גולמיות בתוך מחרוזות הטקסט. זו תקלה טכנית שמבטלת את הבלוק כולו. התוכן עצמו תקין ותואם לשאלות והתשובות המוצגות בעמוד; נדרשת רק החלפת הבלוק בגרסה מתוקנת.</p>
+    <h3>עמוד <a href="https://www.mhaim1.com/c/%D7%97%D7%98%D7%99%D7%A4%D7%99%D7%9D_%D7%9C%D7%97%D7%AA%D7%95%D7%9C%D7%99%D7%9D" target="_blank" rel="noopener">חטיפים לחתולים</a>: הבלוק המתוקן להחלפה</h3>
+    <div class="copybar"><button class="copybtn" onclick="copyCode(this)">העתקה</button></div>
+<pre>&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם חטיפים מתאימים גם לגורי חתולים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בתנאי שבוחרים חטיפים רכים וקטנים. מומלץ להתחיל בכמויות קטנות ולוודא שהחטיף מותאם לגיל. חטיפים רגילים בגודל סטנדרטי עלולים להיות קשים מדי ללעיסה עבור גורים צעירים.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מתי כדאי לתת חטיף לחתול?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;הזמן האידיאלי הוא מיד אחרי התנהגות רצויה שאתם רוצים לחזק, כמו שימוש בארגז חול או שיתוף פעולה באילוף. אפשר גם לתת חטיפים כדי לפנק, כחלק מהשגרה היומית, או כאמצעי הרגעה במצבים מלחיצים כמו ביקור אצל וטרינר או מעבר דירה.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+    <h3>עמוד <a href="https://www.mhaim1.com/c/%D7%97%D7%98%D7%99%D7%A4%D7%99_%D7%90%D7%99%D7%9C%D7%95%D7%A3" target="_blank" rel="noopener">חטיפי אילוף</a>: הבלוק המתוקן להחלפה</h3>
+    <div class="copybar"><button class="copybtn" onclick="copyCode(this)">העתקה</button></div>
+<pre>&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין חטיפי אילוף רכים לקשים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;חטיפים רכים נאכלים מהר, כך שהם מתאימים לאימון אינטנסיבי שבו צריך לתגמל את הכלב בקצב גבוה. חטיפים קשים דורשים לעיסה, ולכן מתאימים יותר כתגמול לאחר אימון או כחטיף פינוק.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איזה סוג חטיף הכי מתאים לאילוף?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אימון כלבים מצריך חטיפים קטנים ורכים. המפתח הוא לתת חטיפים שהכלב יכול לסיים לאכול במהירות ולחזור מיד לתרגול, בלי לעצור את האימון לזמני לעיסה ארוכים. במחסן של חיים תמצאו מגוון רחב במיוחד של חטיפי אילוף ממותגי מיטלין: Wanpy, ODog, כנען, Solo, Bill Jack, Prama, Pedigree ו-Truly.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;איך לבחור חטיף שהכלב באמת יאהב?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כדאי לנסות כמה סוגים של חטיפים ולראות לאילו מהם הכלב מגיב הכי חזק. בדרך כלל, לא תתקשו למשוך את תשומת הלב של כלבים באמצעות חטיפים עם ריח חזק, כמו ג&#x27;רקי ברווז או נקניקיות עוף.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם חטיפי אילוף מתאימים גם לגורים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, בתנאי שבוחרים חטיפים רכים בגודל מותאם לגור. ניתן לתת חטיפים קטנים במיוחד או לחלק לפיסות חטיפים גדולים יותר.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם יש חטיפי אילוף המתאימים לכלבים עם רגישויות?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן. יש חטיפים ללא דגנים כמו של Pet Queen, וחטיפים עם חלבון יחיד כמו מקלות כבש של כנען. אתם מוזמנים להתייעץ עם הצוות של המחסן של חיים לגבי הבחירה המתאימה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כמה חטיפי אילוף מותר לתת לכלב ביום?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;חטיפים לא צריכים לעלות על כ-10% מהצריכת המזון היומית של הכלב. באימון אינטנסיבי כדאי להשתמש בחטיפים קטנים במיוחד כדי לא לחרוג מהכמות הזו. בימי אימונים, בהם ניתנים חטיפים בכמות גדולה, ניתן לתת מעט פחות מזון כדי לאזן את הצריכה הכוללת.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+    <p>בשני המקרים יש להחליף את בלוק ה־script הקיים בעמוד בבלוק המתוקן במלואו. התוכן זהה, תוקן רק מבנה ה־JSON.</p>
+  </div>
+</details>
+
+<details>
+  <summary>5. יישום גורף או עמוד־עמוד<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p><strong>ניתן, וזו הדרך הנכונה.</strong> מכיוון שהקוד השגוי מגיע משדה ה־CSS המותאם הגלובלי, הוא מופיע בכל 4,324 עמודי האתר ממקור אחד. מחיקה אחת של המקטע מהשדה הזה מסירה אותו מכל האתר בבת אחת, ואין צורך לעבור עמוד־עמוד.</p>
+    <p>שתי הסתייגויות ליישום:</p>
+    <ul>
+      <li>ההסרה הגורפת נוגעת אך ורק למקטע שבתוך ה־CSS. באתר קיימים 83 עמודים (עמודי קטגוריה, עמודי מדריך ועמודי מוצר) עם בלוקי FAQ תקינים שהוטמעו כחלק מתוכן העמוד, ואלה נשארים ללא שינוי.</li>
+      <li>שני העמודים שבסעיף 4 דורשים בנוסף החלפה נקודתית של הבלוק בקוד המתוקן המצורף.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>6. בדיקת תקינות לאחר הביצוע<span class="chev">&#9660;</span></summary>
+  <div class="body">
+    <p>לאחר ההסרה (וניקוי Cache של הפלטפורמה/CDN) נוודא משני הצדדים:</p>
+    <ul>
+      <li>אפס מופעים של המחרוזת <code class="inline">application/ld json</code> בקוד המקור בכל עמודי האתר.</li>
+      <li>לא נותר טקסט script בתוך בלוקי <code class="inline">&lt;style&gt;</code>.</li>
+      <li>83 בלוקי ה־FAQ התקינים הקיימים נשארו במקומם ללא שינוי, וכן שאר בלוקי ה־JSON-LD (Organization, WebSite).</li>
+      <li>הבלוקים המתוקנים בעמודי חטיפים לחתולים וחטיפי אילוף עוברים פענוח JSON תקין.</li>
+    </ul>
+    <p>אנחנו נריץ את הסריקה החוזרת מצדנו מיד לאחר שקאש קאו יעדכנו שהשינוי בוצע.</p>
+  </div>
+</details>
+
+<footer>NC Digital · הבהרה טכנית – קוד FAQ Schema · אוגוסט 2026</footer>
+</div>
+<script>
+function copyCode(btn){
+  var pre=btn.parentElement.nextElementSibling;
+  var t=pre.textContent;
+  navigator.clipboard.writeText(t).then(function(){
+    var old=btn.textContent;btn.textContent='הועתק';
+    setTimeout(function(){btn.textContent=old;},1500);
+  });
+}
+</script>
+</body>
+</html>
