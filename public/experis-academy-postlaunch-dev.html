@@ -73,6 +73,8 @@ footer{color:#5d6b84;text-align:center;margin-top:38px;font-size:.85em}
 h3{color:#cfdcf2;margin:16px 0 4px;font-size:1.0em}
 .big{font-size:1.05em;color:#f0f4fa;font-weight:600}
 .scroll{max-height:520px;overflow:auto;border:1px solid #263048;border-radius:8px}
+.warn{background:#2a1a12;border:1px solid #4a2f1d;border-inline-start:4px solid #c9772f;border-radius:8px;padding:10px 14px;margin:10px 0;color:#f0cfae}
+.warn b{color:#ffb367}
 </style>
 </head>
 <body>
@@ -125,6 +127,72 @@ h3{color:#cfdcf2;margin:16px 0 4px;font-size:1.0em}
 <p>כל גרסאות הכתובת נבדקו מחדש ומגיעות ליעד הנכון. גרסה אחת עדיין עוברת דרך שתי הפניות:</p>
 <div class="tbl-scroll"><table><tr><th>הכתובת שנבדקה</th><th>מסלול ההפניה</th></tr><tr><td><code>http://experis.co.il/academy/</code></td><td>301 ליעד המאובטח, קפיצה אחת</td></tr><tr><td><code>https://www.experis.co.il/academy/</code></td><td>301 לכתובת ללא www, קפיצה אחת</td></tr><tr><td><code>https://experis.co.il/academy</code></td><td>301 עם לוכסן, קפיצה אחת</td></tr><tr><td><code>http://www.experis.co.il/academy/</code></td><td><b style="color:#ffce6b">301 ואז 301 נוסף, שתי קפיצות</b></td></tr></table></div>
 <div class="action"><b>הפעולה הנדרשת:</b> להגדיר בשרת הפניה ישירה אחת מ-<code>http://www</code> לכתובת הסופית, במקום שתי קפיצות. ההשפעה קטנה ולכן הפריט מסווג לטיפול שוטף.</div>
+</div></div></details>
+<details class="sec"><summary><span>7. הגדרת עמודי הבוגרים כ-ProfilePage<span class="badge b-crit">דחוף</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="finding">
+<p>19 עמודי הבוגרים מסומנים כיום כ-<span class="ltr">WebPage</span>. הסימון פנימית כבר תקין: בכל 19 העמודים השדה <span class="ltr">mainEntity</span> מפנה נכון לצומת ה-<span class="ltr">Person</span> של הבוגר. חסר רק סוג העמוד עצמו.</p>
+<div class="evidence">מדוע זה משנה: לסוג <span class="ltr">Person</span> אין תוצאה עשירה עצמאית בגוגל. המשטח היחיד שבו גוגל צורכת אותו הוא כ-<span class="ltr">mainEntity</span> של עמוד מסוג <span class="ltr">ProfilePage</span>, שגוגל מגדירה במפורש כמתאים ל"עמוד עובד באתר של חברה". כל עוד סוג העמוד הוא <span class="ltr">WebPage</span>, נתוני הבוגר קיימים בקוד אך אינם ניתנים לשימוש על ידי גוגל.</div>
+<p><b>איפה מיישמים:</b> בקובץ <span class="ltr">functions.php</span> של תבנית הבת, או בתוסף פונקציונליות של האתר. לא נדרש שינוי בתוכן העמודים.</p>
+<pre>add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
+    if ( is_singular( &#x27;graduate&#x27; ) ) {
+        $data[&#x27;@type&#x27;] = &#x27;ProfilePage&#x27;;
+    }
+    return $data;
+} );</pre>
+<div class="action"><b>הפעולה הנדרשת:</b> להוסיף את הקוד שלמעלה. לאחר מכן, בקוד המקור של עמוד בוגר כלשהו, הצומת שהיה <span class="ltr">"@type": "WebPage"</span> יופיע כ-<span class="ltr">"@type": "ProfilePage"</span>. השדה <span class="ltr">mainEntity</span> כבר מפנה לצומת הנכון ואין לשנות אותו.</div>
+</div></div></details><details class="sec"><summary><span>8. תיקון פירורי הלחם בעמוד הבית<span class="badge b-crit">דחוף</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="finding">
+<p>בעמוד הבית של האקדמיה צומת <span class="ltr">BreadcrumbList</span> מכיל פריט אחד בלבד:</p>
+<pre>&quot;@type&quot;: &quot;BreadcrumbList&quot;,
+&quot;@id&quot;: &quot;https://experis.co.il/academy/#breadcrumb&quot;,
+&quot;itemListElement&quot;: [
+  { &quot;@type&quot;: &quot;ListItem&quot;, &quot;position&quot;: 1, &quot;name&quot;: &quot;דף הבית&quot; }
+]</pre>
+<div class="evidence">לפי מפרט גוגל, <span class="ltr">BreadcrumbList</span> מחייב לפחות שני פריטים. רשימה בת פריט אחד אינה סימון תקין, ולכן הסימון בעמוד הבית נפסל. בשאר האתר פירורי הלחם תקינים: 10 עמודים עם שני פריטים, 19 עם שלושה ו-33 עם ארבעה.</div>
+<p><b>איפה מיישמים:</b> אותו קובץ <span class="ltr">functions.php</span>. נדרשים <b>שני</b> המסננים יחד.</p>
+<pre>add_filter( &#x27;wpseo_schema_needs_breadcrumb&#x27;, function ( $needs_breadcrumb ) {
+    return is_front_page() ? false : $needs_breadcrumb;
+} );
+
+add_filter( &#x27;wpseo_schema_webpage&#x27;, function ( $data ) {
+    if ( is_front_page() ) {
+        unset( $data[&#x27;breadcrumb&#x27;] );
+    }
+    return $data;
+} );</pre>
+<div class="warn"><b>שני המסננים חובה, לא אחד.</b> המסנן הראשון לבדו מסיר את צומת פירורי הלחם אך משאיר בצומת <span class="ltr">WebPage</span> הפניה יתומה <span class="ltr">"breadcrumb": {"@id": "…#breadcrumb"}</span> שמצביעה לצומת שכבר אינו קיים. המסנן השני מסיר גם את ההפניה.</div>
+<div class="action"><b>הפעולה הנדרשת:</b> להוסיף את שני המסננים. לאחר מכן בקוד המקור של עמוד הבית לא יופיע צומת <span class="ltr">BreadcrumbList</span> כלל, וגם לא המפתח <span class="ltr">breadcrumb</span> בתוך צומת ה-<span class="ltr">WebPage</span>.</div>
+</div></div></details><details class="sec"><summary><span>9. החלפת שמות המשתמש בשדה המחבר בסכמת המאמרים<span class="badge b-content">דחוף</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="finding">
+<p>בכל 30 המאמרים שדה <span class="ltr">author</span> בסכמת ה-<span class="ltr">Article</span> נושא את שם המשתמש הפנימי במערכת ולא שם מלא:</p>
+<div class="tbl-scroll"><table><tr><th>הערך המופיע בסכמה</th><th>מספר מאמרים</th></tr><tr><td>Shaked</td><td>21</td></tr><tr><td>raz</td><td>7</td></tr><tr><td>Nadav</td><td>2</td></tr></table></div>
+<div class="evidence">הערך נלקח משדה "שם התצוגה" של המשתמש בוורדפרס, ולכן הוא מופיע גם בצומת ה-<span class="ltr">Person</span> של המחבר. זו חשיפה של שמות משתמש פנימיים בנתונים המובנים של האתר.</div>
+<p><b>איפה מיישמים:</b> בממשק הניהול, ללא קוד. לכל משתמש: משתמשים ← עריכת המשתמש ← למלא שם פרטי ושם משפחה ← בשדה "הצג את השם בפומבי בתור" לבחור את השם המלא ← שמירה. הסכמה מתעדכנת מיד בכל המאמרים של אותו מחבר.</p>
+<p class="note">אם המדיניות היא לא לייחס מאמרים לעובד ספציפי, החלופה התקינה היא ליצור משתמש אחד בשם המותג ולשייך אליו את המאמרים, במקום להשאיר שמות משתמש.</p>
+<h3>פריט נוסף באותה משפחה</h3>
+<p>במאמר <code>/academy/לא-רק-בוגרי-8200-התוכניות-החדשות-שיעזרו-לח/</code> חסר בסכמה השדה <span class="ltr">dateModified</span>. זהו המאמר היחיד מבין 30 שבו הוא חסר.</p>
+<div class="action"><b>הפעולה הנדרשת:</b> לעדכן את שמות התצוגה של שלושת המשתמשים, ולפתוח ולשמור מחדש את המאמר החסר כדי שייווצר לו <span class="ltr">dateModified</span>.</div>
+</div></div></details><details class="sec"><summary><span>10. ניקוי סימון FAQPage כפול<span class="badge b-dev">לטיפול שוטף</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="finding">
+<p>סימון <span class="ltr">FAQPage</span> מופיע כיום ב-8 עמודים. אותה מערכת בת 6 שאלות מסומנת בשלוש כתובות שונות:</p>
+<div class="tbl-scroll"><table><tr><th>כתובת</th><th>מספר שאלות מסומנות</th></tr>
+<tr><td><code>/academy/course/</code></td><td>6</td></tr>
+<tr><td><code>/academy/course-category/מערכות-מידע/</code></td><td>6</td></tr>
+<tr><td><code>/academy/course-category/פיתוח-תוכנה/</code></td><td>6</td></tr>
+</table></div>
+<div class="evidence">שני דברים רלוונטיים כאן. ראשית, גוגל הסירה את התוצאה העשירה של שאלות ותשובות: ההודעה על ההוצאה משימוש פורסמה ב-8 במאי 2026, התצוגה הופסקה ב-7 במאי 2026 והתיעוד הוסר לחלוטין. סימון <span class="ltr">FAQPage</span> אינו מייצר עוד תוצאה עשירה עבור אף אתר. שנית, אותן שאלות מסומנות בשלוש כתובות שונות. הסימון עצמו אינו מזיק ואינו גורר קנס, ולכן הפריט מסווג לטיפול שוטף ולא כדחוף.</div>
+<div class="action"><b>הפעולה הנדרשת:</b> להסיר את סימון ה-<span class="ltr">FAQPage</span> משלוש הכתובות שבטבלה, ולהשאיר אותו רק בעמודים שבהם השאלות ייחודיות לעמוד: <code>/academy/faq/</code>, עמוד הבית ושלושת עמודי המסלולים. תוכן השאלות הגלוי בעמוד נשאר כפי שהוא. אין להוסיף סימון <span class="ltr">FAQPage</span> לעמודים נוספים.</div>
+</div></div></details><details class="sec"><summary><span>11. שיטת הבדיקה של סעיפי הסכמה<span class="badge b-dev">לידיעה</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="finding">
+<p>סעיפים 7 עד 10 נבדקו כך, כדי שניתן יהיה לשחזר את הממצאים:</p>
+<ul>
+<li>נסרקו <b>כל 64 הכתובות</b> שבמפת האתר, ולא מדגם. 63 נסרקו בהצלחה; הכתובת <code>/academy/קורס-תכנות-coding-bootcamps/</code> אינה ניתנת לסריקה בגלל לולאת ההפניות שבסעיף 2, ולכן אין לה סכמה כלל.</li>
+<li>הבדיקה בוצעה על ה-<b>DOM המעובד</b> בדפדפן Chrome אמיתי, לאחר המתנה לטעינה מלאה, ולא על קוד המקור בלבד. באתר פועל Google Tag Manager ולכן סימון שנוסף בצד הלקוח לא היה נראה בבדיקת קוד מקור.</li>
+<li>במקביל נמשך קוד המקור הגולמי של כל 63 העמודים והושווה לתוצאת העיבוד. <b>לא נמצא הבדל באף עמוד</b>, כלומר הסכמה נוצרת כולה בצד השרת.</li>
+<li>כל צומת נבדק גם בתוך מערכי <span class="ltr">@graph</span> וגם בתוך מערכים רגילים, וכן נבדק סימון <span class="ltr">microdata</span> בנפרד.</li>
+<li>רשימת סוגי הסכמה הנתמכים אומתה מול תיעוד העדכונים של גוגל בזמן הבדיקה, ולא מתוך ידע קודם.</li>
+</ul>
+<div class="action"><b>הפעולה הנדרשת:</b> אין. הסעיף נועד לאפשר לצוות הפיתוח לשחזר את הבדיקה לאחר היישום.</div>
 </div></div></details>
 <footer>NC Digital · Experis Academy · אוגוסט 2026</footer>
 </div>
