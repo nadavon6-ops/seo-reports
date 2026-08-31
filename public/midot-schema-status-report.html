@@ -55,7 +55,7 @@ ol li,ul li{margin:5px 0}
 <header class="hero">
   <p class="kicker">NC Digital &middot; Schema Follow-Up</p>
   <h1>Midot: Schema Status &mdash; Outstanding Items</h1>
-  <p class="sub">A re-audit of the full site against the original schema report. This document lists only what still needs to be implemented; everything already working correctly has been deliberately left out.</p>
+  <p class="sub">The technical items that still need to be implemented on the site, with the exact pages affected and the code required for each.</p>
   <div class="meta">
     <span class="chip">Site: <b>midot.co.il</b></span>
     <span class="chip">Re-audited: <b>August 2026</b></span>
@@ -68,26 +68,13 @@ ol li,ul li{margin:5px 0}
   <h2>Can the task be closed?</h2>
   <p><b>Not yet &mdash; four implementation items remain.</b> They are listed below, in the order we would tackle them.</p>
 
-  <div class="win">
-    <b>Substantial progress since the original report.</b> The FAQ mechanism has been built and is now
-    emitting valid <span class="type">FAQPage</span> JSON-LD on <b>13 blog pages</b>, all of which we
-    re-validated in the rendered DOM for this document. At the time of the original report, not a single
-    page on the site carried a valid FAQPage. One of the two missing <span class="type">Product</span>
-    implementations has also been completed.
-  </div>
-
-  <p>What remains is narrow and specific. The FAQ mechanism was applied to the <span class="type">post</span>
-  content type but not to <span class="type">product</span>, so product pages that display a real
-  question-and-answer section still emit no schema for it. Alongside that, one legacy broken block and one
-  missing Product node are still live.</p>
-
   <div class="tablewrap">
   <table>
     <thead><tr><th>#</th><th>Outstanding item</th><th>Pages affected</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td>FAQ mechanism not extended to the <span class="type">product</span> content type</td><td>3</td></tr>
-      <tr><td>2</td><td>Blog page with a Q&amp;A section that the mechanism has not been applied to</td><td>1</td></tr>
-      <tr><td>3</td><td>Legacy broken FAQ block still served in the page body</td><td>1</td></tr>
+      <tr><td>1</td><td><span class="type">FAQPage</span> missing on product pages with a visible Q&amp;A section</td><td>3</td></tr>
+      <tr><td>2</td><td>Blog page with a visible Q&amp;A section and no <span class="type">FAQPage</span></td><td>1</td></tr>
+      <tr><td>3</td><td>Broken FAQ block served in the page body</td><td>1</td></tr>
       <tr><td>4</td><td>Missing <span class="type">Product</span> schema</td><td>1</td></tr>
     </tbody>
   </table>
@@ -96,11 +83,10 @@ ol li,ul li{margin:5px 0}
 </section>
 
 <details class="acc">
-  <summary><span class="num">1</span> Extend the FAQ mechanism to product pages</summary>
+  <summary><span class="num">1</span> Add FAQPage to product pages</summary>
   <div class="acc-body">
     <p>Three product pages display a full, visible question-and-answer section to users, but emit no
-    <span class="type">FAQPage</span>. The content is already written and on the page &mdash; only the schema
-    output is missing.</p>
+    <span class="type">FAQPage</span>.</p>
 
     <div class="tablewrap">
     <table>
@@ -114,10 +100,9 @@ ol li,ul li{margin:5px 0}
     </div>
 
     <h3>What to do</h3>
-    <p>Register the same question/answer field group already in use on <span class="type">post</span> against
-    the <span class="type">product</span> content type, and have the product template emit the FAQPage node
-    from those fields exactly as the blog template does. This is an extension of the mechanism that already
-    works, not a new build.</p>
+    <p>Register a repeating question/answer field group against the <span class="type">product</span>
+    content type, and have the product template render both the visible text and the
+    <span class="type">FAQPage</span> JSON-LD from those same fields, so the two cannot drift apart.</p>
     <div class="note">Emit the node only when a complete question <i>and</i> answer pair exists, so a
     half-filled row produces no schema. The questions in the schema must match the questions visible on the
     page word for word.</div>
@@ -125,11 +110,10 @@ ol li,ul li{margin:5px 0}
 </details>
 
 <details class="acc">
-  <summary><span class="num">2</span> Apply the mechanism to one remaining blog page</summary>
+  <summary><span class="num">2</span> Add FAQPage to one remaining blog page</summary>
   <div class="acc-body">
-    <p>This page carries a dedicated question-and-answer section and sits on the
-    <span class="type">post</span> type, where the mechanism already works &mdash; it simply has not been
-    populated.</p>
+    <p>This page carries a dedicated question-and-answer section but emits no
+    <span class="type">FAQPage</span>.</p>
     <div class="tablewrap">
     <table>
       <thead><tr><th>Page</th><th>URL</th><th>Visible Q&amp;A</th></tr></thead>
@@ -139,20 +123,19 @@ ol li,ul li{margin:5px 0}
       </tbody>
     </table>
     </div>
-    <p>Filling in the question and answer fields for this page is a content task, not a development task.</p>
+    <p>Populating the question and answer fields for this page is a content task, not a development task.</p>
   </div>
 </details>
 
 <details class="acc">
-  <summary><span class="num">3</span> Remove the legacy broken FAQ block</summary>
+  <summary><span class="num">3</span> Remove the broken FAQ block</summary>
   <div class="acc-body">
-    <p>One page still carries the original broken attempt described in the previous report. It is unchanged.</p>
+    <p>One page carries a broken FAQ block in its body content.</p>
     <p class="kv"><b>Page:</b> <span class="type">/polygraph-concerns-and-how-to-handle-them/</span></p>
-    <p>The block holds five valid questions, but it is declared as
+    <p>The block holds five questions, but it is declared as
     <span class="type">type="application/json"</span> instead of
     <span class="type">type="application/ld+json"</span>, and it sits inside a
-    <span class="type">&lt;p&gt;</span> tag in the body content. Google ignores it completely, so this page
-    is currently getting no benefit from Q&amp;A content that is already written.</p>
+    <span class="type">&lt;p&gt;</span> tag in the body content. Google ignores it completely.</p>
 
     <pre>&lt;!-- currently live on the page --&gt;
 &lt;p&gt;
@@ -164,21 +147,20 @@ ol li,ul li{margin:5px 0}
 
     <h3>What to do</h3>
     <ol>
-      <li>Move the five existing questions and answers into the working FAQ field group for this page.</li>
+      <li>Move the five questions and answers into the FAQ field group for this page.</li>
       <li>Delete the <span class="type">&lt;script id="data"&gt;</span> block from the body content.</li>
     </ol>
     <div class="note">Do not simply change the MIME type in place. That would leave a second, separately
     maintained copy of the Q&amp;A in the body content, which drifts out of sync with the visible text over
-    time &mdash; the problem the field-based mechanism was built to solve.</div>
+    time.</div>
   </div>
 </details>
 
 <details class="acc">
   <summary><span class="num">4</span> Add the missing Product schema</summary>
   <div class="acc-body">
-    <p>Twelve of the thirteen product pages now emit <span class="type">Product</span>. One does not.</p>
     <p class="kv"><b>Page:</b> <span class="type">/product/integritest/</span></p>
-    <p>This is the only remaining gap in the product template&rsquo;s coverage.</p>
+    <p>This product page emits no <span class="type">Product</span> schema.</p>
     <pre>&lt;script type="application/ld+json"&gt;
 {
   "@context": "https://schema.org",
@@ -199,8 +181,7 @@ ol li,ul li{margin:5px 0}
   <summary><span class="num">5</span> Six pages needing a content decision first</summary>
   <div class="acc-body">
     <p>These pages use question-form headings inside the body content, but have no dedicated
-    question-and-answer section. Together with items 1 and 2 above, they account for every page flagged for
-    manual review in the original report. Before any schema is added, someone needs to confirm that each question is
+    question-and-answer section. Before any schema is added, someone needs to confirm that each question is
     followed by a self-contained visible answer. Where that is not the case, the correct action is to leave
     the page alone rather than add a FAQPage.</p>
     <div class="tablewrap">
@@ -235,7 +216,7 @@ ol li,ul li{margin:5px 0}
       <li>No <span class="type">application/json</span> schema block remains anywhere in body content.</li>
       <li>Each affected URL passes Google&rsquo;s Rich Results Test <b>after</b> rendering, not as a template snippet.</li>
     </ol>
-    <div class="note">A note on expectations, unchanged from the original report: Google restricts FAQ rich
+    <div class="note">A note on expectations: Google restricts FAQ rich
     results to government and health sites, so the value here is a machine-readable Q&amp;A structure for
     search and AI engines, not a visual rich result in Google.</div>
   </div>
@@ -244,11 +225,8 @@ ol li,ul li{margin:5px 0}
 <details class="acc">
   <summary><span class="num">7</span> How this was verified</summary>
   <div class="acc-body">
-    <p>Every finding above was confirmed against the rendered DOM in a real browser &mdash; the way Google
-    sees the pages. Raw HTML was pulled separately and diffed against the rendered result: the two agree on
-    this site, so its schema is server-rendered rather than injected by JavaScript. The rendered DOM remains
-    the instrument of record, because it is what Google evaluates and it is the only way to confirm the full
-    graph as assembled on the page.</p>
+    <p>Every item above was confirmed against the rendered DOM in a real browser &mdash; the way Google
+    sees the pages &mdash; and cross-checked against the raw HTML source.</p>
     <ul>
       <li><b>226 URLs</b> enumerated from all eleven sitemaps and rendered in headless Chrome.</li>
       <li><b>167 URLs</b> returned HTTP 200 and were parsed for every
