@@ -54,21 +54,17 @@ footer{margin-top:44px;color:#5d6b84;font-size:.85em;text-align:center;border-to
 <button onclick="document.querySelectorAll('details').forEach(d=>d.open=true)">פתיחת כל הסעיפים</button>
 <button onclick="document.querySelectorAll('details').forEach(d=>d.open=false)">סגירת כל הסעיפים</button>
 </div>
-<details class="sec"><summary><span>1. הקדמת פקודת ברירת המחדל של ההסכמה אל מחוץ לחסימה<span class="open">נדרש טיפול</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<details class="sec"><summary><span>1. עיתוי פקודת ברירת המחדל של ההסכמה<span class="ok">להחלטה</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <div class="method"><b>הממצא:</b> הסקריפט הנושא את פקודת <code class='ltr'>gtag('consent','default')</code>, בעל המזהה <code class='ltr'>gtm-consent-default</code>, מוגדר בעצמו <code>type="text/plain"</code> עם <code>class="optanon-category-C0002"</code>. משמעות הדבר היא שהפקודה מורצת רק לאחר שהגולש מאשר את קטגוריית הסטטיסטיקה. בבדיקה בדפדפן, לפני קבלת הסכמה, לא קיים מצב הסכמה כלל: <code class='ltr'>window.google_tag_data.ics</code> אינו מוגדר. לאחר אישור מלא הערכים נרשמים כראוי במצב מסורב.</div>
 <p class="note">הפקודה עצמה תקינה ומגדירה את כל הקטגוריות כמסורבות. הבעיה היא בעיתוי בלבד: היא מורצת אחרי הרגע שבו היא נחוצה. מכיוון שמיכל התגים אינו נטען כלל לפני הסכמה, אין דליפת מידע בפועל, אך גם אין שידור ללא עוגיות, ולכן גולשים שאינם מאשרים אינם נספרים במדידה.</p>
-<div class="action"><b>הפתרון:</b> להוציא את הסקריפט <code class='ltr'>gtm-consent-default</code> מהחסימה: להסיר ממנו את <code>type="text/plain"</code> ואת מחלקת הקטגוריה, ולהריץ אותו כסקריפט רגיל בראש העמוד, לפני כל קוד גוגל אחר. הפקודה אינה יוצרת עוגיות ואינה מחייבת הסכמה, ותפקידה הוא דווקא להצהיר על סירוב עד לקבלת הסכמה.</div>
-</div></div></details><details class="sec"><summary><span>2. החלפת מזהה HubSpot שנותר כערך תבנית<span class="open">נדרש טיפול</span></span><span class="chev">&#9664;</span></summary><div class="body">
-<div class="finding">
-<div class="method"><b>הממצא:</b> סקריפט HubSpot בעמוד מוגדר עם מזהה שלא הוחלף: <code class='ltr'>https://js-eu1.hs-scripts.com/YOUR_HUBSPOT_ID.js</code>. הבקשה נשלחת בפועל לאחר אישור מלא וגם לאחר אישור קטגוריית השיווק בלבד, בכתובת <code class='ltr'>https://js-eu1.hs-scripts.com/YOUR_HUBSPOT_ID.js?businessUnitId=</code>. הדפדפן דוחה את התשובה בשגיאת <code class='ltr'>ERR_BLOCKED_BY_ORB</code>, כלומר האינטגרציה אינה פועלת.</div>
-<div class="action"><b>הפתרון:</b> להחליף את ערך התבנית במזהה החשבון האמיתי, או להסיר את הסקריפט אם האינטגרציה אינה נדרשת באתר החדש. בשלב זה מדובר בפנייה חיצונית שאינה מביאה תועלת.</div>
-</div></div></details><details class="sec"><summary><span>3. מחיקת עוגיות Clarity בעת ביטול הסכמה<span class="open">נדרש טיפול</span></span><span class="chev">&#9664;</span></summary><div class="body">
+<div class="action"><b>הפתרון:</b> אין המלצה לשנות בשלב זה. מיכל התגים אינו נטען כלל לפני מתן הסכמה, ולכן לא נשלח מידע לגוגל ואין כאן תקלה בעמידה בדרישות. מדובר בהחלטה בין שתי גישות: המצב הקיים, שבו גולש שלא אישר אינו נמדד כלל, לבין טעינת התג במצב מסורב עם שידור ללא עוגיות, שמשפרת את המדידה אך מחייבת אישור משפטי. באתר Experis הראשי השידור הזה כבר מתבצע כיום, ולכן ההחלטה צריכה להיות אחידה בשני האתרים.</div>
+</div></div></details><details class="sec"><summary><span>2. מחיקת עוגיות Clarity בעת ביטול הסכמה<span class="open">נדרש טיפול</span></span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <div class="method"><b>הממצא:</b> מנגנון המחיקה פועל ומסיר בהצלחה את רוב עוגיות המדידה של הדומיין (<code class='ltr'>_ga, _ga_NS6MFLLLXL, _gcl_au, _fbp, _pk_id, _pk_ses</code>). שתי עוגיות נותרות: <code class='ltr'>_clck, _clsk</code> של Microsoft Clarity, השמורות על <span class='ltr'>.experis.co.il</span>. בבדיקה נמצא שערכן אף מתעדכן במהלך הביטול במקום להימחק.</div>
 <p class="note">עוגיות שנוצרו בדומיינים חיצוניים (15 במספר, בהם LinkedIn, Bing ו-Clarity) אינן ניתנות למחיקה מצד האתר, וזו התנהגות מקובלת. הסעיף מתייחס אך ורק לשתי העוגיות הנשמרות על דומיין האתר עצמו.</p>
 <div class="action"><b>הפתרון:</b> להוסיף את <code class='ltr'>_clck, _clsk</code> לרשימת העוגיות הנמחקות כאשר קטגוריית הסטטיסטיקה אינה מאושרת. יש לשים לב שפונקציית המחיקה בקוד מפנה בהערותיה לדומיין <code class='ltr'>local.experis.co.il</code>, שהוא דומיין פיתוח מקומי, ולכן כדאי לוודא שהיא מכסה את הדומיין שבו העוגיות נשמרות בפועל.</div>
-</div></div></details><details class="sec"><summary><span>4. סיכום האימות</span><span class="chev">&#9664;</span></summary><div class="body">
+</div></div></details><details class="sec"><summary><span>3. סיכום האימות</span><span class="chev">&#9664;</span></summary><div class="body">
 <div class="finding">
 <p>הבדיקה בוצעה על סביבת הבדיקות החיה בדפדפן Chrome מלא, ולא על בסיס קוד המקור בלבד.</p>
 <ul>
