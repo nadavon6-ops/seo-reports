@@ -1,0 +1,947 @@
+<!-- wp:html -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content { background: #0f172a !important; margin: 0 !important; padding: 0 !important; }
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; padding: 0 !important; }
+    .ult-wrapper { width: 100% !important; max-width: 100% !important; padding: 20px 2% !important; margin: 0 !important; }
+    .ult-header { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; margin: 0 0 25px 0 !important; }
+    .ult-section, .success-banner, .data-sources-strip, .hero-stats { width: 100% !important; max-width: 100% !important; }
+}
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; padding-top: 0 !important; margin-top: 0 !important; min-height: 100vh !important; }
+html { background: #0f172a !important; direction: rtl !important; }
+.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content, header.site-header, footer.site-footer, nav, .site-navigation, .wp-block-post-title, .entry-header, h1.entry-title { all: unset !important; display: block !important; }
+header, footer, nav, .site-header, .site-footer, .site-navigation, .wp-block-post-title, .entry-header, .entry-title { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: transparent !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+.entry-content, .wp-block-post-content, .wp-site-blocks, main, article { max-width: none !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; position: relative !important; left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.ult-container { direction: rtl; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; color: #e2e8f0; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+.ult-wrapper { max-width: 100%; width: 100%; margin: 0; padding: 20px 16px; }
+
+.ult-header { background: linear-gradient(135deg, #78350f 0%, #d97706 50%, #1e293b 100%); padding: 50px 25px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
+.ult-header::before { content: ''; position: absolute; top: -100%; right: -50%; width: 200%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); animation: headerPulse 6s ease-in-out infinite; }
+@keyframes headerPulse { 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.ult-header .version-badge { position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em; z-index: 10; }
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; text-shadow: 2px 4px 12px rgba(0,0,0,0.3); margin-bottom: 10px; position: relative; z-index: 1; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; position: relative; z-index: 1; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; position: relative; z-index: 1; }
+.ult-header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+.success-banner { background: linear-gradient(135deg, #d97706 0%, #78350f 100%); padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px; animation: successPulse 3s ease-in-out infinite; }
+@keyframes successPulse { 0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(217,119,6,0.4);} 50%{transform:scale(1.01); box-shadow:0 0 20px 10px rgba(217,119,6,0.2);} }
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px 20px; background: linear-gradient(135deg, rgba(217,119,6,0.15), rgba(120,53,15,0.1)); border: 1px solid rgba(217,119,6,0.3); border-radius: 16px; margin-bottom: 25px; }
+.data-source-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #fcd34d; }
+.data-source-item .icon { font-size: 1.2em; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: linear-gradient(135deg, rgba(217,119,6,0.15) 0%, rgba(120,53,15,0.08) 100%); border: 1px solid rgba(217,119,6,0.3); border-radius: 18px; padding: 22px 16px; text-align: center; }
+.kpi-card.green { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(34,197,94,0.3); }
+.kpi-card.gold { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border-color: rgba(251,191,36,0.3); }
+.kpi-card.purple { background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.08) 100%); border-color: rgba(139,92,246,0.3); }
+.kpi-card.cyan { background: linear-gradient(135deg, rgba(6,182,212,0.15) 0%, rgba(14,165,233,0.08) 100%); border-color: rgba(6,182,212,0.3); }
+.kpi-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.kpi-card .secondary { font-size: 1.05em; color: #cbd5e1; margin-bottom: 6px; }
+.kpi-card .label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.kpi-card .compare { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.kpi-card .compare.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.kpi-card .compare.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.kpi-card .compare.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+.ult-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid rgba(217,119,6,0.4); }
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; min-width: 0; overflow: visible; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.traffic-item { display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px; gap: 15px; }
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bar-container { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; border-radius: 4px; }
+.traffic-item .users { font-weight: 700; font-size: 1.05em; text-align: left; }
+.traffic-item .pct { color: #94a3b8; font-size: 0.9em; text-align: left; }
+
+.keywords-category { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.keywords-category.brand { border-right: 4px solid #d97706; }
+.keywords-category.nonbrand { border-right: 4px solid #8b5cf6; }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cat-icon { font-size: 1.5em; }
+.cat-title { font-size: 1.2em; font-weight: 700; color: #fff; }
+.cat-count { margin-right: auto; background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: #94a3b8; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table th { text-align: right; padding: 12px 10px; font-size: 0.85em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+.kw-table td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9em; }
+.kw-table tr:hover { background: rgba(255,255,255,0.03); }
+.kw-name { font-weight: 600; color: #e2e8f0; }
+.vol-badge { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px; font-weight: 800; font-size: 0.85em; color: #fff; }
+.pos-badge.p1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; }
+.pos-badge.top5 { background: rgba(34,197,94,0.35); color: #86efac; }
+.pos-badge.top10 { background: rgba(59,130,246,0.35); color: #93c5fd; }
+.pos-badge.top20 { background: rgba(139,92,246,0.35); color: #c4b5fd; }
+.pos-badge.top50 { background: rgba(239,68,68,0.3); color: #fca5a5; }
+.pos-badge.out { background: rgba(100,116,139,0.35); color: #cbd5e1; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.clicks-badge { background: rgba(34,197,94,0.15); color: #4ade80; padding: 3px 9px; border-radius: 10px; font-size: 0.85em; font-weight: 600; }
+
+.pages-grid { display: flex; flex-direction: column; gap: 10px; }
+.page-row { display: grid; grid-template-columns: 50px 1fr 420px; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 14px; border-radius: 10px; gap: 15px; }
+.page-rank { font-size: 1.2em; font-weight: 800; color: #d97706; }
+.page-url { font-weight: 600; color: #e2e8f0; word-break: break-word; font-size: 0.9em; }
+.page-metrics { display: flex; gap: 10px; }
+.metric-card { background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; text-align: center; min-width: 60px; }
+.metric-value { font-size: 1em; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.7em; color: #64748b; margin-top: 2px; }
+
+.ult-footer { text-align: center; padding: 30px 20px; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #d97706 0%, #78350f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+.se-ranking-section { background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.05) 100%); border: 1px solid rgba(139,92,246,0.3); }
+
+.comparison-block { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 20px; }
+.comp-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+.comp-card h4 { color: #fff; font-size: 1.05em; margin-bottom: 12px; }
+.comp-card table { width: 100%; }
+.comp-card td { padding: 6px 4px; font-size: 0.92em; color: #cbd5e1; }
+.comp-card td:last-child { text-align: left; font-weight: 600; }
+.comp-card span.up { color: #4ade80; }
+.comp-card span.down { color: #f87171; }
+.comp-card span.stable { color: #94a3b8; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .page-row { grid-template-columns: 50px 1fr; }
+    .page-metrics { display: none; }
+}
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .kw-table { font-size: 0.8em; }
+    .kw-table th, .kw-table td { padding: 6px 3px; }
+}
+.launch-banner { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(217,119,6,0.08) 100%); border: 2px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 18px; margin-bottom: 25px; }
+.launch-banner h4 { color: #fbbf24; font-size: 1.1em; margin-bottom: 8px; }
+.launch-banner p { color: #cbd5e1; line-height: 1.6; margin-bottom: 8px; }
+</style>
+
+<div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">Ultimate Report v3.0</div>
+        <div class="client-name">Zen House — זן האוס</div>
+        <h1>דוח ביצועי SEO חודשי - אוגוסט 2026</h1>
+        <p class="subtitle">zen-house.co.il | ספא ועיסויים ברמת השרון | ניתוח תנועה, דירוגים והמרות</p>
+        <div class="period-badge">אוגוסט 2026 | 01/08/2026 - 31/08/2026 vs יולי 2026</div>
+    </div>
+
+    <div class="ult-wrapper">
+        <div class="launch-banner">
+            <h4>🌱 חודש שלישי של Zen House ב-SEO — התייצבות בתנועה, המשך עלייה בדירוגים</h4>
+            <p>אחרי הזינוק של יולי, אוגוסט הוא חודש של <b>התייצבות בצד התנועה</b>: קליקים מגוגל 1,867 מול 1,874 (-0.4%), הופעות 11,113 (+4.8%). <b>בצד הדירוגים ההתקדמות נמשכה</b>: מספר המילים המדורגות עלה מ-7 ל-9, 4 מילים עלו, 2 נכנסו לדירוג לראשונה, ואף מילה לא ירדה או יצאה.</p>
+            <p><b>SE Ranking:</b> 9/23 מילים מדורגות (יולי: 7), <b>3 במיקום #1</b>, <b>4 ב-TOP 3</b>, <b>4 ב-TOP 10</b>. Local Pack: 4 מילים.</p>
+        </div>
+
+        <div class="success-banner">
+            <div class="title">11,266 סשנים (+4.7%) | 1,867 קליקים אורגניים | 11,113 הופעות</div>
+            <div class="subtitle">1,924 סשנים אורגניים (17.1% מהתנועה) | 23 מילים במעקב | 4 ב-TOP 3 | CTR 16.80%</div>
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">📊</span><span>GA4: 11,266 סשנים</span></div>
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 1,867 קליקים / 11,113 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📈</span><span>SE Ranking: 23 מילים (4 ב-TOP 3)</span></div>
+            <div class="data-source-item"><span class="icon">📍</span><span>Local Pack: 4 מילים</span></div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="value">1,924</div>
+                <div class="label">סשנים אורגניים (GA4)</div>
+                <div class="secondary">17.1% מהתנועה</div>
+                <div class="compare down">-2.8% vs יולי</div>
+            </div>
+            <div class="kpi-card">
+                <div class="value">1,867</div>
+                <div class="label">קליקים מגוגל (GSC)</div>
+                <div class="secondary">CTR 16.80%</div>
+                <div class="compare stable">-0.4% vs יולי</div>
+            </div>
+            <div class="kpi-card gold">
+                <div class="value">11,113</div>
+                <div class="label">הופעות בגוגל (GSC)</div>
+                <div class="secondary">358/יום</div>
+                <div class="compare up">+4.8% vs יולי</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="value">9/23</div>
+                <div class="label">מילים מדורגות</div>
+                <div class="secondary">3 במיקום #1 | 4 ב-TOP 3</div>
+                <div class="compare up">+2 מול יולי</div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>השוואת ביצועים חודשית (MoM)</h2>
+                    <div class="desc">אוגוסט 2026 מול יולי 2026 | השוואה Apples-to-Apples: GA4 מול GA4, GSC מול GSC</div>
+                </div>
+            </div>
+            <div class="comparison-block">
+                <div class="comp-card">
+                    <h4>📅 השוואה לחודש קודם (MoM) — יולי 2026</h4>
+                    <table>
+                        <tr><td colspan="3" style="background:rgba(34,197,94,0.12); color:#86efac; font-weight:700; text-align:center; padding:6px;">GA4 — תנועה (מקור זהה)</td></tr>
+                        <tr><td>סה"כ סשנים</td><td>11,266 ↔ 10,759</td><td><span class="up">+4.7%</span></td></tr>
+                        <tr><td>סשנים אורגניים (Organic Search)</td><td>1,924 ↔ 1,979</td><td><span class="down">-2.8%</span></td></tr>
+                        <tr><td>אחוז אורגני מהתנועה</td><td>17.1% ↔ 18.4%</td><td><span class="down">-1.3 נק'</span></td></tr>
+                        <tr><td>סושיאל בתשלום</td><td>6,782 ↔ 5,910</td><td><span class="up">+14.8%</span></td></tr>
+                        <tr><td>סושיאל אורגני</td><td>824 ↔ 1,010</td><td><span class="down">-18.4%</span></td></tr>
+                        <tr><td>ישיר</td><td>715 ↔ 856</td><td><span class="down">-16.5%</span></td></tr>
+                        <tr><td>אירועים סה"כ</td><td>58,825 ↔ 61,544</td><td><span class="down">-4.4%</span></td></tr>
+                        <tr><td colspan="3" style="background:rgba(59,130,246,0.12); color:#93c5fd; font-weight:700; text-align:center; padding:6px;">GSC — קליקים והופעות (מקור זהה)</td></tr>
+                        <tr><td>קליקים GSC</td><td>1,867 ↔ 1,874</td><td><span class="stable">-0.4%</span></td></tr>
+                        <tr><td>הופעות GSC</td><td>11,113 ↔ 10,606</td><td><span class="up">+4.8%</span></td></tr>
+                        <tr><td>CTR ממוצע</td><td>16.80% ↔ 17.67%</td><td><span class="down">-0.87 נק'</span></td></tr>
+                        <tr><td>מיקום ממוצע</td><td>7.0 ↔ 5.9</td><td><span class="down">-1.1</span></td></tr>
+                        <tr><td>קליקים Brand</td><td>947 ↔ 965</td><td><span class="down">-1.9%</span></td></tr>
+                        <tr><td>קליקים Non-Brand</td><td>267 ↔ 316</td><td><span class="down">-15.5%</span></td></tr>
+                    </table>
+                    <div style="margin-top:10px; padding:10px; background:rgba(59,130,246,0.12); border-radius:8px; font-size:0.85em; color:#93c5fd; line-height:1.6;">
+                        📌 <b>הערה על מקורות זהים:</b> ההשוואה מבוצעת מקור-מול-מקור בלבד. יחס GSC/GA4-אורגני = <b>0.97</b> באוגוסט (מול 0.95 ביולי) — יציב ובטווח התקין 0.5-1.5, כך ששני המקורות מתארים את אותה תנועה. מדד GA4 בדוח הוא <b>סשנים</b> (העמודה "פעילויות באתר" בייצוא).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה - התמונה המלאה</h2>
+                    <div class="desc">פילוח כל הערוצים | מקור: GA4</div>
+                </div>
+                <div class="total-badge" style="margin-right: auto; background: linear-gradient(135deg, #78350f 0%, #d97706 100%); color: white; padding: 12px 24px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 1.8em; font-weight: 800;">11,266</div>
+                    <div style="font-size: 0.85em; opacity: 0.9;">סה"כ סשנים</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area"><canvas id="trafficChart" height="300"></canvas></div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ec4899;"></span><span>סושיאל בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 100%; background: #ec4899;"></div></div>
+                        <div class="users">6,782</div>
+                        <div class="pct">60.2%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span><span>חיפוש אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 28%; background: #22c55e;"></div></div>
+                        <div class="users">1,924</div>
+                        <div class="pct">17.1%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span><span>סושיאל אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 12%; background: #8b5cf6;"></div></div>
+                        <div class="users">824</div>
+                        <div class="pct">7.3%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ef4444;"></span><span>חיפוש בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 11%; background: #ef4444;"></div></div>
+                        <div class="users">773</div>
+                        <div class="pct">6.9%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span><span>ישיר</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 11%; background: #3b82f6;"></div></div>
+                        <div class="users">715</div>
+                        <div class="pct">6.3%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #64748b;"></span><span>לא מסווג</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 2%; background: #64748b;"></div></div>
+                        <div class="users">157</div>
+                        <div class="pct">1.4%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #10b981;"></span><span>הפניה (Referral)</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #10b981;"></div></div>
+                        <div class="users">45</div>
+                        <div class="pct">0.4%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #06b6d4;"></span><span>AI Assistant</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 0%; background: #06b6d4;"></div></div>
+                        <div class="users">28</div>
+                        <div class="pct">0.2%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #eab308;"></span><span>רשת חוצה</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 0%; background: #eab308;"></div></div>
+                        <div class="users">18</div>
+                        <div class="pct">0.2%</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color:#fff; font-size:1.1em; margin-bottom:12px; margin-top:22px;">📊 פילוח ערוצים - סשנים, אירועים ומשך התעניינות</h3>
+            <table class="kw-table" style="background:rgba(0,0,0,0.2); border-radius:12px;">
+                <thead><tr><th>ערוץ</th><th>אוגוסט</th><th>יולי</th><th>אירועים</th><th>משך ממוצע</th><th>שינוי</th></tr></thead>
+                <tbody><tr>
+                            <td class="kw-name">סושיאל בתשלום</td>
+                            <td><strong style="color:#60a5fa;">6,782</strong></td>
+                            <td><strong style="color:#cbd5e1;">5,910</strong></td>
+                            <td><strong style="color:#fbbf24;">29,716</strong></td>
+                            <td><strong style="color:#fca5a5;">10s</strong></td>
+                            <td><span class="change-badge up">+14.8%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">חיפוש אורגני</td>
+                            <td><strong style="color:#60a5fa;">1,924</strong></td>
+                            <td><strong style="color:#cbd5e1;">1,979</strong></td>
+                            <td><strong style="color:#fbbf24;">12,485</strong></td>
+                            <td><strong style="color:#fca5a5;">35s</strong></td>
+                            <td><span class="change-badge down">-2.8%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">סושיאל אורגני</td>
+                            <td><strong style="color:#60a5fa;">824</strong></td>
+                            <td><strong style="color:#cbd5e1;">1,010</strong></td>
+                            <td><strong style="color:#fbbf24;">5,525</strong></td>
+                            <td><strong style="color:#fca5a5;">27s</strong></td>
+                            <td><span class="change-badge down">-18.4%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">חיפוש בתשלום</td>
+                            <td><strong style="color:#60a5fa;">773</strong></td>
+                            <td><strong style="color:#cbd5e1;">923</strong></td>
+                            <td><strong style="color:#fbbf24;">5,440</strong></td>
+                            <td><strong style="color:#fca5a5;">37s</strong></td>
+                            <td><span class="change-badge down">-16.3%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">ישיר</td>
+                            <td><strong style="color:#60a5fa;">715</strong></td>
+                            <td><strong style="color:#cbd5e1;">856</strong></td>
+                            <td><strong style="color:#fbbf24;">4,563</strong></td>
+                            <td><strong style="color:#fca5a5;">32s</strong></td>
+                            <td><span class="change-badge down">-16.5%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">לא מסווג</td>
+                            <td><strong style="color:#60a5fa;">157</strong></td>
+                            <td><strong style="color:#cbd5e1;">4</strong></td>
+                            <td><strong style="color:#fbbf24;">461</strong></td>
+                            <td><strong style="color:#fca5a5;">21s</strong></td>
+                            <td><span class="change-badge up">+3825.0%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">הפניה (Referral)</td>
+                            <td><strong style="color:#60a5fa;">45</strong></td>
+                            <td><strong style="color:#cbd5e1;">37</strong></td>
+                            <td><strong style="color:#fbbf24;">232</strong></td>
+                            <td><strong style="color:#fca5a5;">25s</strong></td>
+                            <td><span class="change-badge up">+21.6%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">AI Assistant</td>
+                            <td><strong style="color:#60a5fa;">28</strong></td>
+                            <td><strong style="color:#cbd5e1;">17</strong></td>
+                            <td><strong style="color:#fbbf24;">213</strong></td>
+                            <td><strong style="color:#fca5a5;">29s</strong></td>
+                            <td><span class="change-badge up">+64.7%</span></td>
+                        </tr><tr>
+                            <td class="kw-name">רשת חוצה</td>
+                            <td><strong style="color:#60a5fa;">18</strong></td>
+                            <td><strong style="color:#cbd5e1;">23</strong></td>
+                            <td><strong style="color:#fbbf24;">190</strong></td>
+                            <td><strong style="color:#fca5a5;">47s</strong></td>
+                            <td><span class="change-badge down">-21.7%</span></td>
+                        </tr></tbody>
+            </table>
+            <div style="margin-top:12px; padding:12px 14px; background:rgba(236,72,153,0.1); border-radius:8px; font-size:0.9em; color:#f9a8d4; line-height:1.7;">
+                💡 <b>סושיאל בתשלום הוא 60% מהתנועה</b> (6,782 סשנים) אך משך ההתעניינות הממוצע בו הוא 10 שניות בלבד — הנמוך ביותר מכל הערוצים. לשם השוואה, בחיפוש האורגני המשך הוא 35 שניות. כדאי לבחון את מיקוד הקמפיין ואת התאמת עמוד הנחיתה.
+            </div>
+        </div>
+
+        <div class="ult-section se-ranking-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>מגמת דירוגים - SE Ranking</h2>
+                    <div class="desc">23 מילים אסטרטגיות | היסטוריה: יוני-ספטמבר 2026 | מיקוד: ספא ומסאז ברמת השרון</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(251,191,36,0.1); border:1px solid rgba(251,191,36,0.3); border-radius:12px; padding:12px 16px; margin-bottom:20px; font-size:0.9em; color:#fde68a;">
+                ℹ️ <b>הערה:</b> מעקב SE Ranking על Zen House החל ב-08.06.2026. הדוח מציג 3 נקודות מדידה: 08.06.2026 (בסיס), 02.08.2026 (תחילת אוגוסט) ו-01.09.2026 (נוכחי).
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; margin-bottom:20px; font-size:0.9em; color:#cbd5e1; line-height:1.7;">
+                🏆 <b>סיכום שינוי חודשי (02.08.2026 ← 01.09.2026):</b>
+                <span style="color:#4ade80; font-weight:700;">↑ 4 מילים עלו</span> |
+                <span style="color:#f87171; font-weight:700;">↓ 0 מילים ירדו</span> |
+                <span style="color:#94a3b8; font-weight:700;">= 3 שמרו על מיקומן</span> |
+                <span style="color:#93c5fd; font-weight:700;">✨ 2 נכנסו לדירוג</span> |
+                <span style="color:#fca5a5; font-weight:700;">⚠️ 0 יצאו מדירוג</span> |
+                <span style="color:#64748b; font-weight:700;">14 אינן מדורגות בשתי הנקודות</span>
+                <br><br>
+                🥇 <b>3 מילים במיקום #1</b> | <b>4 ב-TOP 3</b> | <b>4 ב-TOP 10</b> | <b>14/23 מהשאילתות מציגות AI Overview ב-SERP</b>
+            </div>
+
+            <div class="keywords-category" style="border-right-color:#8b5cf6;">
+                <div class="category-header">
+                    <span class="cat-icon">📊</span>
+                    <span class="cat-title">טבלת דירוגים מלאה - 23 מילות מפתח</span>
+                    <span class="cat-count">ממוקמות לפי המיקום הנוכחי</span>
+                </div>
+                <div style="overflow-x:auto;">
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th><th>נפח חיפוש</th><th>08.06.2026</th><th>02.08.2026</th>
+                            <th style="color:#a78bfa;">נוכחי (01.09.2026)</th><th>שינוי חודשי</th>
+                        </tr>
+                    </thead>
+                    <tbody><tr>
+                                <td class="kw-name">עיסוי רמת השרון</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                            </tr><tr>
+                                <td class="kw-name">מסאז רמת השרון</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge up">↑ 1</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי תאילנדי רמת השרון</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge top50">22</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי ברמת השרון</td>
+                                <td><span class="vol-badge">140</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי בארבע ידיים</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge top20">12</span></td>
+                                <td><span class="change-badge up">✨ נכנסה לדירוג</span></td>
+                            </tr><tr>
+                                <td class="kw-name">פוט מסאז</td>
+                                <td><span class="vol-badge">590</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge top20">20</span></td>
+                                <td><span class="pos-badge top20">16</span></td>
+                                <td><span class="change-badge up">↑ 4</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי רקמות עמוק</td>
+                                <td><span class="vol-badge">390</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge top50">52</span></td>
+                                <td><span class="pos-badge top50">39</span></td>
+                                <td><span class="change-badge up">↑ 13</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי צוואר וכתפיים</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge top50">65</span></td>
+                                <td><span class="pos-badge top50">39</span></td>
+                                <td><span class="change-badge up">↑ 26</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי הריון</td>
+                                <td><span class="vol-badge">320</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge top50">40</span></td>
+                                <td><span class="change-badge up">✨ נכנסה לדירוג</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי</td>
+                                <td><span class="vol-badge">18,100</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי תאילנדי</td>
+                                <td><span class="vol-badge">1,900</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי זוגי</td>
+                                <td><span class="vol-badge">590</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי כפות רגליים</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי שוודי</td>
+                                <td><span class="vol-badge">100</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי מומלץ</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי תאילנדי מסורתי</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי טיפולי</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי תאילנדי במרכז</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי ראש</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">מחיר עיסוי</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי במרכז</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">טיפול עיסוי זוגי</td>
+                                <td><span class="vol-badge">0</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיסוי תאילנדי עם שמן</td>
+                                <td><span class="vol-badge">0</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="pos-badge out">—</span></td>
+                                <td><span class="change-badge stable">—</span></td>
+                            </tr></tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>מילות מפתח מובילות ב-GSC — Brand vs Non-Brand</h2>
+                    <div class="desc">פילוח הקליקים ממנוע החיפוש לפי סוג מילת מפתח | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="keywords-category brand" style="margin-bottom:20px;">
+                <div class="category-header">
+                    <span class="cat-icon">🏷️</span>
+                    <span class="cat-title">מותג (Brand) — Zen House / זן</span>
+                    <span class="cat-count">121 וריאציות | 947 קליקים (78.0% מהשאילתות)</span>
+                </div>
+                <table class="kw-table">
+                    <thead><tr><th>מילת מפתח</th><th>הופעות</th><th>מיקום</th><th>קליקים</th></tr></thead>
+                    <tbody>
+<tr>
+                                <td class="kw-name">zen רמת השרון</td>
+                                <td><span class="vol-badge">168</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">109</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן ספא רמת השרון</td>
+                                <td><span class="vol-badge">172</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">103</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן ספא</td>
+                                <td><span class="vol-badge">127</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">91</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">zen house</td>
+                                <td><span class="vol-badge">104</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">70</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן האוס רמת השרון</td>
+                                <td><span class="vol-badge">107</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">65</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן רמת השרון</td>
+                                <td><span class="vol-badge">105</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">61</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן מסאג</td>
+                                <td><span class="vol-badge">84</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">49</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">zen spa</td>
+                                <td><span class="vol-badge">72</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">46</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">zen house רמת השרון</td>
+                                <td><span class="vol-badge">58</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">46</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן מסאז</td>
+                                <td><span class="vol-badge">58</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">39</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן מסאז רמת השרון</td>
+                                <td><span class="vol-badge">44</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">31</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">zen massage house, זן עיסוי ברמת השרון</td>
+                                <td><span class="vol-badge">86</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">29</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">zen massage</td>
+                                <td><span class="vol-badge">62</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">28</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן האוס</td>
+                                <td><span class="vol-badge">42</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">27</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">זן מסאג ברמת השרון</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">26</span></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="keywords-category nonbrand">
+                <div class="category-header">
+                    <span class="cat-icon">🌐</span>
+                    <span class="cat-title">Non-Brand — מילים גנריות ספא ועיסויים</span>
+                    <span class="cat-count">510 וריאציות | 267 קליקים (22.0% מהשאילתות)</span>
+                </div>
+                <table class="kw-table">
+                    <thead><tr><th>מילת מפתח</th><th>הופעות</th><th>מיקום</th><th>קליקים</th></tr></thead>
+                    <tbody>
+<tr>
+                                <td class="kw-name">מסאז רמת השרון</td>
+                                <td><span class="vol-badge">179</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">35</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאג רמת השרון</td>
+                                <td><span class="vol-badge">152</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">29</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">עיסוי רמת השרון</td>
+                                <td><span class="vol-badge">204</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">20</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ספא רמת השרון</td>
+                                <td><span class="vol-badge">74</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">19</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">עיסוי ברמת השרון</td>
+                                <td><span class="vol-badge">202</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">16</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">עיסוי תאילנדי רמת השרון</td>
+                                <td><span class="vol-badge">174</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">15</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאז תאילנדי רמת השרון</td>
+                                <td><span class="vol-badge">156</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">14</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">פוט מסאז רמת השרון</td>
+                                <td><span class="vol-badge">116</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">14</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאז ברמת השרון</td>
+                                <td><span class="vol-badge">56</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">13</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאג תאילנדי רמת השרון</td>
+                                <td><span class="vol-badge">85</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">12</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ספא ברמת השרון</td>
+                                <td><span class="vol-badge">31</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">10</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ספא תאילנדי רמת השרון</td>
+                                <td><span class="vol-badge">58</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאג ברמת השרון</td>
+                                <td><span class="vol-badge">53</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מסאג אוסישקין רמת השרון</td>
+                                <td><span class="vol-badge">27</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">אוסישקין 22 רמת השרון</td>
+                                <td><span class="vol-badge">79</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">5</span></td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים</h2>
+                    <div class="desc">העמודים המובילים בתנועה אורגנית באוגוסט 2026 | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-row">
+                    <div class="page-rank">#1</div>
+                    <div class="page-url">עמוד הבית</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">1,568</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">9,315</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">16.83%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#2</div>
+                    <div class="page-url">/טיפולים/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">140</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,449</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">5.72%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">3</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#3</div>
+                    <div class="page-url">/צור-קשר/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">89</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,259</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">3.94%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#4</div>
+                    <div class="page-url">/treatments/עיסוי-רגליים-פוט-מסאז׳/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">57</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,391</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.38%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#5</div>
+                    <div class="page-url">/treatments/עיסוי-זוגי/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">13</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">307</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">4.23%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">17</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#6</div>
+                    <div class="page-url">/treatments/עיסוי-בארבע-ידיים/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">10</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">221</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">4.52%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">13</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#7</div>
+                    <div class="page-url">/אודות/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,228</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.36%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#8</div>
+                    <div class="page-url">/treatments/עיסוי-תאילנדי-עם-שמן/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,057</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.34%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#9</div>
+                    <div class="page-url">/treatments/עיסוי-ראש-כתפיים-וצוואר/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">255</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.96%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">19</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#10</div>
+                    <div class="page-url">/treatments/עיסוי-שוודי/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">3</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,003</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.15%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">💡</span>
+                <div class="section-title">
+                    <h2>תובנות ומסקנות</h2>
+                    <div class="desc">סיכום מנהלים לחודש אוגוסט 2026</div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                <div style="background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.4); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#4ade80; margin-bottom:10px;">🌱 מגמות חיוביות</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• <b>מילים מדורגות 7 ← 9</b> מתוך 23 — 4 עלו, 2 נכנסו לדירוג, ואף מילה לא ירדה או יצאה</li>
+                        <li>• <b>"מסאז רמת השרון" עלתה 2 ← 1</b> (110 חיפושים) — עם זה, 3 מילים מחזיקות כעת במיקום #1</li>
+                        <li>• <b>"עיסוי בארבע ידיים" נכנסה לדירוג ב-12</b> (70) ו<b>"עיסוי הריון" ב-40</b> (320) — שתי מילות טיפול חדשות</li>
+                        <li>• <b>"פוט מסאז" 20 ← 16</b> (590 חיפושים) ו<b>"עיסוי רקמות עמוק" 52 ← 39</b> (390) — התקדמות במילים המסחריות הגדולות</li>
+                        <li>• <b>הופעות בגוגל +4.8%</b> (11,113 מול 10,606) — החשיפה ממשיכה לגדול</li>
+                        <li>• <b>CTR 16.80%</b> — גבוה במיוחד, תוצאה של שליטה ב-Local Pack ובשאילתות המותג באזור</li>
+                        <li>• <b>סה"כ סשנים +4.7%</b> (11,266 מול 10,759)</li>
+                    </ul>
+                </div>
+                <div style="background:rgba(217,119,6,0.15); border:1px solid rgba(217,119,6,0.4); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#fcd34d; margin-bottom:10px;">🎯 המלצות פעולה ספטמבר</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• <b>להשלים את הגדרת האירועים המרכזיים ב-GA4</b> — נרשמו 2 אירועים מרכזיים באוגוסט מול 3 ביולי. בהיקף כזה אי אפשר למדוד פניות והזמנות תורים, וזו הפעולה בעלת הערך הגבוה ביותר החודש</li>
+                        <li>• <b>מילות הטיפולים שעדיין אינן מדורגות</b>: "עיסוי תאילנדי" (1,900), "עיסוי זוגי" (590), "עיסוי כפות רגליים" (170), "עיסוי שוודי" (100) — לכל אחת כבר קיים עמוד ייעודי באתר, והמיקוד שלו בביטוי עצמו (כותרת, H1, תיאור) הוא הצעד הישיר. <b>5 מילות טיפול כבר נכנסו לדירוג מאז יוני בדיוק כך</b></li>
+                        <li>• <b>שני עמודי טיפולים צוברים חשיפה בלי קליקים</b>: /treatments/עיסוי-שוודי/ (2,003 הופעות, 3 קליקים) ו-/treatments/עיסוי-תאילנדי-עם-שמן/ (2,057 הופעות, 7 קליקים). ההופעות כבר שם — הכותרת והתיאור בתוצאות החיפוש הם מה שחסר</li>
+                        <li>• <b>הביטוי "עיסוי" (18,100 חיפושים) נשאר מחוץ למיקוד</b> — ביטוי ארצי שסטודיו יחיד אינו מתחרה עליו; הוא משמש רק כתמיכה בתוך הדפים, והיעד הוא תמיד הצירוף עם סוג הטיפול או עם רמת השרון</li>
+                        <li>• <b>הקליקים התייצבו (-0.4%) בזמן שההופעות עלו (+4.8%)</b> — הצמיחה הבאה תגיע מדפי הטיפולים, לא מעמוד הבית שכבר מביא 1,568 מתוך 1,867 הקליקים</li>
+                        <li>• <b>14 מתוך 23 השאילתות מציגות AI Overview</b> — Zen House אינו מצוטט באף אחת מהן. תוכן בפורמט של תשובה ישירה בדפי הטיפולים הוא הדרך להיכנס</li>
+                        <li>• <b>סושיאל בתשלום — 6,782 סשנים ב-10 שניות בממוצע</b> — לבחון מיקוד הקמפיין מול עמוד הנחיתה</li>
+                        <li>• להמשיך לחזק את הנוכחות המקומית ברמת השרון והשרון — שם מרוכזות כל השאילתות הגנריות שמביאות קליקים</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-footer">
+            <div class="brand">Nadav Digital | נדב דיגיטל</div>
+            <div class="info">דוח זה נוצר אוטומטית עבור Zen House — זן האוס | אוגוסט 2026 | נתונים: GSC + GA4 + SE Ranking (23 KW History)</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('trafficChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: ["סושיאל בתשלום", "חיפוש אורגני", "סושיאל אורגני", "חיפוש בתשלום", "ישיר", "לא מסווג", "הפניה (Referral)", "AI Assistant", "רשת חוצה"],
+        datasets: [{ data: [6782, 1924, 824, 773, 715, 157, 45, 28, 18], backgroundColor: ["#ec4899", "#22c55e", "#8b5cf6", "#ef4444", "#3b82f6", "#64748b", "#10b981", "#06b6d4", "#eab308"], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } },
+        cutout: '60%' }
+});
+</script>
+<!-- /wp:html -->
