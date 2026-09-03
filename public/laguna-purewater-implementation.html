@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>לגונה פתרונות מים - PureWater, תוכנית יישום שלב ב | NC Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f172a; --card:#1e293b; --card-2:#273548; --border:#334155;
+  --text:#e2e8f0; --muted:#94a3b8; --accent:#0891b2; --accent-light:#22d3ee;
+  --green:#10b981; --amber:#f59e0b; --purple:#a78bfa; --rose:#f43f5e; --line:#475569;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;direction:rtl}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+
+.header{background:linear-gradient(135deg,#0c4a6e 0%,#164e63 50%,#1e293b 100%);
+  border:1px solid var(--border);border-radius:16px;padding:40px 32px;margin-bottom:22px;text-align:center}
+.header h1{font-size:2.05rem;font-weight:800;background:linear-gradient(135deg,var(--accent-light),var(--accent));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.35}
+.header .meta{margin-top:14px;color:var(--muted);font-size:.86rem}
+
+.toolbar{display:flex;gap:10px;justify-content:flex-end;margin-bottom:18px;flex-wrap:wrap}
+.toolbar button{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;
+  padding:9px 18px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.18s}
+.toolbar button:hover{background:var(--card-2);border-color:var(--accent)}
+
+.lead{background:var(--card);border:1px solid var(--border);border-right:4px solid var(--accent);
+  border-radius:12px;padding:20px 24px;margin-bottom:22px}
+.lead h2{font-size:1.08rem;color:var(--accent-light);margin-bottom:8px;font-weight:700}
+.lead p{color:var(--muted);font-size:.95rem}
+.lead p+p{margin-top:10px}
+.lead strong{color:var(--text)}
+
+table.prio,table.data{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;margin-bottom:22px;font-size:.92rem}
+table.data{margin:12px 0 16px}
+table.prio thead th,table.data thead th{background:#16324a;color:var(--accent-light);font-weight:700;padding:12px 14px;text-align:right;font-size:.86rem}
+table.prio td,table.data td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:top}
+table.prio tbody tr:hover,table.data tbody tr:hover{background:var(--card-2)}
+.rank{font-weight:800;color:var(--accent-light);width:38px}
+.tblwrap{overflow-x:auto}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.76rem;font-weight:700;white-space:nowrap}
+.p-high{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.35)}
+.p-mid{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.35)}
+.p-s{background:rgba(34,211,238,.12);color:var(--accent-light);border:1px solid rgba(34,211,238,.3)}
+.p-m{background:rgba(167,139,250,.14);color:var(--purple);border:1px solid rgba(167,139,250,.32)}
+.p-no{background:rgba(244,63,94,.13);color:var(--rose);border:1px solid rgba(244,63,94,.32)}
+
+details.sec{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden}
+details.sec>summary{padding:20px 24px;cursor:pointer;font-size:1.16rem;font-weight:700;color:var(--text);
+  display:flex;align-items:center;gap:14px;list-style:none;transition:.18s}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary::marker{content:""}
+details.sec>summary:hover{background:var(--card-2)}
+.chev{width:22px;height:22px;flex:0 0 22px;border-radius:6px;background:rgba(34,211,238,.12);
+  display:flex;align-items:center;justify-content:center;transition:transform .22s}
+.chev::before{content:"";width:7px;height:7px;border-left:2px solid var(--accent-light);
+  border-bottom:2px solid var(--accent-light);transform:rotate(-45deg);margin-top:-3px}
+details.sec[open]>summary .chev{transform:rotate(-180deg)}
+.secnum{color:var(--accent);font-weight:800;font-size:.94rem;background:rgba(8,145,178,.14);
+  padding:3px 11px;border-radius:8px}
+.secbody{padding:4px 24px 26px}
+
+.find{border-top:1px solid var(--border);padding-top:22px;margin-top:22px}
+.find:first-child{border-top:none;padding-top:6px;margin-top:0}
+.find h3{font-size:1.04rem;font-weight:700;color:var(--accent-light);margin-bottom:12px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.find h3 .tag{font-size:.72rem;font-weight:700;color:var(--muted);border:1px solid var(--border);
+  border-radius:6px;padding:2px 8px;white-space:nowrap}
+.block{margin-bottom:14px}
+.block .lbl{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.03em;margin-bottom:5px}
+.block p,.block li{font-size:.94rem;color:var(--text)}
+.block ul,.block ol{margin:0 18px 0 0}
+.block li{margin-bottom:5px}
+.now{background:rgba(148,163,184,.07);border-right:3px solid var(--line);border-radius:8px;padding:12px 15px}
+.do{background:rgba(8,145,178,.08);border-right:3px solid var(--accent);border-radius:8px;padding:12px 15px}
+.why{background:rgba(16,185,129,.07);border-right:3px solid var(--green);border-radius:8px;padding:12px 15px}
+.warn{background:rgba(244,63,94,.07);border-right:3px solid var(--rose);border-radius:8px;padding:12px 15px}
+.why p{color:var(--text)}
+code{background:#0b1220;border:1px solid var(--border);border-radius:5px;padding:1px 6px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;color:var(--accent-light);direction:ltr;display:inline-block}
+.num{color:var(--accent-light);font-weight:700}
+.ltr{direction:ltr;display:inline-block;unicode-bidi:isolate}
+
+.copy{background:#0b1220;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin:8px 0 14px}
+.copy .ct{font-size:.75rem;font-weight:800;color:var(--accent-light);letter-spacing:.04em;margin-bottom:7px}
+.copy p{font-size:.93rem;color:#dbe7f3;margin-bottom:8px}
+.copy p:last-child{margin-bottom:0}
+.copy .cnt{font-size:.74rem;color:var(--muted);margin-top:7px}
+pre.code{background:#080e1a;border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  direction:ltr;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.78rem;
+  color:#cbe9f5;line-height:1.6;margin:8px 0 14px}
+.qa{border-right:3px solid var(--accent);background:rgba(8,145,178,.06);border-radius:8px;padding:12px 15px;margin-bottom:11px}
+.qa .q{font-weight:700;color:var(--accent-light);font-size:.95rem;margin-bottom:5px}
+.qa .a{font-size:.93rem;color:var(--text)}
+.ph{display:inline-block;background:rgba(245,158,11,.16);color:var(--amber);border:1px dashed rgba(245,158,11,.5);border-radius:5px;padding:0 7px;font-weight:700;font-size:.92em}
+.needs{display:inline-block;font-size:.74rem;font-weight:700;padding:2px 9px;border-radius:999px;
+  background:rgba(245,158,11,.14);color:var(--amber);margin-right:6px}
+
+.footer{text-align:center;color:var(--muted);font-size:.85rem;padding:28px 10px 12px;margin-top:26px;border-top:1px solid var(--border)}
+.footer b{color:var(--accent-light)}
+@media(max-width:640px){
+  .header{padding:28px 20px}.header h1{font-size:1.42rem}
+  .secbody{padding:4px 15px 22px}details.sec>summary{padding:16px 15px;font-size:1rem}
+  .container{padding:13px}table.prio,table.data{font-size:.82rem}
+  table.prio td,table.prio thead th,table.data td,table.data thead th{padding:9px 8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>לגונה פתרונות מים<br>PureWater - תוכנית יישום, שלב ב</h1>
+    <div class="meta">מערכת מים תת כיורית למים חמים וקרים PureWater &middot; ספטמבר 2026</div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="document.querySelectorAll('details.sec').forEach(d=>d.open=true)">פתיחת הכל</button>
+    <button onclick="document.querySelectorAll('details.sec').forEach(d=>d.open=false)">סגירת הכל</button>
+  </div>
+
+  <details class="sec">
+    <summary><span class="chev"></span><span class="secnum">1</span> מה כבר בוצע בעמוד</summary>
+    <div class="secbody">
+
+      <div class="find">
+        <h3>1.1 שישה נתונים נוספו לעמוד ואומתו</h3>
+        <div class="block why"><div class="lbl">אומת בבדיקה חוזרת של העמוד החי</div>
+          <p>התשובות שהתקבלו כבר הוטמעו בגוף העמוד. אין צורך להטמיע אותן שוב, והן משמשות בסיס לכל הניסוחים בהמשך.</p>
+        </div>
+        <div class="tblwrap">
+        <table class="data">
+          <thead><tr><th style="width:30%">הנתון</th><th>מה מופיע בעמוד כעת</th></tr></thead>
+          <tbody>
+            <tr><td>טמפרטורת מים חמים</td><td>"טמפרטורה ניתנת לכיוון עד 98 מעלות למים חמים"</td></tr>
+            <tr><td>תפוקת מים חמים</td><td>"תפוקת המים עד 13 ליטר למים רותחים לשעה (ל-72 כוסות לשעה)"</td></tr>
+            <tr><td>מידות יחידת החימום</td><td>רוחב 20, עומק 20, גובה 28</td></tr>
+            <tr><td>מידות יחידת הקירור</td><td>רוחב 18, עומק 38, גובה 33</td></tr>
+            <tr><td>החלפת מסנן</td><td>מקטע חדש "תחזוקת המערכת": החלפת סננים פעם בשנה</td></tr>
+            <tr><td>חיבור חשמל</td><td>"לא נדרש שקע כוח, אלא נקודת חשמל סטנדרטית"</td></tr>
+            <tr><td>אחריות</td><td>"אחריות מלאה לשנה!" בפסקת הפתיחה</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="block now">
+          <p style="font-size:.88rem">בנוסף עודכנה התפוקה הכוללת מ-60 ל-72 כוסות בשעה. הנתון עקבי: 13 ליטר לשעה מחולק ל-72 כוסות הם כ-181 מ"ל לכוס, כלומר שני המספרים מתארים את אותה תפוקה בשתי יחידות מידה.</p>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>1.2 שתי נקודות לבדיקה במה שנוסף</h3>
+        <div class="block warn"><div class="lbl">שאלה עסקית, לא תקלה</div>
+          <p><b>האחריות נרשמה כשנה אחת.</b> בתשובה שהתקבלה נכתב "אחריות מלאה של היבואן" ללא ציון תקופה, ובעמוד נכתב "אחריות מלאה לשנה". בקטגוריה שבה נמצא המוצר מופיע דגם אחר של לגונה שכותרתו כוללת <b>שלוש שנות אחריות</b>, והשניים מוצגים זה לצד זה באותו עמוד קטגוריה.</p>
+          <p style="margin-top:8px">נדרשת הכרעה: אם תקופת האחריות בפועל ארוכה משנה, כדאי לעדכן. אם היא אכן שנה, מומלץ לנסח אותה כ"אחריות יבואן מלאה לשנה" ולא כהבטחה שיווקית עם סימן קריאה, כדי שלא תתפרש כנחותה לעומת דגם עם שלוש שנות אחריות.</p>
+        </div>
+        <div class="block do"><div class="lbl">תיקון טכני קטן</div>
+          <p>שורת החשמל מתחילה בשני תווי כוכבית שנראים בעמוד כטקסט: <code>**לא נדרש שקע כוח</code>. יש להסיר את שתי הכוכביות. הניסוח המתוקן מופיע במקטע 3.3.</p>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="sec">
+    <summary><span class="chev"></span><span class="secnum">2</span> עדיפות גבוהה - ארבע פעולות בעורך המוצר</summary>
+    <div class="secbody">
+
+      <div class="find">
+        <h3>2.1 כותרת העמוד ותיאור המטא</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>תיאור המטא עדיין נגזר אוטומטית מתחילת הטקסט. הוא נפתח ברווח, מכיל את הצירוף "חמם מים- puretech. קיבולת 2.4 ליטר" ונקטע באמצע המילה "מעלו". זהו הטקסט שמוצג למשתמשים בתוצאות החיפוש.</p>
+        </div>
+        <div class="block do"><div class="lbl">איפה לעדכן</div>
+          <p>בעורך המוצר בקאש קאו, בשדות ה-SEO של המוצר: שדה כותרת העמוד ושדה תיאור המטא. אם השדות ריקים, המערכת גוזרת אוטומטית - ולכן חובה למלא אותם ידנית.</p>
+        </div>
+        <div class="copy">
+          <div class="ct">כותרת העמוד - להעתקה</div>
+          <p>מערכת מים תת כיורית PureWater - חמים, קרים ומסוננים | לגונה</p>
+          <div class="cnt">59 תווים</div>
+        </div>
+        <div class="copy">
+          <div class="ct">תיאור המטא - להעתקה</div>
+          <p>מערכת מים תת-כיורית PureWater: מים חמים עד 98 מעלות וקרים עד 6 מעלות, 13 ליטר בשעה, סינון Pureal בתקן NSF, ברז פיורטק בשישה גוונים. 3,790 ₪ במקום 6,500 ₪.</p>
+          <div class="cnt">154 תווים. כל המידע החשוב נכלל באורך התצוגה של גוגל</div>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>2.2 הפיכת הטקסט המודגש לכותרות משנה</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>התוכן שנוסף הגדיל את העמוד לכ-<span class="num">570</span> מילים, אך כולו נוסף כטקסט מודגש. בעמוד לא קיימת כותרת משנה המתייחסת למוצר: כל כותרות ה-H2 הקיימות שייכות לקרוסלת המוצרים הקשורים ולטופס יצירת הקשר.</p>
+          <p style="margin-top:8px">ככל שנוסף תוכן, הבעיה הופכת משמעותית יותר. טקסט מודגש אינו יוצר מבנה, ולכן מנוע חיפוש ומנוע תשובות אינם יכולים לזהות היכן מתחילה התשובה על הסינון והיכן על החימום, ואינם יכולים לצטט אף אחת מהן בנפרד.</p>
+        </div>
+        <div class="block do"><div class="lbl">מה לעשות בפועל</div>
+          <p>בעורך התוכן העשיר של המוצר, לסמן כל אחת מהשורות המודגשות ולהחיל עליה סגנון <b>כותרת 2</b> במקום הדגשה. תוכן הפסקאות שמתחת נשאר בדיוק כפי שהוא. שינוי הסגנון בלבד, ללא שינוי בתוכן הפסקאות.</p>
+        </div>
+        <div class="tblwrap">
+        <table class="data">
+          <thead><tr><th style="width:44%">הטקסט המודגש היום</th><th>הכותרת שתחליף אותו</th></tr></thead>
+          <tbody>
+            <tr><td>המערכת כוללת :</td><td>מה כוללת מערכת PureWater</td></tr>
+            <tr><td>חמם מים- puretech.</td><td>יחידת חימום PureTech - מים חמים עד 98 מעלות</td></tr>
+            <tr><td>יחידת קירור-</td><td>יחידת קירור - מים קרים עד 6 מעלות</td></tr>
+            <tr><td>מטהר מים-</td><td>מטהר מים Pureal PPF-1000 בתקן NSF</td></tr>
+            <tr><td>תחזוקת המערכת</td><td>תחזוקת המערכת והחלפת המסנן</td></tr>
+            <tr><td>ברז פיורטק מקורי לבחירה</td><td>ברז פיורטק: שלושה דגמים בשישה גוונים</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="block now">
+          <p style="font-size:.88rem">שלוש הכותרות הנוספות - טבלת המפרט, בלוק ההתאמה ומקטע השאלות והתשובות - נוצרות במקטעים 2.3, 3.1 ו-2.4 ומוצבות אחרי מקטע הברז.</p>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>2.3 טבלת מפרט</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>אין בעמוד אף אלמנט טבלה. כל הנתונים קיימים, אך פזורים על פני חמישה בלוקי טקסט ובתוך משפטים שיווקיים. הטבלה מרכזת אותם במקום אחד.</p>
+        </div>
+        <div class="block do"><div class="lbl">איפה למקם</div>
+          <p>מיד אחרי מקטע "מה כוללת מערכת PureWater" ולפני מקטע יחידת החימום, תחת כותרת H2 בשם <b>מפרט טכני מלא</b>. כל הערכים לקוחים מהתוכן שכבר קיים בעמוד; לא נוספה כאן אף עובדה חדשה.</p>
+        </div>
+        <div class="tblwrap">
+        <table class="data">
+          <thead><tr><th style="width:34%">מאפיין</th><th>ערך</th></tr></thead>
+          <tbody>
+            <tr><td>שם הדגם</td><td>PureWater</td></tr>
+            <tr><td>סוג המערכת</td><td>מערכת מים חמים, קרים ומסוננים, תת-כיורית</td></tr>
+            <tr><td>מק״ט</td><td><span class="ltr">N04NJI881L</span></td></tr>
+            <tr><td>מיקום התקנה</td><td>מתחת לכיור</td></tr>
+            <tr><td>טמפרטורת מים חמים</td><td>עד 98 מעלות, ניתנת לכיוון</td></tr>
+            <tr><td>תפוקת מים חמים</td><td>עד 13 ליטר לשעה, כ-72 כוסות</td></tr>
+            <tr><td>נפח מיכל מים חמים</td><td>2.4 ליטר</td></tr>
+            <tr><td>גוף חימום</td><td><span class="ltr">PureTech</span>, ללא מגע ישיר עם המים</td></tr>
+            <tr><td>מידות יחידת החימום</td><td>רוחב 20 ס"מ, עומק 20 ס"מ, גובה 28 ס"מ</td></tr>
+            <tr><td>טמפרטורת מים קרים</td><td>עד 6 מעלות, ניתנת לכיוון</td></tr>
+            <tr><td>נפח מיכל מים קרים</td><td>1.5 ליטר</td></tr>
+            <tr><td>מידות יחידת הקירור</td><td>רוחב 18 ס"מ, עומק 38 ס"מ, גובה 33 ס"מ</td></tr>
+            <tr><td>מקום נדרש בארון</td><td>כ-38 ס"מ רוחב על 38 ס"מ עומק ו-33 ס"מ גובה, אם שתי היחידות מוצבות זו לצד זו</td></tr>
+            <tr><td>חיבור חשמל</td><td>נקודת חשמל סטנדרטית. אין צורך בשקע כוח ייעודי</td></tr>
+            <tr><td>מערכת סינון</td><td><span class="ltr">Pureal PPF-1000</span>, היברידית, תוצרת PICOGRAM, דרום קוריאה</td></tr>
+            <tr><td>תקנים</td><td><span class="ltr">NSF42</span>, <span class="ltr">NSF372</span></td></tr>
+            <tr><td>קיבולת המסנן</td><td>6,000 ליטר</td></tr>
+            <tr><td>החלפת מסנן</td><td>פעם בשנה</td></tr>
+            <tr><td>מה המסנן מסלק</td><td>כלור, חלודה, בקטריות וחומרים לא רצויים נוספים</td></tr>
+            <tr><td>מינרלים</td><td>המסנן מוסיף אשלגן וסידן</td></tr>
+            <tr><td>דגמי ברז לבחירה</td><td><span class="ltr">HC2100</span>, <span class="ltr">HC2200</span>, <span class="ltr">DHC2200</span></td></tr>
+            <tr><td>גוונים לבחירה</td><td>ניקל, מוברש, שחור, זהב מוברש, רוז גולד, גרפיט</td></tr>
+            <tr><td>אחריות</td><td>אחריות יבואן מלאה לשנה</td></tr>
+            <tr><td>מים מוגזים</td><td>אינם נכללים</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="block now">
+          <p style="font-size:.88rem">שורת "מקום נדרש בארון" מחושבת משתי שורות המידות שמעליה ואינה נתון יצרן. זוהי שאלה נפוצה בקרב לקוחות לפני רכישת מערכת תת-כיורית, ולכן מומלץ שהחישוב יופיע במפורש ולא יוטל על הלקוחות.</p>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>2.4 מקטע שאלות ותשובות</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>בגוף העמוד אין ולו סימן שאלה אחד. שבע השאלות הבאות ניתנות למענה מלא מהתוכן שכבר קיים בעמוד, למעט שדה אחד שממתין לנתון.</p>
+        </div>
+        <div class="block do"><div class="lbl">איפה למקם</div>
+          <p>בתחתית תיאור המוצר, אחרי מקטע הברז, תחת כותרת H2 בשם <b>שאלות ותשובות על מערכת PureWater</b>. אין להוסיף סימון FAQPage - גוגל הפסיקה להציג תוצאות עשירות של שאלות ותשובות במאי 2026, והערך כאן הוא בתוכן הגלוי.</p>
+        </div>
+
+        <div class="qa"><div class="q">כמה עולה מערכת PureWater ומה כלול במחיר?</div>
+          <div class="a">מערכת PureWater עולה 3,790 שקלים במקום 6,500 שקלים. המחיר כולל את יחידת החימום, יחידת הקירור, מסנן Pureal PPF-1000 וברז פיורטק מקורי בדגם ובגוון לבחירה. התקנה בסיסית היא תוספת של 350 שקלים, וניתן גם להזמין את המערכת ללא התקנה.</div></div>
+
+        <div class="qa"><div class="q">מהי טמפרטורת המים החמים ומהי תפוקת המערכת?</div>
+          <div class="a">המים החמים מגיעים לטמפרטורה של עד 98 מעלות, והטמפרטורה ניתנת לכיוון. תפוקת המים החמים היא עד 13 ליטר בשעה, שהם כ-72 כוסות, ללא המתנה בין מנה למנה. המים הקרים מגיעים לטמפרטורה של עד 6 מעלות, גם היא ניתנת לכיוון.</div></div>
+
+        <div class="qa"><div class="q">כמה מקום צריך בארון מתחת לכיור?</div>
+          <div class="a">המערכת מורכבת משתי יחידות נפרדות. יחידת החימום במידות 20 על 20 ס"מ ובגובה 28 ס"מ, ויחידת הקירור במידות 18 על 38 ס"מ ובגובה 33 ס"מ. אם שתי היחידות מוצבות זו לצד זו, נדרש שטח של כ-38 ס"מ רוחב על 38 ס"מ עומק ובגובה 33 ס"מ, ולצדו מקום לצנרת ולגישה נוחה להחלפת המסנן.</div></div>
+
+        <div class="qa"><div class="q">האם נדרשת נקודת חשמל מיוחדת?</div>
+          <div class="a">לא. המערכת אינה דורשת שקע כוח ייעודי ואינה מצריכה שינוי בלוח החשמל. די בנקודת חשמל סטנדרטית בארון שמתחת לכיור.</div></div>
+
+        <div class="qa"><div class="q">כל כמה זמן מחליפים את המסנן וכמה זה עולה?</div>
+          <div class="a">המסנן מוחלף פעם בשנה. קיבולת המסנן היא 6,000 ליטר, וההחלפה פשוטה ואינה דורשת פירוק של המערכת. מחיר מחסנית חלופית הוא <span class="ph">__ שקלים</span>.</div></div>
+
+        <div class="qa"><div class="q">מה מסנן Pureal PPF-1000 מסלק ומה הוא משאיר במים?</div>
+          <div class="a">המסנן הוא מסנן היברידי מתוצרת PICOGRAM מדרום קוריאה, והוא מסלק כלור, חלודה, בקטריות וחומרים לא רצויים נוספים. במקביל הוא משאיר ומוסיף למים מינרלים חיוניים, ובהם אשלגן וסידן, ולכן המים אינם מטוהרים לחלוטין כמו במערכת אוסמוזה הפוכה. המסנן עומד בתקנים NSF42 ו-NSF372.</div></div>
+
+        <div class="qa"><div class="q">האם אפשר לבחור את הברז ואת הגוון?</div>
+          <div class="a">כן. המערכת מגיעה עם ברז פיורטק מקורי בשלושה דגמים לבחירה: HC2100 עם ידית אחת ונעילת בטיחות למים חמים, HC2200 עם שתי ידיות נפרדות, ו-DHC2200 בעיצוב מלבני עם שתי ידיות. כל דגם זמין בשישה גוונים: ניקל, מוברש, שחור, זהב מוברש, רוז גולד וגרפיט.</div></div>
+
+        <div class="block warn"><div class="lbl">נתון להשלמה</div>
+          <p>מחיר מחסנית חלופית. בתשובה שהתקבלה נכתב שהמחיר משתנה לפי המסנן, אך במערכת זו יש מסנן אחד בלבד - Pureal PPF-1000. נדרש מחיר אחד למחסנית של הדגם הזה. עד לקבלתו, אפשר לפרסם את התשובה בלי המשפט האחרון.</p>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="sec">
+    <summary><span class="chev"></span><span class="secnum">3</span> עדיפות בינונית - שלוש פעולות</summary>
+    <div class="secbody">
+
+      <div class="find">
+        <h3>3.1 בלוק למי המערכת מתאימה ולמי פחות</h3>
+        <div class="block why"><div class="lbl">הנימוק</div>
+          <p>זהו סוג התוכן שעשוי להוביל לציטוט בכלי AI. בבדיקה שנערכה בדוח הקודם, מתוך 45 הציטוטים של לגונה בתשובות AI של גוגל רק 8 מפנים לעמוד מוצר, ובכל אחד מהמקרים עמוד המוצר עונה על שאלת התאמה שעמוד קטגוריה אינו יכול לענות עליה. הבלוק מסייע גם בצמצום פניות של לקוחות שהמוצר אינו עונה על צורכיהם.</p>
+        </div>
+        <div class="block do"><div class="lbl">איפה למקם</div>
+          <p>אחרי מקטע הברז ולפני מקטע השאלות והתשובות, תחת כותרת H2 בשם <b>למי המערכת מתאימה ולמי פחות</b>.</p>
+        </div>
+        <div class="copy">
+          <div class="ct">מתאימה במיוחד ל- </div>
+          <p>למטבח שבו רוצים מים חמים, קרים ומסוננים מברז אחד, בלי מכשיר על משטח העבודה.</p>
+          <p>למי שמייחס חשיבות לתקן סינון מוכר: המסנן עומד בתקנים NSF42 ו-NSF372, ולא רק מצהיר על סינון.</p>
+          <p>למעדיפים מים מסוננים שמשאירים מינרלים, ולא מים מטוהרים לחלוטין.</p>
+          <p>למטבח מעוצב שבו הברז צריך להשתלב בגוון החומרה הקיימת - שישה גוונים ושלושה דגמים לבחירה.</p>
+          <p>למי שאין לו שקע כוח ייעודי בארון: המערכת עובדת על נקודת חשמל סטנדרטית.</p>
+        </div>
+        <div class="copy">
+          <div class="ct">פחות מתאימה ל- </div>
+          <p>למי שמחפש גם מים מוגזים. PureWater אינה כוללת סודה, ולשם כך יש מערכות אחרות בקטגוריה.</p>
+          <p>למי שמחפש אוסמוזה הפוכה. הסינון כאן משאיר מינרלים במים במכוון, ואינו ממברנת אוסמוזה.</p>
+          <p>לארון מטבח שבו אין מקום לשתי יחידות ברוחב כולל של כ-38 ס"מ ובעומק 38 ס"מ.</p>
+          <p>למעדיפים מכשיר נייד שאפשר לקחת במעבר דירה בלי עבודת אינסטלציה.</p>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>3.2 בורר דגם ברז וגוון בטופס ההזמנה</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>העמוד מתאר שלושה דגמי ברז ושישה גוונים, וזהו המאפיין היחיד שאין לאף מוצר אחר באשכול התת-כיורי של לגונה. בפועל שלושת הדגמים והגוונים מופיעים כטקסט בלבד. במקטע "אפשרויות" בטופס ההזמנה קיימת בחירה אחת בלבד: התקנה בסיסית או ללא התקנה.</p>
+          <p style="margin-top:8px">היעדר אפשרות בחירה עלול לגרום למשתמשים להניח שהמוצר מגיע בגוון יחיד, או לפנות לשירות הלקוחות. רצוי למנוע את שתי האפשרויות.</p>
+        </div>
+        <div class="block do"><div class="lbl">מה לעשות בפועל</div>
+          <p>בעורך המוצר, במקטע האפשרויות שבו כבר מוגדרת אפשרות ההתקנה, להוסיף שתי אפשרויות נוספות באותו מנגנון בדיוק:</p>
+          <ul style="margin-top:8px">
+            <li><b>דגם ברז</b> - שלוש אפשרויות: <span class="ltr">HC2100</span>, <span class="ltr">HC2200</span>, <span class="ltr">DHC2200</span>. ללא תוספת מחיר.</li>
+            <li><b>גוון הברז</b> - שש אפשרויות: ניקל, מוברש, שחור, זהב מוברש, רוז גולד, גרפיט. ללא תוספת מחיר.</li>
+          </ul>
+          <p style="margin-top:8px">זהו אותו מנגנון שבו מוגדרת בחירת הגימור בעמוד PRIME, כך שאין צורך בפיתוח חדש. אם ניתן להציג דוגמיות צבע במקום רשימת מילים - עדיף.</p>
+        </div>
+        <div class="copy">
+          <div class="ct">טבלת הדגמים - להעתקה, מתחת לכותרת מקטע הברז</div>
+          <p>הברז נבחר בעת ההזמנה מבין שלושה דגמים, וכל דגם זמין בשישה גוונים להתאמה לחומרה הקיימת במטבח.</p>
+        </div>
+        <div class="tblwrap">
+        <table class="data">
+          <thead><tr><th style="width:22%">דגם</th><th style="width:30%">מבנה</th><th>למי זה מתאים</th></tr></thead>
+          <tbody>
+            <tr><td><span class="ltr">HC2100</span></td><td>ידית אחת לחמים ולקרים, עם נעילת בטיחות למים החמים</td><td>למטבחים עם ילדים ולמעדיפים תפעול בידית אחת</td></tr>
+            <tr><td><span class="ltr">HC2200</span></td><td>שתי ידיות נפרדות, אחת לחמים ואחת לקרים</td><td>למעדיפים הפרדה מלאה בין הטמפרטורות</td></tr>
+            <tr><td><span class="ltr">DHC2200</span></td><td>שתי ידיות בעיצוב מלבני</td><td>למטבח בקו עיצובי מודרני וישר</td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>3.3 שלוש הגהות בטקסט הקיים</h3>
+        <div class="block do"><div class="lbl">להחליף אחד לאחד</div>
+          <div class="tblwrap">
+          <table class="data">
+            <thead><tr><th style="width:46%">הטקסט בעמוד היום</th><th>הטקסט המתוקן</th></tr></thead>
+            <tbody>
+              <tr><td>תוצרת PICOGRAM, דר' קוריאה</td><td>תוצרת PICOGRAM, דרום קוריאה</td></tr>
+              <tr><td>**לא נדרש שקע כוח, אלא נקודת חשמל סטנדרטית.</td><td>המערכת אינה דורשת שקע כוח ייעודי. די בנקודת חשמל סטנדרטית בארון שמתחת לכיור.</td></tr>
+              <tr><td>חמם מים- puretech.</td><td>יחידת חימום PureTech</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <p style="margin-top:8px">בשורה הראשונה, "דר'" נקרא כקיצור של דוקטור ולא של דרום. בשורה השנייה שתי הכוכביות מוצגות בעמוד כטקסט. בשורה השלישית שם המותג כתוב באותיות קטנות באמצע משפט טכני - יש להקפיד על הכתיב PureTech בכל מופעיו בעמוד, כפי שהוא מופיע בשם המוצר.</p>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="sec">
+    <summary><span class="chev"></span><span class="secnum">4</span> מה דורש את קאש קאו ולא את עורך המוצר</summary>
+    <div class="secbody">
+
+      <div class="find">
+        <h3>4.1 סימון המוצר</h3>
+        <div class="block now"><div class="lbl">המצב הקיים</div>
+          <p>Search Console מדווח על העמוד ארבע אזהרות: פורמט מחיר לא חוקי ב-<span class="ltr">lowPrice</span> וב-<span class="ltr">highPrice</span>, וחוסר בשדות <span class="ltr">review</span> ו-<span class="ltr">aggregateRating</span>. המחיר מסומן <code>3,790.00</code> עם פסיק כמפריד אלפים ואינו נקרא כמספר, ו-<span class="ltr">highPrice</span> הוא המחיר שלפני ההנחה ולא הצעה שנייה. בנוסף חסרים שדות המותג ומספר הדגם.</p>
+        </div>
+        <div class="block warn"><div class="lbl">מגבלת יישום</div>
+          <p>בעמוד <b>כבר קיים</b> סימון <span class="ltr">Product</span> ו-<span class="ltr">BreadcrumbList</span> בפורמט Microdata. אין להוסיף סימון חדש בפורמט JSON-LD - כפילות בסימונים עלולה להזיק יותר מחוסר סימון. התיקונים מתבצעים בתוך הסימון הקיים, ברמת תבנית הפלטפורמה, ולכן <b>אינם באחריות עורך המוצר</b>.</p>
+          <p style="margin-top:8px">התיקון זהה למה שנמסר בדוח עמוד PRIME. תיקון אחד בתבנית פותר את שני העמודים ואת כלל עמודי המוצר באתר, ולכן כדאי להעביר אותו לקאש קאו כפנייה אחת.</p>
+        </div>
+        <pre class="code">&lt;!-- 1. Offer יחיד במקום AggregateOffer, מחיר ללא פסיק --&gt;
+&lt;div itemprop="offers" itemscope itemtype="https://schema.org/Offer"&gt;
+  &lt;meta itemprop="price" content="3790.00"&gt;
+  &lt;meta itemprop="priceCurrency" content="ILS"&gt;
+  &lt;link itemprop="availability" href="https://schema.org/InStock"&gt;
+  &lt;meta itemprop="priceValidUntil" content="2026-12-31"&gt;
+&lt;/div&gt;
+
+&lt;!-- 2. מותג ומספר דגם --&gt;
+&lt;div itemprop="brand" itemscope itemtype="https://schema.org/Brand"&gt;
+  &lt;meta itemprop="name" content="PureWater"&gt;
+&lt;/div&gt;
+&lt;meta itemprop="mpn" content="N04NJI881L"&gt;
+
+&lt;!-- 3. תיאור המוצר, במקום הגזירה האוטומטית --&gt;
+&lt;meta itemprop="description" content="מערכת מים תת-כיורית PureWater למים חמים עד 98 מעלות וקרים עד 6 מעלות, בתפוקה של עד 13 ליטר בשעה, עם מסנן Pureal PPF-1000 בתקני NSF42 ו-NSF372 בקיבולת 6,000 ליטר וברז פיורטק לבחירה בשלושה דגמים ושישה גוונים."&gt;</pre>
+        <div class="block now">
+          <p style="font-size:.88rem">אין להוסיף <span class="ltr">aggregateRating</span> או <span class="ltr">review</span> כל עוד אין בעמוד חוות דעת אמיתיות. מקטע "תגובות" קיים בעמוד וריק. סימון דירוג ללא חוות דעת בפועל מנוגד להנחיות גוגל.</p>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <details class="sec">
+    <summary><span class="chev"></span><span class="secnum">5</span> סדר ביצוע ומדידה</summary>
+    <div class="secbody">
+
+      <div class="find">
+        <h3>5.1 סדר העבודה</h3>
+        <div class="block do"><div class="lbl">שלושה שלבים, לפי סדר</div>
+          <ol>
+            <li><b>בעורך המוצר, ללא תלות בגורמים אחרים.</b> כותרת ותיאור מטא (2.1) ← שלוש ההגהות (3.3) ← הפיכת המודגש לכותרות (2.2) ← טבלת המפרט (2.3) ← בלוק ההתאמה (3.1) ← מקטע השאלות והתשובות (2.4).</li>
+            <li><b>הגדרות מוצר.</b> הוספת בורר דגם הברז ובורר הגוון (3.2).</li>
+            <li><b>פנייה לקאש קאו.</b> תיקון סימון המוצר (4.1), כפנייה אחת שמכסה את כל עמודי המוצר באתר.</li>
+          </ol>
+          <p style="margin-top:8px">שלב 1 עומד בפני עצמו ואינו תלוי בשלבים 2 ו-3, וניתן לבצעו באופן מיידי.</p>
+        </div>
+        <div class="block warn"><div class="lbl">שני פריטים ממתינים להכרעה</div>
+          <ul>
+            <li>מחיר מחסנית חלופית - להשלמת התשובה במקטע 2.4.</li>
+            <li>תקופת האחריות - האם שנה היא הנתון הנכון, לאור דגם אחר באותה קטגוריה עם שלוש שנות אחריות (מקטע 1.2).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="find">
+        <h3>5.2 נקודת הבסיס למדידה</h3>
+        <div class="block now"><div class="lbl">Search Console, מאז עליית העמוד ועד סוף אוגוסט 2026</div>
+          <p>העמוד צבר <span class="num">7</span> הופעות ואפס קליקים. הפילוח: המונח <b>purewater</b> - <span class="num">5</span> הופעות במיקום <span class="num">7.2</span>; <b>מערכת תת כיורית למים חמים וקרים</b> - הופעה אחת במיקום <span class="num">97</span>; מונח נוסף בודד במיקום 100.</p>
+          <p style="margin-top:8px">התמונה תואמת את מה שנמסר בדוח הקודם: המונח המותגי כבר מדורג גבוה אך כמעט אין לו ביקוש, והמונחים הגנריים רחוקים מהעמוד הראשון. זו נקודת הפתיחה שמולה יימדד היישום.</p>
+        </div>
+        <div class="block do"><div class="lbl">מה למדוד ומתי</div>
+          <ul>
+            <li><b>חודש אחרי היישום:</b> הופעות וקליקים בעמוד, ומספר השאילתות השונות שהעמוד מקבל עליהן הופעות. עלייה במספר השאילתות היא הסימן הראשון לכך שהמבנה החדש נקלט.</li>
+            <li><b>חודשיים אחרי:</b> מיקומים על המונחים מהמיפוי בדוח הקודם - מטהר מים תת כיורי, מערכת מים תת כיורית מחיר, ומונחי הסינון בתקן NSF.</li>
+            <li><b>לאורך זמן:</b> הפניות מכלי AI לכתובת העמוד ב-Analytics. היום אפס.</li>
+          </ul>
+          <p style="margin-top:8px">חשוב לרשום את תאריך היישום ולהשוות חלונות של 28 יום לפני ואחרי, ולא חודשים קלנדריים.</p>
+        </div>
+      </div>
+
+    </div>
+  </details>
+
+  <div class="footer">
+    <b>NC Digital</b><br>
+    לגונה פתרונות מים - PureWater, תוכנית יישום שלב ב<br>
+    ספטמבר 2026
+  </div>
+
+</div>
+</body>
+</html>
