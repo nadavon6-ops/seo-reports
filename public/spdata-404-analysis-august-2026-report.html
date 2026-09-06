@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+<title>sp.data — ניתוח דפי 404 ומפת הפניות | אוגוסט 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--card2:#334155;--border:#475569;--text:#e2e8f0;--text2:#94a3b8;--accent:#0891b2;--accent2:#06b6d4;--green:#10b981;--amber:#f59e0b;--purple:#a78bfa}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;direction:rtl}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+
+.header{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);border:1px solid var(--border);border-radius:16px;padding:38px 30px;margin-bottom:26px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent))}
+.header h1{font-size:2em;font-weight:800;color:#fff;margin-bottom:8px}
+.header .sub{font-size:1.02em;color:var(--accent2);font-weight:500}
+.header .domain{font-size:0.92em;color:var(--text2);margin-top:6px;direction:ltr;unicode-bidi:embed}
+
+.lead{background:var(--card);border:1px solid var(--border);border-right:3px solid var(--accent2);border-radius:12px;padding:20px 24px;margin-bottom:26px;font-size:0.95em}
+.lead p{margin-bottom:10px}
+.lead p:last-child{margin-bottom:0}
+.lead strong{color:#fff;font-weight:700}
+
+details.acc{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+details.acc>summary{background:var(--card2);padding:16px 22px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary:hover{background:rgba(51,65,85,0.8)}
+.acc-title{font-weight:800;color:#fff;font-size:1.06em}
+.acc-right{display:flex;align-items:center;gap:10px}
+.acc-badge{font-size:0.74em;font-weight:600;padding:3px 11px;border-radius:12px;background:var(--accent);color:#fff;white-space:nowrap}
+.acc-badge.green{background:var(--green)}
+.acc-badge.amber{background:var(--amber)}
+.acc-badge.purple{background:var(--purple);color:#1e1b4b}
+.chev{color:var(--text2);font-size:0.8em;transition:transform 0.2s;flex-shrink:0}
+details.acc[open] .chev{transform:rotate(180deg)}
+.acc-body{padding:22px}
+.acc-body p{margin-bottom:12px;font-size:0.93em}
+.acc-body p:last-child{margin-bottom:0}
+.acc-body h3{font-size:0.98em;font-weight:700;color:#fff;margin:20px 0 10px}
+.acc-body h3:first-child{margin-top:0}
+
+table{width:100%;border-collapse:collapse;margin-bottom:6px}
+th{text-align:right;padding:9px 14px;font-size:0.78em;color:var(--text2);font-weight:500;background:rgba(0,0,0,0.18);border-bottom:1px solid var(--border)}
+td{padding:9px 14px;font-size:0.86em;border-bottom:1px solid rgba(71,85,105,0.22);vertical-align:top;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.u{direction:ltr;unicode-bidi:embed;text-align:right;display:inline-block;font-size:0.95em}
+.num{text-align:center;color:var(--accent2);font-weight:700;white-space:nowrap}
+.mid{text-align:center;color:var(--text2)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
+.note{font-size:0.83em;color:var(--text2);margin-top:10px}
+
+.tag{display:inline-block;font-size:0.73em;font-weight:600;padding:2px 9px;border-radius:6px;white-space:nowrap}
+.t-odoo{background:rgba(6,182,212,0.15);color:var(--accent2);border:1px solid rgba(6,182,212,0.3)}
+.t-jobs{background:rgba(167,139,250,0.15);color:var(--purple);border:1px solid rgba(167,139,250,0.3)}
+.t-old{background:rgba(245,158,11,0.15);color:var(--amber);border:1px solid rgba(245,158,11,0.3)}
+.t-typo{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3)}
+.t-bot{background:rgba(148,163,184,0.15);color:var(--text2);border:1px solid rgba(148,163,184,0.3)}
+
+.bars{margin-bottom:18px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:9px;font-size:0.88em}
+.bar-label{width:210px;flex-shrink:0;color:var(--text)}
+.bar-track{flex:1;height:20px;background:rgba(0,0,0,0.25);border-radius:5px;overflow:hidden;min-width:60px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:5px}
+.bar-fill.p{background:linear-gradient(90deg,#7c3aed,var(--purple))}
+.bar-fill.a{background:linear-gradient(90deg,#b45309,var(--amber))}
+.bar-fill.g{background:linear-gradient(90deg,#047857,var(--green))}
+.bar-fill.n{background:linear-gradient(90deg,#475569,#94a3b8)}
+.bar-val{width:96px;flex-shrink:0;color:var(--accent2);font-weight:700;font-size:0.9em}
+
+.ol{list-style:none;padding:0}
+.ol li{padding:9px 0;border-bottom:1px solid rgba(71,85,105,0.25);font-size:0.91em;display:flex;gap:11px;align-items:flex-start}
+.ol li:last-child{border-bottom:none}
+.ol .n{background:var(--accent);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72em;font-weight:700;flex-shrink:0;margin-top:3px}
+
+.footer{text-align:center;padding:24px;color:var(--text2);font-size:0.85em;border-top:1px solid var(--border);margin-top:26px}
+.footer .brand{color:var(--accent2);font-weight:600}
+
+@media(max-width:768px){
+  .container{padding:12px}
+  .header{padding:24px 16px}
+  .header h1{font-size:1.45em}
+  th,td{padding:7px 10px;font-size:0.8em}
+  .bar-label{width:118px;font-size:0.82em}
+  .bar-val{width:74px;font-size:0.8em}
+  .acc-body{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>ניתוח דפי שגיאה 404 ומפת הפניות</h1>
+  <div class="sub">אוגוסט 2026 — פירוט הכתובות, מקורות התנועה והפעולות הנדרשות</div>
+  <div class="domain">www.spdata.co.il</div>
+</div>
+
+<div class="lead">
+  <p>ב־GA4 דף השגיאה מופיע לפי כותרת בלבד, ולכן כל הכתובות השבורות מתאחדות לשורה אחת. הפירוק לפי Page Path מראה ש־<strong>161 הצפיות באוגוסט מתחלקות בין 38 כתובות שונות</strong>, ומרביתן אינן תנועה שיווקית: <strong>47% הן פניות של עובדי החברה למערכת ה־ERP</strong> שעברה לתת־דומיין נפרד, ועוד 23% הן כתובות משרות ישנות שמקושרות מלינקדאין, מפייסבוק ומ־JobNet.</p>
+  <p>מדובר במגמת ירידה ולא בעלייה: ביולי נרשמו 739 צפיות בדף השגיאה, באוגוסט 161. הפער נובע מהמעבר לאתר החדש בתחילת יולי, ואוגוסט הוא זנב הגל הזה.</p>
+  <p>לא נמצאה תקלה רוחבית באתר. כל 205 הכתובות במפת האתר מחזירות 200, ומתוך 1,160 יעדי קישור פנימיים שנבדקו נמצאו שלושה קישורים שבורים בלבד. הפעולה הנדרשת היא מפת הפניות 301 ממוקדת, ולא טיפול תשתיתי.</p>
+</div>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">מה עומד מאחורי 161 הצפיות</span>
+    <span class="acc-right"><span class="acc-badge">38 כתובות</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <div class="bars">
+      <div class="bar-row"><div class="bar-label">מערכת Odoo הפנימית</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-val">76 (47%)</div></div>
+      <div class="bar-row"><div class="bar-label">כתובות משרות ישנות</div><div class="bar-track"><div class="bar-fill p" style="width:48.7%"></div></div><div class="bar-val">37 (23%)</div></div>
+      <div class="bar-row"><div class="bar-label">כתובות מהאתר הקודם</div><div class="bar-track"><div class="bar-fill a" style="width:36.8%"></div></div><div class="bar-val">28 (17%)</div></div>
+      <div class="bar-row"><div class="bar-label">שגיאות כתיב בכתובת</div><div class="bar-track"><div class="bar-fill g" style="width:15.8%"></div></div><div class="bar-val">12 (7%)</div></div>
+      <div class="bar-row"><div class="bar-label">סריקות בוטים</div><div class="bar-track"><div class="bar-fill n" style="width:5.3%"></div></div><div class="bar-val">4 (2%)</div></div>
+      <div class="bar-row"><div class="bar-label">אחר</div><div class="bar-track"><div class="bar-fill n" style="width:5.3%"></div></div><div class="bar-val">4 (2%)</div></div>
+    </div>
+
+    <h3>הכתובות המלאות ומקור התנועה</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>כתובת</th><th style="width:70px">צפיות</th><th style="width:210px">מקור התנועה</th><th style="width:120px">קטגוריה</th></tr></thead>
+      <tbody>
+        <tr><td><span class="u">/odoo</span></td><td class="num">50</td><td class="mid">ישיר (40), Betterstack (3), Bing (2), Google אורגני (2), Google ממומן (2), ויקיפדיה (1)</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/jobs</span></td><td class="num">20</td><td class="mid">לינקדאין (11), ישיר (9)</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/אודות-qlik/</span></td><td class="num">14</td><td class="mid">ישיר</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/?p=…</span> (8 מזהי פוסט ישנים)</td><td class="num">8</td><td class="mid">ישיר (7), Google אורגני (1)</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/web/login</span></td><td class="num">7</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/jobs/account-executive-channel-partner-127</span></td><td class="num">5</td><td class="mid">JobNet</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/פתרונואנליטיקה-בענן-קליק-סנס/</span></td><td class="num">5</td><td class="mid">Google אורגני</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/en/jobs/talend-specialist-data-engineer-147</span></td><td class="num">4</td><td class="mid">קישור פנימי מ־/en/jobs</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/jobs/mnhl-t-akdmyh-vyd-argvny-145</span></td><td class="num">4</td><td class="mid">פייסבוק</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/my</span></td><td class="num">4</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/en/ll-products/</span></td><td class="num">3</td><td class="mid">Google אורגני</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/helpdesk/m-rkhvt-myd-it-5</span></td><td class="num">3</td><td class="mid">Google ממומן (2), ישיר (1)</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/אקדמיה/qlikview-courses/professional-qlikview/</span></td><td class="num">3</td><td class="mid">Google ממומן (2), Google אורגני (1)</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/en/</span></td><td class="num">3</td><td class="mid">Google אורגני (2), Google ממומן (1)</td><td><span class="tag t-bot">נפתר בינתיים</span></td></tr>
+        <tr><td><span class="u">/jobs/bi-developer-qlik-specialist-121</span></td><td class="num">2</td><td class="mid">ישיר</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/mail/view</span></td><td class="num">2</td><td class="mid">Google אורגני (1), לינקדאין (1)</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/odoo/action-196/342</span></td><td class="num">2</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/odoo/timesheets</span></td><td class="num">2</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/odoo/knowledge/217</span></td><td class="num">1</td><td class="mid">Google ממומן</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/odoo/time-off</span></td><td class="num">1</td><td class="mid">Google אורגני</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/odoo/helpdesk/11/tickets</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/helpdesk-teams</span></td><td class="num">1</td><td class="mid">Google ממומן</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/my/home</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/web/signup</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-odoo">Odoo</span></td></tr>
+        <tr><td><span class="u">/en/jobs</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/קריירה/wn</span></td><td class="num">1</td><td class="mid">Google אורגני</td><td><span class="tag t-jobs">משרות</span></td></tr>
+        <tr><td><span class="u">/דף-דמו/</span></td><td class="num">1</td><td class="mid">קישור פנימי מ־/en/application-automation/</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/event/לממש-את-ההבטחה-של-ה-ai-19/register</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/אודות-sp-data/אוריאן פינטו סמנכ"לית משאבי אנוש</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-old">אתר קודם</span></td></tr>
+        <tr><td><span class="u">/איטגרציה-נתונים-ואיכות-נתונים</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/פתרונות-אנליטיה-בענן-קליק-סנס</span></td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/en/lp</span></td><td class="num">1</td><td class="mid">Google אורגני</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/הצהרת-נגישו…</span> (כתובת קטועה)</td><td class="num">1</td><td class="mid">ישיר</td><td><span class="tag t-typo">שגיאת כתיב</span></td></tr>
+        <tr><td><span class="u">/contact-us.html</span>, <span class="u">/contact.html</span>, <span class="u">/contact.php</span>, <span class="u">/contacte</span></td><td class="num">4</td><td class="mid">ישיר</td><td><span class="tag t-bot">סריקת בוטים</span></td></tr>
+        <tr><td><span class="u">/wp-content/uploads/2026/08/cropped-favicon2026..png</span></td><td class="num">1</td><td class="mid">Google אורגני</td><td><span class="tag t-bot">נכס תמונה</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">מקור: GA4, נכס Spdata GA4, 1–31 באוגוסט 2026, פילוח Page Path בסינון לפי כותרת דף השגיאה. סך הכל 161 צפיות ו־96 משתמשים. הקובץ שצורף לבדיקה מכסה 6 באוגוסט עד 2 בספטמבר ולכן מציג 147 צפיות.</p>
+  </div>
+</details>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">מפת ההפניות המומלצת</span>
+    <span class="acc-right"><span class="acc-badge amber">לביצוע</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <p>הכתובות מקובצות לפי כלל הפניה, כדי שהיישום יהיה כמה שורות ולא רשימה של 38 שורות. כל היעדים נבדקו ומחזירים 200.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>כתובת מקור</th><th style="width:60px">צפיות</th><th>יעד ההפניה</th><th style="width:34%">נימוק</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="u">/odoo</span>, <span class="u">/odoo/*</span>, <span class="u">/web/login</span>, <span class="u">/web/signup</span>, <span class="u">/my</span>, <span class="u">/my/home</span>, <span class="u">/mail/view</span></td>
+          <td class="num">72</td>
+          <td><span class="u">https://odoo.spdata.co.il/&lt;אותו נתיב&gt;</span></td>
+          <td>מערכת ה־ERP עברה לתת־דומיין. הנתיבים זהים שם ומחזירים תשובה תקינה או מפנים למסך ההתחברות.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/jobs</span>, <span class="u">/jobs/*</span>, <span class="u">/en/jobs</span>, <span class="u">/en/jobs/*</span>, <span class="u">/קריירה/wn</span></td>
+          <td class="num">37</td>
+          <td><span class="u">https://odoo.spdata.co.il/jobs</span></td>
+          <td>לוח המשרות יושב על תת־הדומיין. חלק מהמשרות הישנות נסגרו, ולכן הפניה לרשימת המשרות ולא לכל משרה בנפרד מונעת שרשור לשגיאה נוספת.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/אודות-qlik/</span></td>
+          <td class="num">14</td>
+          <td><span class="u">/אודות-sp-data/</span></td>
+          <td>דף האודות מהמיתוג הקודם. הכתובת עדיין מקבלת פניות ישירות מדי חודש.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/helpdesk</span>, <span class="u">/helpdesk/*</span>, <span class="u">/helpdesk-teams</span></td>
+          <td class="num">4</td>
+          <td><span class="u">/צרו-קשר/</span></td>
+          <td>מודול התמיכה אינו חשוף לציבור גם בתת־הדומיין, ולכן היעד הרלוונטי הוא דף יצירת הקשר.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/פתרונואנליטיקה-בענן-קליק-סנס/</span>, <span class="u">/פתרונות-אנליטיה-בענן-קליק-סנס</span></td>
+          <td class="num">6</td>
+          <td><span class="u">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span></td>
+          <td>שתי גרסאות שגויות של אותה כתובת, אחת מהן מגיעה מתוצאות אורגניות בגוגל.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/en/ll-products/</span></td>
+          <td class="num">3</td>
+          <td><span class="u">/en/all-products/</span></td>
+          <td>אות חסרה בכתובת. התנועה מגיעה מגוגל אורגני.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/אקדמיה/qlikview-courses/professional-qlikview/</span></td>
+          <td class="num">3</td>
+          <td><span class="u">/אקדמיה/</span></td>
+          <td>מבנה קורסי QlikView מהאתר הקודם. אין דף מקביל היום, ודף האקדמיה הוא היעד הקרוב ביותר.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/en/lp</span></td>
+          <td class="num">1</td>
+          <td><span class="u">/en/</span></td>
+          <td>שריד מדף נחיתה אנגלי שהוסר.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/איטגרציה-נתונים-ואיכות-נתונים</span></td>
+          <td class="num">1</td>
+          <td><span class="u">/אינטגרציית-נתונים-ואיכות-נתונים/</span></td>
+          <td>אות חסרה בכתובת.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/דף-דמו/</span></td>
+          <td class="num">1</td>
+          <td><span class="u">/התנסות-חינם-qlik/</span></td>
+          <td>דף הדמו מהאתר הקודם. היעד הנוכחי לבקשת התנסות.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/event/*/register</span></td>
+          <td class="num">1</td>
+          <td><span class="u">/מרכז-הידע/</span></td>
+          <td>דפי הרשמה לאירועים שהסתיימו.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/אודות-sp-data/אוריאן פינטו…</span></td>
+          <td class="num">1</td>
+          <td><span class="u">/אודות-sp-data/</span></td>
+          <td>שם עובדת שנוסף בטעות לסוף נתיב דף האודות.</td>
+        </tr>
+        <tr>
+          <td><span class="u">/biplatform/</span></td>
+          <td class="num">—</td>
+          <td><span class="u">/lp/biplatform/</span></td>
+          <td>דף הקמפיין עבר לנתיב חדש בלי הפניה. פירוט בסעיף נפרד.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>מה לא דורש הפניה</h3>
+    <p><span class="u">/contact.php</span>, <span class="u">/contact.html</span>, <span class="u">/contact-us.html</span> ו־<span class="u">/contacte</span> הן סריקות אוטומטיות שמנסות נתיבים גנריים, ארבע צפיות בסך הכל. תשובת 404 היא התשובה הנכונה עבורן.</p>
+    <p>שמונה הצפיות בכתובות <span class="u">/?p=…</span> ו־<span class="u">/?page_id=…</span> מפנות למזהי תוכן מהאתר הקודם שאינם קיימים עוד. מיפוי שלהן דורש שחזור התוכן המקורי לכל מזהה, והתועלת נמוכה ביחס למאמץ.</p>
+    <p><span class="u">/en/</span> החזירה שגיאה בחלק מאוגוסט ומחזירה 200 היום, כך שאין פעולה נדרשת.</p>
+    <p>הצפייה בכתובת הקטועה של הצהרת הנגישות נובעת מכתובת שנחתכה באמצע הקידוד. אין תבנית קבועה שאפשר להפנות ממנה, וההיקף הוא צפייה אחת.</p>
+    <p>קובץ ה־favicon עם הנקודה הכפולה בשם אינו מקושר מאף דף באתר. מדובר בשריד באינדקס התמונות של גוגל שיינשר מעצמו.</p>
+
+    <h3>לאחר היישום</h3>
+    <p>תשובת ה־404 באתר מוגשת עם הוראת שמירה במטמון לשבוע. יש לנקות את מטמון LiteSpeed אחרי הוספת ההפניות, אחרת חלק מהגולשים ימשיכו לקבל את הגרסה השמורה.</p>
+  </div>
+</details>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">קישורים פנימיים שבורים</span>
+    <span class="acc-right"><span class="acc-badge amber">3 קישורים</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <p>אלה קישורים שיושבים היום על דפים חיים באתר ומובילים לשגיאה. תיקון הקישור עצמו עדיף כאן על הפניה.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>הדף שבו הקישור</th><th>עוגן</th><th>היעד השבור</th><th>היעד הנכון</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="u">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span><br><span class="u">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span></td>
+          <td>ויזואליזציה ודשבורדים</td>
+          <td><span class="u">/ויזואליציה-ודשבורדים-אינטראקטיביים/</span></td>
+          <td><span class="u">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span></td>
+        </tr>
+        <tr>
+          <td><span class="u">/en/data-integration-quality/</span></td>
+          <td>More details</td>
+          <td><span class="u">/en/qlik-data-integration-on-prem-replication/</span></td>
+          <td><span class="u">/en/qlik-data-integration/</span></td>
+        </tr>
+        <tr>
+          <td><span class="u">/en/analytics-and-ai-qlik-sense/</span></td>
+          <td>More details</td>
+          <td><span class="u">/en/qlik-sense-on-premises-analytics-solution/</span></td>
+          <td><span class="u">/en/qlik-sense-clinet-manage/</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="note">הקישור הראשון יושב על אחד מדפי המוצר המרכזיים, ולכן עדיפות לתיקונו. שני האחרים הם כפתורי "More details" בגרסה האנגלית ומובילים לשמות דפים שלא נוצרו במעבר לאתר החדש.</p>
+  </div>
+</details>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">בדיקת תקינות רוחבית</span>
+    <span class="acc-right"><span class="acc-badge green">לא נמצאה תקלה</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <p>הנקודה שנשאלה היא האם קיימת תקלה שמייצרת 404 בכמות חריגה. הבדיקה נערכה בשלושה מישורים ולא העלתה תקלה כזו.</p>
+    <ul class="ol">
+      <li><span class="n">1</span><span>כל 205 הכתובות במפת האתר נסרקו ומחזירות 200. אין דף שנשמט או שנשבר.</span></li>
+      <li><span class="n">2</span><span>1,160 יעדי קישור פנימיים ייחודיים נבדקו אחד אחד. שלושה מהם שבורים, והם מפורטים בסעיף הקודם. כל השאר תקינים או מפנים כראוי.</span></li>
+      <li><span class="n">3</span><span>המגמה החודשית יורדת: 739 צפיות בדף השגיאה ביולי, 161 באוגוסט. יולי הוא חודש המעבר לאתר החדש, ואוגוסט הוא זנב הגל.</span></li>
+    </ul>
+    <p>בסרץ' קונסול מופיעות 66 כתובות בסטטוס "לא נמצא (404)", מספר שעולה בקנה אחד עם מעבר אתר: אלה כתובות מהאתר הקודם שגוגל עדיין מנסה. מפת ההפניות שלמעלה מכסה את אלה שמקבלות תנועה בפועל, והשאר יינשרו מהאינדקס מעצמן.</p>
+    <p>נקודה אחת ראויה לציון: שתי כתובות שבורות מקבלות חשיפה של ממש בגוגל. <span class="u">/web/login</span> צברה 128 הופעות ושתי קליקים במיקום ממוצע 6.1, ו־<span class="u">/jobs</span> צברה 28 הופעות במיקום ממוצע 6.8, בשלושת החודשים האחרונים. גולשים שמחפשים את מסך ההתחברות או את לוח המשרות מגיעים כרגע לדף שגיאה, וההפניות שבמפה פותרות זאת.</p>
+  </div>
+</details>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">דף הקמפיין /biplatform/</span>
+    <span class="acc-right"><span class="acc-badge purple">ממצא נוסף</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <p>במהלך הבדיקה עלה ממצא שאינו חלק מ־161 הצפיות של אוגוסט אבל נוגע ישירות לאותה משפחה של תקלות.</p>
+    <p>הדף <span class="u">/biplatform/</span> — "קמפיין 2024" — צבר 1,219 צפיות בין 1 ביוני ל־6 בספטמבר, והוא הדף השלישי בכמות הצפיות בקובץ הנתונים שצורף לבדיקה. הוא מחזיר היום 404. התוכן קיים בכתובת <span class="u">/lp/biplatform/</span>, אך לא הוגדרה הפניה מהכתובת הישנה.</p>
+    <p>התנועה לדף ירדה מכ־30 עד 60 צפיות ביום ביוני לצפיות בודדות ביולי ולאפס אחרי 25 ביולי, כלומר הקמפיינים כבר לא מפנים לשם והנזק הפעיל נעצר. עם זאת, כל קישור שמור, מייל ישן או הפניה חיצונית שעדיין מצביעים על הכתובת מגיעים לשגיאה. הפניה 301 מ־<span class="u">/biplatform/</span> אל <span class="u">/lp/biplatform/</span> סוגרת את הפינה.</p>
+  </div>
+</details>
+
+<details class="acc">
+  <summary>
+    <span class="acc-title">תיוגי UTM ותנועה שסווגה כ־Unassigned</span>
+    <span class="acc-right"><span class="acc-badge">בדיקה מקבילה</span><span class="chev">▼</span></span>
+  </summary>
+  <div class="acc-body">
+    <h3>מצב ה־Unassigned כיום</h3>
+    <p>בנכס ה־GA4 של האתר רשומות באוגוסט <strong>7 סשנים בלבד בסיווג Unassigned</strong>, מתוך 2,919 סשנים — כרבע אחוז. כולם ללא מקור ומדיום כלשהם, ולא ניתן לשייך אותם לקמפיין. בטווח 6 באוגוסט עד 2 בספטמבר מדובר ב־6 סשנים.</p>
+    <p>הנתון של 82 סשנים אינו מופיע בנכס בבדיקה הנוכחית. ההסבר הסביר הוא ששיוך התנועה ב־GA4 מתעדכן לאחור בימים שאחרי הדיווח, וחלק מהסשנים שסווגו בתחילה כ־Unassigned שויכו מאז לערוץ שלהם. בכל מקרה, בנתונים כפי שהם היום אין תופעה שדורשת טיפול נוסף מצד הקמפיינים.</p>
+
+    <h3>מה כן נותר פתוח בצד האתר</h3>
+    <p>קיים בכל זאת שריד של אותה בעיית תיוג, והוא לא נספר כ־Unassigned אלא כתנועה אורגנית. כתובת דף הבית מקבלת פניות חוזרות עם מחרוזת פרמטרים שבורה:</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>הכתובת שנקלטת</th><th style="width:110px">סשנים באוגוסט</th><th style="width:150px">איך GA4 מסווג</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="u">/?amp;utm_medium=adwords&amp;amp;utm_campaign=62256681544&amp;amp;utm_term=qlik israel&amp;amp;gclid=…</span></td>
+          <td class="num">4</td>
+          <td class="mid">Organic Search<br>google / (not set)</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p>שתי תקלות מצטברות כאן. הראשונה, סימני ה־&amp; בכתובת נשמרו בקידוד HTML במקום כתו רגיל, ולכן כל פרמטר מהשני והלאה נקלט בשם שגוי — <span class="u">amp;utm_medium</span> במקום <span class="u">utm_medium</span>. השנייה, הערך שנבחר למדיום הוא <span class="u">adwords</span>, ערך ש־GA4 אינו מזהה בהגדרות הערוצים שלו. התוצאה היא שהמדיום נשאר ריק והמקור נשאר google, ו־GA4 מסווג את הסשן כחיפוש אורגני במקום כתנועה ממומנת.</p>
+    <p>מזהה הקליק בכתובת זהה בכל הפניות, לאורך חודשים. מכאן שאין מדובר בתנועת קמפיין חיה אלא בקישור אחד שמור שנלחץ שוב ושוב — קישור ישן במייל, בשמירה בדפדפן או ברישום באתר חיצוני. אותה תבנית הופיעה גם על <span class="u">/biplatform/</span> ביוני, שם עם המדיום <span class="u">search</span> שגם הוא אינו מזוהה.</p>
+
+    <h3>מה מומלץ</h3>
+    <ul class="ol">
+      <li><span class="n">1</span><span>לוודא שבכל כתובת קמפיין הפרמטרים מופרדים בתו &amp; רגיל ולא בגרסה המקודדת. זו התקלה שיצרה את הכפילות.</span></li>
+      <li><span class="n">2</span><span>להשתמש בערכי מדיום ש־GA4 מזהה — <span class="u">cpc</span> או <span class="u">paid</span> — ולא <span class="u">adwords</span> או <span class="u">search</span>.</span></li>
+      <li><span class="n">3</span><span>לאתר את הקישור השמור שמחזיר את הכתובת השבורה של דף הבית ולעדכן אותו, או להתעלם ממנו בהינתן ההיקף — ארבעה סשנים בחודש.</span></li>
+    </ul>
+    <p>מצד הדפים האורגניים אין נזק לאינדקס: הכתובת עם הפרמטרים מגישה תגית קנוניקל תקינה לדף הבית, כך שגוגל אינו מתייחס אליה כדף נפרד. ההשפעה היחידה היא על דיוק הדיווח בין ערוצים.</p>
+  </div>
+</details>
+
+<div class="footer">
+  <div class="brand">NC Digital</div>
+  <div>ניתוח דפי שגיאה 404 ומפת הפניות — sp.data</div>
+  <div>ספטמבר 2026</div>
+</div>
+
+</div>
+</body>
+</html>
