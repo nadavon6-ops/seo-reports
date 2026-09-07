@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>קלומפוס | דוח שינויים לאישור</title>
+    <style>
+        :root{
+            --bg:#0e1116; --panel:#171a21; --panel2:#1d222b; --border:#2a303c;
+            --text:#e9edf3; --muted:#9aa4b2; --dim:#6b7583; --accent:#ff9c33; --accent-soft:#ffb35c;
+            --high:#ff7a59; --mid:#ffc857; --low:#7f8a9b; --ok:#54c08a;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Assistant","Rubik",Arial,sans-serif;line-height:1.75;font-size:16px}
+        .wrap{max-width:1000px;margin:0 auto;padding:32px 20px 80px}
+        header.top{border-bottom:1px solid var(--border);padding-bottom:24px;margin-bottom:24px}
+        .kicker{color:var(--accent);font-weight:700;letter-spacing:.5px;font-size:14px;margin-bottom:8px}
+        h1{font-size:30px;font-weight:800;line-height:1.3;margin-bottom:10px}
+        .sub{color:var(--muted);font-size:17px;max-width:78ch}
+        .meta-row{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:18px;font-size:13.5px;color:var(--muted)}
+        .meta-row b{color:var(--text);font-weight:600}
+
+        .decide{background:rgba(255,200,87,.08);border:1px solid rgba(255,200,87,.34);border-radius:12px;padding:18px 20px;margin-bottom:16px}
+        .decide h3{font-size:16px;color:var(--accent-soft);margin-bottom:10px;font-weight:800}
+        .decide ol{margin:0 20px 0 0;font-size:14.8px;color:#f0dcb4}
+        .decide ol li{margin:9px 0}
+        .decide b{color:#ffd9a8}
+
+        .toolbar{display:flex;gap:8px;margin:20px 0 14px}
+        .toolbar button{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+        .toolbar button:hover{color:var(--accent);border-color:var(--accent)}
+
+        details.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+        summary.block-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;list-style:none;user-select:none}
+        summary.block-head::-webkit-details-marker{display:none}
+        summary.block-head::marker{content:""}
+        .num{background:var(--accent);color:#221602;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:0 0 auto}
+        summary.block-head h2{font-size:19px;font-weight:700;flex:1}
+        .pill{font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;white-space:nowrap;flex:0 0 auto}
+        .p-high{background:rgba(255,122,89,.16);color:#ff9a80;border:1px solid rgba(255,122,89,.35)}
+        .p-mid{background:rgba(255,200,87,.14);color:#ffcf6b;border:1px solid rgba(255,200,87,.3)}
+        .p-low{background:rgba(127,138,155,.16);color:#aab4c2;border:1px solid rgba(127,138,155,.3)}
+        summary.block-head::after{content:'';flex:none;width:8px;height:8px;margin-right:4px;margin-top:-4px;
+            border-left:2px solid var(--dim);border-bottom:2px solid var(--dim);
+            transform:rotate(-45deg);transition:transform .18s ease,border-color .18s ease}
+        details[open]>summary.block-head::after{transform:rotate(135deg);margin-top:3px}
+        summary.block-head:hover::after{border-color:var(--accent)}
+        .block-body{padding:4px 22px 22px;border-top:1px solid var(--border)}
+
+        .lead{color:#cdd5e0;font-size:15px;margin:16px 0 14px;max-width:80ch}
+        .item{background:var(--panel2);border:1px solid var(--border);border-radius:11px;padding:14px 18px;margin-bottom:10px}
+        .item .t{font-weight:700;font-size:15.5px;margin-bottom:5px;color:#fff}
+        .item .d{font-size:14.5px;color:#c4cdd9}
+        .item .why{font-size:13.5px;color:var(--muted);margin-top:6px;border-right:2px solid var(--border);padding-right:10px}
+        ul.tight{margin:8px 20px 0 0;font-size:14.5px;color:#c9d2de}
+        ul.tight li{margin:5px 0}
+        table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+        th,td{border:1px solid var(--border);padding:9px 12px;text-align:right;color:#c9d2de;background:var(--panel2)}
+        th{background:#212734;color:var(--accent-soft);font-weight:700;font-size:13.5px}
+        code{background:#0a0d12;border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-family:"SF Mono",Menlo,"DejaVu Sans Mono",Consolas,"Courier New",monospace;font-size:12.5px;color:#ffd9a8;direction:ltr;display:inline-block}
+        .flag{background:rgba(255,122,89,.1);border:1px solid rgba(255,122,89,.3);border-radius:9px;padding:11px 15px;margin-top:12px;font-size:14px;color:#ffb59f}
+        .note{background:rgba(84,192,138,.08);border:1px solid rgba(84,192,138,.28);border-radius:9px;padding:11px 15px;margin-top:12px;font-size:14px;color:#9ad9b8}
+        footer{border-top:1px solid var(--border);margin-top:44px;padding-top:22px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+        footer b{color:var(--text)}
+        @media(max-width:600px){h1{font-size:24px}.wrap{padding:22px 14px 60px}summary.block-head h2{font-size:16.5px}table{font-size:13px}th,td{padding:7px 8px}}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="top">
+        <div class="kicker">NC Digital</div>
+        <h1>קלומפוס | דוח שינויים לאישור</h1>
+        <div class="sub">ריכוז כל השינויים המומלצים באתר ובמקורות החיצוניים, לאישור לפני ביצוע. כל פריט נבדק מול האתר החי ומול המקור עצמו.</div>
+        <div class="meta-row">
+            <span><b>אתר:</b> klompus.co.il</span>
+            <span><b>מיקום:</b> מתחם דפנה׳לה, קיבוץ דפנה</span>
+            <span><b>תקופה:</b> ספטמבר 2026</span>
+        </div>
+    </header>
+
+    <div class="decide">
+        <h3>שלוש שאלות שנדרשת עליהן תשובה לפני הביצוע</h3>
+        <ol>
+            <li><b>האם החניה במתחם דפנה׳לה חינמית למבקרים?</b> בכוונתנו לכתוב בעמוד החדש שהחניה חינמית, אך לא מצאנו לכך אישור בשום מקור, כולל הצהרת הנגישות שלכם. אם החניה בתשלום או עשויה להפוך לתשלום, נכתוב רק שקיימת חניה במתחם.</li>
+            <li><b>אישור הכתיב "מתחם דפנה׳לה".</b> כך המתחם עצמו כותב את שמו באתר שלו, ולכן זהו הכתיב שנטמיע בכל מקום. באתר קלומפוס מופיעים כיום שני כתיבים אחרים, ואף אחד מהם אינו זה. נבקש אישורכם לפני שינוי גורף באתר ופנייה למקורות חיצוניים.</li>
+            <li><b>שמות לשתי קטגוריות המשקאות בתפריט.</b> קיימות היום שתי קטגוריות בשם זהה "משקאות אלכוהוליים" שנבדלות רק במחיר. אנחנו מציעים "משקאות אלכוהוליים – פרימיום" ו"משקאות אלכוהוליים – קלאסיים". נשמח לאישור או לשמות שתעדיפו.</li>
+        </ol>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="toggleAll(true)">הרחב הכל</button>
+        <button onclick="toggleAll(false)">כווץ הכל</button>
+    </div>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">1</div><h2>עמוד חדש: איך מגיעים לקלומפוס</h2><span class="pill p-high">עדיפות גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">כיום "איך מגיעים" באתר הוא עוגן שמדלג לאזור בעמוד הבית, ולא עמוד עצמאי. משמעות הדבר: אין לאתר עמוד שגוגל יכול להציג למי שמחפש את הכתובת, השעות או דרכי ההגעה. אנחנו ממליצים להקים עמוד ייעודי בכתובת <code>/how-to-get/</code>.</p>
+
+            <div class="item">
+                <div class="t">מה יופיע בעמוד</div>
+                <div class="d">כתובת, טלפון ושעות פתיחה; כפתורי ניווט ל-Waze ול-Google Maps; מפה פעילה; הבהרה שהמסעדה עברה מגן הצפון למתחם דפנה׳לה; מידע על חניה ונגישות; הסבר איפה בדיוק נמצאת המסעדה בתוך המתחם; טבלת מרחקים מאתרי הטיול בסביבה; שאלות נפוצות; וכפתורי הזמנת שולחן, טייק אווי ותפריט.</div>
+            </div>
+
+            <div class="item">
+                <div class="t">למה זה חשוב</div>
+                <div class="d">חלק ניכר מהחיפושים סביב מסעדה הם חיפושי הגעה: כתובת, שעות, "פתוח עכשיו", ניווט. בנוסף, המעבר מגן הצפון עדיין לא הופנם בכל מקום ברשת, ועמוד ייעודי נותן לנו מקום אחד ומוסמך להפנות אליו כל תיקון חיצוני.</div>
+            </div>
+
+            <div class="item">
+                <div class="t">שינוי שכדאי לשים לב אליו</div>
+                <div class="d">לאחר עליית העמוד, הקישור "איך מגיעים" בתפריט העליון, בפוטר ובעמוד הסיפור יפנה לעמוד החדש במקום לעוגן בעמוד הבית. בלוק הכתובת בעמוד הבית יישאר במקומו כתקציר.</div>
+            </div>
+
+            <div class="item">
+                <div class="t">טבלת המרחקים תוקנה</div>
+                <div class="d">המרחקים לאתרי הטיול נמדדו בניווט אמיתי בכביש מנקודת הציון של המסעדה. שתי שורות תוקנו: המרחק לבניאס יורד מ-10 עד 12 ק"מ לכ-7 עד 8 ק"מ, ולשמורה יש שתי כניסות שיוצגו בנפרד. בית הלל וקריית שמונה עודכנו כלפי מעלה במעט.</div>
+                <div class="why">מבקרים מהאזור מכירים את המרחקים האלה. מספר שגוי בעמוד "איך מגיעים" פוגע באמון בכל שאר המידע בעמוד.</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">2</div><h2>אחידות בשם המתחם בכל האתר</h2><span class="pill p-high">עדיפות גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">שם המתחם מופיע באתר בשני כתיבים שונים, ואף אחד מהם אינו הכתיב שבו המתחם עצמו משתמש. אנחנו מציעים לאחד הכול ל<b>מתחם דפנה׳לה</b>.</p>
+            <table>
+                <tr><th>איפה</th><th>מה מופיע היום</th><th>מה יופיע אחרי התיקון</th></tr>
+                <tr><td>עמוד הבית, פסקת "שעות פתיחה ודרכי הגעה"</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>עמוד הבית, כרטיס הכתובת</td><td>מתחם דפנל'ה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>עמוד הבית, התשובה ל"היכן נמצאת קלומפוס?"</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>עמוד התפריט, פסקת הפתיחה</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>עמוד הסיפור, פסקת הסיום</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>הצהרת הנגישות, שני מקומות</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>הפוטר, בכל עמודי האתר</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+                <tr><td>פרטי הכתובת שנשלחים לגוגל</td><td>מתחם דפנהלה</td><td>מתחם דפנה׳לה</td></tr>
+            </table>
+            <div class="note">התיקון בפוטר מתבצע פעם אחת בתבנית ומתעדכן בכל העמודים. אין השפעה על עיצוב או על מבנה העמודים.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">3</div><h2>שיפורים בעמוד התפריט</h2><span class="pill p-mid">עדיפות בינונית</span></summary>
+        <div class="block-body">
+            <div class="item">
+                <div class="t">שלוש מנות הילדים מופיעות כמנה אחת</div>
+                <div class="d">כיום המבורגר הילדים, השניצל והפופקוצ'יקן מחוברים לשורה אחת רצופה, ללא רווח בין המנות. יש לפצל לשלוש מנות נפרדות, עם המחיר המשותף מתחתן.</div>
+                <div class="why">מבקר שמחפש מנת ילדים לא מזהה כרגע שיש שלוש אפשרויות.</div>
+            </div>
+            <div class="item">
+                <div class="t">מחירים בתוך כותרות</div>
+                <div class="d">בשבע כותרות בעמוד המחיר מוטמע בתוך שם הקטגוריה או שם המנה. נעביר את המחירים לשורה נפרדת מתחת לכותרת, כמו בשאר התפריט.</div>
+            </div>
+            <div class="item">
+                <div class="t">שתי קטגוריות בשם זהה</div>
+                <div class="d">קיימות שתי קטגוריות "משקאות אלכוהוליים" שנבדלות זו מזו רק במחיר. נדרש שם ברור לכל אחת. אנחנו מציעים "משקאות אלכוהוליים – פרימיום" ו"משקאות אלכוהוליים – קלאסיים", ונשמח לאישורכם או לשמות שתעדיפו.</div>
+            </div>
+            <div class="item">
+                <div class="t">תיקון ניסוח</div>
+                <div class="d">הכותרת "קינוח ושתייה חמה" תשונה ל"קינוחים ושתייה חמה".</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">4</div><h2>תיקונים טכניים שאינם משנים את מה שרואים באתר</h2><span class="pill p-high">עדיפות גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">אלה תיקונים בקוד שמעביר לגוגל את פרטי המסעדה. הם אינם משנים דבר בעיצוב או בתוכן הגלוי, אבל הם משפיעים ישירות על מה שגוגל מציג עליכם.</p>
+            <div class="item">
+                <div class="t">נקודת הציון שנשלחת לגוגל אינה מדויקת</div>
+                <div class="d">האתר מוסר לגוגל שתי נקודות ציון שונות למסעדה, ושתיהן אינן במקום הנכון: אחת במרחק כ-380 מטר מהמסעדה והשנייה כ-280 מטר. נתקן לנקודה המדויקת, זו שאליה מפנים הניווט ב-Waze ופרופיל העסק בגוגל.</div>
+                <div class="why">זו בדיוק אותה תקלה שאיתרנו באתרים חיצוניים, והפעם היא באתר שלכם.</div>
+            </div>
+            <div class="item">
+                <div class="t">פרטי המסעדה מוגדרים פעמיים, בשתי גרסאות שונות</div>
+                <div class="d">עמוד הבית ועמוד התפריט שולחים שניהם כרטיס עסק לגוגל תחת אותו מזהה, אבל עם כתובת שונה, נקודת ציון שונה וקישורי רשתות חברתיות שונים. נשאיר הגדרה אחת מלאה ומדויקת, ונסיר את הכפילות.</div>
+                <div class="why">כשגוגל מקבל שתי גרסאות סותרות של אותו עסק, אין ודאות איזו מהן יציג.</div>
+            </div>
+            <div class="item">
+                <div class="t">קישור פייסבוק לא נקי</div>
+                <div class="d">אחד הקישורים לפייסבוק שנשלחים לגוגל מכיל שאריות של פרמטרי מעקב מהעתקה. נחליף בכתובת הקבועה של העמוד.</div>
+            </div>
+            <div class="item">
+                <div class="t">עמוד ארכיון ריק פתוח לאינדוקס</div>
+                <div class="d">קיימת בוורדפרס כתובת ארכיון ברירת מחדל שאינה חלק מהאתר ואינה אמורה להופיע בגוגל. נגדיר אותה כך שלא תיסרק.</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">5</div><h2>עדכון פרטי המסעדה במקורות חיצוניים</h2><span class="pill p-high">עדיפות גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">בדקנו כל מקור שמזכיר את קלומפוס. במקורות רבים עדיין מופיעים המיקום הישן בגן הצפון, מספר הטלפון הישן, או קישור לאתר שכבר אינו פעיל. אנחנו מטפלים בפניות מול כל הגורמים.</p>
+
+            <div class="item">
+                <div class="t">הדחוף ביותר: סיכות מפה שמובילות למיקום הישן</div>
+                <div class="d">ב-Rest/ZAP וב-2eat כפתור הניווט מוביל לנקודה במרחק של יותר משני קילומטרים מהמסעדה, במיקום הישן שעל כביש 99. לקוח שמנווט משם לא מגיע אליכם.</div>
+            </div>
+            <div class="item">
+                <div class="t">כרטיס Tripadvisor שכל פרטיו שגויים</div>
+                <div class="d">הכרטיס אינו מנוהל על ידכם, ומופיעים בו הכתובת הישנה, הטלפון הישן, שעות פתיחה שגויות וקישור לאתר שאינו פעיל יותר. לכרטיס יש 78 ביקורות ודירוג 4.4, כלומר הוא נראה ומשפיע. נדרשת דרישת בעלות עליו.</div>
+            </div>
+            <div class="item">
+                <div class="t">כתובת אתר ישנה שממשיכה להופיע</div>
+                <div class="d">הדומיין הישן foccacia.co.il כבר אינו פעיל, אך הוא עדיין מופיע כאתר הרשמי בכמה מקומות, וכן ככתובת המייל של העסק באחד האינדקסים ובקישור בפרופיל Threads.</div>
+            </div>
+            <div class="item">
+                <div class="t">מספר הטלפון הישן</div>
+                <div class="d">המספר 052-3140801 עדיין מופיע בשלושה מקורות לצד המספר הנוכחי.</div>
+            </div>
+            <div class="item">
+                <div class="t">כתבות שמציגות את המיקום הישן</div>
+                <div class="d">חמש כתבות מציגות את המסעדה בגן הצפון, חלקן עם שעות פתיחה ומחירים שאינם עדכניים, ואחת כותבת את שם העסק כ"קולומפוס". נפנה לכל אחת מהן עם התיקון ועם בקשה לקישור לאתר.</div>
+            </div>
+            <div class="item">
+                <div class="t">הזדמנויות קלות שכבר קיימות</div>
+                <div class="d">שני אתרי תיירות מפרסמים כבר היום מידע נכון ומעודכן על קלומפוס, אך אינם מקשרים לאתר שלכם כלל. באחד מהם יש כפתור "לכניסה לאתר הבית" שאינו קישור פעיל. גם אתר המתחם עצמו מקשר רק לאינסטגרם ולא לאתר. אלה התיקונים הזולים ביותר להשגה.</div>
+            </div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">6</div><h2>משימות שדורשות גישה לחשבונות שלכם</h2><span class="pill p-mid">עדיפות בינונית</span></summary>
+        <div class="block-body">
+            <p class="lead">את הפריטים הבאים לא ניתן לבצע מבחוץ. נשמח לקבל גישה, או לבצע אותם יחד אתכם בשיחה קצרה.</p>
+            <ul class="tight">
+                <li><b>פרופיל העסק בגוגל.</b> נקודת הציון נבדקה ונמצאה מדויקת. נותר לוודא שעות מיוחדות, קישור לאתר, קישור לתפריט, קישור להזמנת שולחן, קטגוריה ראשית ותמונות עדכניות מהמיקום הנוכחי.</li>
+                <li><b>מערכת Tabit.</b> שם העסק וכתובת האיסוף מוגדרים שם כ"מתחם דפנה" במקום "מתחם דפנה׳לה". כמו כן חלון ההזמנות מוגדר 11:50 עד 21:45, ויש לוודא שזה מכוון.</li>
+                <li><b>פרופיל Threads.</b> התיאור עדיין מתאר את המתחם הישן ואת הקונספט הישן, והקישור בפרופיל מוביל לדומיין שאינו פעיל. הפרופיל פעיל ומפרסם.</li>
+                <li><b>Tripadvisor.</b> דרישת בעלות על הכרטיס, ולאחריה תיקון כל הפרטים.</li>
+                <li><b>פייסבוק.</b> שדה הכתובת מציין "קיבוץ דפנה" בלבד, בלי שם המתחם.</li>
+            </ul>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">7</div><h2>סדר ביצוע מוצע</h2><span class="pill p-low">לעיון</span></summary>
+        <div class="block-body">
+            <table>
+                <tr><th>שלב</th><th>פעולה</th><th>מי מבצע</th></tr>
+                <tr><td>1</td><td>מענה על שתי השאלות בראש הדוח</td><td>הלקוח</td></tr>
+                <tr><td>2</td><td>תיקון סיכות המפה ב-Rest וב-2eat</td><td>אנחנו</td></tr>
+                <tr><td>3</td><td>תיקון נקודת הציון ופרטי המסעדה בקוד האתר</td><td>מפתח האתר</td></tr>
+                <tr><td>4</td><td>אחידות שם המתחם בכל האתר</td><td>מפתח האתר</td></tr>
+                <tr><td>5</td><td>הקמת עמוד "איך מגיעים" והפניית הקישורים אליו</td><td>מפתח האתר</td></tr>
+                <tr><td>6</td><td>דרישת בעלות על Tripadvisor ובדיקת פרופיל העסק בגוגל</td><td>הלקוח, בליווינו</td></tr>
+                <tr><td>7</td><td>שיפורים בעמוד התפריט</td><td>מפתח האתר</td></tr>
+                <tr><td>8</td><td>פנייה לכתבות ולאתרי התיירות</td><td>אנחנו</td></tr>
+            </table>
+            <div class="note">כל הפריטים המיועדים למפתח מרוכזים במסמך הפעלה נפרד, הכולל את הטקסטים המדויקים ואת הקוד המוכן להטמעה.</div>
+        </div>
+    </details>
+
+    <footer>
+        <span><b>NC Digital</b> · קלומפוס</span>
+        <span>ספטמבר 2026</span>
+    </footer>
+</div>
+<script>
+function toggleAll(o){document.querySelectorAll('details.block').forEach(function(d){d.open=o;});}
+</script>
+</body>
+</html>

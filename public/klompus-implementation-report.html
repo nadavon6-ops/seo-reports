@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>קלומפוס | מסמך הטמעה למפתח</title>
+    <style>
+        :root{
+            --bg:#0e1116; --panel:#171a21; --panel2:#1d222b; --border:#2a303c;
+            --text:#e9edf3; --muted:#9aa4b2; --dim:#6b7583; --accent:#ff9c33; --accent-soft:#ffb35c;
+            --high:#ff7a59; --mid:#ffc857; --low:#7f8a9b; --ok:#54c08a;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{background:var(--bg);color:var(--text);font-family:"Segoe UI","Assistant","Rubik",Arial,sans-serif;line-height:1.75;font-size:16px}
+        .wrap{max-width:1040px;margin:0 auto;padding:32px 20px 80px}
+        header.top{border-bottom:1px solid var(--border);padding-bottom:24px;margin-bottom:22px}
+        .kicker{color:var(--accent);font-weight:700;letter-spacing:.5px;font-size:14px;margin-bottom:8px}
+        h1{font-size:29px;font-weight:800;line-height:1.3;margin-bottom:10px}
+        .sub{color:var(--muted);font-size:16.5px;max-width:80ch}
+        .meta-row{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:18px;font-size:13.5px;color:var(--muted)}
+        .meta-row b{color:var(--text);font-weight:600}
+
+        .warnbox{background:rgba(255,122,89,.1);border:1px solid rgba(255,122,89,.34);border-radius:12px;padding:16px 20px;margin-bottom:14px}
+        .warnbox h3{font-size:15.5px;color:#ff9a80;margin-bottom:9px;font-weight:800}
+        .warnbox ul{margin:0 20px 0 0;font-size:14.5px;color:#ffcabb}
+        .warnbox li{margin:7px 0}
+
+        .toolbar{display:flex;gap:8px;margin:20px 0 14px}
+        .toolbar button{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;font-family:inherit}
+        .toolbar button:hover{color:var(--accent);border-color:var(--accent)}
+
+        details.block{background:var(--panel);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+        summary.block-head{display:flex;align-items:center;gap:12px;padding:16px 20px;cursor:pointer;list-style:none;user-select:none}
+        summary.block-head::-webkit-details-marker{display:none}
+        summary.block-head::marker{content:""}
+        .num{background:var(--accent);color:#221602;width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex:0 0 auto}
+        summary.block-head h2{font-size:19px;font-weight:700;flex:1}
+        .pill{font-size:12px;font-weight:700;padding:3px 11px;border-radius:20px;white-space:nowrap;flex:0 0 auto}
+        .p-high{background:rgba(255,122,89,.16);color:#ff9a80;border:1px solid rgba(255,122,89,.35)}
+        .p-mid{background:rgba(255,200,87,.14);color:#ffcf6b;border:1px solid rgba(255,200,87,.3)}
+        .p-low{background:rgba(127,138,155,.16);color:#aab4c2;border:1px solid rgba(127,138,155,.3)}
+        summary.block-head::after{content:'';flex:none;width:8px;height:8px;margin-right:4px;margin-top:-4px;
+            border-left:2px solid var(--dim);border-bottom:2px solid var(--dim);
+            transform:rotate(-45deg);transition:transform .18s ease,border-color .18s ease}
+        details[open]>summary.block-head::after{transform:rotate(135deg);margin-top:3px}
+        summary.block-head:hover::after{border-color:var(--accent)}
+        .block-body{padding:6px 22px 22px;border-top:1px solid var(--border)}
+
+        h3.step{font-size:16px;color:var(--accent-soft);margin:20px 0 8px;font-weight:800;border-right:3px solid var(--accent);padding-right:10px}
+        .lead{color:#cdd5e0;font-size:15px;margin:14px 0 10px;max-width:82ch}
+        p.body{color:#c4cdd9;font-size:14.8px;margin:8px 0;max-width:82ch}
+        ul.tight{margin:8px 20px 0 0;font-size:14.5px;color:#c9d2de}
+        ul.tight li{margin:5px 0}
+        table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13.8px}
+        th,td{border:1px solid var(--border);padding:9px 11px;text-align:right;color:#c9d2de;background:var(--panel2);vertical-align:top}
+        th{background:#212734;color:var(--accent-soft);font-weight:700;font-size:13.2px}
+        code{background:#0a0d12;border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-family:"SF Mono",Menlo,"DejaVu Sans Mono",Consolas,"Courier New",monospace;font-size:12.5px;color:#ffd9a8;direction:ltr;display:inline-block;text-align:left}
+        pre{background:#080a0e;border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-top:10px;overflow-x:auto;direction:ltr;text-align:left}
+        pre code{background:none;border:none;padding:0;font-size:12.5px;line-height:1.65;color:#d7e0ec;display:block;white-space:pre}
+        .copy{background:#0a0d12;border:1px solid var(--border);border-right:3px solid var(--accent);border-radius:9px;padding:13px 16px;margin-top:9px;font-size:14.8px;color:#e4e9f0;white-space:pre-wrap}
+        .lbl{color:var(--accent-soft);font-weight:700;font-size:13.2px;margin:14px 0 3px}
+        .flag{background:rgba(255,122,89,.1);border:1px solid rgba(255,122,89,.3);border-radius:9px;padding:11px 15px;margin-top:12px;font-size:14px;color:#ffb59f}
+        .note{background:rgba(84,192,138,.08);border:1px solid rgba(84,192,138,.28);border-radius:9px;padding:11px 15px;margin-top:12px;font-size:14px;color:#9ad9b8}
+        .hold{background:rgba(255,200,87,.09);border:1px solid rgba(255,200,87,.32);border-radius:9px;padding:11px 15px;margin-top:12px;font-size:14px;color:#f0d9a7}
+        footer{border-top:1px solid var(--border);margin-top:44px;padding-top:22px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+        footer b{color:var(--text)}
+        @media(max-width:600px){h1{font-size:23px}.wrap{padding:22px 14px 60px}summary.block-head h2{font-size:16.5px}table{font-size:12.5px}th,td{padding:7px 7px}pre code{font-size:11.5px}}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="top">
+        <div class="kicker">NC Digital · מסמך פנימי</div>
+        <h1>קלומפוס | מסמך הטמעה למפתח</h1>
+        <div class="sub">כל השינויים המאושרים, מוכנים להעתקה והטמעה. הטקסטים כאן סופיים. הקוד כאן מיועד להחלפה מלאה של הבלוקים הקיימים, לא לתוספת.</div>
+        <div class="meta-row">
+            <span><b>אתר:</b> klompus.co.il</span>
+            <span><b>פלטפורמה:</b> WordPress + Yoast</span>
+            <span><b>תקופה:</b> ספטמבר 2026</span>
+        </div>
+    </header>
+
+    <div class="warnbox">
+        <h3>לקרוא לפני שמתחילים</h3>
+        <ul>
+            <li><b>הגרש בשם המתחם.</b> הכתיב הנכון הוא <code>מתחם דפנה׳לה</code> והתו באמצע הוא גרש עברי (U+05F3), לא אפוסטרוף רגיל. יש להעתיק את המחרוזת מהמסמך הזה ולא להקליד אותה, אחרת ייווצר כתיב רביעי.</li>
+            <li><b>עמוד הבית מקודד עברית כישויות HTML.</b> חיפוש-והחלפה על המחרוזת "דפנהלה" בקוד המקור של עמוד הבית לא ימצא כלום. את הטקסט הגלוי יש לערוך דרך עורך העמודים, ואת ה-JSON-LD דרך הבלוק שבו הוא מוגדר.</li>
+            <li><b>גיבוי.</b> לפני עריכת בלוקי ה-JSON-LD יש לשמור עותק של הקוד הקיים.</li>
+            <li><b>פריטים שממתינים לתשובת הלקוח</b> מסומנים במסמך במסגרת צהובה. אין להטמיע אותם לפני קבלת התשובה. כל השאר מוכן לביצוע.</li>
+        </ul>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="toggleAll(true)">הרחב הכל</button>
+        <button onclick="toggleAll(false)">כווץ הכל</button>
+    </div>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">1</div><h2>אחידות שם המתחם</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">להחליף בכל המקומות הבאים ל־<code>מתחם דפנה׳לה</code>. סך הכול שמונה מקומות בטקסט גלוי, תיקון אחד בתבנית הפוטר ושני מקומות בנתונים המובנים.</p>
+            <table>
+                <tr><th>#</th><th>עמוד</th><th>מיקום מדויק</th><th>מה מופיע היום</th></tr>
+                <tr><td>1</td><td>עמוד הבית</td><td>הפסקה תחת ה-H2 "שעות פתיחה ודרכי הגעה לקלומפוס"</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>2</td><td>עמוד הבית</td><td>כרטיס הכתובת, ה-H3 שמתחת לטלפון</td><td>מתחם דפנל'ה</td></tr>
+                <tr><td>3</td><td>עמוד הבית</td><td>גוף התשובה לשאלה "היכן נמצאת קלומפוס?"</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>4</td><td>עמוד התפריט</td><td>פסקת הפתיחה מתחת ל-H1</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>5</td><td>עמוד הסיפור</td><td>פסקת הסיום</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>6</td><td>הצהרת נגישות</td><td>המשפט הפותח תחת "הסדרי נגישות במסעדה"</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>7</td><td>הצהרת נגישות</td><td>שדה הכתובת בפרטי איש הקשר</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>8</td><td>כל העמודים</td><td>הפוטר הגלובלי, בתבנית. תיקון אחד</td><td>מתחם דפנהלה</td></tr>
+                <tr><td>9</td><td>עמוד הבית</td><td>JSON-LD, בתוך <code>Restaurant.address.streetAddress</code></td><td>מתחם דפנהלה</td></tr>
+                <tr><td>10</td><td>עמוד הבית</td><td>JSON-LD, בתוך טקסט התשובה בבלוק ה-FAQPage</td><td>מתחם דפנהלה</td></tr>
+            </table>
+            <div class="flag">שורה 10 היא המקום שנוטים לפספס. הטקסט של השאלות הנפוצות מופיע פעמיים: פעם אחת בתוכן הגלוי ופעם שנייה בתוך בלוק ה-JSON-LD. תיקון של אחד מהם בלבד משאיר את השני שגוי. אם מבוצעת ההמלצה בסעיף 2.3 והבלוק הזה מוסר, השורה הזו מתייתרת.</div>
+            <div class="lbl">בדיקה בסיום</div>
+            <p class="body">חיפוש טקסטואלי בקוד המקור הגולמי אינו בדיקה אמינה כאן: עמוד הבית מקודד עברית כישויות HTML, וחלק מה-JSON-LD מקודד אותה כרצפי <code>\u</code>. לכן הבדיקה מתבצעת על ה-DOM המעובד ועל ה-JSON-LD אחרי פענוח. לפתוח כל עמוד בדפדפן, לרוקן קאש, ולהריץ בקונסול:</p>
+            <pre><code>[document.body.innerText,
+ ...[...document.querySelectorAll('script[type="application/ld+json"]')]
+      .map(s =&gt; JSON.stringify(JSON.parse(s.textContent)))
+].join(' ').match(/דפנ[^\s,.<]{0,4}/g)</code></pre>
+            <p class="body">התוצאה הנדרשת בכל אחד מהעמודים: רק המחרוזות <code>דפנה׳לה</code> ו-<code>דפנה</code>. כל הופעה של <code>דפנהלה</code> או <code>דפנל'ה</code> משמעותה שנותר מקום שלא תוקן.</p>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">2</div><h2>נתונים מובנים בעמוד הבית</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">בעמוד הבית קיימים כיום שלושה בלוקי JSON-LD נפרדים. הבלוק של Yoast תקין ואין לגעת בו. שני הבלוקים הידניים דורשים טיפול.</p>
+
+            <h3 class="step">2.1 להסיר את ישות ה-WebPage הכפולה</h3>
+            <p class="body">בבלוק הידני קיימת ישות <code>WebPage</code> עם המזהה <code>https://klompus.co.il/#webpage</code>, בנוסף לישות ש-Yoast כבר מייצר עבור אותו עמוד. יש למחוק את הישות הידנית הזו במלואה. הישות של Yoast נשארת.</p>
+
+            <h3 class="step">2.2 להחליף את ישות ה-Restaurant</h3>
+            <p class="body">להחליף את כל הבלוק הידני של המסעדה בקוד הבא. שלושה שינויים מהותיים: נקודת הציון תוקנה למיקום המדויק, הכתובת תוקנה, ונוסף קישור לתפריט ולהזמנת שולחן.</p>
+            <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Restaurant",
+      "@id": "https://klompus.co.il/#restaurant",
+      "name": "מסעדת קלומפוס",
+      "url": "https://klompus.co.il/",
+      "telephone": "+972-72-2221243",
+      "priceRange": "₪₪",
+      "servesCuisine": ["Burgers", "Meat", "Grill"],
+      "image": { "@id": "https://klompus.co.il/#primaryimage" },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "מתחם דפנה׳לה",
+        "addressLocality": "קיבוץ דפנה",
+        "addressRegion": "הגליל העליון",
+        "addressCountry": "IL"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 33.2287142,
+        "longitude": 35.6407689
+      },
+      "hasMap": "https://maps.app.goo.gl/gQE2WxHYDAvfRRjb6",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+          "opens": "12:00",
+          "closes": "22:00"
+        }
+      ],
+      "hasMenu": { "@id": "https://klompus.co.il/menu/#menu" },
+      "acceptsReservations": "https://tabitisrael.co.il/%D7%94%D7%96%D7%9E%D7%A0%D7%AA-%D7%9E%D7%A7%D7%95%D7%9D/create-reservation?step=search&amp;orgId=6910847548918c7e1a1d7ecb&amp;locale=he-IL&amp;source=website&amp;type=future_reservation",
+      "sameAs": [
+        "https://www.facebook.com/profile.php?id=100063627215979",
+        "https://www.instagram.com/klompus_dafna"
+      ]
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            <div class="note">נקודת הציון 33.2287142, 35.6407689 היא זו שאליה מפנים גם פרופיל העסק בגוגל וגם קישור ה-Waze שבאתר. הערכים הקודמים היו במרחק של כ-380 מטר מהמסעדה.</div>
+
+            <h3 class="step">2.3 להסיר את בלוק ה-FAQPage</h3>
+            <p class="body">בעמוד הבית קיים בלוק FAQPage נפרד, ללא מזהה. שתי סיבות להסיר אותו:</p>
+            <ul class="tight">
+                <li>גוגל הפסיק להציג תוצאות עשירות עבור FAQPage באתרים שאינם ממשלתיים או רפואיים. אין מה להפסיד.</li>
+                <li>FAQPage הוא תת-סוג של WebPage. בלוק כזה ללא מזהה יוצר ישות עמוד שנייה ואנונימית לאותו עמוד עצמו, וזו בדיוק הכפילות שאנחנו מנקים בסעיף 2.1.</li>
+            </ul>
+            <p class="body">תוכן השאלות והתשובות הגלוי בעמוד נשאר במקומו ללא שינוי. רק בלוק הקוד מוסר.</p>
+            <div class="note">אם מעדיפים בכל זאת להשאיר את הבלוק, חובה לתקן בתוכו את שם המתחם (שורה 10 בטבלה בסעיף 1). אין להשאיר אותו ללא תיקון.</div>
+
+            <h3 class="step">2.4 ניקוי קישור הפייסבוק בהגדרות Yoast</h3>
+            <p class="body">הקישור שנשלח כיום מכיל שאריות פרמטרי מעקב. בממשק Yoast, תחת הגדרות ← ייצוג האתר ← פרופילים חברתיים, להחליף את כתובת הפייסבוק בכתובת הנקייה:</p>
+            <div class="copy">https://www.facebook.com/profile.php?id=100063627215979</div>
+            <p class="body">באותו מסך מומלץ לעדכן את שם הארגון ל-<b>מסעדת קלומפוס</b>, כדי שיהיה זהה לשם שבישות המסעדה.</p>
+            <div class="hold"><b>לא להוסיף כרגע קישור לפרופיל העסק בגוגל לתוך sameAs.</b> קישור שיתוף מ-Maps, כתובת חיפוש וכתובת מבוססת Place ID אינם אותו דבר, וחלקם מכילים פרמטרים זמניים. נמסור את הכתובת היציבה בנפרד לאחר שנשלוף אותה מפרופיל העסק. אין להמציא אותה.</div>
+
+            <h3 class="step">2.5 המלצת המשך: איחוד ישות העסק לישות אחת</h3>
+            <p class="body">גם אחרי התיקונים שלמעלה, האתר עדיין מתאר את העסק בשתי ישויות: <code>#organization</code> ש-Yoast מייצר, ו-<code>#restaurant</code> הידנית. זה לא שבור וגוגל מתמודד עם זה, אבל זה לא נקי. הפתרון המסודר הוא להפוך את ישות ה-Yoast עצמה למסעדה, ואז יש ישות עסק אחת בלבד באתר.</p>
+            <pre><code>add_filter( 'wpseo_schema_organization', function ( $data ) {
+    $data['@type']    = 'Restaurant';
+    $data['telephone'] = '+972-72-2221243';
+    $data['priceRange'] = '₪₪';
+    $data['servesCuisine'] = [ 'Burgers', 'Meat', 'Grill' ];
+    $data['address']  = [
+        '@type'           =&gt; 'PostalAddress',
+        'streetAddress'   =&gt; 'מתחם דפנה׳לה',
+        'addressLocality' =&gt; 'קיבוץ דפנה',
+        'addressRegion'   =&gt; 'הגליל העליון',
+        'addressCountry'  =&gt; 'IL',
+    ];
+    $data['geo'] = [
+        '@type'     =&gt; 'GeoCoordinates',
+        'latitude'  =&gt; 33.2287142,
+        'longitude' =&gt; 35.6407689,
+    ];
+    $data['openingHoursSpecification'] = [ [
+        '@type'     =&gt; 'OpeningHoursSpecification',
+        'dayOfWeek' =&gt; [ 'Monday','Tuesday','Wednesday','Thursday','Friday','Saturday' ],
+        'opens'     =&gt; '12:00',
+        'closes'    =&gt; '22:00',
+    ] ];
+    $data['hasMenu'] = [ '@id' =&gt; 'https://klompus.co.il/menu/#menu' ];
+    return $data;
+} );</code></pre>
+            <p class="body">אם מיישמים את זה, הבלוק הידני של המסעדה מסעיף 2.2 מוסר לגמרי, וכל ההפניות הקיימות של Yoast ממשיכות לעבוד כי המזהה <code>#organization</code> לא משתנה.</p>
+            <div class="flag">זו המלצה, לא דרישה. היא נוגעת בקוד התבנית ולכן מסוכנת יותר מעריכת בלוק JSON-LD. אם אין גישה נוחה לקוד התבנית, לבצע רק את סעיפים 2.1 עד 2.4 ולדלג על הסעיף הזה. עיקר הנזק היום הוא נקודת הציון השגויה והמזהה הכפול בין העמודים, ושניהם נפתרים בלי הפילטר.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">3</div><h2>נתונים מובנים בעמוד התפריט</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">עמוד התפריט מגדיר כיום ישות Restaurant נוספת עם אותו מזהה בדיוק כמו זו שבעמוד הבית, אבל עם כתובת שונה ונקודת ציון שונה. זו הבעיה החמורה יותר בנתונים המובנים של האתר: גוגל מקבל שתי גרסאות סותרות של אותו עסק תחת אותו מזהה.</p>
+            <p class="body">יש להחליף את כל הבלוק הידני בעמוד התפריט בקוד הבא. ישות המסעדה נמחקת מהעמוד הזה לחלוטין, ונשארת רק בעמוד הבית.</p>
+            <pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Menu",
+      "@id": "https://klompus.co.il/menu/#menu",
+      "name": "תפריט מסעדת קלומפוס",
+      "url": "https://klompus.co.il/menu/",
+      "inLanguage": "he-IL"
+    }
+  ]
+}
+&lt;/script&gt;</code></pre>
+            <div class="note">הקישור בין העמודים נשמר דרך השדה <code>hasMenu</code> שבישות המסעדה בעמוד הבית, שמצביע על אותו מזהה בדיוק.</div>
+            <div class="flag">בקטע הקוד שהופיע במסמך המקורי הייתה סוגר מסולסל מיותרת בסוף. הקוד שלמעלה הוא הגרסה התקינה. יש להריץ את התוצאה ב-Rich Results Test של גוגל אחרי ההטמעה.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">4</div><h2>עמוד חדש: איך מגיעים לקלומפוס</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">להקים עמוד חדש בכתובת <code>https://klompus.co.il/how-to-get/</code>. כל הטקסטים כאן סופיים ומוכנים להעתקה.</p>
+
+            <div class="lbl">Title</div>
+            <div class="copy">איך מגיעים לקלומפוס? כתובת, שעות וניווט | קלומפוס</div>
+            <div class="lbl">Meta description</div>
+            <div class="copy">קלומפוס נמצאת במתחם דפנה׳לה בקיבוץ דפנה. כתובת, שעות פתיחה, טלפון, חניה וקישורים לניווט ב-Waze וב-Google Maps.</div>
+            <div class="lbl">H1</div>
+            <div class="copy">איך מגיעים לקלומפוס בקיבוץ דפנה?</div>
+
+            <h3 class="step">פסקת פתיחה, מיד מתחת ל-H1</h3>
+            <div class="copy">קלומפוס נמצאת במתחם דפנה׳לה שבקיבוץ דפנה, בגליל העליון. כאן תמצאו את כתובת המסעדה, שעות הפתיחה, מספר הטלפון וכל המידע הדרוש להגעה, כולל קישורים לניווט ב-Waze וב-Google Maps.</div>
+            <p class="body">מתחת לפסקה, שני כפתורים:</p>
+            <table>
+                <tr><th>טקסט הכפתור</th><th>קישור</th></tr>
+                <tr><td>ניווט לקלומפוס ב-Waze</td><td><code>https://waze.com/ul/hsvcm510ef</code></td></tr>
+                <tr><td>ניווט לקלומפוס ב-Google Maps</td><td><code>https://maps.app.goo.gl/gQE2WxHYDAvfRRjb6</code></td></tr>
+            </table>
+
+            <h3 class="step">H2: כתובת, טלפון ושעות פתיחה</h3>
+            <div class="copy">מסעדת קלומפוס
+מתחם דפנה׳לה, קיבוץ דפנה, גליל עליון
+טלפון: 072-2221243
+
+שעות פתיחה:
+ראשון: סגור
+שני עד שבת: 12:00 עד 22:00</div>
+            <p class="body">מספר הטלפון יהיה קישור לחיץ אל <code>tel:0722221243</code>. מתחת לפרטים, שני כפתורים:</p>
+            <table>
+                <tr><th>טקסט הכפתור</th><th>קישור</th></tr>
+                <tr><td>להזמנת שולחן</td><td><code>https://tabitisrael.co.il/%D7%94%D7%96%D7%9E%D7%A0%D7%AA-%D7%9E%D7%A7%D7%95%D7%9D/create-reservation?step=search&amp;orgId=6910847548918c7e1a1d7ecb&amp;locale=he-IL&amp;source=website&amp;type=future_reservation</code></td></tr>
+                <tr><td>להזמנת טייק אווי</td><td><code>https://tabitisrael.co.il/tabit-order?siteName=klompusdaf&amp;step=enter</code></td></tr>
+            </table>
+            <div class="note">שני הקישורים נבדקו ומחזירים 200. יש להשתמש בהם בדיוק כפי שהם מופיעים כאן, כולל הקידוד.</div>
+
+            <h3 class="step">H2: קלומפוס נמצאת כיום במתחם דפנה׳לה</h3>
+            <div class="copy">קלומפוס עברה ממתחם גן הצפון וכיום נמצאת במתחם דפנה׳לה שבקיבוץ דפנה. כדי להגיע ישירות למסעדה, אפשר להשתמש בקישורי הניווט המעודכנים שבעמוד זה.</div>
+
+            <h3 class="step">H2: מפת הגעה לקלומפוס</h3>
+            <p class="body">להטמיע מפת Google Maps פעילה, ממורכזת על נקודת הציון <code>33.2287142, 35.6407689</code>, עם <code>loading="lazy"</code> ועם <code>title</code> בעברית לאייפריים. יש לקבע לאייפריים מידות רספונסיביות מראש כדי למנוע קפיצת תוכן בטעינה. תמונה סטטית של מפה אינה מספיקה.</p>
+            <p class="body">אין לבנות את המפה או את הכפתורים על חיפוש לפי שם או לפי כתובת. חיפוש כזה עלול להיפתר למרכז הקיבוץ, למתחם, או לכרטיס ישן. יש להשתמש בנקודת הציון המפורשת. כתובת יעד לניווט:</p>
+            <div class="copy">https://www.google.com/maps/dir/?api=1&amp;destination=33.2287142%2C35.6407689</div>
+            <p class="body">מתחת למפה: השורה "מתחם דפנה׳לה, קיבוץ דפנה" ושני קישורי הניווט שוב. כמו כן להשאיר את הכתובת המלאה כטקסט רגיל בעמוד, כדי שתהיה זמינה גם אם המפה לא נטענת.</p>
+
+            <h3 class="step">H2: חניה ונגישות בקלומפוס</h3>
+            <div class="hold"><b>ממתין לתשובת הלקוח.</b> להטמיע כרגע את הנוסח הראשון. אם הלקוח מאשר שהחניה חינמית, להחליף בנוסח השני.</div>
+            <div class="lbl">נוסח לפרסום עכשיו</div>
+            <div class="copy">במתחם דפנה׳לה קיימת חניה למבקרים. בסמוך למסעדה קיימת גם חניית נכים, והדרך מהחניה אל המסעדה נגישה. המסעדה מאפשרת התניידות באמצעות כיסא גלגלים, קיימים בה שירותים נגישים, וניתן לקבל בה תפריט נגיש מודפס.</div>
+            <div class="lbl">נוסח חלופי, רק אם הלקוח מאשר שהחניה חינמית</div>
+            <div class="copy">במתחם דפנה׳לה קיימת חניה חינם למבקרים. בסמוך למסעדה קיימת גם חניית נכים, והדרך מהחניה אל המסעדה נגישה. המסעדה מאפשרת התניידות באמצעות כיסא גלגלים, קיימים בה שירותים נגישים, וניתן לקבל בה תפריט נגיש מודפס.</div>
+            <p class="body">מתחת לפסקה, קישור בטקסט "למידע המלא בהצהרת הנגישות" אל:</p>
+            <div class="copy">https://klompus.co.il/%D7%94%D7%A6%D7%94%D7%A8%D7%AA-%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA/</div>
+            <div class="flag">כל טענת הנגישות בנוסח שלמעלה מגובה במילה במילה בהצהרת הנגישות של המסעדה. אין להוסיף לפסקה הזו טענות נוספות שאינן מופיעות בהצהרה.</div>
+
+            <h3 class="step">H2: איפה נמצאת קלומפוס במתחם דפנה׳לה?</h3>
+            <div class="copy">לאחר ההגעה למתחם דפנה׳לה יש לעקוב אחר השילוט לקלומפוס. המסעדה פועלת במבנה הקבוע במתחם, ומציעה ישיבה במקום וגם אפשרות להזמנת טייק אווי.</div>
+            <p class="body">לצרף שלוש תמונות: הכניסה למתחם, המבנה של קלומפוס, והשלט המכוון למסעדה. תגיות Alt:</p>
+            <ul class="tight">
+                <li>הכניסה למסעדת קלומפוס במתחם דפנה׳לה</li>
+                <li>הכניסה למתחם דפנה׳לה בקיבוץ דפנה</li>
+                <li>שלט הכוונה למסעדת קלומפוס</li>
+            </ul>
+
+            <h3 class="step">H2: משלבים את קלומפוס בטיול באזור</h3>
+            <div class="copy">אפשר לשלב עצירה בקלומפוס במהלך טיול בגליל העליון. המסעדה נמצאת בקרבת חורשת טל, קיבוץ הגושרים, בית הלל, שמורת תל דן והבניאס, ובמרחק נסיעה קצר מקריית שמונה.</div>
+            <p class="body">הטבלה להטמעה. המרחקים וזמני הנסיעה חושבו בניווט אמיתי בכביש מנקודת הציון של המסעדה, ולא באומדן:</p>
+            <table>
+                <tr><th>נקודת מוצא</th><th>מרחק נסיעה</th><th>זמן נסיעה משוער</th></tr>
+                <tr><td>חורשת טל</td><td>כ-2 ק"מ</td><td>כ-4 דקות</td></tr>
+                <tr><td>קיבוץ הגושרים</td><td>כ-3 ק"מ</td><td>כ-5 דקות</td></tr>
+                <tr><td>שמורת תל דן</td><td>כ-4 ק"מ</td><td>כ-6 דקות</td></tr>
+                <tr><td>בית הלל</td><td>כ-6 ק"מ</td><td>כ-7 דקות</td></tr>
+                <tr><td>שמורת הבניאס, כניסת המעיינות</td><td>כ-7 ק"מ</td><td>כ-8 דקות</td></tr>
+                <tr><td>שמורת הבניאס, כניסת המפל</td><td>כ-8 ק"מ</td><td>כ-14 דקות</td></tr>
+                <tr><td>קריית שמונה</td><td>כ-9 ק"מ</td><td>כ-12 דקות</td></tr>
+            </table>
+            <p class="body">מתחת לטבלה:</p>
+            <div class="copy">המרחקים וזמני הנסיעה משוערים, לפי נקודת היציאה מקלומפוס והכניסה המצוינת לכל אתר, ועשויים להשתנות בהתאם לעומסי התנועה.</div>
+            <div class="flag">הערכים כאן מתקנים את הטבלה שהופיעה במסמך המקורי. המרחק לבניאס נכתב שם 10 עד 12 ק"מ, והמרחק בפועל הוא כ-7 עד 8 ק"מ. בנוסף, לשמורת הבניאס יש שתי כניסות שמרוחקות זו מזו, ולכן שורה אחת בשם "בניאס" אינה ניתנת לאימות. שאר השורות עודכנו למספרים המדודים: המרחק לבית הלל היה נמוך מדי, ולקריית שמונה נמוך במעט.</div>
+
+            <h3 class="step">H2: שאלות נפוצות על ההגעה לקלומפוס</h3>
+            <p class="body">שבע שאלות, כל אחת כ-H3 והתשובה כטקסט רגיל.</p>
+            <div class="lbl">H3: איפה נמצאת מסעדת קלומפוס?</div>
+            <div class="copy">קלומפוס נמצאת במתחם דפנה׳לה שבקיבוץ דפנה, בגליל העליון. בעמוד זה מופיעים קישורים לניווט ישיר למסעדה באמצעות Waze ו-Google Maps.</div>
+            <div class="lbl">H3: האם קלומפוס נמצאת בגן הצפון?</div>
+            <div class="copy">לא. קלומפוס עברה ממתחם גן הצפון למתחם דפנה׳לה שבקיבוץ דפנה. בעמוד זה מופיעים קישורי הניווט המעודכנים למיקום הנוכחי של המסעדה.</div>
+            <div class="lbl">H3: מהן שעות הפתיחה של קלומפוס?</div>
+            <div class="copy">קלומפוס פתוחה בימים שני עד שבת בשעות 12:00 עד 22:00. ביום ראשון המסעדה סגורה. בחגים ובמועדים מיוחדים מומלץ לבדוק אם פורסם עדכון לשעות הפעילות.</div>
+            <div class="lbl">H3: האם יש חניה ליד קלומפוס?</div>
+            <div class="copy">כן. במתחם דפנה׳לה קיימת חניה למבקרים, ובסמוך למסעדה קיימת גם חניית נכים.</div>
+            <div class="hold">גם בתשובה הזו, אם הלקוח מאשר שהחניה חינמית, לכתוב "חניה חינם למבקרים".</div>
+            <div class="lbl">H3: האם קלומפוס נגישה?</div>
+            <div class="copy">כן. הדרך אל המסעדה נגישה, ניתן להתנייד בה באמצעות כיסא גלגלים וקיימים בה שירותים נגישים. מידע נוסף מופיע בהצהרת הנגישות של קלומפוס.</div>
+            <div class="lbl">H3: האם כדאי להזמין מקום מראש?</div>
+            <div class="copy">מומלץ להזמין מקום מראש, במיוחד בסופי שבוע ובשעות העומס. ניתן לבצע הזמנה ישירות דרך האתר.</div>
+            <div class="lbl">H3: האם ניתן להזמין טייק אווי?</div>
+            <div class="copy">כן. ניתן לבצע הזמנת טייק אווי מראש ולאסוף אותה מקלומפוס במתחם דפנה׳לה.</div>
+
+            <h3 class="step">H2: מתכננים להגיע לקלומפוס?</h3>
+            <div class="copy">בואו ליהנות מהמבורגר טוב, בירה קרה וארוחה שכיף לעצור בשבילה.</div>
+            <p class="body">מתחת לטקסט, חמישה כפתורים: לתפריט קלומפוס, להזמנת שולחן, להזמנת טייק אווי, ניווט ב-Waze, ניווט ב-Google Maps.</p>
+
+            <h3 class="step">קישורים פנימיים מהעמוד</h3>
+            <ul class="tight">
+                <li>עמוד הבית — <code>https://klompus.co.il/</code></li>
+                <li>תפריט קלומפוס — <code>https://klompus.co.il/menu/</code></li>
+                <li>הסיפור של קלומפוס — <code>https://klompus.co.il/about/</code></li>
+                <li>הצהרת הנגישות — <code>https://klompus.co.il/%D7%94%D7%A6%D7%94%D7%A8%D7%AA-%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA/</code></li>
+            </ul>
+
+            <h3 class="step">נתונים מובנים לעמוד החדש</h3>
+            <p class="body">אין ליצור ישות Restaurant נוספת בעמוד הזה, ואין להוסיף לו בלוק FAQPage נפרד, מאותן סיבות שבסעיף 2.3. Yoast ייצר עבורו WebPage ו-BreadcrumbList באופן אוטומטי, וזה מספיק.</p>
+            <p class="body">השיפור היחיד המומלץ הוא לקשר את העמוד לישות המסעדה. השדה הנכון כאן הוא <code>about</code>, כי העמוד עוסק במסעדה אך אינו הישות עצמה. אם מיושם הפילטר מסעיף 2.5, המזהה יהיה <code>#organization</code> במקום <code>#restaurant</code>:</p>
+            <pre><code>add_filter( 'wpseo_schema_webpage', function ( $data ) {
+    if ( is_page( 'how-to-get' ) ) {
+        $data['about'] = [ '@id' =&gt; 'https://klompus.co.il/#restaurant' ];
+    }
+    return $data;
+} );</code></pre>
+            <div class="note">גם זה בעדיפות נמוכה. עמוד שעולה בלי השדה הזה תקין לחלוטין.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">5</div><h2>הפניית הקישורים לעמוד החדש</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">כיום כל הקישורים מפנים לעוגן <code>https://klompus.co.il/#how</code>. לאחר עליית העמוד יש להחליף את כולם ב-<code>https://klompus.co.il/how-to-get/</code>.</p>
+            <table>
+                <tr><th>#</th><th>איפה</th><th>מצב היום</th></tr>
+                <tr><td>1</td><td>התפריט הראשי, הפריט "איך מגיעים". מופיע בכל ארבעת העמודים</td><td>/#how</td></tr>
+                <tr><td>2</td><td>הפוטר, הפריט "איך מגיעים"</td><td>/#how</td></tr>
+                <tr><td>3</td><td>עמוד הסיפור, הקישור "איך מגיעים לקלומפוס" בגוף הטקסט</td><td>/#how</td></tr>
+            </table>
+            <p class="body">בלוק הכתובת בעמוד הבית נשאר במקומו כתקציר, וממשיך להציג כתובת, טלפון ושעות. מומלץ להוסיף בו קישור "לכל פרטי ההגעה" אל העמוד החדש.</p>
+            <div class="note">אין צורך בהפניה 301. הכתובת <code>/#how</code> היא עוגן בעמוד הבית ולא כתובת עצמאית, ולכן היא לא נעלמת ולא נשברת.</div>
+            <div class="lbl">בדיקה בסיום</div>
+            <p class="body">לחפש בקוד המקור של כל ארבעת העמודים את המחרוזת <code>#how</code>. התוצאה הנדרשת: אפס מופעים, למעט מזהה האזור בעמוד הבית עצמו אם הוא נשאר.</p>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">6</div><h2>עמוד התפריט: תוכן וכותרות</h2><span class="pill p-mid">בינונית</span></summary>
+        <div class="block-body">
+            <h3 class="step">6.1 פיצול מנות הילדים</h3>
+            <p class="body">כיום שלוש המנות מחוברות לכותרת H3 אחת רצופה, ללא רווח בין "120 גרם" לבין "שניצל". יש לפצל לשלוש כותרות H3 נפרדות, עם המחיר המשותף פעם אחת מתחתן:</p>
+            <div class="copy">המבורגר ילדים, בקר 120 גרם
+שניצל ילדים בלחמנייה עם חסה, עגבנייה, בצל וחמוצים
+פופקוצ׳יקן לילדים, נתחי פילה עוף בציפוי קריספי
+
+46 ₪ (כולל תוספת) / 40 ₪ (ללא תוספת)</div>
+
+            <h3 class="step">6.2 הוצאת המחירים מתוך הכותרות</h3>
+            <p class="body">מבנה הכותרות בעמוד תקין: הקטגוריות כבר H2 והמנות כבר H3. הבעיה היחידה היא שבשבע כותרות המחיר מוטמע בתוך הכותרת עצמה. בכל אחת מהן יש להשאיר בכותרת רק את השם, ולהעביר את המחיר לשורת טקסט רגילה מתחתיה.</p>
+            <table>
+                <tr><th>רמה</th><th>הכותרת היום</th><th>הכותרת אחרי</th><th>המחיר יורד לשורה נפרדת</th></tr>
+                <tr><td>H3</td><td>סלט קיסר - 32 ₪</td><td>סלט קיסר</td><td>32 ₪</td></tr>
+                <tr><td>H3</td><td>סלט חסה אגוזים - 32 ₪</td><td>סלט חסה אגוזים</td><td>32 ₪</td></tr>
+                <tr><td>H3</td><td>סלט ירקות - 24 ₪</td><td>סלט ירקות</td><td>24 ₪</td></tr>
+                <tr><td>H3</td><td>צ'יפס / מיקס צ'יפס ובטטה - 20 / 30 ₪</td><td>צ'יפס / מיקס צ'יפס ובטטה</td><td>20 / 30 ₪</td></tr>
+                <tr><td>H2</td><td>קוקטיילים - 38 ₪</td><td>קוקטיילים</td><td>38 ₪ למנה</td></tr>
+                <tr><td>H2</td><td>משקאות אלכוהוליים - 48 / 27 ₪</td><td>משקאות אלכוהוליים – פרימיום</td><td>48 / 27 ₪</td></tr>
+                <tr><td>H2</td><td>משקאות אלכוהוליים - 37 / 20 ₪</td><td>משקאות אלכוהוליים – קלאסיים</td><td>37 / 20 ₪</td></tr>
+            </table>
+            <div class="flag">שתי השורות האחרונות דורשות תשומת לב. שתי הקטגוריות נקראות היום "משקאות אלכוהוליים" ונבדלות זו מזו רק במחיר. הסרת המחיר בלבד הייתה יוצרת שתי כותרות זהות בדיוק באותו עמוד, ולכן נוספו להן שמות מבחינים. השמות המוצעים ממתינים לאישור הלקוח, ואם יאושרו שמות אחרים יש להשתמש בהם.</div>
+
+            <h3 class="step">6.3 תיקון ניסוח</h3>
+            <p class="body">הכותרת H2 <code>קינוח ושתייה חמה</code> משתנה ל-<code>קינוחים ושתייה חמה</code>.</p>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">7</div><h2>עמוד הסיפור</h2><span class="pill p-low">נמוכה</span></summary>
+        <div class="block-body">
+            <p class="lead">העמוד כבר מוגדר נכון כ-AboutPage על ידי Yoast, ואין ליצור עבורו סכמת עמוד נוספת.</p>
+            <p class="body">השיפור היחיד האפשרי הוא לקשר את העמוד לישות המסעדה, כדי להבהיר לגוגל שהסיפור עוסק באותו עסק. זה דורש הוספת שדה לישות ש-Yoast מייצר, באמצעות פילטר בקובץ הפונקציות של תבנית הבת:</p>
+            <pre><code>add_filter( 'wpseo_schema_webpage', function ( $data ) {
+    if ( is_page( 'about' ) ) {
+        $data['about'] = [ '@id' =&gt; 'https://klompus.co.il/#restaurant' ];
+    }
+    return $data;
+} );</code></pre>
+            <div class="note">זהו שיפור בעדיפות נמוכה. אם אין רצון לגעת בקוד התבנית, אפשר לוותר עליו ללא נזק. שאר הסעיפים במסמך חשובים ממנו.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">8</div><h2>עמוד ארכיון ברירת מחדל</h2><span class="pill p-mid">בינונית</span></summary>
+        <div class="block-body">
+            <p class="lead">מתוך שלושת עמודי ברירת המחדל שנבדקו, שניים כבר טופלו בעבר ואין בהם מה לעשות. נותר פריט אחד.</p>
+            <table>
+                <tr><th>כתובת</th><th>מצב שנמצא בבדיקה</th><th>פעולה</th></tr>
+                <tr><td><code>/hello-world/</code></td><td>מחזיר 404. הפוסט כבר נמחק</td><td>אין פעולה</td></tr>
+                <tr><td><code>/author/yarin/</code></td><td>מבצע הפניה 301 לעמוד הבית</td><td>אין פעולה</td></tr>
+                <tr><td><code>/category/uncategorized/</code></td><td>מחזיר 200, מוגדר <code>index, follow</code>, עם קנוניקל לעצמו</td><td>להגדיר noindex</td></tr>
+            </table>
+            <p class="body">הפעולה המומלצת: בממשק Yoast, תחת הגדרות ← סוגי תוכן ← טקסונומיות ← קטגוריות, לכבות את הצגת ארכיון הקטגוריות בתוצאות החיפוש. זו פעולה אחת, הפיכה, ובלי נגיעה בקוד.</p>
+            <div class="flag">לא לנסות למחוק את הקטגוריה Uncategorized כברירת מחדל. וורדפרס מסרב למחוק את קטגוריית ברירת המחדל של האתר, והפעולה פשוט תיכשל בשקט. מחיקה אמיתית מחייבת קודם להגדיר קטגוריית ברירת מחדל אחרת, להעביר אליה פוסטים אם יש, ורק אז למחוק. זה מאמץ מיותר עבור התועלת, ולכן ההמלצה היא noindex.</div>
+            <div class="note">אין צורך להסיר את הכתובת ממפת האתר. מפת האתר מכילה כיום רק את מפת העמודים, וארכיון הקטגוריות אינו מופיע בה כלל.</div>
+        </div>
+    </details>
+
+    <details class="block">
+        <summary class="block-head"><div class="num">9</div><h2>בדיקות סיום</h2><span class="pill p-high">גבוהה</span></summary>
+        <div class="block-body">
+            <p class="lead">לבצע אחרי ההטמעה, לפני החזרת המשימה.</p>
+            <p class="body">לרוקן קאש ו-CDN לפני הבדיקות, אחרת נבדקת גרסה ישנה.</p>
+            <ul class="tight">
+                <li>בכל חמשת העמודים, סקריפט הבדיקה מסעיף 1 מחזיר רק <code>דפנה׳לה</code> ו-<code>דפנה</code>.</li>
+                <li>עמוד הבית, עמוד התפריט והעמוד החדש עוברים גם ב-Schema Markup Validator וגם ב-Rich Results Test של גוגל, ללא שגיאות וללא אזהרות חדשות.</li>
+                <li>בעמוד הבית קיימת ישות WebPage אחת בלבד. חיפוש <code>#webpage</code> מחזיר אפס תוצאות.</li>
+                <li>בעמוד התפריט אין יותר ישות Restaurant. חיפוש <code>#restaurant</code> בעמוד הזה מחזיר אפס תוצאות.</li>
+                <li>בכל האתר קיימת נקודת ציון אחת בלבד, והיא <code>33.2287142, 35.6407689</code>.</li>
+                <li>אחרי הפענוח, הטלפון, הכתובת, השעות, נקודת הציון, כתובת התפריט וקישורי הרשתות זהים בכל העמודים שבהם הם מופיעים.</li>
+                <li>שני קישורי Tabit ושני קישורי הניווט נפתחים ומגיעים ליעד הנכון, גם ממכשיר נייד.</li>
+                <li>העמוד החדש מחזיר 200, מוגדר <code>index, follow</code>, יש לו קנוניקל לעצמו, והוא מופיע פעם אחת במפת האתר של Yoast.</li>
+                <li>אפס מופעים של <code>#how</code> בקישורי הניווט בכל העמודים.</li>
+                <li>העמוד החדש נבדק במסך נייד: פריסת RTL תקינה, הטבלה נגללת בתוך עצמה בלי לגרור את העמוד, המפה נטענת בלי קפיצת תוכן, והכפתורים לחיצים ונגישים גם במקלדת.</li>
+                <li>בסיום, לבקש סריקה מחדש של העמוד החדש ושל העמודים ששונו, דרך בדיקת כתובת URL ב-Search Console.</li>
+            </ul>
+        </div>
+    </details>
+
+    <footer>
+        <span><b>NC Digital</b> · קלומפוס · מסמך הטמעה</span>
+        <span>ספטמבר 2026</span>
+    </footer>
+</div>
+<script>
+function toggleAll(o){document.querySelectorAll('details.block').forEach(function(d){d.open=o;});}
+</script>
+</body>
+</html>
