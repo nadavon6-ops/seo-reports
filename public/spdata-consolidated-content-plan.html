@@ -1,0 +1,447 @@
+<!DOCTYPE html><html><head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Language" content="he">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>sp.data - תוכנית תוכן מאוחדת</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { direction:rtl; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:linear-gradient(180deg,#0f172a 0%,#1e293b 50%,#0f172a 100%); min-height:100vh; color:#e2e8f0; font-size:16px; line-height:1.7; }
+.wrap { max-width:1180px; margin:0 auto; padding:0 16px 44px; }
+.header { background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 50%,#1e293b 100%); padding:46px 25px 38px; text-align:center; border-radius:0 0 30px 30px; margin-bottom:22px; }
+.header .client { font-size:2.4em; font-weight:800; color:#fff; text-shadow:2px 4px 12px rgba(0,0,0,.3); }
+.header h1 { font-size:1.35em; color:rgba(255,255,255,.95); margin-top:6px; font-weight:600; }
+.header .meta { display:inline-block; background:rgba(255,255,255,.18); padding:9px 26px; border-radius:30px; font-weight:600; border:1px solid rgba(255,255,255,.3); margin-top:16px; font-size:.95em; }
+.toolbar { display:flex; gap:10px; margin-bottom:16px; }
+.toolbar button { background:rgba(59,130,246,.15); color:#60a5fa; border:1px solid rgba(59,130,246,.4); padding:8px 18px; border-radius:20px; cursor:pointer; font-family:inherit; font-size:.9em; }
+.toolbar button:hover { background:rgba(59,130,246,.3); }
+.sec { background:rgba(255,255,255,.03); border-radius:16px; border:1px solid rgba(255,255,255,.08); margin-bottom:14px; overflow:hidden; }
+.sec summary { list-style:none; display:flex; align-items:center; gap:14px; padding:18px 22px; cursor:pointer; }
+.sec summary::-webkit-details-marker { display:none; }
+.sec-num { background:linear-gradient(135deg,#0ea5e9,#3b82f6); color:#fff; font-weight:800; min-width:34px; height:34px; padding:0 9px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.85em; }
+.sec-title { font-size:1.08em; font-weight:700; color:#fff; flex:1; }
+.sec-meta { padding:4px 13px; border-radius:14px; font-size:.75em; white-space:nowrap; }
+.m-gap { background:rgba(16,185,129,.16); color:#6ee7b7; border:1px solid rgba(16,185,129,.35); }
+.m-cov { background:rgba(244,63,94,.15); color:#fda4af; border:1px solid rgba(244,63,94,.35); }
+.m-part { background:rgba(234,179,8,.14); color:#fde047; border:1px solid rgba(234,179,8,.3); }
+.chev { font-size:1.5em; color:#64748b; transform:rotate(90deg); transition:transform .2s; }
+.sec[open] .chev { transform:rotate(-90deg); }
+.sec-body { padding:4px 22px 22px; }
+.blk { font-size:1em; color:#7dd3fc; margin:18px 0 8px; font-weight:700; }
+.grp { margin:28px 0 12px; padding:0 4px; }
+.grp h2 { color:#7dd3fc; font-size:1.1em; font-weight:700; }
+.grp p { color:#94a3b8; font-size:.88em; margin-top:5px; line-height:1.6; }
+.pill { display:inline-block; border-radius:12px; padding:4px 12px; font-size:.78em; margin:0 0 7px 7px; background:rgba(148,163,184,.12); border:1px solid rgba(148,163,184,.24); color:#cbd5e1; }
+.p-lo { background:rgba(16,185,129,.15); border-color:rgba(16,185,129,.35); color:#6ee7b7; }
+.p-mid { background:rgba(234,179,8,.13); border-color:rgba(234,179,8,.3); color:#fde047; }
+.p-hi { background:rgba(244,63,94,.13); border-color:rgba(244,63,94,.3); color:#fda4af; }
+.p-buy { background:rgba(139,92,246,.16); border-color:rgba(139,92,246,.4); color:#c4b5fd; }
+.why { color:#cbd5e1; font-size:.93em; line-height:1.75; }
+.why b { color:#7dd3fc; }
+.note { background:rgba(251,191,36,.09); border-right:3px solid #fbbf24; border-radius:8px; padding:11px 15px; color:#fde68a; font-size:.89em; margin-top:10px; }
+.good { background:rgba(16,185,129,.08); border-right:3px solid #10b981; border-radius:8px; padding:11px 15px; color:#a7f3d0; font-size:.89em; margin-top:10px; }
+.tbl-wrap { overflow-x:auto; }
+.tbl { width:100%; border-collapse:collapse; font-size:.88em; margin-top:8px; }
+.tbl th { text-align:right; padding:9px 8px; font-size:.82em; color:#64748b; border-bottom:1px solid rgba(255,255,255,.12); white-space:nowrap; }
+.tbl td { padding:9px 8px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top; color:#cbd5e1; }
+.tbl td.kw { color:#fff; font-weight:600; }
+.num { font-variant-numeric:tabular-nums; unicode-bidi:embed; }
+.hi { color:#c4b5fd; font-weight:700; }
+.footer { text-align:center; padding:30px 10px 6px; margin-top:26px; border-top:1px solid rgba(255,255,255,.1); }
+.footer .brand { font-size:1.25em; font-weight:800; color:#7dd3fc; }
+.footer .info { color:#64748b; font-size:.85em; margin-top:5px; }
+@media (max-width:820px){ .header .client{font-size:1.7em;} }
+
+
+.m-src { background:rgba(139,92,246,.15); color:#c4b5fd; border:1px solid rgba(139,92,246,.35); }
+.m-res { background:rgba(14,165,233,.13); color:#7dd3fc; border:1px solid rgba(14,165,233,.32); }
+.link { background:rgba(59,130,246,.08); border-right:3px solid #3b82f6; border-radius:8px; padding:11px 15px; color:#bfdbfe; font-size:.89em; margin-top:10px; }
+.link b { color:#93c5fd; }
+.newkw { background:rgba(168,85,247,.09); border-right:3px solid #a855f7; border-radius:8px; padding:11px 15px; color:#e9d5ff; font-size:.89em; margin-top:10px; }
+.newkw b { color:#d8b4fe; }
+</style></head><body><div class="wrap">
+<div class="header"><div class="client">sp.data</div>
+<h1>תוכנית תוכן מאוחדת: דאטה ואנליטיקה + AI</h1>
+<div class="meta">21 נושאים · ספטמבר 2026</div></div>
+<div class="toolbar">
+<button onclick="document.querySelectorAll('details.sec').forEach(d=>d.open=true)">פתיחת הכל</button>
+<button onclick="document.querySelectorAll('details.sec').forEach(d=>d.open=false)">סגירת הכל</button>
+</div>
+<div class="grp"><h2>מבנה התוכנית</h2><p>איחוד של שתי התוכניות לרשימה אחת, מחולקת לשני המסלולים שביקשתם. כל נושא מסומן במקורו: <b>הצעה שלכם</b> או <b>תוספת ממחקר</b>. כל הכותרות שלכם מופיעות בנוסח שאישרתם, מילה במילה. במקרים שבהם נושא מהמחקר חפף לנושא שהצעתם, נשמרה ההצעה שלכם בלבד. לצד כל נושא מופיעים נפח החיפוש והקושי שנמדדו מחדש בספטמבר 2026, בדיקת כיסוי מול כל 95 מאמרי הבלוג ו-108 עמודי האתר, ויעד הקישור הפנימי.</p></div>
+
+<details class="sec"><summary>
+<div class="sec-num">פתיחה</div>
+<div class="sec-title">שלושה דברים שכדאי לדעת לפני שמתחילים</div>
+<div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="good"><b>מסלול ה-AI שווה יותר מבחינה מסחרית.</b> ביטויי ה-AI בתוכנית נושאים עלות קליק של 1.39 עד 1.97, לעומת 0.02 עד 0.50 ברוב ביטויי הדאטה וה-BI. הפער הזה מצדיק את ההחלטה שלכם להרחיב את מסלול ה-AI. שני החריגים במסלול הדאטה הם דשבורד BI בעלות קליק 2.14 ו-QlikView בעלות קליק 1.40.</div>
+<div class="note"><b>שלושה נושאים דורשים זווית מדויקת כדי לא להתחרות בתוכן קיים.</b> סוכני AI, שלושה מאמרים קיימים באתר. ETL vs. ELT, קיים מאמר על ETL. דוגמאות דשבורדים, קיימים שלושה מאמרי דשבורדים. בכל אחד מהם הזווית שניסחתם היא הנכונה, ובלבד שהמאמר לא יחזור על ההסבר הבסיסי שכבר קיים.</div>
+<div class="note"><b>OLAP ממתין להחלטה שלכם.</b> הנושא לא נכלל ברשימה עד שתשלימו את הבדיקה הפנימית. לידיעתכם, הביטוי olap מה זה עומד על 10 חיפושים בלבד בקושי 23, ואין באתר עמוד שמכוון אליו. אם תחליטו לקדם אותו, ההמלצה היא לאחד אותו עם מאמר מידול הנתונים למדריך אחד.</div>
+</div></details>
+
+<div class="grp"><h2>מסלול א: דאטה ואנליטיקה</h2><p>חמישה עשר נושאים, מסודרים לפי חוזק ההזדמנות. שבעה מהם הצעות שלכם ושמונה תוספות מהמחקר</p></div>
+<details class="sec"><summary>
+<div class="sec-num">1</div>
+<div class="sec-title">מה זה KPI, איך בוחרים מדדי ביצוע ואיך מנהלים אותם באמצעות BI</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">מה זה KPI: 590 חיפושים</span><span class="pill p-lo">קושי 15</span><span class="pill ">KPI: 2,400 בקושי 68</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים מתוך 95 ואפס עמודים. הנושא אינו קיים באתר בשום צורה.</p>
+<div class="blk">מתחרים</div>
+<p class="why">נושא מבוקש שמכוסה היום בעיקר על ידי אתרי ייעוץ ניהולי ואתרי הדרכה, ולא על ידי ספקי BI. אין מתחרה ישראלי מעולם ה-BI שמחזיק את המונח.</p>
+<div class="blk">ביטוי יעד חדש</div>
+<div class="newkw">מילת היעד: <b>מה זה KPI</b>, 590 חיפושים בקושי 15. אין באתר עמוד שמכוון לביטוי הזה, ולכן המאמר עצמו הוא הנכס המדרג. הוא יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span> כדי להעביר אליהם את הסמכות.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הנפח הגבוה ביותר במסלול הדאטה, ובקושי 15 בלבד גם הכי בר-השגה. ההסתייגות שלכם נכונה: הביטוי הרחב KPI עומד על קושי 68 והוא ניהולי באופיו. הנוסח שלכם, שמחבר את המדדים לניהול באמצעות BI, הוא בדיוק מה שמסיט את המאמר לעולם הטכנולוגי שלכם.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">2</div>
+<div class="sec-title">מה זה אינטגרציה של מערכות ונתונים: המדריך הארגוני</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">אינטגרציה פירוש: 390</span><span class="pill p-lo">קושי 8</span><span class="pill p-lo">מה זה אינטגרציה: 320 בקושי 7</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אין מאמר בעברית. קיים מאמר באנגלית בלבד, <span dir="ltr">what-is-data-integration</span>, שאינו משרת קהל שמחפש בעברית.</p>
+<div class="blk">מתחרים</div>
+<p class="why">התוצאות החיות מורכבות כמעט כולן מערכי מילון: <span dir="ltr">milog.co.il</span>, ויקיפדיה ו-<span dir="ltr">archi-tech.co.il</span>. <span dir="ltr">aman.co.il</span> היא היחידה מעולם ה-IT שמדורגת, במקומות 6 עד 15. אין ספק אינטגרציה שמחזיק את המונח.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>מה זה אינטגרציה</b> ו<b>אינטגרציה פירוש</b>, יחד כ-710 חיפושים בקושי 7 עד 8. המאמר יקשר אל <span dir="ltr">/אינטגרציית-נתונים-ואיכות-נתונים/</span> ואל <span dir="ltr">/אינטגרציה-בין-אפליקציות-וממשקי-api/</span>, שני עמודי שירות קיימים שכמעט ואינם מקבלים חשיפות היום.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">אשכול הביקוש הגדול ביותר בכל התוכנית שנמצא בקושי נמוך. חשוב לשים לב שהכוונה מילונית וכללית, ולכן המבנה הנכון הוא פתיח הגדרתי קצר ומיד מעבר לאינטגרציה של מערכות ונתונים בארגון. הערך אינו בהמרה ישירה אלא בהזנת עמודי האינטגרציה, שהם ליבת השירות.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">3</div>
+<div class="sec-title">Data Governance: איך מבטיחים נתונים אמינים, מאובטחים ומוכנים ל-BI ול-AI</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">data governance: 70</span><span class="pill p-lo">קושי 0</span><span class="pill p-buy">עלות קליק 0.50</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים. קיימים שני עמודי פתרון, <span dir="ltr">/איכות-נתונים-ומשילות-נתונים/</span> והגרסה האנגלית שלו.</p>
+<div class="blk">מתחרים</div>
+<p class="why">הביטוי האנגלי נשלט בישראל על ידי תוכן גלובלי, אך בקושי 0 בלבד. אף מפיץ או אינטגרטור ישראלי לא מחזיק תוכן עברי בנושא.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>data governance</b>, 70 חיפושים בקושי 0 ובעלות קליק 0.50. המאמר יקשר אל <span dir="ltr">/איכות-נתונים-ומשילות-נתונים/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">קושי 0 עם עלות קליק 0.50, מהגבוהות במסלול הדאטה. המיקוד שבחרתם, נתונים שמוכנים ל-BI ול-AI, הוא גם מה שמחבר את המאמר למסלול ה-AI ולא משאיר אותו נושא תשתית מבודד. הערה טרמינולוגית: בחומרים שלכם מופיעים גם משילות נתונים וגם מימשל נתונים. כדאי לקבע מונח עברי אחד לגוף המאמר.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">4</div>
+<div class="sec-title">Power BI מול Qlik Sense: השוואה מקצועית לבחירת פלטפורמת BI</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">power bi מה זה: 70</span><span class="pill p-lo">קושי 6</span><span class="pill p-hi">power bi: 6,600 בקושי 94</span><span class="pill ">qlik sense: 480</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים עם השוואת פלטפורמות בכותרת או בכותרת משנה. קיימים מאמרים חד-צדדיים על יתרונות Qlik Sense, אך לא השוואה.</p>
+<div class="blk">מתחרים</div>
+<p class="why">שישה מתחרים מדורגים על הביטוי המידעי, ושניים מהם מצוטטים ב-AI Overview: <span dir="ltr">datamind.co.il</span> במקום 1, <span dir="ltr">naya-college.co.il</span> במקום 1, <span dir="ltr">excelando.co.il</span> במקום 1 על power bi מה זה, ואחריהם <span dir="ltr">bina-bi</span>, <span dir="ltr">bionit</span> ו-<span dir="ltr">datacore</span>.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>power bi מה זה</b>, 70 חיפושים בקושי 6, מתוך אשכול שראשו 6,600. המאמר יקשר אל <span dir="ltr">/למה-qlik-spdata/</span> ואל <span dir="ltr">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">כוונת החיפוש קרובה מאוד לבחירת ספק ומערכת, ומתאימה ישירות למיצוב של sp.data כמפיצה הבלעדית של Qlik בישראל. המצב שבו שלושה בתי הדרכה מדורגים ראשונים על ההשוואה, בעוד המפיץ עצמו אינו מחזיק תוכן, הוא הפער הבולט ביותר במסלול הדאטה.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">5</div>
+<div class="sec-title">מה זה CDC (Change Data Capture) ואיך הוא מאפשר אינטגרציית נתונים בזמן אמת</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">cdc: 470</span><span class="pill p-hi">קושי 64</span><span class="pill ">cdc data: 70 בקושי 62</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים מתוך 95. קיים עמוד פתרון אחד בלבד, <span dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</span>, ללא שום תוכן תומך.</p>
+<div class="blk">מתחרים</div>
+<p class="why">הביטוי CDC רב-משמעי ומושך תוצאות מתחומים אחרים לגמרי. אין מתחרה ישראלי מתחום הדאטה שמחזיק את המונח בעברית.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>cdc data</b>, 70 חיפושים, ולא הביטוי הרחב cdc שעומד על 470 בקושי 64 ורב-משמעי. המאמר יקשר אל <span dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">בתשובה לשאלתכם: אכן אין מאמר. הנפח על הביטוי הרחב אמיתי, אך הקושי גבוה והמונח רב-משמעי, ולכן הכותרת שניסחתם, שמפרשת את ראשי התיבות ומוסיפה את הקשר זמן האמת, נכונה גם מבחינת דיוק החיפוש.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">6</div>
+<div class="sec-title">ETL vs. ELT: מה ההבדל ואיך בוחרים את הגישה הנכונה לאינטגרציית נתונים</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-part">חלקי</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">etl vs elt: 50</span><span class="pill p-mid">קושי 44</span><span class="pill p-lo">תהליכי etl: 40 בקושי 9</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיים מאמר אחד, מה זה ETL ומהם תהליכי ETL, ושלושה עמודי פתרון בהם <span dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</span>.</p>
+<div class="blk">מתחרים</div>
+<p class="why">ההשוואה עצמה כמעט ואינה מכוסה בעברית. רוב התוכן הישראלי עוצר בהסבר מה זה ETL.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>etl vs elt</b>, 50 חיפושים. המאמר יקשר אל <span dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</span> ואל <span dir="ltr">/טעינת-נתונים-etl-מתקדם/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הנפח צנוע, אך ההשוואה אינה מכוסה: המאמר הקיים מסביר מה זה ETL ואינו עוסק בבחירה בין שתי הגישות. חשוב שהמאמר החדש יתמקד בהשוואה ובשיקולי הבחירה בלבד, ויקשר אל המאמר הקיים, כדי שלא יתחרה בו.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">7</div>
+<div class="sec-title">QlikView מול Qlik Sense: מדריך מעבר מסודר לארגונים</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">qlikview: 170 בקושי 31</span><span class="pill p-buy">עלות קליק 1.40</span><span class="pill p-lo">qlikview bi: 30 בקושי 18</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים בנושא. קיימים עמוד <span dir="ltr">/qlik-sense-clinet-manage/</span> וקורסי QlikView באקדמיה.</p>
+<div class="blk">מתחרים</div>
+<p class="why">על שאילתה ממותגת של Qlik, <span dir="ltr">datamind.co.il</span> מדורגת ראשונה וגם מצוטטת ב-AI Overview, בעוד שהמפיץ הבלעדי של Qlik בישראל אינו מחזיק תוכן בנושא.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>qlikview</b>, 170 חיפושים בקושי 31 ובעלות קליק 1.40. המאמר יקשר אל <span dir="ltr">/qlik-sense-clinet-manage/</span>, אל <span dir="ltr">/למה-qlik-spdata/</span> ואל <span dir="ltr">/אקדמיה/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">קהל קטן יותר, אך בעל כוונה עסקית מדויקת: בסיס לקוחות QlikView הוותיק ששוקל מעבר ל-Qlik Sense. עלות קליק 1.40 היא מהגבוהות במסלול הדאטה, והמאמר משרת גם את מסלול ההדרכות.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">8</div>
+<div class="sec-title">מחולל דוחות ודוחות BI אוטומטיים: יכולות ויתרונות לארגון</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">מחולל דוחות: 50</span><span class="pill p-lo">קושי 10</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים. קיים עמוד שירות ייעודי לדוחות והתראות חכמות, ללא שום מאמר תומך.</p>
+<div class="blk">מתחרים</div>
+<p class="why">מתחרה אחד בלבד מדורג על הביטוי, <span dir="ltr">inflow.co.il</span> במקום 9. השאר תוצאות כלליות.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>מחולל דוחות</b>, 50 חיפושים בקושי 10. המאמר יקשר אל <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span> ואל קורס nPrinting באקדמיה.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">קושי 10 עם מתחרה יחיד במקום 9 הוא אחד המצבים הנוחים ביותר בתוכנית. הכוונה מעשית וקרובה להמרה, והעמוד שאליו הוא מקשר קיים וממתין לתוכן.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">9</div>
+<div class="sec-title">דוגמאות של דשבורדים לפי תחום</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">דשבורד ניהולי: 110 בקושי 4</span><span class="pill p-buy">דשבורד BI: 30, עלות קליק 2.14</span><span class="pill ">דשבורד פיננסי: 30</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיימים שלושה מאמרים על דשבורדים באופן כללי: מהו דשבורד BI, איך לאפיין דשבורד ניהולי, והאם הדשבורד מת. אין שום תוכן שמציג דוגמאות לפי תעשייה.</p>
+<div class="blk">מתחרים</div>
+<p class="why">בתי הדרכה ואתרי אקסל מחזיקים את ביטויי הדשבורד. אין ספק BI ישראלי שמציג גלריית דוגמאות לפי תחום.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>דשבורד ניהולי</b>, 110 חיפושים בקושי 4. שימו לב שהביטוי <b>דשבורד BI</b> נושא עלות קליק 2.14, הגבוהה במסלול הדאטה. המאמר יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">מכיוון שכבר קיימים שלושה מאמרי דשבורדים באתר, המאמר הזה חייב להיות גלריית דוגמאות לפי תעשייה ולא הסבר נוסף על מהו דשבורד, אחרת הוא יתחרה בהם. בתשובה לשאלתכם על מקור: <span dir="ltr">qlik.com/us/dashboard-examples</span> מחזיק שלושה חלקים רלוונטיים, ו-<span dir="ltr">demos.qlik.com</span> מציג דמואים חיים. שני המקורות של Qlik עצמה.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">10</div>
+<div class="sec-title">מעבר מדשבורדים באקסל למערכת BI: השיקולים והתהליך</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">דשבורד באקסל: 30 בקושי 4</span><span class="pill ">דשבורד אקסל: 20</span><span class="pill ">ניתוח נתונים באקסל: 20</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אין תוכן ייעודי. האתר מדורג היום במקום 38 על הביטוי.</p>
+<div class="blk">מתחרים</div>
+<p class="why">התוצאות שייכות לאתרי אקסל: <span dir="ltr">excelwiz</span>, <span dir="ltr">excel-pedia</span>, <span dir="ltr">excel-vba</span>. שלושה גופים מעולם הדאטה מדורגים על ביטויי הדשבורד באקסל: <span dir="ltr">naya-college</span>, <span dir="ltr">nogamy</span> ו-<span dir="ltr">excelando</span>.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>דשבורד באקסל</b>, 30 חיפושים בקושי 4, מתוך אשכול של כ-70. המאמר יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל המאמר הקיים על אפיון דשבורד ניהולי.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">כאב עסקי ברור וקהל יעד מדויק: ארגונים שמנתחים נתונים באקסל ומגיעים לגבול היכולת שלו. הזווית של ספק BI אינה איך בונים דשבורד באקסל אלא מתי אקסל מפסיק להספיק, וזו בדיוק הזווית שאתרי האקסל לא יכתבו.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">11</div>
+<div class="sec-title">Tableau מול Qlik Sense: השוואת יכולות לארגונים</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">tableau מה זה: 30 בקושי 7</span><span class="pill p-hi">tableau: 1,900 בקושי 91</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים בנושא.</p>
+<div class="blk">מתחרים</div>
+<p class="why">שישה מתחרים מדורגים על הביטוי ואף אחד מהם אינו מפיץ Qlik: <span dir="ltr">naya-college</span> במקום 1, <span dir="ltr">bina-bi</span> במקום 12, <span dir="ltr">datacore</span> במקום 20, ואחריהם <span dir="ltr">ramkedem</span>, <span dir="ltr">nogamy</span> ו-<span dir="ltr">excelando</span>.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>tableau מה זה</b>, 30 חיפושים בקושי 7. המאמר יקשר אל <span dir="ltr">/למה-qlik-spdata/</span>, אל <span dir="ltr">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span> ואל מאמר ההשוואה מול Power BI.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">רלוונטי מסחרית, אך פחות חזק מההשוואה מול Power BI, ולכן הוא בא אחריה. יחד השניים מבססים את האתר כמקור הישראלי להשוואות פלטפורמות BI, פורמט שמנועי AI מרבים לצטט.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">12</div>
+<div class="sec-title">Data Lake מול Data Warehouse מול Lakehouse: מה מתאים לארגון שלכם</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">data lake vs data warehouse: 40</span><span class="pill p-mid">קושי 46</span><span class="pill ">מחסן נתונים: 10</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיימים שני מאמרים נפרדים, מה זה אגם נתונים ומה הם מחסני נתונים, וכן מאמר על ניהול Data Lakehouses. אין מאמר השוואה שמחבר ביניהם. עמוד <span dir="ltr">/open-lakehouse/</span> נותר ללא מאמר תומך.</p>
+<div class="blk">מתחרים</div>
+<p class="why"><span dir="ltr">qlik.com</span> העולמי מדורג ראשון על הביטוי באנגלית ומהווה מודל תוכן מוכן. <span dir="ltr">naya-college</span> מחזיקה השוואה משלה בעברית, לצד <span dir="ltr">ibm.com</span> ו-<span dir="ltr">databricks.com</span> באנגלית.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>data lake vs data warehouse</b>, 40 חיפושים. המאמר יקשר אל <span dir="ltr">/open-lakehouse/</span>, אל <span dir="ltr">/מודרניזציה-של-מחסני-נתונים-בענן/</span> ואל שני המאמרים הקיימים.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הערך העיקרי אינו תנועה ישירה אלא סגירת אשכול: שלושה נכסים קיימים באתר ללא מאמר שמחבר ביניהם, ועמוד מוצר שאין לו תוכן תומך. שני הביטויים נמצאים ברשימת המעקב המאושרת שלכם ב-SE Ranking.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">13</div>
+<div class="sec-title">מה זה Data Pipeline ואיך בונים תהליך נתונים יעיל ואמין</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-part">חלקי</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">ללא נפח נמדד בעברית</span><span class="pill p-mid">קיים מאמר באנגלית</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיים מאמר אחד, <span dir="ltr">what-are-data-pipelines</span>, אך הוא באנגלית בלבד ואינו משרת קהל שמחפש בעברית.</p>
+<div class="blk">מתחרים</div>
+<p class="why">אין תוכן עברי משמעותי בנושא אצל אף מתחרה. גם הביטוי העברי צינור נתונים אינו נושא נפח מדוד.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">אין נפח מדוד לביטוי בעברית, ולכן זהו מאמר תומך ולא מאמר לדירוג. הוא יקשר אל <span dir="ltr">/qlik-data-integration/</span> ואל <span dir="ltr">/מחברים-ואינטגרציות-למקורות-דאטה/</span>, וכן אל המאמר האנגלי הקיים.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">המאמר החדש אינו כפילות אלא הגרסה העברית שחסרה. חשוב לקשר בין השניים. בעולם ה-B2B הטכני בישראל, היעדר נפח מדוד לביטוי עברי נובע לרוב מכך שאנשי המקצוע מחפשים באנגלית, ואינו מעיד על היעדר ביקוש.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">14</div>
+<div class="sec-title">מה זה Embedded Analytics ואיך משלבים יכולות BI במוצרי תוכנה ו-SaaS</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער בעברית</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">embedded analytics: 10</span><span class="pill p-mid">קושי 56</span><span class="pill p-buy">נושא מכירה</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיים מאמר אחד באנגלית, <span dir="ltr">increasing-revenue-with-embedded-analytics</span>, ושני עמודי פתרון, <span dir="ltr">/אנליטיקה-מוטמעת/</span> והגרסה האנגלית.</p>
+<div class="blk">מתחרים</div>
+<p class="why">אין תוכן עברי אצל אף מתחרה. השוק הזה קטן ומקצועי, והתחרות על הביטוי נמוכה.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">הנפח הנמדד נמוך מאוד, ולכן זהו מאמר תומך מכירה ולא מאמר לדירוג. הוא יקשר אל <span dir="ltr">/אנליטיקה-מוטמעת/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הערך אינו בתנועה אורגנית אלא בתמיכה במכירה מול ISVs וחברות תוכנה, וזהו נושא שמצדיק את עצמו עסקית ולא לפי נפח. יש לכם כבר בריף מוכן: במייל מדצמבר 2024 מהחברה הקודמת קיים בריף מלא של 1,800 מילים בדיוק לנושא הזה, עם מבנה בן שבעה פרקים, קהל יעד מוגדר ומקרי בוחן. לא נמצא מאמר תואם באתר, ולכן ככל הנראה מעולם לא נכתב. אפשר להתחיל ממנו במקום מאפס.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">15</div>
+<div class="sec-title">נרמול נתונים וסכמת כוכב: איך בונים מודל נתונים נכון ל-BI</div>
+<div class="sec-meta m-res">תוספת ממחקר</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">נרמול נתונים: 20 בקושי 12</span><span class="pill ">סכמת כוכב: ללא נפח נמדד</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס אזכורים לנרמול או לסכמת כוכב בכל האתר, במאמרים ובעמודים כאחד.</p>
+<div class="blk">מתחרים</div>
+<p class="why"><span dir="ltr">ramkedem.com</span> מדורגת ראשונה עם מאמר ייעודי, לצד ויקיפדיה ומדריכים טכניים. אין מתחרה מסחרי שמחזיק את האשכול בעברית.</p>
+<div class="blk">ביטוי יעד חדש</div>
+<div class="newkw"><b>ביטוי חדש: אין באתר עמוד שמכוון לנרמול נתונים או למידול נתונים.</b> המאמר יקשר אל המאמר הקיים על מחסני נתונים ואל מאמר ה-OLAP, אם יאושר.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הנושא הנישתי ביותר בתוכנית, והוא נמצא בסוף הרשימה בהתאם. הערך הוא סמכות מקצועית ונוכחות במנועי AI ולא תנועה או המרה. אפשרות חלופית: לאחד אותו עם מאמר ה-OLAP למדריך מידול נתונים אחד ומקיף.</p>
+</div></details>
+
+<div class="grp"><h2>מסלול ב: AI</h2><p>שישה נושאים, כולם בנוסח שאישרתם, מסודרים לפי חוזק ההזדמנות</p></div>
+<details class="sec"><summary>
+<div class="sec-num">16</div>
+<div class="sec-title">אוטומציה עסקית מבוססת נתונים: איך הופכים תובנות לפעולות אוטומטיות</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">אוטומציה עסקית: 590</span><span class="pill p-lo">קושי 16</span><span class="pill p-buy">עלות קליק 1.57</span><span class="pill p-buy">כוונה מסחרית</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים. קיימים חמישה עמודי פתרון בתחום האוטומציה, בהם <span dir="ltr">/אוטומציה-והפעלת-תהליכים-מבוססי-דאטה/</span> ו<span dir="ltr">/אוטומציה-של-תהליכים-עסקיים/</span>.</p>
+<div class="blk">מתחרים</div>
+<p class="why">השוק הזה נשלט על ידי בתי תוכנה ומטמיעי אוטומציה כלליים, ולא על ידי ספקי דאטה. הזווית של הפיכת תובנה מהדאטה לפעולה אוטומטית אינה מכוסה על ידי אף אחד מהם.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>אוטומציה עסקית</b>, 590 חיפושים בקושי 16 ובעלות קליק 1.57. המאמר יקשר אל <span dir="ltr">/אוטומציה-של-תהליכים-עסקיים/</span> ואל <span dir="ltr">/אוטומציה-והפעלת-תהליכים-מבוססי-דאטה/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הנושא החזק ביותר בכל התוכנית מבחינת נתונים: 590 חיפושים, קושי 16 בלבד, עלות קליק 1.57, וגוגל מסמן אותו ככוונה מסחרית מפורשת. זהו גם הנושא עם הכי הרבה עמודי פתרון קיימים שממתינים לתוכן שיפנה אליהם. ההמלצה היא להתחיל ממנו.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">17</div>
+<div class="sec-title">איך משלבים Agentic AI עם אנליטיקה עסקית כדי לייצר ערך אמיתי מהדאטה</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">בינה מלאכותית לעסקים: 110</span><span class="pill p-lo">קושי 17</span><span class="pill p-buy">עלות קליק 1.97</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אין מאמר שמחבר בין agentic AI לאנליטיקה עסקית. המאמרים הקיימים עוסקים ביכולות בודדות ולא בשילוב.</p>
+<div class="blk">מתחרים</div>
+<p class="why">התוכן הישראלי בנושא AI לעסקים כללי ברובו ומגיע מסוכנויות דיגיטל ומיועצים, ולא מספקי אנליטיקה. החיבור לדאטה הארגונית אינו מכוסה.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>בינה מלאכותית לעסקים</b>, 110 חיפושים בקושי 17 ובעלות קליק 1.97. המאמר יקשר אל <span dir="ltr">/agentic-ai/</span> ואל <span dir="ltr">/מנוע-אסוציאטיבי-מבוסס-ai/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">זהו מאמר האב של מסלול ה-AI, וכל שאר המאמרים במסלול יקשרו אליו. עלות קליק 1.97 בקושי 17 היא אחת ההזדמנויות הטובות ברשימה כולה.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">18</div>
+<div class="sec-title">סוכני AI בארגון: איך הם עובדים, מה הם יכולים לעשות ובמה הם שונים מצ'אטבוטים</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-cov">קיים כיסוי</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">סוכן AI: 320</span><span class="pill p-mid">קושי 44</span><span class="pill p-buy">עלות קליק 1.39</span><span class="pill p-hi">agentic ai: 760 בקושי 95</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">שלושה מאמרים קיימים: Agentic AI Assistant, Qlik Discovery Agent ו-Agentic Data Engineering, לצד ארבעה עמודי פתרון. זהו הנושא היחיד בתוכנית שכבר מכוסה באתר.</p>
+<div class="blk">מתחרים</div>
+<p class="why">התחרות על הביטוי העברי בינונית. הביטויים האנגליים agentic ai ו-ai agents נושאים נפח גבוה יותר אך בקושי 95 עד 100, כלומר תוצאות גלובליות שלא ניתן להתחרות בהן.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>סוכן AI</b> בעברית, 320 חיפושים בקושי 44, ולא הביטויים האנגליים. המאמר יקשר אל <span dir="ltr">/agentic-ai/</span> ואל <span dir="ltr">/עוזר-ai-חכם/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">ציינתם שהנושא דחוף, אך זהו הנושא היחיד ברשימה שכבר מכוסה, ולכן הוא דורש זהירות. הזווית שניסחתם, ההשוואה לצ'אטבוט וההסבר התפעולי, היא בדיוק מה שלא קיים באף אחד משלושת המאמרים, והיא זו שמצדיקה מאמר נוסף. הקושי על הביטוי העברי עלה מאז המדידה הקודמת ועומד כעת על 44.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">19</div>
+<div class="sec-title">איך מאפשרים ל-LLMs גישה מאובטחת לנתונים ארגוניים לצורך ניתוח וקבלת החלטות</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-part">חלקי</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">llm מה זה: 320 בקושי 13</span><span class="pill p-hi">llm: 3,600 בקושי 98</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיים פוסט דמו על חיבור AI ל-Qlik עם MCP, וכן שני מאמרים על אבטחת AI בתוך ה-BI הארגוני ועל חיבור מאובטח בין כלי AI חיצוניים. קיים עמוד פתרון <span dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</span>.</p>
+<div class="blk">מתחרים</div>
+<p class="why">התוכן הישראלי בנושא LLM הוא ברובו הסברי ולא ארגוני. זווית האבטחה והגישה לנתונים ארגוניים אינה מכוסה בעברית.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>llm מה זה</b>, 320 חיפושים בקושי 13, ולא הביטוי הרחב llm שעומד על 3,600 בקושי 98 ומחזיר תוצאות גלובליות באנגלית. המאמר יקשר אל <span dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">שימו לב שקיימים כבר שני מאמרים שנוגעים באבטחת AI בסביבה הארגונית. מה שאינו קיים הוא ההסבר הבסיסי, מה זה LLM, שהוא גם הביטוי בר-ההשגה. לכן המאמר צריך לפתוח בהסבר ולהמשיך לזווית הגישה המאובטחת שניסחתם, ולקשר אל שני המאמרים הקיימים כדי שלא יתחרה בהם.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">20</div>
+<div class="sec-title">מהי אנליטיקה חזויה (Predictive Analytics) ואיך AutoML עוזר לחזות תוצאות עסקיות</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-part">חלקי</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill p-lo">predictive analytics: 50 בקושי 0</span><span class="pill ">למידת מכונה: 260 בקושי 27</span><span class="pill ">אנליטיקה חזויה: ללא נפח</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">קיים פוסט וובינר על Qlik AutoML ומאמר על למידת מכונה, וכן עמוד פתרון <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span>. אין מאמר הסבר על אנליטיקה חזויה.</p>
+<div class="blk">מתחרים</div>
+<p class="why">הביטוי האנגלי כמעט ואינו מתוחרה בישראל, בקושי 0. התוכן העברי על למידת מכונה אקדמי ברובו.</p>
+<div class="blk">יעד קישור פנימי</div>
+<div class="link">מילת היעד: <b>predictive analytics</b>, 50 חיפושים בקושי 0. המאמר יקשר אל <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span> ואל פוסט הוובינר הקיים.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">קושי 0 על הביטוי האנגלי. הפוסט הקיים הוא סיכום וובינר ולא מאמר הסבר, ולכן אין כפילות, אך כדאי לקשר אליו ואל עמוד הפתרון. ביקשתם לפצל את הנושא לחמישה מאמרים. ההמלצה היא להתחיל במאמר הסבר אחד ולפצל רק אם הוא מוכיח ביקוש, מכיוון שהנפח הכולל באשכול אינו מצדיק חמישה מאמרים נפרדים בשלב זה.</p>
+</div></details>
+<details class="sec"><summary>
+<div class="sec-num">21</div>
+<div class="sec-title">ניתוח נתונים בשפה טבעית: איך AI מאפשר לשאול את הדאטה ולקבל תשובות עסקיות</div>
+<div class="sec-meta m-src">הצעה שלכם</div>
+<div class="sec-meta m-gap">פער</div><div class="chev">&rsaquo;</div></summary>
+<div class="sec-body">
+<div class="blk">נתוני חיפוש</div>
+<span class="pill ">Qlik Answers: ללא נפח נמדד</span><span class="pill ">שאילתות בשפה טבעית: ללא נפח</span>
+<div class="blk">כיסוי קיים באתר</div>
+<p class="why">אפס מאמרים ואפס עמודים המזכירים Qlik Answers. הנושא אינו קיים באתר בשום צורה. קיים עמוד <span dir="ltr">/עוזר-ai-חכם/</span> שנוגע ביכולת אך לא במוצר.</p>
+<div class="blk">מתחרים</div>
+<p class="why">אין תוכן ישראלי בנושא שאילתות בשפה טבעית מול דאטה ארגונית. הקטגוריה כולה פנויה בעברית.</p>
+<div class="blk">ביטוי יעד חדש</div>
+<div class="newkw"><b>ביטוי חדש: לשם המוצר Qlik Answers ולביטוי שאילתות בשפה טבעית אין נפח חיפוש מדוד.</b> לכן המאמר צריך להיכתב סביב הצורך ולא סביב שם המוצר. הוא יקשר אל <span dir="ltr">/עוזר-ai-חכם/</span>.</div>
+<div class="blk">למה המאמר</div>
+<p class="why">הפער הנקי ביותר במסלול ה-AI: מוצר שלכם שאין עליו מילה באתר. מכיוון שלשם המוצר אין נפח, המאמר צריך להיבנות סביב הצורך, כלומר שאילתות בשפה טבעית וקבלת תשובות עסקיות מהדאטה, והמוצר מוצג בתוכו כפתרון.</p>
+</div></details>
+
+<div class="footer"><div class="brand">NC Digital</div>
+<div class="info">sp.data - תוכנית תוכן מאוחדת: דאטה ואנליטיקה + AI · ספטמבר 2026</div></div>
+</div>
+<script>document.documentElement.lang='he';</script>
+</body></html>
