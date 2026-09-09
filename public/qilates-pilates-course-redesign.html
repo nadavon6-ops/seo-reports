@@ -454,10 +454,10 @@ h3{font-size:1.12rem;font-weight:500;letter-spacing:-.005em;line-height:1.35}
 <!-- ===== STATS ===== -->
 <section class="wrap">
   <div class="stats">
-    <div class="stat"><div class="n">440</div><div class="l">שעות הכשרה, כ-6 חודשים</div></div>
-    <div class="stat"><div class="n">27</div><div class="l">מפגשי רפרטואר בני 3.5 ש״א</div></div>
-    <div class="stat"><div class="n">200</div><div class="l">שעות התמחות מעשית</div></div>
-    <div class="stat"><div class="n">5</div><div class="l">מכשירים ברפרטואר מלא</div></div>
+    <div class="stat"><div class="n" data-count="440">440</div><div class="l">שעות הכשרה, כ-6 חודשים</div></div>
+    <div class="stat"><div class="n" data-count="27">27</div><div class="l">מפגשי רפרטואר בני 3.5 ש״א</div></div>
+    <div class="stat"><div class="n" data-count="200">200</div><div class="l">שעות התמחות מעשית</div></div>
+    <div class="stat"><div class="n" data-count="5">5</div><div class="l">מכשירים ברפרטואר מלא</div></div>
   </div>
 </section>
 
@@ -902,6 +902,29 @@ h3{font-size:1.12rem;font-weight:500;letter-spacing:-.005em;line-height:1.35}
 </div>
 
 <script>
+/* stat count-up on scroll — Elementor Pro Counter widget equivalent */
+(function(){
+  var els=[].slice.call(document.querySelectorAll('[data-count]'));
+  if(!els.length)return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce||!('IntersectionObserver' in window))return;
+  function run(el){
+    var target=parseInt(el.dataset.count,10),dur=1500,start=null;
+    function step(ts){
+      if(!start)start=ts;
+      var p=Math.min((ts-start)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*e).toLocaleString('en-US');
+      if(p<1)requestAnimationFrame(step);else el.textContent=target.toLocaleString('en-US');
+    }
+    requestAnimationFrame(step);
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){en.target.textContent='0';run(en.target);io.unobserve(en.target);}
+    });
+  },{threshold:.45});
+  els.forEach(function(el){io.observe(el);});
+})();
 document.getElementById('burger').addEventListener('click',function(){
   document.getElementById('mobileNav').classList.toggle('open');
 });
