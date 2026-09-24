@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Midot: Missing Schema Report</title>
+<title>Midot: Schema Report</title>
 <style>
 :root{--bg:#0b1220;--panel:#111a2e;--panel2:#0e1728;--line:#1e2b47;--txt:#e6ecf7;--muted:#93a1bf;
 --cyan:#22c3e6;--cyan2:#0891b2;--gold:#f0b429;--green:#31c48d;--red:#ff7a7a;--code:#0a1120;}
@@ -52,13 +52,6 @@ details{margin-top:8px} summary{cursor:pointer;color:var(--cyan);font-weight:700
 footer{color:var(--muted);text-align:center;font-size:13px;margin-top:36px;padding-top:16px;border-top:1px solid var(--line)}
 ol li,ul li{margin:5px 0}
 a{color:var(--cyan)} td a{word-break:break-all}
-a{color:var(--cyan)} td a{word-break:break-all}
-a{color:var(--cyan)} td a{word-break:break-all}
-a{color:var(--cyan)} td a{word-break:break-all}
-@media (max-width:700px){table{display:block;overflow-x:auto;max-width:100%}th,td{min-width:120px}}
-a{color:var(--cyan)} td a{word-break:break-all}
-@media (max-width:700px){table{display:block;overflow-x:auto;max-width:100%}th,td{min-width:120px}}
-a{color:var(--cyan)} td a{word-break:break-all}
 @media (max-width:700px){table{display:block;overflow-x:auto;max-width:100%}th,td{min-width:120px}}
 </style>
 </head>
@@ -68,7 +61,7 @@ a{color:var(--cyan)} td a{word-break:break-all}
 <header class="hero">
   <p class="kicker">NC Digital · Schema Report</p>
   <h1>Midot: Open Item for the Dev Team</h1>
-  <p class="sub">What still needs to be done on midot.co.il. Re-scan covered all 229 sitemap URLs, rendered in a real browser.</p>
+  <p class="sub">What still needs to be done on midot.co.il. The re-scan covered all 229 URLs in the sitemap.</p>
   <div class="meta">
     <span class="chip">Original audit: <b>19 July 2026</b></span>
     <span class="chip">Last scan: <b>24 September 2026</b></span>
@@ -78,16 +71,14 @@ a{color:var(--cyan)} td a{word-break:break-all}
 <details class="acc">
   <summary>Server error (HTTP 500) on /מטפלות-מתעללות/</summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> <a href="https://midot.co.il/%d7%9e%d7%98%d7%a4%d7%9c%d7%95%d7%aa-%d7%9e%d7%aa%d7%a2%d7%9c%d7%9c%d7%95%d7%aa/" dir="ltr">https://midot.co.il/מטפלות-מתעללות/</a> (page ID 1231), listed in <span class="type">page-sitemap.xml</span>, returns <b>HTTP 500</b>. The page prints the site header and menu, then stops with the WordPress message "<span class="rtl">אירעה שגיאה קריטית</span>". The result is the same for a regular browser and for the Googlebot user agent.</div>
+  <div class="bad"><b>The problem:</b> <a href="https://midot.co.il/%d7%9e%d7%98%d7%a4%d7%9c%d7%95%d7%aa-%d7%9e%d7%aa%d7%a2%d7%9c%d7%9c%d7%95%d7%aa/" dir="ltr">https://midot.co.il/מטפלות-מתעללות/</a> (page ID 1231), listed in <span class="type">page-sitemap.xml</span>, returns <b>HTTP 500</b>. The page prints the site header and menu, then stops with the WordPress message "<span class="rtl">באתר זה אירעה שגיאה קריטית.</span>" The status code is the same for a regular browser and for the Googlebot user agent. It is the only URL in the sitemap that fails.</div>
   <h3>Where the error is</h3>
-  <p>The page uses the custom page template <span class="type">template-page/caretakers.php</span> in the <span class="type">midot-th</span> theme. A <span class="type">HEAD</span> request to the URL returns <b>200</b> and a <span class="type">GET</span> returns <b>500</b>. WordPress answers HEAD requests before it loads the template, so the fatal error is raised while this template renders the page.</p>
-  <h3>Why Search Console shows no error</h3>
-  <p>URL Inspection reports "URL is unknown to Google": Google has not requested the page yet, so no server-error report exists. The sitemap status only confirms that the sitemap file could be read. Once Googlebot requests the page, it will receive the 500.</p>
+  <p>The page uses the custom page template <span class="type">template-page/caretakers.php</span> in the <span class="type">midot-th</span> theme. A <span class="type">HEAD</span> request to the URL returns <b>200</b> and a <span class="type">GET</span> returns <b>500</b>. WordPress answers HEAD requests before it loads the template, so the fatal error is raised while the page itself is being rendered. Since no other page fails, this template, or something it calls, is the most likely source.</p>
   <h3>What to do</h3>
   <ol>
     <li>In <span class="type">wp-config.php</span> set <span class="type">WP_DEBUG</span> and <span class="type">WP_DEBUG_LOG</span> to <span class="type">true</span> and <span class="type">WP_DEBUG_DISPLAY</span> to <span class="type">false</span>, open the URL, then read <span class="type">wp-content/debug.log</span>. The fatal error line names the file and line.</li>
-    <li>Fix <span class="type">template-page/caretakers.php</span> so the page returns 200 with its content.</li>
-    <li>If the page is not meant to be public, unpublish it instead. WordPress then removes it from <span class="type">page-sitemap.xml</span>.</li>
+    <li>Fix the error at the file and line the log names (most likely <span class="type">template-page/caretakers.php</span>) so the page returns 200 with its content.</li>
+    <li>If the page is not meant to be public, unpublish it instead and confirm it no longer appears in <span class="type">page-sitemap.xml</span>.</li>
   </ol>
   <p class="kv"><b>Acceptance:</b> a GET request to the URL returns 200 with the page content, or the page is unpublished and no longer listed in the sitemap.</p>
 </div>
