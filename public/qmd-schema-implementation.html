@@ -135,12 +135,15 @@ footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);
     <button type="button" id="closeAll">Collapse all</button>
   </div>
 </header>
-<div class="part part-fix"><h2>Fix in the code</h2><span class="pcount">1 section</span><p class="pblurb">One fix, three lines of code.</p></div><details class="sec"><summary><span class="num">01</span><span class="stitle">A 404 page is publishing a person's details</span><span class="badge">dev &middot; three lines</span></summary><div class="body">
+<div class="part part-fix"><h2>Fix in the code</h2><span class="pcount">1 section</span><p class="pblurb">One item for the developer.</p></div><details class="sec"><summary><span class="num">01</span><span class="stitle">A 404 page is publishing a person's details</span><span class="badge">dev &middot; three lines</span></summary><div class="body">
 <p><code>/leadership/atul-malik/</code> returns <strong>HTTP 404</strong> and still outputs a
 <code>Person</code> entity for Atul Malik, with his job title and a <code>url</code> pointing at
-<code>/leadership/hartesh-juneja/</code>. A page that does not exist is currently asserting that a
-named individual does.</p>
-<div class="spec"><div class="srow"><span class="sk">Where</span><span class="sv">The <code>wpseo_schema_graph</code> filter in <code>qmd-schema.php</code>.</span></div><div class="srow"><span class="sk">Why it happens</span><span class="sv">The file registers <code>/leadership/atul-malik/</code> as well as the current slug, so the markup would survive the planned rename. The rename has not been done, so that path is a 404, and the filter has no 404 guard.</span></div><div class="srow"><span class="sk">Scope</span><span class="sv">One page. Nothing else is affected.</span></div><div class="srow"><span class="sk">Fix</span><span class="sv">Three lines, below.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Load <code>/leadership/atul-malik/</code>, view source. There should be no <code>Person</code> node, and no <code>@type</code> beyond Yoast's own.</span></div></div>
+<code>/leadership/hartesh-juneja/</code>, which is Atul Malik's own profile page (the slug is left
+over from an earlier post). The person data is accurate; the problem is that it is being published on a
+page that does not exist.</p>
+<div class="spec"><div class="srow"><span class="sk">Where</span><span class="sv">The <code>wpseo_schema_graph</code> filter in <code>qmd-schema.php</code>.</span></div><div class="srow"><span class="sk">Why it happens</span><span class="sv">The file registers <code>/leadership/atul-malik/</code> as well as the current slug, so the markup would keep working if the slug were renamed. No rename has been done, so that path is a 404, and the filter has no 404 guard.</span></div><div class="srow"><span class="sk">Scope</span><span class="sv">One page. Nothing else is affected.</span></div><div class="srow"><span class="sk">Fix</span><span class="sv">Add the guard shown below, then purge the WP Rocket cache.</span></div><div class="srow"><span class="sk">Confirm it worked</span><span class="sv">Load <code>/leadership/atul-malik/</code>, view source. There should be no <code>Person</code> node, and the top level of the graph should hold only
+<code>WebSite</code> and <code>Organization</code>. The addresses, places and contact points nested
+inside <code>Organization</code> are expected on every page, including this one.</span></div></div>
 <div class="codewrap"><button class="copy" type="button">Copy</button><pre class="code php"><code>add_filter( &#x27;wpseo_schema_graph&#x27;, function ( $graph ) {
 
 	if ( is_404() ) {            // &lt;-- add these three lines
@@ -157,9 +160,12 @@ named individual does.</p>
 	}
 	return $graph;
 } );</code></pre></div>
-<p>Renaming the slug to <code>/leadership/atul-malik/</code> with a 301, as originally intended,
-also resolves it, because the path stops being a 404. The guard is worth adding either way: it stops
-any future path in the map from leaking a node onto a missing page.</p>
+<p>If the slug is later renamed to <code>/leadership/atul-malik/</code> with a 301, that path stops
+being a 404, but three values in the file then need updating by hand: <code>url</code> and
+<code>@id</code> on that <code>Person</code> node, and the matching entry in the leadership
+<code>ItemList</code>. One find and replace of <code>hartesh-juneja</code> with
+<code>atul-malik</code>. The guard is worth adding either way: it stops any path in the map from
+publishing a node on a missing page.</p>
 <p class="note">Verified two ways: headless Chrome and a plain <code>curl</code> both return 404 with
 the <code>Person</code> node present in the body.</p>
 </div></details><footer><span>NC Digital</span><span>QMD Schema: Fix Required &middot; September 2026</span></footer>
