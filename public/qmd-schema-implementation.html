@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>QMD Schema: Remaining Items</title>
+<title>QMD Schema: Fix Required</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -129,13 +129,13 @@ footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);
 <div class="wrap">
 <header>
   <p class="eyebrow">QMD &middot; qmd.net</p>
-  <h1>Schema: Remaining Items</h1>
+  <h1>Schema: Fix Required</h1>
   <div class="toolbar">
     <button type="button" id="openAll">Expand all</button>
     <button type="button" id="closeAll">Collapse all</button>
   </div>
 </header>
-<div class="part part-fix"><h2>Fix in the code</h2><span class="pcount">1 section</span><p class="pblurb">One item, and it is small.</p></div><details class="sec"><summary><span class="num">01</span><span class="stitle">A 404 page is publishing a person's details</span><span class="badge">dev &middot; three lines</span></summary><div class="body">
+<div class="part part-fix"><h2>Fix in the code</h2><span class="pcount">1 section</span><p class="pblurb">One fix, three lines of code.</p></div><details class="sec"><summary><span class="num">01</span><span class="stitle">A 404 page is publishing a person's details</span><span class="badge">dev &middot; three lines</span></summary><div class="body">
 <p><code>/leadership/atul-malik/</code> returns <strong>HTTP 404</strong> and still outputs a
 <code>Person</code> entity for Atul Malik, with his job title and a <code>url</code> pointing at
 <code>/leadership/hartesh-juneja/</code>. A page that does not exist is currently asserting that a
@@ -162,45 +162,7 @@ also resolves it, because the path stops being a 404. The guard is worth adding 
 any future path in the map from leaking a node onto a missing page.</p>
 <p class="note">Verified two ways: headless Chrome and a plain <code>curl</code> both return 404 with
 the <code>Person</code> node present in the body.</p>
-</div></details><div class="part part-decide"><h2>Needs a decision</h2><span class="pcount">1 section</span><p class="pblurb">Not a schema question. It changes whether part of the work counts.</p></div><details class="sec"><summary><span class="num">02</span><span class="stitle">The twelve leadership profiles are set to noindex</span><span class="badge">needs a decision</span></summary><div class="body">
-<p><code>ProfilePage</code> and <code>Person</code> are correctly implemented on all twelve profile
-pages, and they validate cleanly. They cannot earn anything, because all twelve carry
-<code>&lt;meta name='robots' content='noindex, follow'&gt;</code> and Google will not index them.</p>
-<div class="spec"><div class="srow"><span class="sk">What carries it</span><span class="sv">Sixteen URLs: the twelve leadership profiles, plus <code>/leadership/</code>, <code>/leadership/page/2/</code>, <code>/product/</code> and <code>/product-category/coronary-products/</code>.</span></div><div class="srow"><span class="sk">Effect on the markup</span><span class="sv">None of the ProfilePage work can produce a result while this stands. The markup is correct; the pages are excluded.</span></div><div class="srow"><span class="sk">Who decides</span><span class="sv">QMD. This is a question about whether those pages belong in the index, not a schema question.</span></div><div class="srow"><span class="sk">Verified by</span><span class="sv">The raw HTML, the rendered DOM, and Google Search Console, which reports these URLs as excluded by a noindex tag.</span></div></div>
-<p><strong>Two ways forward.</strong></p>
-<ul class="plain2">
-  <li><strong>If the profiles should be indexed:</strong> remove the noindex on the leadership post
-  type. Nothing in the schema changes, and the pages return to the index over the following weeks.</li>
-  <li><strong>If the noindex is deliberate:</strong> the twelve <code>Person</code> nodes are doing
-  nothing where they are. Move them onto <code>/qmd-leadership/</code>, which is indexable, ranks,
-  and already lists all twelve with their titles and photographs.</li>
-</ul>
-<p class="note">Their absence from the sitemap and their missing canonical tags both follow
-automatically from the noindex. Neither is a separate fault.</p>
-</div></details><div class="part part-client"><h2>Needs values from QMD</h2><span class="pcount">1 section</span><p class="pblurb">Nothing blocks the rest of the implementation.</p></div><details class="sec"><summary><span class="num">03</span><span class="stitle">Eight Organization properties still have no source</span><span class="badge">needs the client</span></summary><div class="body">
-<p>These belong on the Organization node and appear nowhere on the site, so they are correctly not
-in the code. None is required, and the markup is valid without them. Add the ones QMD confirms and
-leave the rest out.</p>
-<table class="tbl"><thead><tr><th>Property</th><th>What is needed</th></tr></thead>
-<tbody><tr><td><code>legalName</code></td><td>The registered company name, if it differs from QMD.</td></tr><tr><td><code>alternateName</code></td><td>Any other name the company is known by. Leave out if there is none.</td></tr><tr><td><code>sameAs</code></td><td>The official LinkedIn company page, and any other profile QMD owns. The site links to no social profile anywhere, so there is nothing to verify a candidate against.</td></tr><tr><td><code>foundingDate</code></td><td>Year founded, as YYYY or YYYY-MM-DD.</td></tr><tr><td><code>numberOfEmployees</code></td><td>A number or a range.</td></tr><tr><td><code>naics</code></td><td>NAICS industry code.</td></tr><tr><td><code>duns</code></td><td>Dun and Bradstreet number.</td></tr><tr><td><code>vatID</code></td><td>VAT identification number.</td></tr></tbody></table>
-<p class="where"><span class="lbl">Where they go</span>Inside
-<code>qmd_schema_organization_data()</code> in <code>qmd-schema.php</code>, as additional array
-entries alongside <code>'name'</code> and <code>'description'</code>. Nowhere else.</p>
-</div></details>
-<div class="sidenote">
-  <span class="snlabel">Working as intended &middot; do not "fix" these</span>
-  <h3>Two things that will look like faults and are not</h3>
-  <p><strong>The product pages will report as ineligible.</strong> Once Google recrawls them, the
-  Rich Results Test and Search Console may list the fourteen product pages as invalid under Product
-  snippets, because they carry no price, review or rating. That is the expected result of a
-  quote-based catalogue and it was the accepted trade-off. <strong>Do not add a price, a currency, an
-  availability value or a rating to clear it.</strong> That single change is the only thing that would
-  turn accurate markup into a false claim.</p>
-  <p><strong>The homepage no longer reports a Breadcrumbs rich result.</strong> That is the intended
-  outcome. Its breadcrumb contained a single item, and Google requires at least two, so it could never
-  have qualified. Removing it cost nothing. Every inner page keeps its full trail.</p>
-</div>
-<footer><span>NC Digital</span><span>QMD Schema: Remaining Items &middot; September 2026</span></footer>
+</div></details><footer><span>NC Digital</span><span>QMD Schema: Fix Required &middot; September 2026</span></footer>
 </div>
 <script>
 document.getElementById('openAll').onclick=function(){document.querySelectorAll('details.sec').forEach(function(d){d.open=true});};
