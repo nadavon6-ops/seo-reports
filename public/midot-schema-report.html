@@ -60,27 +60,42 @@ a{color:var(--cyan)} td a{word-break:break-all}
 
 <header class="hero">
   <p class="kicker">NC Digital · Schema Report</p>
-  <h1>Midot: Open Item for the Dev Team</h1>
-  <p class="sub">What still needs to be done on midot.co.il. The re-scan covered all 229 URLs in the sitemap.</p>
+  <h1>Midot: Open Items for the Dev Team</h1>
+  <p class="sub">What still needs to be done on midot.co.il. The last scan re-checked the items below; the last full scan of all 229 sitemap URLs was on 24 September 2026.</p>
   <div class="meta">
     <span class="chip">Original audit: <b>19 July 2026</b></span>
-    <span class="chip">Last scan: <b>24 September 2026</b></span>
+    <span class="chip">Last scan: <b>27 September 2026</b></span>
   </div>
 </header>
 
 <details class="acc">
-  <summary>Server error (HTTP 500) on /מטפלות-מתעללות/</summary>
+  <summary>1. Exposed Google Cloud service-account key</summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> <a href="https://midot.co.il/%d7%9e%d7%98%d7%a4%d7%9c%d7%95%d7%aa-%d7%9e%d7%aa%d7%a2%d7%9c%d7%9c%d7%95%d7%aa/" dir="ltr" style="white-space:nowrap">midot.co.il/מטפלות-מתעללות/</a> (page ID 1231), listed in <span class="type">page-sitemap.xml</span>, returns <b>HTTP 500</b>. The page prints the site header and menu, then stops with the WordPress message "<span class="rtl">באתר זה אירעה שגיאה קריטית</span>". The status code is the same for a regular browser and for the Googlebot user agent. It is the only URL in the sitemap that fails.</div>
-  <h3>Where the error is</h3>
-  <p>The page uses the custom page template <span class="type">template-page/caretakers.php</span> in the <span class="type">midot-th</span> theme. A <span class="type">HEAD</span> request to the URL returns <b>200</b> and a <span class="type">GET</span> returns <b>500</b>. WordPress answers HEAD requests before it loads the template, so the fatal error is raised while the page itself is being rendered. Since no other page fails, this template, or something it calls, is the most likely source.</p>
+  <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable from the theme folder. The file no longer loads, but a copy downloaded before that still works until the key is disabled in Google Cloud.</div>
+  <h3>What to do</h3>
+  <p>These steps need someone with admin rights on the Google Cloud project.</p>
+  <ol>
+    <li><b>Disable the key now.</b> Disabling is reversible, so it can be re-enabled briefly if something turns out to depend on it.</li>
+    <li>Check whether anything else on the site uses this service account (forms, scheduled tasks, other templates). If something does, create a new key with only the permissions it needs, store it outside the public web folder, and update the code.</li>
+    <li><b>Delete the old key.</b></li>
+    <li>Review the Cloud audit logs for any use of the key, and review the service account's roles and the files shared with it.</li>
+    <li>Remove copies of the key file from backups, staging copies and code history.</li>
+    <li>Move the <span class="type">google-api-php-client-2.2.4</span> library out of the public theme folder, or block the whole folder at the server level. The rest of the folder is still publicly reachable (for example <span class="type">composer.json</span>).</li>
+  </ol>
+  <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and the library folder no longer serves files to the public.</p>
+</div>
+</details>
+
+<details class="acc">
+  <summary>2. Empty page: /מטפלות-מתעללות/</summary>
+  <div class="acc-body">
+  <div class="bad"><b>The problem:</b> <a href="https://midot.co.il/%d7%9e%d7%98%d7%a4%d7%9c%d7%95%d7%aa-%d7%9e%d7%aa%d7%a2%d7%9c%d7%9c%d7%95%d7%aa/" dir="ltr" style="white-space:nowrap">midot.co.il/מטפלות-מתעללות/</a> (page ID 1231) reads its list from a Google Sheet that has been deleted. The page returns 200 with an empty results table ("<span class="rtl">לא נמצאו תוצאות</span>"), is set to index, and is listed in <span class="type">page-sitemap.xml</span>. Whether to restore the list is Midot's decision.</div>
   <h3>What to do</h3>
   <ol>
-    <li>In <span class="type">wp-config.php</span> set <span class="type">WP_DEBUG</span> and <span class="type">WP_DEBUG_LOG</span> to <span class="type">true</span> and <span class="type">WP_DEBUG_DISPLAY</span> to <span class="type">false</span>, open the URL, then read <span class="type">wp-content/debug.log</span>. The fatal error line names the file and line.</li>
-    <li>Fix the error at the file and line the log names (most likely <span class="type">template-page/caretakers.php</span>) so the page returns 200 with its content.</li>
-    <li>If the page is not meant to be public, unpublish it instead and confirm it no longer appears in <span class="type">page-sitemap.xml</span>.</li>
+    <li><b>Unpublish the page</b> until Midot decides. It had no Google search impressions in the past 12 months and has no known backlinks or internal links.</li>
+    <li>If Midot restores the list: the Sheet should be owned by a Midot account and shared read-only with the service account. When the Sheet cannot be read, the page should show a "temporarily unavailable" message instead of "no results" or a fatal error.</li>
   </ol>
-  <p class="kv"><b>Acceptance:</b> a GET request to the URL returns 200 with the page content, or the page is unpublished and no longer listed in the sitemap.</p>
+  <p class="kv"><b>Acceptance:</b> the page is unpublished and no longer listed in <span class="type">page-sitemap.xml</span>, or it is restored with its list and the error handling above.</p>
 </div>
 </details>
 
