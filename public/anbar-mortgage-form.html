@@ -582,7 +582,7 @@ const ROUTES = {
     relationOpts:["בן/בת זוג","בן, בת או הורה","אח או אחות","אבא/אמא","אחר"],
     rateOpts:["קבועה צמודה","קבועה לא צמודה (קל\"צ)","משתנה פריים"],
     repayOpts:["שפיצר","גרייס חלקי","בלון חלקי","משולב"],
-    purposeOpts:["עזרה לבן משפחה","מחיה, הוצאות שוטפות וטיפול רפואי","מיחזור משכנתא מבנק או גורם חוץ בנקאי",
+    purposeOpts:["עזרה לבן משפחה","מחיה, הוצאות שוטפות","טיפול רפואי","מיחזור משכנתא מבנק או גורם חוץ בנקאי",
                  "מעבר לדיור מוגן","סילוק הלוואה או התחייבות אחרת","שיפוץ","מטרה אחרת"],
     propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
     note:"עד 3 לווים · מסלול משולב · כולל שאלת דיירים נוספים בנכס."
@@ -632,11 +632,13 @@ const S = {
     collateral:[blankCollateral()],
     other:[],
     tracks:[blankTrack()],
-    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}, hasOccupants:""
+    bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}, hasOccupants:"",
+    credit:{}, signDate:todayISO()
   },
   errors:{}
 };
 
+function todayISO(){ const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`; }
 function blankBorrower(){return{
   firstName:"",lastName:"",id:"",birthDate:"",gender:"",marital:"",phone:"",email:"",
   street:"",city:"",zip:"",sameAddr:false,residency:"אזרח ישראל",relation:"",relationOther:"",
@@ -655,16 +657,23 @@ function blankBorrower(){return{
       fatcaSign:"",usPerson:"",otherTaxResidency:"",taxCountries:"",
       cpaConfirm:"",fundsSource:"",publicFigure:"",seniorIntl:"",
       accountRelation:"",accountRelationOther:"",accountReason:"",
-      equitySource:"",equityProof:"",proofType:""}
+      equitySource:"",equityProof:"",proofType:""},
+  /* איילון · עמודים 4–5 — שאלון הכר את הלקוח, עמודה לכל לווה */
+  ay:{beneficiary:"",benName:"",benId:"",benRelation:"",
+      refusedCredit:"",refusedCreditDetail:"",refusedAccount:"",refusedAccountDetail:"",
+      bankrupt:"",bankruptDetail:"",incapacity:"",incapacityDetail:"",
+      hasPoa:"",poaName:"",poaId:"",poaBirth:"",poaAddress:"",
+      pep:"",pepWhere:"",pepCountry:"",pepRole:"",pepRoleOther:"",
+      pepFam:"",pepFamFirst:"",pepFamLast:"",pepFamRelation:"",pepFamWhere:"",pepFamCountry:"",pepFamRole:"",pepFamRoleOther:""}
 };}
 function blankCollateral(){return{
   gush:"",helka:"",sub:"",builtArea:"",lotArea:"",street:"",num:"",apt:"",city:"",
   type:"",value:"",registry:"",
   mortgaged:"לא",mortgagedTo:"",mortgageBalance:"",
   seized:"לא",seizedTo:"",seizedBalance:"",
-  rented:"לא",rentAmount:""
+  rented:"לא",rentAmount:"",mortgageMonthly:""
 };}
-function blankOther(){return{type:"",address:"",value:"",rentIncome:"",mortgagedTo:"",mortgageBalance:""};}
+function blankOther(){return{type:"",address:"",value:"",rentIncome:"",mortgagedTo:"",mortgageBalance:"",mortgageMonthly:""};}
 function blankTrack(){return{amount:"",years:"",rate:"",repay:"",graceMonths:""};}
 function blankOccupant(){return{firstName:"",lastName:"",id:"",birthDate:"",marital:"",relation:""};}
 function blankContact(){return{firstName:"",lastName:"",id:"",address:"",phone:"",email:"",relation:"",gender:"",birthDate:""};}
@@ -701,6 +710,14 @@ function fmtDate(v){ if(!v) return ""; const p=String(v).split("-"); return p.le
 /* ===========================================================================
    4. STEPS
    ======================================================================== */
+/* Per-company link: ?route=clal-regular (or window.ANBAR_ROUTE set by the host page)
+   opens that company's form directly and hides the company picker. */
+const ROUTE_ALIAS={clal:"",ayalon:"ayalon-reverse",migdal:"migdal-reverse",credit360:"credit360-both"};
+function lockedRoute(){
+  let q=(new URLSearchParams(location.search).get("route")||window.ANBAR_ROUTE||"").trim();
+  if(ROUTE_ALIAS[q]) q=ROUTE_ALIAS[q];
+  return (typeof ROUTES!=="undefined"&&ROUTES[q]&&ROUTES[q].pdfReady)?q:"";
+}
 const STEPS = [
   {id:0, t:"בחירת מסלול",        short:"מסלול"},
   {id:1, t:"לווים ומשק בית",      short:"לווים"},
@@ -710,21 +727,24 @@ const STEPS = [
   {id:5, t:"נספחים והצהרות",      short:"נספחים"},
   {id:6, t:"סקירה ושליחה",        short:"שליחה"}
 ];
+const LOCKED = lockedRoute();
 
 /* ===========================================================================
    5. RENDER — rail
    ======================================================================== */
 function renderRail(){
   const rail = $("#rail");
-  rail.innerHTML = `<div class="eyebrow">שלבי הבקשה</div><div class="steplist">` + STEPS.map(st=>{
+  rail.innerHTML = `<div class="eyebrow">שלבי הבקשה</div><div class="steplist">` + STEPS.filter(st=>!(LOCKED&&st.id===0)).map(st=>{
     const on = st.id===S.step, done = S.visited.has(st.id)&&!on, dis = st.id>0 && !S.route;
+    const num = LOCKED?st.id:st.id+1;
     return `<button class="st ${on?"on":""} ${done?"done":""}" data-go="${st.id}" ${dis?"disabled":""}>
-      <i>${done?"✓":st.id+1}</i><span>${esc(st.short)}</span></button>`;
+      <i>${done?"✓":num}</i><span>${esc(st.short)}</span></button>`;
   }).join("") + `</div>`;
   rail.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(+b.dataset.go));
 }
 
 function go(n){
+  if(LOCKED&&n<1) n=1;
   if(n>0 && !S.route) return;
   S.visited.add(S.step);
   S.step = n;
@@ -754,7 +774,7 @@ function renderDocPane(){
         <div>
           <div class="dp-t">${esc(r.lender)}<br>${esc(r.productLabel)}</div>
           <div class="dp-m">${meta}</div>
-          <button type="button" class="ghost" style="margin-top:8px;padding:3px 9px;font-size:11.5px" id="dpChange">החלף חברה</button>
+          ${LOCKED?"":`<button type="button" class="ghost" style="margin-top:8px;padding:3px 9px;font-size:11.5px" id="dpChange">החלף חברה</button>`}
         </div>
       </div>
       <div class="dp-sec">
@@ -790,7 +810,7 @@ function render(){
 function nav(){
   const last = S.step===6;
   return `<div class="nav">
-    ${S.step>0?`<button class="btn g" data-nav="-1">→ הקודם</button>`:""}
+    ${S.step>(LOCKED?1:0)?`<button class="btn g" data-nav="-1">→ הקודם</button>`:""}
     <div class="sp"></div>
     ${!last?`<button class="btn p" data-nav="1">המשך ←</button>`:""}
   </div>`;
@@ -991,6 +1011,7 @@ function step1(){
       + rowsBlock("contacts","איש קשר",maxC,i=>`<div class="grid">
         ${fInput(`contacts.${i}.firstName`,"שם פרטי")}
         ${fInput(`contacts.${i}.lastName`,"שם משפחה")}
+        ${fRadio(`contacts.${i}.gender`,"מגדר",["זכר","נקבה"])}
         ${fInput(`contacts.${i}.id`,"תעודת זהות",{maxlength:9})}
         ${fInput(`contacts.${i}.birthDate`,"תאריך לידה",{type:"date"})}
         ${fInput(`contacts.${i}.phone`,"טלפון",{type:"tel"})}
@@ -1106,6 +1127,7 @@ function step3(){
       ${when(c.mortgaged==="כן",`<div class="grid">
         ${fInput(`collateral.${i}.mortgagedTo`,"למי?")}
         ${fInput(`collateral.${i}.mortgageBalance`,"יתרת המשכנתא לסילוק",{money:true})}
+        ${r.has360Extras?fInput(`collateral.${i}.mortgageMonthly`,"גובה ההחזר החודשי במשכנתא",{money:true}):""}
       </div>`)}
       <div class="grid" style="margin-top:12px">${fRadio(`collateral.${i}.seized`,"האם מעוקל כיום?",["לא","כן"])}</div>
       ${when(c.seized==="כן",`<div class="grid">
@@ -1137,6 +1159,7 @@ function step3(){
         ${fInput(`other.${i}.value`,"שווי משוער",{money:true,step:10000})}
         ${fInput(`other.${i}.rentIncome`,"הכנסה משכר דירה (לחודש)",{money:true})}
         ${fInput(`other.${i}.mortgagedTo`,"אם ממושכן — למי?")}
+        ${r.has360Extras?fInput(`other.${i}.mortgageMonthly`,"גובה ההחזר החודשי במשכנתא",{money:true}):""}
         ${fInput(`other.${i}.mortgageBalance`,"יתרת המשכנתא",{money:true})}
       </div>`,blankOther,"הוסף נכס נוסף"));
 
@@ -1198,6 +1221,7 @@ function step4(){
   h += sec("סכום ומסלולים","",
     `<div class="grid">${fInput("purpose.amount","סכום ההלוואה המבוקש",{money:true,step:10000,req:true})}
      ${r.hasAnnuity?fInput("purpose.annuity","סכום האנונה (הלוואה חודשית) המבוקש",{money:true}):""}</div>
+     ${r.hasAnnuity?when(!!S.data.purpose.annuity,`<div class="grid" style="margin-top:12px">${fRadio("purpose.annuityRate","סוג ריבית מבוקש למסלול האנונה",["קבועה לא צמודה","קבועה צמודה","משתנה ע\"פ הפריים"],{wide:true})}</div>`):""}
      <div style="margin-top:16px">${rowsBlock("tracks","מסלול",r.maxTracks,i=>{
         const t=S.data.tracks[i];
         return `<div class="grid">
@@ -1208,7 +1232,7 @@ function step4(){
           ${fRadio(`tracks.${i}.rate`,"סוג ריבית",r.rateOpts,{wide:true,stack:r.rateOpts.length>3})}
         </div>
         <div class="grid" style="margin-top:12px">
-          ${fRadio(`tracks.${i}.repay`,"אופן ההחזר",r.repayOpts,{wide:true})}
+          ${fRadio(`tracks.${i}.repay`,r.pdfFile==="ayalon-reverse"?"מסלול מבוקש להלוואה בסכום חד פעמי":"אופן ההחזר",r.repayOpts,{wide:true})}
         </div>
         ${when(t.repay==="גרייס חלקי",`<div class="grid">${fInput(`tracks.${i}.graceMonths`,"גרייס חלקי למספר חודשים",{type:"number"})}</div>`)}`;
       },blankTrack,"הוסף מסלול")}</div>
@@ -1266,9 +1290,46 @@ function step5(){
       <ul>${r.caveats.map(c=>`<li>${esc(c)}</li>`).join("")}</ul></div>`;
   }
 
+  if(r.pdfFile==="ayalon-reverse"){
+    const ROLES=["ראש מדינה","נשיא מדינה","ראש עיר","שופט","חבר פרלמנט / חבר ממשלה","שגריר","קצין צבא בכיר","קצין משטרה בכיר","תפקיד ציבורי אחר"];
+    h += sec("הכר את הלקוח — איילון","עמודים 4–5 בטופס",
+      S.data.borrowers.map((b,i)=>{ const a=b.ay; const P=k=>`borrowers.${i}.ay.${k}`;
+      const yn=(k,q,d)=>`<div class="grid" style="margin-top:12px">${fRadio(P(k),q,["לא","כן"],{wide:true})}</div>${when(a[k]==="כן",fInput(P(d),"פרט",{wide:true}))}`;
+      return `<article class="row"><div class="row-h"><i>${i+1}</i><b>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</b></div><div class="row-b">
+        <div class="grid">${fRadio(P("beneficiary"),"הצהרת נהנה — הנהנה מהאשראי המבוקש",["הלווה","נהנה אחר"],{wide:true})}</div>
+        ${when(a.beneficiary==="נהנה אחר",`<div class="grid">${fInput(P("benName"),"שם מלא של הנהנה")}${fInput(P("benId"),"ת.ז",{maxlength:9})}${fInput(P("benRelation"),"קשר ללווה")}</div>`)}
+        ${yn("refusedCredit","האם סורבת בעבר מקבלת אשראי מכל גורם שהוא מסיבות הקשורות באיסור הלבנת הון ומימון טרור?","refusedCreditDetail")}
+        ${yn("refusedAccount","האם גוף מוסדי או בנק סירב לפתוח לך חשבון מסיבות יישום הוראות איסור הלבנת הון?","refusedAccountDetail")}
+        ${yn("bankrupt","האם הוכרזת כפושט רגל, מתקיים נגדך הליך פשיטת רגל או חדלות פירעון, או הוכרזת כחייב מוגבל באמצעים?","bankruptDetail")}
+        ${yn("incapacity","האם הוכרזת כפסול דין, מונה לך אפוטרופוס, או שאתה סובל ממחלה שעלולה לפגוע בכושר השיפוט או להגביל את החתימה על מסמכי ההלוואה?","incapacityDetail")}
+        <div class="grid" style="margin-top:12px">${fRadio(P("hasPoa"),"האם יש מיופה כוח הפועל בשם הלווה?",["לא","כן"],{wide:true})}</div>
+        ${when(a.hasPoa==="כן",`<div class="grid">${fInput(P("poaName"),"שם מלא של מיופה הכוח")}${fInput(P("poaId"),"ת.ז",{maxlength:9})}${fInput(P("poaBirth"),"תאריך לידה",{type:"date"})}${fInput(P("poaAddress"),"כתובת")}</div>`)}
+        <hr class="rule"><div class="subhead">תפקיד ציבורי בכיר (בחמש השנים האחרונות)</div>
+        <div class="grid">${fRadio(P("pep"),"האם אתה בעל תפקיד ציבורי בכיר בארץ או בחו\"ל?",["לא","כן"],{wide:true})}</div>
+        ${when(a.pep==="כן",`<div class="grid">${fRadio(P("pepWhere"),"באיזו מדינה?",["בישראל","בחו\"ל"])}${fInput(P("pepCountry"),"שם המדינה (בחו\"ל)")}</div>
+          <div class="grid" style="margin-top:12px">${fRadio(P("pepRole"),"התפקיד",ROLES,{wide:true,stack:true})}</div>
+          ${when(a.pepRole==="תפקיד ציבורי אחר",fInput(P("pepRoleOther"),"פרט את התפקיד",{wide:true}))}`)}
+        <div class="grid" style="margin-top:12px">${fRadio(P("pepFam"),"האם יש לך בן משפחה או שותף עסקי שהוא בעל תפקיד ציבורי בכיר בארץ או בחו\"ל?",["לא","כן"],{wide:true})}</div>
+        ${when(a.pepFam==="כן",`<div class="grid">${fInput(P("pepFamFirst"),"שם פרטי")}${fInput(P("pepFamLast"),"שם משפחה")}${fInput(P("pepFamRelation"),"קרבה")}</div>
+          <div class="grid" style="margin-top:12px">${fRadio(P("pepFamWhere"),"באיזו מדינה?",["בישראל","בחו\"ל"])}${fInput(P("pepFamCountry"),"שם המדינה (בחו\"ל)")}</div>
+          <div class="grid" style="margin-top:12px">${fRadio(P("pepFamRole"),"התפקיד",ROLES,{wide:true,stack:true})}</div>
+          ${when(a.pepFamRole==="תפקיד ציבורי אחר",fInput(P("pepFamRoleOther"),"פרט את התפקיד",{wide:true}))}`)}
+      </div></article>`;}).join(""));
+  }
+
+  if(r.pdfFile==="credit360"){
+    const Q=[["bounced","האם חזרו שיקים ו/או הוראות קבע על שמך בשלוש השנים האחרונות?"],
+             ["execution","האם נפתח בעבר תיק על שמך בלשכת ההוצאה לפועל?"],
+             ["restricted","האם אתה מוגדר כיום או הוכרזת כלקוח מוגבל בעבר?"],
+             ["reportPositive","האם דו\"ח נתוני אשראי של כל הלווים בעסקה חיובי (תקין)?"],
+             ["rejected","האם קיבלת בעבר תשובה שלילית לבקשת משכנתא באחד הבנקים?"]];
+    h += sec("הצהרות לקוח — היסטוריית אשראי","עמוד 4 בטופס",
+      `<div class="grid">${Q.map(([k,q])=>fRadio(`credit.${k}`,q,["כן","לא"],{wide:true})).join("")}</div>`);
+  }
+
   if(r.lender==="מגדל"){
     h += sec("הכר את הלקוח — מגדל","טופס נפרד לכל לווה",
-      `<div class="note info">מגדל דורשת בלוק «הכר את הלקוח» לכל לווה. המערכת מדפיסה עותק של עמוד 4 לכל לווה שמולא.</div>`
+      `<div class="note info">מגדל דורשת בלוק «הכר את הלקוח» לכל לווה. טופס מגדל כולל שלושה עמודים כאלה (עמודים 4–6), והמערכת ממלאת עמוד אחד לכל לווה.</div>`
       + S.data.borrowers.map((b,i)=>`<article class="row"><div class="row-h"><i>${i+1}</i><b>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</b></div><div class="row-b">
         <div class="grid">
           ${fInput(`borrowers.${i}.mk.originCountry`,"ארץ מוצא")}
@@ -1371,6 +1432,8 @@ function step6(){
       המידע נשמר בתיק היועץ ואינו מודפס על גבי מסמך החברה.</div>`;
   }
 
+  h += sec("תאריך החתימה","",
+    `<div class="grid">${fInput("signDate","תאריך החתימה",{type:"date",hint:"מודפס בטופס בשורות התאריך שליד חתימות הלווים. ברירת המחדל היא היום, וניתן לשנות"})}</div>`);
   h += reviewBlocks();
 
   h += `<div class="send"><div class="send-h">הפקת המסמך ושליחה לחתימה</div><div class="send-b">
@@ -1380,7 +1443,7 @@ function step6(){
       <div class="fl"><i>2</i><div><b>בדיקה</b>
         <p>תצוגה מקדימה של המסמך המופק, עמוד אחר עמוד, מול הטופס המקורי.</p></div></div>
       <div class="fl pending"><i>3</i><div><b>חתימה ב־iSign</b>
-        <p>המסמך מועלה ל־iSign, שם ממקמים לכל לווה שדה חתימה ושדה מילוי לתאריך, ונשלח ללקוח ב־SMS או בדוא"ל. את תאריך החתימה הלקוח ממלא בעצמו.</p></div></div>
+        <p>המסמך מועלה ל־iSign, שם ממקמים שדה חתימה לכל לווה, ונשלח ללקוח ב־SMS או בדוא"ל. תאריך החתימה שנבחר למעלה כבר מודפס בשורות התאריך שהחברה ביקשה; לכל שורת תאריך אחרת ממקמים ב־iSign «שדה מילוי».</p></div></div>
     </div>
 
     <div class="nav" style="margin:0;padding:0;border:0">
@@ -1511,6 +1574,7 @@ function collectMissing(){
     if(!b.firstName) out.push({step:1,label:`לווה ${i+1} — שם פרטי`});
     if(!b.lastName)  out.push({step:1,label:`לווה ${i+1} — שם משפחה`});
     if(!b.id)        out.push({step:1,label:`לווה ${i+1} — תעודת זהות`});
+    if(!b.gender)    out.push({step:1,label:`לווה ${i+1} — מגדר`});
     else if(!validId(b.id)){ out.push({step:1,label:`לווה ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`borrowers.${i}.id`]="ספרת ביקורת שגויה"; }
     if(!b.phone)     out.push({step:1,label:`לווה ${i+1} — טלפון נייד`});
     else if(!validPhone(b.phone)){ out.push({step:1,label:`לווה ${i+1} — טלפון לא תקין`}); S.errors[`borrowers.${i}.phone`]="מספר לא תקין"; }
@@ -1524,6 +1588,12 @@ function collectMissing(){
     if(c.id&&!validId(c.id)){ out.push({step:1,label:`איש קשר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`contacts.${i}.id`]="ספרת ביקורת שגויה"; }
   });
   if(!S.data.purpose.amount) out.push({step:4,label:"סכום ההלוואה המבוקש"});
+  S.data.tracks.forEach((t,i)=>{
+    if(!t.amount) return;
+    if(!t.rate)  out.push({step:4,label:`מסלול ${i+1} — סוג ריבית`});
+    if(!t.repay) out.push({step:4,label:`מסלול ${i+1} — ${R().pdfFile==="ayalon-reverse"?"מסלול מבוקש (בלון / ריבית בלבד / קרן + ריבית)":"אופן ההחזר"}`});
+  });
+  if(R().hasAnnuity&&S.data.purpose.annuity&&!S.data.purpose.annuityRate) out.push({step:4,label:"סוג ריבית למסלול האנונה"});
   const sum=S.data.tracks.reduce((a,t)=>a+(+t.amount||0),0);
   const req=+S.data.purpose.amount||0;
   if(req&&sum&&sum!==req) out.push({step:4,label:`סך המסלולים (${nis(sum)}) אינו תואם לסכום המבוקש (${nis(req)})`});
@@ -1633,7 +1703,7 @@ function ensureCaps(){
   while(S.data.other.length>r.maxOther) S.data.other.pop();
   while(S.data.tracks.length>r.maxTracks) S.data.tracks.pop();
   if(!has("contact")) S.data.contacts=[];
-  if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",number:"4390"};
+  if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"};
 }
 
 /* ---------- route-switch impact report ---------- */
@@ -1749,7 +1819,7 @@ function bindSend(){
      <ul class="dl">
        <li><span class="b">1</span><span>הורד את המסמך שהופק (הוא זהה למסמך המקור של החברה, עם הנתונים מוטבעים).</span></li>
        <li><span class="b">2</span><span>ב־iSign לחץ «מסמך חדש» וגרור את הקובץ, או בחר אותו מ־Google Drive, מ־Dropbox או מ־OneDrive. כל טופס ממולא מועלה כמסמך חדש: תבנית שמורה ב־iSign נפתחת תמיד על הקובץ שנשמר בה, ולכן מתאימה רק לטופס קבוע ללא פרטים אישיים, כמו טופסי ההסכמה.</span></li>
-       <li><span class="b">3</span><span>מקם שדה חתימה לכל לווה, ולצדו «שדה מילוי» על שורת התאריך. ב־iSign אין שדה תאריך שמתמלא אוטומטית, ולכן הלקוח מקליד את תאריך החתימה בעצמו. המסמך שהופק משאיר את שורות התאריך שליד חתימות הלווים ריקות לצורך זה.</span></li>
+       <li><span class="b">3</span><span>מקם שדה חתימה לכל לווה. ב־iSign אין שדה תאריך שמתמלא אוטומטית: במקומות שבהם החברה ביקשה תאריך, תאריך החתימה שנבחר בשלב הסקירה כבר מודפס בטופס. ליד כל שורת תאריך אחרת שליד חתימה, מקם «שדה מילוי» שהלקוח ממלא.</span></li>
        <li><span class="b">4</span><span>שלח ללקוח לחתימה ב־SMS או בדוא"ל.</span></li>
      </ul>
      <div class="note info" style="margin-top:14px">אם אנבר יקבלו גישת API (או יעברו לספק שמפרסם אחד),
@@ -1792,6 +1862,10 @@ async function buildPdf(){
   const {PDFDocument} = PDFLib;
   const r = R();
   const doc = await PDFDocument.load(await template(r.pdfFile));
+  /* Clal regular's authorisation letter (pp. 7–8) carries interactive fields whose grey
+     boxes paint over page content. Flatten them into the page (their current look is
+     kept) so the values drawn below sit on top and stay visible in every viewer. */
+  if(r.pdfFile==="clal-regular"){ try{ doc.getForm().flatten({updateFieldAppearances:false}); }catch(e){ console.warn("flatten",e); } }
   await overlay(doc, r.pdfFile);   // map keys are the file names, not the route ids
 
   if((r.annexes||[]).some(a=>a.perBorrower) && FIELD_MAP["clal-kyc"]){
@@ -1805,16 +1879,17 @@ async function buildPdf(){
     kycFor = 0;
   }
 
-  /* Migdal's KYC is page 4 of its own document and it states a separate form is
-     required per borrower. Page 4 was already overlaid for borrower 1 above, so
-     append one further copy per additional borrower. */
+  /* Migdal's own document carries three identical KYC pages (4, 5, 6), one per
+     borrower. Page 4 was overlaid for borrower 1 above; borrowers 2 and 3 are
+     drawn onto pages 5 and 6 with the same slot map. */
   if(r.pdfFile==="migdal" && S.data.borrowers.length>1){
-    for(let i=1;i<S.data.borrowers.length;i++){
+    const pages=doc.getPages();
+    for(let i=1;i<Math.min(S.data.borrowers.length,3);i++){
       kycFor = i;
-      const k = await PDFDocument.load(await template("migdal"));
-      await overlayPages(k,"migdal",["4"]);
-      const [copied] = await doc.copyPages(k,[3]);
-      doc.addPage(copied);
+      const page=pages[3+i];
+      const {width,height}=page.getSize();
+      const png=await drawOverlay(FIELD_MAP.migdal["4"],width,height);
+      page.drawImage(await doc.embedPng(png),{x:0,y:0,width,height});
     }
     kycFor = 0;
   }
@@ -1869,17 +1944,18 @@ function drawOverlay(items,w,h){
         ctx.stroke(); ctx.restore();
         return;
       }
-      ctx.font=`${it.size||9}px Assistant, Arial, sans-serif`;
-      ctx.textAlign=it.align||"right";
+      // 25% larger than the original map sizes (client asked for bigger text), capped at 12pt
+      let size=Math.min(12,(it.size||9)*1.25);
+      ctx.font=`${size}px Assistant, Arial, sans-serif`;
+      ctx.textAlign=it.ctr?"center":(it.align||"right");
       const text=String(v);
       // shrink to fit the slot rather than overflow into the next label
-      let size=it.size||9;
       if(it.w){
         while(ctx.measureText(text).width>it.w && size>5.5){
           size-=0.4; ctx.font=`${size}px Assistant, Arial, sans-serif`;
         }
       }
-      ctx.fillText(text,it.x,h-it.y);
+      ctx.fillText(text,it.ctr&&it.w?it.x-it.w/2:it.x,h-it.y);
     });
     // wait a frame so the webfont is definitely applied before serialising
     requestAnimationFrame(()=>{
@@ -1908,9 +1984,26 @@ const FN = {
   today:           () => { const n=new Date(); return `${String(n.getDate()).padStart(2,"0")}/${String(n.getMonth()+1).padStart(2,"0")}/${n.getFullYear()}`; },
   agentName:       d => (d.agent||{}).name||"",
   agentPhone:      d => (d.agent||{}).phone||"",
+  agentEmail:      d => (d.agent||{}).email||"",
   agentNumber:     d => (d.agent||{}).number||"",
   agentNotes:      d => (d.agent||{}).notes||"",
   purposeHas:    (d,_,arg) => (d.purpose.list||[]).includes(arg),
+  /* signing date — the value of the date field on the review step (defaults to today) */
+  signDate:  d => fmtDate(d.signDate||todayISO()),
+  signDay:   d => (d.signDate||todayISO()).slice(8,10),
+  signMonth: d => (d.signDate||todayISO()).slice(5,7),
+  signYear:  d => (d.signDate||todayISO()).slice(0,4),
+  /* the same date, only on the rows of borrowers that exist */
+  signDateFor: (d,_,arg) => d.borrowers[+arg] ? fmtDate(d.signDate||todayISO()) : "",
+  /* do the borrowers live in the property offered as collateral? */
+  livesIn: (d,_,arg) => { const set=d.borrowers.filter(b=>b.residence); if(!set.length) return false;
+    const yes=set.some(b=>b.residence==="הנכס המוצע לשעבוד"); return arg==="כן"?yes:!yes; },
+  /* other occupants besides the borrowers — answered by the occupants list itself */
+  hasOcc: (d,_,arg) => { const n=d.occupants.filter(o=>o.firstName||o.lastName).length; return arg==="כן"?n>0:n===0; },
+  addr2: d => addrOf(d.borrowers[2]),
+  /* Ayalon p.4, borrower 1: name and ID labels share one line, so print them together */
+  benLine0: d => { const a=(d.borrowers[0]||{}).ay||{}; return a.beneficiary==="נהנה אחר"?[a.benName,a.benId].filter(Boolean).join("  "):""; },
+  addr3: d => addrOf(d.borrowers[3]),
 
   /* composite strings the table-based documents want in a single cell */
   addr0: d => addrOf(d.borrowers[0]),
@@ -1926,6 +2019,9 @@ const FN = {
   contactName0: d => nameOf(d.contacts[0]),
   contactName1: d => nameOf(d.contacts[1]),
   dealRank:  d => d.deal.rank||"",
+  /* 360 p.1: lien grade after the requested amount ("דרגה ראשונה / שניה ____") */
+  dealGrade: (d,_,arg) => { const r=d.deal.rank||""; const g=/ראשונה/.test(r)?"ראשונה":/שניה/.test(r)?"שניה":"";
+    return arg===undefined?g:g===arg; },
   otherAddr0: d => (d.other[0]||{}).address||"",
   otherAddr1: d => (d.other[1]||{}).address||"",
   purposeLine: d => (d.purpose.list||[]).join(", "),
@@ -1984,8 +2080,8 @@ function oblRows(){
 }
 /* Collateral first, then any additional property — 360 lists them in one table. */
 function allProperties(d){
-  return d.collateral.map(c=>({addr:propAddr(c),reg:c.registry,val:c.value,to:c.mortgagedTo,bal:c.mortgageBalance}))
-    .concat(d.other.map(o=>({addr:o.address,reg:"",val:o.value,to:o.mortgagedTo,bal:o.mortgageBalance})));
+  return d.collateral.map(c=>({addr:propAddr(c),reg:c.registry,val:c.value,to:c.mortgagedTo,bal:c.mortgageBalance,mon:c.mortgageMonthly,coll:true}))
+    .concat(d.other.map(o=>({addr:o.address,reg:"",val:o.value,to:o.mortgagedTo,bal:o.mortgageBalance,mon:o.mortgageMonthly,coll:false})));
 }
 function propRows(){
   const o={};
@@ -1995,6 +2091,9 @@ function propRows(){
     o["propValue"+i]  =d=>{const v=(allProperties(d)[i]||{}).val; return v?Number(v).toLocaleString("en-US"):"";};
     o["propMortTo"+i] =d=>(allProperties(d)[i]||{}).to||"";
     o["propMortBal"+i]=d=>{const v=(allProperties(d)[i]||{}).bal; return v?Number(v).toLocaleString("en-US"):"";};
+    o["propMonthly"+i]=d=>{const v=(allProperties(d)[i]||{}).mon; return v?Number(v).toLocaleString("en-US"):"";};
+    /* 360 asks "is this property collateral for the loan? כ/ל" — collateral rows yes, additional properties no */
+    o["propCollTxt"+i]=d=>{const p=allProperties(d)[i]; return p&&p.addr?(p.coll?"כן":"לא"):"";};
   }
   return o;
 }
@@ -2168,10 +2267,10 @@ function demoData(){
   Object.assign(c,{gush:"6128",helka:"447",sub:"12",builtArea:"92",lotArea:"",
     street:"הרצל",num:"118",apt:"7",city:"רמת גן",type:"דירה",value:"2450000",
     mortgaged:"כן",mortgagedTo:"בנק לאומי למשכנתאות",mortgageBalance:"318000",
-    seized:"לא",rented:"לא"});
+    seized:"לא",rented:"לא",mortgageMonthly:"2150"});
   const o=blankOther();
   Object.assign(o,{type:"דירה",address:"ויצמן 22, כפר סבא",value:"1780000",
-    rentIncome:"5200",mortgagedTo:"מזרחי טפחות",mortgageBalance:"240000"});
+    rentIncome:"5200",mortgagedTo:"מזרחי טפחות",mortgageBalance:"240000",mortgageMonthly:"1680"});
 
   const t1=blankTrack(), t2=blankTrack();
   Object.assign(t1,{amount:"400000",years:"15",rate:"קבועה לא צמודה (קל\"צ)",repay:"בלון חלקי"});
@@ -2195,6 +2294,13 @@ function demoData(){
     equitySource:"חסכונות והורים",equityProof:"כן",proofType:"תדפיסי בנק"},o);
   b1.mk=MK({occupationField:"גמלאית"});
   b2.mk=MK({occupationField:"מנהל פיתוח",seniorityYears:"7"});
+  // Ayalon pages 4–5: one borrower answers "no" throughout, the other exercises every "yes" branch
+  const AY=(o)=>Object.assign(blankBorrower().ay,{beneficiary:"הלווה",refusedCredit:"לא",refusedAccount:"לא",
+    bankrupt:"לא",incapacity:"לא",hasPoa:"לא",pep:"לא",pepFam:"לא"},o);
+  b1.ay=AY({pepFam:"כן",pepFamFirst:"דוד",pepFamLast:"לוי",pepFamRelation:"אח",pepFamWhere:"בישראל",pepFamRole:"שופט"});
+  b2.ay=AY({beneficiary:"נהנה אחר",benName:"נועה בן־אברהם",benId:"058173246",benRelation:"בת זוג",
+    hasPoa:"כן",poaName:"נועה בן־אברהם",poaId:"058173246",poaBirth:"1979-04-17",poaAddress:"סוקולוב 4, הרצליה",
+    pep:"כן",pepWhere:"בחו\"ל",pepCountry:"קנדה",pepRole:"שגריר"});
 
   const r=R();
   const d={
@@ -2209,17 +2315,19 @@ function demoData(){
     purchase: has("purchase")?{kind:"דירה יחידה",hand:"הנכס יירכש מיד שניה",
       fromSale:"450000",equitySource:"חסכונות והורים",equityAmount:"310000",
       fromLoan:"600000",sellerRelation:"אין"}:{},
-    deal:{rank:r.dealPurpose?r.dealPurpose[2]:""},
+    deal:{rank:r.dealPurpose?r.dealPurpose[0]:""},
     consents:{insurance:true,credit:true,declarations:true,privacy:true},
     annexes:{a0:"הושלם",a1:"חסר",a2:"הושלם"},
     insurance:{exists:"לא",wantOffer:"כן"},
+    credit:{bounced:"לא",execution:"לא",restricted:"לא",reportPositive:"כן",rejected:"לא"},
+    signDate:todayISO(),
     clal:{existingMortgage:"כן",existingOnListed:"לא"},
     hasOccupants:S.data.occupants.length?"כן":"לא",
     kyc:{purpose:"אחר",repaySource:"משכורת",refused:"לא",
          assets:"דירה בכפר סבא המושכרת ב־5,200 ₪ לחודש."},
-    agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}
+    agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"}
   };
-  if(r.hasAnnuity) d.purpose.annuity="4500";
+  if(r.hasAnnuity){ d.purpose.annuity="4500"; d.purpose.annuityRate="קבועה צמודה"; }
   // route-specific enum safety: keep only values this document actually offers
   d.borrowers.forEach(b=>{
     if(!r.residenceOpts.includes(b.residence)) b.residence=r.residenceOpts[0];
@@ -2254,18 +2362,19 @@ $("#loadDemo").onclick=()=>{
 $("#clearAll").onclick=()=>{
   S.data={borrowers:[blankBorrower()],occupants:[],contacts:[],collateral:[blankCollateral()],
           other:[],tracks:[blankTrack()],bank:{},purpose:{},purchase:{},consents:{},
-          annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390"}};
+          annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",credit:{},signDate:todayISO(),agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"}};
   S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
 };
 
 /* ===========================================================================
    12. BOOT
    ======================================================================== */
-if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",number:"4390"};
+if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"};
 
 /* Public link by default: the demo tools only appear with ?demo=1, so the same
    URL can be handed to a client, an advisor, or anyone else. */
 const DEMO = new URLSearchParams(location.search).has("demo");
+if(LOCKED){ S.route=LOCKED; S.step=1; }
 if(DEMO){ ["loadDemo","clearAll","demoPill"].forEach(id=>{const e=document.getElementById(id); if(e) e.hidden=false;}); }
 
 render();
