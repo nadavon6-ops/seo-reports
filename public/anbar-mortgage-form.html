@@ -1944,8 +1944,8 @@ function drawOverlay(items,w,h){
         ctx.stroke(); ctx.restore();
         return;
       }
-      // 25% larger than the original map sizes (client asked for bigger text), capped at 12pt
-      let size=Math.min(12,(it.size||9)*1.25);
+      // 50% larger than the original map sizes (client asked for bigger text), capped at 12pt
+      let size=Math.min(12,(it.size||9)*1.5);
       ctx.font=`${size}px Assistant, Arial, sans-serif`;
       ctx.textAlign=it.ctr?"center":(it.align||"right");
       const text=String(v);
@@ -1985,6 +1985,8 @@ const FN = {
   agentName:       d => (d.agent||{}).name||"",
   agentPhone:      d => (d.agent||{}).phone||"",
   agentEmail:      d => (d.agent||{}).email||"",
+  /* the advisory company as it appears pre-printed on the other lenders' forms */
+  agentCompany:    d => (d.agent||{}).company||"אמיר נוה",
   agentNumber:     d => (d.agent||{}).number||"",
   agentNotes:      d => (d.agent||{}).notes||"",
   purposeHas:    (d,_,arg) => (d.purpose.list||[]).includes(arg),
@@ -2103,6 +2105,8 @@ function otherIncome(b){
   if(!b) return "";
   return [b.incAllowance&&`קצבה ${(+b.incAllowance).toLocaleString("en-US")}`,
           b.incRent&&`שכ"ד ${(+b.incRent).toLocaleString("en-US")}`,
+          b.incPension&&`פנסיה ${(+b.incPension).toLocaleString("en-US")}`,
+          b.incOtherAmt&&`${b.incOtherSrc||"אחר"} ${(+b.incOtherAmt).toLocaleString("en-US")}`,
           b.incAlimony&&`מזונות ${(+b.incAlimony).toLocaleString("en-US")}`].filter(Boolean).join(" · ");
 }
 function bankLine(d){ const b=d.bank||{};
