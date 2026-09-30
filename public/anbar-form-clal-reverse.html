@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>אנבר · מערכת טפסי משכנתא לחתימה דיגיטלית</title>
+<title>אנבר · טופס בקשה להלוואה — כלל · משכנתא הפוכה</title>
+<meta property="og:title" content="אנבר · טופס בקשה להלוואה — כלל · משכנתא הפוכה">
+<meta property="og:description" content="טופס הבקשה של כלל — משכנתא הפוכה. ממלאים את הפרטים, והמערכת מפיקה את טופס החברה.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -458,7 +460,7 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 /* company band — shown on the per-company pages so the client always sees whose form this is */
-.coband{background:var(--navy);color:#fff;padding:12px 34px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.coband{position:sticky;top:60px;z-index:59;background:var(--navy);color:#fff;padding:12px 34px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .coband b{font-size:19px;font-weight:800;letter-spacing:-.01em}
 .coband span{font-size:14px;opacity:.85}
 @media (max-width:760px){.coband{padding:10px 16px}.coband b{font-size:17px}}
@@ -721,9 +723,9 @@ function fmtDate(v){ if(!v) return ""; const p=String(v).split("-"); return p.le
    ======================================================================== */
 /* Per-company link: ?route=clal-regular (or window.ANBAR_ROUTE set by the host page)
    opens that company's form directly and hides the company picker. */
-const ROUTE_ALIAS={clal:"",ayalon:"ayalon-reverse",migdal:"migdal-reverse",credit360:"credit360-both"};
+const ROUTE_ALIAS={ayalon:"ayalon-reverse",migdal:"migdal-reverse",credit360:"credit360-both"};
 function lockedRoute(){
-  let q=(new URLSearchParams(location.search).get("route")||window.ANBAR_ROUTE||"").trim();
+  let q=(window.ANBAR_ROUTE||new URLSearchParams(location.search).get("route")||"").trim();
   if(ROUTE_ALIAS[q]) q=ROUTE_ALIAS[q];
   return (typeof ROUTES!=="undefined"&&ROUTES[q]&&ROUTES[q].pdfReady)?q:"";
 }
@@ -1420,9 +1422,8 @@ function step6(){
   const unmapped = unmappedFields();
 
   let h=`<div class="head"><h1>סקירה ושליחה</h1>
-    <p>בדיקה אחרונה לפני שהמסמך נשלח ללקוח לחתימה.</p></div>
-    <div class="note info"><b>המסמך שיישלח:</b> ${esc(r.lender)} · ${esc(r.productLabel)}
-      ${r.doc&&r.doc!=="—"?` — טופס ${esc(r.doc)}, גרסה ${esc(r.ver)}`:""}, ${r.pages} עמודים.</div>`;
+    <p>בדיקה אחרונה לפני הפקת הטופס.</p></div>
+    <div class="note info"><b>המסמך שיופק:</b> ${esc(r.lender)} · ${esc(r.productLabel)}${r.doc&&r.doc!=="—"?` — טופס ${esc(r.doc)}${r.ver&&r.ver!=="—"?`, גרסה ${esc(r.ver)}`:""}`:""}, ${r.pages} עמודים.</div>`;
 
   if(S.data.demoNote){
     h += `<div class="note info">${esc(S.data.demoNote)}</div>`;
