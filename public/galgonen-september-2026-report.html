@@ -1,0 +1,958 @@
+<!-- wp:html -->
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang='he';</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content {
+    background: #0f172a !important; background-color: #0f172a !important; margin: 0 !important; padding: 0 !important;
+}
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; padding: 0 !important; }
+    .ult-wrapper { width: 100% !important; max-width: 100% !important; padding: 20px 2% !important; margin: 0 !important; }
+    .ult-header { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; margin: 0 0 25px 0 !important; }
+    .ult-section, .success-banner, .data-sources-strip, .hero-stats { width: 100% !important; max-width: 100% !important; }
+}
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; padding-top: 0 !important; margin-top: 0 !important; min-height: 100vh !important; }
+html { background: #0f172a !important; direction: rtl !important; }
+html.admin-bar body, body.admin-bar { margin-top: 0 !important; padding-top: 0 !important; }
+.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content, header.site-header, footer.site-footer, nav, .site-navigation, .wp-block-post-title, .entry-header, h1.entry-title { all: unset !important; display: block !important; }
+header, footer, nav, .site-header, .site-footer, .site-navigation, .wp-block-post-title, .entry-header, .entry-title { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: transparent !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+.entry-content, .wp-block-post-content, .wp-site-blocks, main, article { max-width: none !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; position: relative !important; left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.ult-container { direction: rtl; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; color: #e2e8f0; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+.ult-wrapper { max-width: 100%; width: 100%; margin: 0; padding: 20px 16px; }
+
+.ult-header { background: linear-gradient(135deg, #a21caf 0%, #c026d3 50%, #1e293b 100%); padding: 50px 25px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
+.ult-header::before { content: ''; position: absolute; top: -100%; right: -50%; width: 200%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); animation: headerPulse 6s ease-in-out infinite; }
+@keyframes headerPulse { 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.ult-header .version-badge { position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em; z-index: 10; }
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; text-shadow: 2px 4px 12px rgba(0,0,0,0.3); margin-bottom: 10px; position: relative; z-index: 1; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; position: relative; z-index: 1; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; position: relative; z-index: 1; }
+.ult-header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+.success-banner { background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%); padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px; animation: successPulse 3s ease-in-out infinite; }
+@keyframes successPulse { 0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(192,38,211,0.4);} 50%{transform:scale(1.01); box-shadow:0 0 20px 10px rgba(192,38,211,0.2);} }
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px 20px; background: linear-gradient(135deg, rgba(192,38,211,0.15), rgba(185,28,28,0.1)); border: 1px solid rgba(192,38,211,0.3); border-radius: 16px; margin-bottom: 25px; }
+.data-source-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #fca5a5; }
+.data-source-item .icon { font-size: 1.2em; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: linear-gradient(135deg, rgba(14,165,233,0.15) 0%, rgba(6,182,212,0.08) 100%); border: 1px solid rgba(14,165,233,0.3); border-radius: 18px; padding: 22px 16px; text-align: center; }
+.kpi-card.red { background: linear-gradient(135deg, rgba(192,38,211,0.15) 0%, rgba(185,28,28,0.08) 100%); border-color: rgba(192,38,211,0.3); }
+.kpi-card.gold { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border-color: rgba(251,191,36,0.3); }
+.kpi-card.green { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(34,197,94,0.3); }
+.kpi-card.purple { background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.08) 100%); border-color: rgba(139,92,246,0.3); }
+.kpi-card .icon { font-size: 2.2em; margin-bottom: 10px; }
+.kpi-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.kpi-card .secondary { font-size: 1.05em; color: #cbd5e1; margin-bottom: 6px; }
+.kpi-card .label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.kpi-card .compare { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.kpi-card .compare.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.kpi-card .compare.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.kpi-card .compare.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+.ult-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid rgba(192,38,211,0.4); }
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.organic-highlight { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border: 2px solid rgba(34,197,94,0.4); border-radius: 18px; padding: 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+.organic-stat { text-align: center; }
+.organic-stat .value { font-size: 2em; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+.organic-stat .label { font-size: 0.9em; color: #94a3b8; }
+.organic-summary { text-align: center; padding: 18px; background: rgba(34,197,94,0.1); border-radius: 12px; font-size: 1.1em; line-height: 1.6; }
+.organic-summary strong { color: #4ade80; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; min-width: 0; overflow: visible; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.traffic-item { display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px; gap: 15px; }
+.traffic-item:hover { background: rgba(255,255,255,0.08); transform: translateX(-5px); }
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bar-container { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; border-radius: 4px; }
+.traffic-item .users { font-weight: 700; font-size: 1.05em; text-align: left; }
+.traffic-item .pct { color: #94a3b8; font-size: 0.9em; text-align: left; }
+
+.keywords-category { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.keywords-category.brand { border-right: 4px solid #c026d3; }
+.keywords-category.nonbrand { border-right: 4px solid #8b5cf6; }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cat-icon { font-size: 1.5em; }
+.cat-title { font-size: 1.2em; font-weight: 700; color: #fff; }
+.cat-count { margin-right: auto; background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: #94a3b8; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table th { text-align: right; padding: 12px 10px; font-size: 0.85em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+.kw-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.kw-table tr:hover { background: rgba(255,255,255,0.03); }
+.kw-name { font-weight: 600; color: #e2e8f0; }
+.vol-badge { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 10px; border-radius: 18px; font-weight: 800; font-size: 0.95em; color: #fff; }
+.pos-badge.p1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; }
+.pos-badge.top5 { background: rgba(34,197,94,0.35); color: #86efac; }
+.pos-badge.top10 { background: rgba(59,130,246,0.35); color: #93c5fd; }
+.pos-badge.top20 { background: rgba(139,92,246,0.35); color: #c4b5fd; }
+.pos-badge.top50 { background: rgba(239,68,68,0.3); color: #fca5a5; }
+.pos-badge.out { background: rgba(100,116,139,0.35); color: #cbd5e1; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.clicks-badge { background: rgba(34,197,94,0.15); color: #4ade80; padding: 3px 9px; border-radius: 10px; font-size: 0.85em; font-weight: 600; }
+
+.pages-grid { display: flex; flex-direction: column; gap: 12px; }
+.page-row { display: grid; grid-template-columns: 50px 1fr 420px; align-items: center; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; gap: 20px; }
+.page-row:hover { background: rgba(255,255,255,0.06); transform: translateX(-5px); }
+.page-rank { font-size: 1.4em; font-weight: 800; color: #c026d3; }
+.page-url { font-weight: 600; color: #e2e8f0; word-break: break-word; }
+.page-metrics { display: flex; gap: 15px; }
+.metric-card { background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; text-align: center; min-width: 70px; }
+.metric-value { font-size: 1.1em; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.75em; color: #64748b; margin-top: 4px; }
+
+.ult-footer { text-align: center; padding: 30px 20px; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+.se-ranking-section { background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.05) 100%); border: 1px solid rgba(139,92,246,0.3); }
+.se-ranking-badge { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75em; font-weight: 600; margin-right: 10px; }
+
+.comparison-block { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 20px; }
+.comp-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+.comp-card h4 { color: #fff; font-size: 1.05em; margin-bottom: 12px; }
+.comp-card table { width: 100%; }
+.comp-card td { padding: 6px 4px; font-size: 0.92em; color: #cbd5e1; }
+.comp-card td:last-child { text-align: left; font-weight: 600; }
+.comp-card span.up { color: #4ade80; }
+.comp-card span.down { color: #f87171; }
+.comp-card span.stable { color: #94a3b8; }
+
+.timeframes-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 25px; }
+.timeframe-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(139,92,246,0.25); border-radius: 14px; padding: 16px 14px; text-align: center; }
+.tf-label { font-size: 1em; font-weight: 700; color: #c4b5fd; margin-bottom: 3px; }
+.tf-date { font-size: 0.75em; color: #64748b; margin-bottom: 12px; }
+.tf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.tf-stat { display: flex; flex-direction: column; align-items: center; }
+.tf-num { font-size: 1.4em; font-weight: 800; }
+.tf-cap { font-size: 0.7em; color: #94a3b8; margin-top: 2px; }
+.tf-bar-container { display: flex; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.tf-bar { height: 100%; }
+.tf-bar-3 { background: #fbbf24; }
+.tf-bar-10 { background: #4ade80; }
+.tf-bar-20 { background: #60a5fa; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .organic-highlight { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .page-row { grid-template-columns: 50px 1fr; }
+    .page-metrics { display: none; }
+    .timeframes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .kw-table { font-size: 0.85em; }
+    .kw-table th, .kw-table td { padding: 8px 4px; }
+}
+.month-switcher { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; position: relative; z-index: 2; }
+.month-switcher .ms-label { color: rgba(255,255,255,0.8); font-size: 0.95em; margin-left: 6px; }
+.month-switcher .ms-btn { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9em; font-weight: 600; }
+.month-switcher .ms-btn:hover { background: rgba(255,255,255,0.25); }
+.month-switcher .ms-btn.active { background: rgba(192,38,211,0.5); border-color: rgba(192,38,211,0.8); }
+</style>
+
+<style>/* WP override rules use all:unset on ancestors, which kills inherited colour - any cell without its own colour renders black */ .ult-container td{color:#e2e8f0 !important;} .ult-container th{color:#94a3b8 !important;} .ult-container td b,.ult-container td strong{color:#fff !important;}</style><div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">Ultimate Report v3.0</div>
+        <div class="client-name">Gal Gonen | גל גונן</div>
+        <h1>דוח ביצועי SEO חודשי - ספטמבר 2026</h1>
+        <p class="subtitle">galgonen.com | מותג קוסמטיקה, טיפוח ובישום | ניתוח תנועה, דירוגים ותובנות</p>
+        <div class="period-badge">ספטמבר 2026 | 01/09/2026 - 30/09/2026 | דוח ראשון: נקודת הבסיס</div>
+        <div class="month-switcher">
+            <span class="ms-label">חודשים זמינים:</span>
+            <a href="/galgonen-september-2026" class="ms-btn active">ספטמבר 2026</a>
+        </div>
+    </div>
+
+    <div class="ult-wrapper">
+        <div class="success-banner">
+            <div class="title">1,041 קליקים מגוגל | 23,025 הופעות | 40 מילות מפתח ב-Top 10</div>
+            <div class="subtitle">715 סשנים אורגניים (5.4% מהתנועה) | 87 חיפושים כלליים בעמוד הראשון של גוגל | CTR 4.52%</div>
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">📊</span><span>GA4: 13,322 סשנים</span></div>
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 1,041 קליקים / 23,025 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📈</span><span>SE Ranking: 99 מילים במעקב</span></div>
+            <div class="data-source-item"><span class="icon">🏆</span><span>24 מילים ב-Top 3</span></div>
+        </div>
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="icon">🌱</div>
+                <div class="value">715</div>
+                <div class="label">סשנים אורגניים (GA4)</div>
+                <div class="secondary">5.4% מכלל התנועה</div>
+                <div class="compare up">+16.3% מול אוגוסט</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="icon">🔍</div>
+                <div class="value">1,041</div>
+                <div class="label">קליקים מגוגל (GSC)</div>
+                <div class="secondary">CTR 4.52%</div>
+                <div class="compare stable">חודש בסיס</div>
+            </div>
+            <div class="kpi-card gold">
+                <div class="icon">👁️</div>
+                <div class="value">23,025</div>
+                <div class="label">הופעות בגוגל (GSC)</div>
+                <div class="secondary">768/יום ממוצע</div>
+                <div class="compare stable">חודש בסיס</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="icon">🏆</div>
+                <div class="value">40</div>
+                <div class="label">מילות מפתח ב-Top 10</div>
+                <div class="secondary">מתוך 99 מילים במעקב</div>
+                <div class="compare stable">24 מהן ב-Top 3</div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🏅</span>
+                <div class="section-title">
+                    <h2>הישגי החודש</h2>
+                    <div class="desc">מה כבר עובד באתר | ספטמבר 2026</div>
+                </div>
+            </div>
+            <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.98em; line-height:2;">
+                <li>• <b>המותג במקום הראשון בגוגל</b>: "גל גונן" במיקום 1 עם 307 קליקים, ו-561 קליקים מחיפושי מותג בסך הכל</li>
+                <li>• <b>87 חיפושים כלליים (לא מותג) כבר בעמוד הראשון</b>, ביניהם "lip gloss" (מיקום 8, 1,507 הופעות), "טוש נמשים" (מיקום 8, 352 הופעות), "mini fridge" (מיקום 7, 309 הופעות)</li>
+                <li>• <b>40 מילות מפתח במעקב נמצאות ב-Top 10</b>, מתוכן 24 ב-Top 3 ו-11 במקום הראשון</li>
+                <li>• <b>מוצרים בעמוד הראשון על חיפושים עם נפח</b>: "eye patches" (נפח 880) במיקום 2, "hair clay" (נפח 390) במיקום 3, "קלין גירל" (נפח 260) במיקום 2, "סבון גבות" (נפח 210) במיקום 2</li>
+                <li>• <b>עליות במהלך ספטמבר</b>: "glow stick" ממיקום 15 ל-5, "טוש נמשים" ממיקום 6 ל-5, "גל גונן סופר פארם" ממיקום 2 ל-1</li>
+                <li>• <b>התנועה האורגנית צמחה</b>: 715 סשנים מול 615 באוגוסט (+16.3%)</li>
+                <li>• <b>איכות התנועה האורגנית עלתה</b>: שיעור המעורבות 69.4% מול 65.9% באוגוסט</li>
+            </ul>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>נתוני הבסיס והשוואה חודשית</h2>
+                    <div class="desc">ספטמבר 2026 מול אוגוסט 2026 היכן שיש נתונים מלאים לשני החודשים | כל השאר הוא נקודת הפתיחה לחודש הבא</div>
+                </div>
+            </div>
+            <div class="comparison-block">
+                <div class="comp-card">
+                    <h4>📅 ספטמבר 2026 ↔ אוגוסט 2026</h4>
+                    <table>
+                                                <tr><td colspan="3" style="background:rgba(34,197,94,0.12); color:#86efac; font-weight:700; text-align:center; padding:6px;">GA4 | תנועה</td></tr>
+                        <tr><td>סה"כ סשנים</td><td>13,322 ↔ 16,522</td><td><span class="down">-19.4%</span></td></tr>
+                        <tr><td>סשנים אורגניים (Organic Search)</td><td>715 ↔ 615</td><td><span class="up">+16.3%</span></td></tr>
+                        <tr><td>סשנים אורגניים עם מעורבות</td><td>496 ↔ 405</td><td><span class="up">+22.5%</span></td></tr>
+                        <tr><td>אירועים מרכזיים מחיפוש אורגני</td><td>29 ↔ 44</td><td><span class="down">-34.1%</span></td></tr>
+                        <tr><td>הכנסות מחיפוש אורגני (₪)</td><td>7,018 ↔ 10,436</td><td><span class="down">-32.8%</span></td></tr>
+                        <tr><td>AI Assistant</td><td>17 ↔ 10</td><td><span class="up">+70.0%</span></td></tr>
+                        <tr><td colspan="3" style="background:rgba(59,130,246,0.12); color:#93c5fd; font-weight:700; text-align:center; padding:6px;">GSC | נוכחות בגוגל</td></tr>
+                        <tr><td>קליקים</td><td>1,041</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>הופעות</td><td>23,025</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>CTR ממוצע</td><td>4.52%</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>מיקום ממוצע</td><td>9</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>קליקים מחיפושי מותג</td><td>561</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>קליקים מחיפושים כלליים (Non-Brand)</td><td>92</td><td><span class="stable">בסיס</span></td></tr>
+                        <tr><td>קליקים משאילתות שגוגל לא חושף</td><td>388</td><td><span class="stable">בסיס</span></td></tr>
+                    </table>
+                    <div style="margin-top:10px; padding:10px; background:rgba(59,130,246,0.12); border-radius:8px; font-size:0.85em; color:#93c5fd; line-height:1.6;">בנתוני GSC זה החודש המלא הראשון של האתר, ולכן נתוני גוגל מוצגים כנקודת בסיס. נתוני GA4 קיימים לשני החודשים ומוצגים בהשוואה (ספטמבר 2026 מול 02.08-31.08.2026). מדד GA4 בדוח הוא סשנים.</div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <div class="section-title">
+                    <h2>תנועה אורגנית מגוגל</h2>
+                    <div class="desc">1,041 קליקים ו-23,025 הופעות בספטמבר 2026</div>
+                </div>
+            </div>
+
+            <div class="organic-highlight">
+                <div class="organic-stat"><div class="value">715</div><div class="label">סשנים אורגניים (GA4)</div></div>
+                <div class="organic-stat"><div class="value">1,041</div><div class="label">קליקים מגוגל</div></div>
+                <div class="organic-stat"><div class="value">4.52%</div><div class="label">CTR ממוצע</div></div>
+                <div class="organic-stat"><div class="value">9</div><div class="label">מיקום ממוצע</div></div>
+            </div>
+            <div class="organic-highlight" style="margin-top:14px;">
+                <div class="organic-stat"><div class="value">947</div><div class="label">קליקים מנייד (91.0%)</div></div><div class="organic-stat"><div class="value">85</div><div class="label">קליקים ממחשב שולחני (8.2%)</div></div><div class="organic-stat"><div class="value">9</div><div class="label">קליקים מטאבלט (0.9%)</div></div>
+            </div>
+            <div class="organic-summary"><strong>1,041 קליקים</strong> ו-<strong>23,025 הופעות</strong> בגוגל. מלבד המותג, האתר מופיע בעמוד הראשון ב-<strong>87 חיפושים כלליים</strong> שהצטברו ל-8,449 הופעות. עמוד הבשמים הביא 140 קליקים במיקום ממוצע 1, ו-91.0% מהקליקים הגיעו מהנייד.</div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🌐</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה - התמונה המלאה</h2>
+                    <div class="desc">13,322 סשנים בספטמבר 2026 | GA4</div>
+                </div>
+            </div>
+
+            <div class="traffic-grid">
+                <div class="traffic-chart-area"><canvas id="trafficChart" height="300"></canvas></div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span><span>סושיאל אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 100%; background: #8b5cf6;"></div></div>
+                        <div class="users">3,284</div>
+                        <div class="pct">24.7%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ec4899;"></span><span>סושיאל בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 84%; background: #ec4899;"></div></div>
+                        <div class="users">2,772</div>
+                        <div class="pct">20.8%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ef4444;"></span><span>חיפוש בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 71%; background: #ef4444;"></div></div>
+                        <div class="users">2,340</div>
+                        <div class="pct">17.6%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #64748b;"></span><span>לא מסווג</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 58%; background: #64748b;"></div></div>
+                        <div class="users">1,911</div>
+                        <div class="pct">14.3%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span><span>ישיר</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 42%; background: #3b82f6;"></div></div>
+                        <div class="users">1,369</div>
+                        <div class="pct">10.3%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span><span>חיפוש אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 22%; background: #22c55e;"></div></div>
+                        <div class="users">715</div>
+                        <div class="pct">5.4%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #f97316;"></span><span>SMS</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 21%; background: #f97316;"></div></div>
+                        <div class="users">681</div>
+                        <div class="pct">5.1%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #14b8a6;"></span><span>שופינג אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 3%; background: #14b8a6;"></div></div>
+                        <div class="users">114</div>
+                        <div class="pct">0.9%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #10b981;"></span><span>הפניה (Referral)</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 2%; background: #10b981;"></div></div>
+                        <div class="users">75</div>
+                        <div class="pct">0.6%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #a3a3a3;"></span><span>רשת חוצה</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #a3a3a3;"></div></div>
+                        <div class="users">24</div>
+                        <div class="pct">0.2%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #eab308;"></span><span>דיוור (Email)</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #eab308;"></div></div>
+                        <div class="users">20</div>
+                        <div class="pct">0.2%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #06b6d4;"></span><span>AI Assistant</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #06b6d4;"></div></div>
+                        <div class="users">17</div>
+                        <div class="pct">0.1%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section se-ranking-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>דירוגים - SE Ranking <span class="se-ranking-badge">נקודת בסיס</span></h2>
+                    <div class="desc">99 מילות מפתח במעקב | גוגל ישראל, מחשב ונייד | מיקום = הטוב ביותר מבין שני המכשירים</div>
+                </div>
+            </div>
+
+            <div class="timeframes-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+                <div class="timeframe-card">
+                    <div class="tf-label">מצב נוכחי</div>
+                    <div class="tf-date">המיקום הטוב ביותר עד 03.10.2026</div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">24</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">40</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">63</span><span class="tf-cap">Top 30</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">71</span><span class="tf-cap">ב-100 הראשונים</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:24%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:16%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:23%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin:0 0 18px; padding:10px; background:rgba(139,92,246,0.12); border-radius:8px; font-size:0.85em; color:#c4b5fd; line-height:1.6;">סט מילות המפתח המלא נבדק לראשונה ב-03.10.2026, ומהבדיקה הזו נמדדת ההתקדמות מהחודש הבא. 24 מילים היו במעקב כבר מ-02.09.2026; אצלן העמודה "סטטוס" מציגה את העלייה מהבדיקה הראשונה ועד 25.09.2026.</div>
+            <div class="keywords-category" style="border-right:4px solid #22c55e;">
+                <div class="category-header">
+                    <span class="cat-icon">🏆</span>
+                    <span class="cat-title">מילות מפתח מדורגות</span>
+                    <span class="cat-count">71 מתוך 99 מילים במעקב | ממוינות לפי מיקום</span>
+                </div>
+                <table class="kw-table">
+                    <thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>מיקום (הטוב ביותר)</th><th>מיקום ממוצע בגוגל (GSC)</th><th>עמוד מדורג</th><th>סטטוס</th></tr></thead>
+                    <tbody>
+<tr>
+                                <td class="kw-name">gal</td>
+                                <td><span class="vol-badge">880</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">gal gonen</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן איפור</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן</td>
+                                <td><span class="vol-badge">150</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן סופר פארם</td>
+                                <td><span class="vol-badge">90</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge up">↑ 2 ← 1</span></td>
+                            </tr><tr>
+                                <td class="kw-name">galgonen</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/shopping-il</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גנון</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/all-items</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן בושם</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/fragrances</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">soap brows</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/brows-lift-soap</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">reve perfume</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge top20">11</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/reve-eau-de-parfum</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן קוסמטיקה</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">eye patches</td>
+                                <td><span class="vol-badge">880</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/sweet-clouds-hydrogel-peptide-eye-patches</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">קלין גירל</td>
+                                <td><span class="vol-badge">260</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/blogs/news/how-to-choose-the-perfect-makeup-products-for-your-skin-gal-gonens-blog</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">סבון גבות</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/brows-lift-soap</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">bronzing drops</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/bronzing-drops-illuminating-sunshine-drops</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">שפתון מתקלף</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/lips</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן גיל</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/pages/about-us</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">kuku לשיער</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/חימר-לשיער-kuku-tigth-hair-clay-long-lasting</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">hair clay</td>
+                                <td><span class="vol-badge">390</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/חימר-לשיער-kuku-tigth-hair-clay-long-lasting</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">מקרר סקין קר</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/mini-fridge-retro</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">פודרה מינרלית</td>
+                                <td><span class="vol-badge">90</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/sugar-rush-mineral-powder</bdi></td>
+                                <td><span class="change-badge up">↑ 7 ← 6</span></td>
+                            </tr><tr>
+                                <td class="kw-name">איך להיות קלין גירל</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/blogs/news/how-to-choose-the-perfect-makeup-products-for-your-skin-gal-gonens-blog</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">mykonos בושם</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/mykonos-vibes-eau-de-parfum</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">חימר מרקם שיער</td>
+                                <td><span class="vol-badge">מתחת ל-10</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge top50">25</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/kuku-tigth</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">gal cosmetics</td>
+                                <td><span class="vol-badge">320</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">glow stick</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top20">11</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/california-sun-kissed-glow-stick</bdi></td>
+                                <td><span class="change-badge up">↑ 15 ← 5</span></td>
+                            </tr><tr>
+                                <td class="kw-name">lip oil</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">10</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/keep-it-glow-lip-oil-vitamin-e-almomd-oil</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עיפרון נמשים</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/freckle-control-make-your-own</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">lip plumper</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/lip-volume-effect-hyaluronic-lip-plumper</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">micellar</td>
+                                <td><span class="vol-badge">140</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/micellar-water-makeup-remover</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">אודם מתקלף</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/lips</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">סבון לגבות</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/brows-lift-soap</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">בושם מיקונוס</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/mykonos-vibes-eau-de-parfum</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל קוסמטיקס</td>
+                                <td><span class="vol-badge">2,400</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">טוש נמשים</td>
+                                <td><span class="vol-badge">390</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/freckle-control-make-your-own</bdi></td>
+                                <td><span class="change-badge up">↑ 6 ← 5</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל קוסמטיקס אתר</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>עמוד הבית</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">my blush סומק</td>
+                                <td><span class="vol-badge">מתחת ל-10</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/crush-blush-velevt-touch-new</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">ביבי קרים</td>
+                                <td><span class="vol-badge">320</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/bb-cream-skin-longwear-foundation-spf-15</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">שפתון עגול</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="pos-badge top50">22</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/collections/lips</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr><tr>
+                                <td class="kw-name">ביבי קרם</td>
+                                <td><span class="vol-badge">320</span></td>
+                                <td><span class="pos-badge top10">10</span></td>
+                                <td><span class="pos-badge top20">12</span></td>
+                                <td style="font-size:0.8em; direction:ltr; text-align:right;"><bdi>/products/bb-cream-skin-longwear-foundation-spf-15</bdi></td>
+                                <td><span class="change-badge stable">בסיס</span></td>
+                            </tr>
+                    </tbody>
+                </table><div style="margin-top:8px; font-size:0.85em; color:#94a3b8;">מוצגות 40 המילים המדורגות הגבוהות מתוך 71.</div>
+            </div>
+            <div class="keywords-category" style="border-right:4px solid #8b5cf6;">
+                <div class="category-header">
+                    <span class="cat-icon">🚀</span>
+                    <span class="cat-title">מילות יעד לחודשים הקרובים</span>
+                    <span class="cat-count">28 מילים במעקב שעדיין מחוץ ל-100 הראשונים</span>
+                </div>
+                <div style="color:#cbd5e1; font-size:0.92em; margin-bottom:8px;">מילות היעד בעלות נפח החיפוש הגבוה ביותר (נפח חודשי בסוגריים):</div>
+                <div><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">מסכה לשיער <span style="color:#a5b4fc;">(3,200)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">קרם לשיער <span style="color:#a5b4fc;">(1,800)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">גלוס <span style="color:#a5b4fc;">(660)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">primer <span style="color:#a5b4fc;">(660)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">mini fridge <span style="color:#a5b4fc;">(590)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">match point <span style="color:#a5b4fc;">(590)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">concealer <span style="color:#a5b4fc;">(590)</span></span><span style="display:inline-block; background:rgba(139,92,246,0.18); color:#ddd6fe; border-radius:14px; padding:5px 12px; margin:4px; font-size:0.85em;">minifridge <span style="color:#a5b4fc;">(590)</span></span></div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🏷️</span>
+                <div class="section-title">
+                    <h2>מילות מפתח מובילות ב-GSC - Brand vs Non-Brand</h2>
+                    <div class="desc">פילוח החיפושים שהביאו את האתר לגוגל | מקור: GSC</div>
+                </div>
+            </div>
+
+            <div class="cat-tables-grid">
+                <div class="keywords-category brand">
+                    <div class="category-header">
+                        <span class="cat-icon">🏷️</span>
+                        <span class="cat-title">מותג (Brand) | גל גונן / Gal Gonen</span>
+                        <span class="cat-count">21 וריאציות | 561 קליקים (85.9% מהקליקים בשאילתות המזוהות)</span>
+                    </div>
+                    <table class="kw-table">
+                        <thead><tr><th>מילת מפתח</th><th>הופעות</th><th>מיקום</th><th>קליקים</th></tr></thead>
+                        <tbody>
+<tr>
+                                <td class="kw-name">גל גונן</td>
+                                <td><span class="vol-badge">1,524</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">307</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן אתר</td>
+                                <td><span class="vol-badge">279</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">68</span></td>
+                            </tr><tr>
+                                <td class="kw-name">gal gonen</td>
+                                <td><span class="vol-badge">345</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">58</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן בושם</td>
+                                <td><span class="vol-badge">169</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">35</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גונן איפור</td>
+                                <td><span class="vol-badge">208</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">21</span></td>
+                            </tr><tr>
+                                <td class="kw-name">בושם גל גונן</td>
+                                <td><span class="vol-badge">98</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">19</span></td>
+                            </tr><tr>
+                                <td class="kw-name">גל גנון</td>
+                                <td><span class="vol-badge">114</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">17</span></td>
+                            </tr><tr>
+                                <td class="kw-name">galgonen</td>
+                                <td><span class="vol-badge">121</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">13</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="keywords-category nonbrand">
+                    <div class="category-header">
+                        <span class="cat-icon">🔎</span>
+                        <span class="cat-title">חיפושים כלליים (Non-Brand)</span>
+                        <span class="cat-count">1005 שאילתות | 12,927 הופעות | 92 קליקים</span>
+                    </div>
+                    <table class="kw-table">
+                        <thead><tr><th>מילת מפתח</th><th>הופעות</th><th>מיקום</th><th>קליקים</th></tr></thead>
+                        <tbody>
+<tr>
+                                <td class="kw-name">גל קוסמטיקס</td>
+                                <td><span class="vol-badge">2,034</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr><tr>
+                                <td class="kw-name">lip gloss</td>
+                                <td><span class="vol-badge">1,507</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">טוש נמשים</td>
+                                <td><span class="vol-badge">352</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">4</span></td>
+                            </tr><tr>
+                                <td class="kw-name">mini fridge</td>
+                                <td><span class="vol-badge">309</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">mykonos perfume</td>
+                                <td><span class="vol-badge">295</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr><tr>
+                                <td class="kw-name">gal</td>
+                                <td><span class="vol-badge">266</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">שפתון</td>
+                                <td><span class="vol-badge">266</span></td>
+                                <td><span class="pos-badge top50">28</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">סבון גבות</td>
+                                <td><span class="vol-badge">230</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">gal cosmetics</td>
+                                <td><span class="vol-badge">220</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr><tr>
+                                <td class="kw-name">עט נמשים</td>
+                                <td><span class="vol-badge">177</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים</h2>
+                    <div class="desc">העמודים שהביאו הכי הרבה קליקים מגוגל | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-row">
+                    <div class="page-rank">#1</div>
+                    <div class="page-url"><bdi>עמוד הבית</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">502</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">8,252</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">6.08%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#2</div>
+                    <div class="page-url"><bdi>/collections/fragrances</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">140</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,991</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">4.68%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">1</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#3</div>
+                    <div class="page-url"><bdi>/products/ciel-eau-de-parfum</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">59</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">988</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">5.97%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#4</div>
+                    <div class="page-url"><bdi>/products/mini-fridge-retro</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">45</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">1,139</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">3.95%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#5</div>
+                    <div class="page-url"><bdi>/products/mykonos-vibes-eau-de-parfum</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">38</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">955</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">3.98%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#6</div>
+                    <div class="page-url"><bdi>/collections/all-items</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">24</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,719</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.88%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">1</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#7</div>
+                    <div class="page-url"><bdi>/products/fix-it-hair-powder</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">23</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">1,212</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.90%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">30</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#8</div>
+                    <div class="page-url"><bdi>/products/emanuela-eau-de-parfum</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">23</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">634</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">3.63%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">💡</span>
+                <div class="section-title">
+                    <h2>הזדמנויות לחודש הבא</h2>
+                    <div class="desc">מה בונים על נקודת הבסיס של ספטמבר 2026</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:14px; padding:18px;">
+                <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.95em; line-height:1.9;">
+                    <li>• חיפושים בעמוד השני של גוגל עם הכי הרבה הופעות, שהם ההזדמנות הקרובה לעמוד הראשון: "ביבי קרם" (מיקום 12, 126 הופעות), "bb cream" (מיקום 17, 115 הופעות), "קונסילר ירוק" (מיקום 14, 101 הופעות)</li><li>• 28 מילות מפתח במעקב עדיין מחוץ ל-100 הראשונים, וזה הבסיס למדידה בחודש הבא</li><li>• מהדוח הבא נתוני GSC יוצגו בהשוואה לספטמבר 2026</li>
+                </ul>
+            </div>
+        </div><div class="ult-footer">
+            <div class="brand">NC Digital</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('trafficChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ["סושיאל אורגני", "סושיאל בתשלום", "חיפוש בתשלום", "לא מסווג", "ישיר", "חיפוש אורגני", "SMS", "שופינג אורגני", "הפניה (Referral)", "רשת חוצה", "דיוור (Email)", "AI Assistant"],
+        datasets: [{
+            data: [3284, 2772, 2340, 1911, 1369, 715, 681, 114, 75, 24, 20, 17],
+            backgroundColor: ["#8b5cf6", "#ec4899", "#ef4444", "#64748b", "#3b82f6", "#22c55e", "#f97316", "#14b8a6", "#10b981", "#a3a3a3", "#eab308", "#06b6d4"],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } },
+        cutout: '60%'
+    }
+});
+</script>
+<!-- /wp:html -->
