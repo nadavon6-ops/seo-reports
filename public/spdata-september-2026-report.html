@@ -1,0 +1,1251 @@
+<!-- wp:html -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content { background: #0f172a !important; margin: 0 !important; padding: 0 !important; }
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; padding: 0 !important; }
+    .ult-wrapper { width: 100% !important; max-width: 100% !important; padding: 20px 2% !important; margin: 0 !important; }
+    .ult-header { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; margin: 0 0 25px 0 !important; }
+    .ult-section, .success-banner, .data-sources-strip, .hero-stats { width: 100% !important; max-width: 100% !important; }
+}
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; padding-top: 0 !important; margin-top: 0 !important; min-height: 100vh !important; }
+html { background: #0f172a !important; direction: rtl !important; }
+.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content, header.site-header, footer.site-footer, nav, .site-navigation, .wp-block-post-title, .entry-header, h1.entry-title { all: unset !important; display: block !important; }
+header, footer, nav, .site-header, .site-footer, .site-navigation, .wp-block-post-title, .entry-header, .entry-title { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: transparent !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+.entry-content, .wp-block-post-content, .wp-site-blocks, main, article { max-width: none !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; position: relative !important; left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.ult-container { direction: rtl; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; color: #e2e8f0; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+.ult-wrapper { max-width: 100%; width: 100%; margin: 0; padding: 20px 16px; }
+
+.ult-header { background: linear-gradient(135deg, #059669 0%, #16a34a 50%, #1e293b 100%); padding: 50px 25px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
+.ult-header::before { content: ''; position: absolute; top: -100%; right: -50%; width: 200%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); animation: headerPulse 6s ease-in-out infinite; }
+@keyframes headerPulse { 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.ult-header .version-badge { position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em; z-index: 10; }
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; text-shadow: 2px 4px 12px rgba(0,0,0,0.3); margin-bottom: 10px; position: relative; z-index: 1; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; position: relative; z-index: 1; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; position: relative; z-index: 1; }
+.ult-header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+.success-banner { background: linear-gradient(135deg, #16a34a 0%, #059669 100%); padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px; }
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px 20px; background: linear-gradient(135deg, rgba(22,163,74,0.15), rgba(5,150,105,0.1)); border: 1px solid rgba(22,163,74,0.3); border-radius: 16px; margin-bottom: 25px; }
+.data-source-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #93c5fd; }
+.data-source-item .icon { font-size: 1.2em; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: linear-gradient(135deg, rgba(22,163,74,0.15) 0%, rgba(5,150,105,0.08) 100%); border: 1px solid rgba(22,163,74,0.3); border-radius: 18px; padding: 22px 16px; text-align: center; }
+.kpi-card.green { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(34,197,94,0.3); }
+.kpi-card.gold { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border-color: rgba(251,191,36,0.3); }
+.kpi-card.purple { background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.08) 100%); border-color: rgba(139,92,246,0.3); }
+.kpi-card .icon { font-size: 2.2em; margin-bottom: 10px; }
+.kpi-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.kpi-card .secondary { font-size: 1.05em; color: #cbd5e1; margin-bottom: 6px; }
+.kpi-card .label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.kpi-card .compare { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.kpi-card .compare.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.kpi-card .compare.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.kpi-card .compare.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+.ult-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid rgba(22,163,74,0.4); }
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.organic-highlight { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border: 2px solid rgba(34,197,94,0.4); border-radius: 18px; padding: 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+.organic-stat { text-align: center; }
+.organic-stat .value { font-size: 2em; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+.organic-stat .label { font-size: 0.9em; color: #94a3b8; }
+.organic-summary { text-align: center; padding: 18px; background: rgba(34,197,94,0.1); border-radius: 12px; font-size: 1.1em; line-height: 1.6; }
+.organic-summary strong { color: #4ade80; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; min-width: 0; overflow: visible; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.traffic-item { display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px; gap: 15px; }
+.traffic-item:hover { background: rgba(255,255,255,0.08); transform: translateX(-5px); }
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bar-container { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; border-radius: 4px; }
+.traffic-item .users { font-weight: 700; font-size: 1.05em; text-align: left; }
+.traffic-item .pct { color: #94a3b8; font-size: 0.9em; text-align: left; }
+
+.keywords-category { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.keywords-category.brand { border-right: 4px solid #16a34a; }
+.keywords-category.nonbrand { border-right: 4px solid #8b5cf6; }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cat-icon { font-size: 1.5em; }
+.cat-title { font-size: 1.2em; font-weight: 700; color: #fff; }
+.cat-count { margin-right: auto; background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: #94a3b8; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table th { text-align: right; padding: 12px 10px; font-size: 0.85em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+.kw-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.kw-table tr:hover { background: rgba(255,255,255,0.03); }
+.kw-name { font-weight: 600; color: #e2e8f0; }
+.vol-badge { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 10px; border-radius: 18px; font-weight: 800; font-size: 0.95em; color: #fff; }
+.pos-badge.p1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; }
+.pos-badge.top5 { background: rgba(34,197,94,0.35); color: #86efac; }
+.pos-badge.top10 { background: rgba(59,130,246,0.35); color: #93c5fd; }
+.pos-badge.top20 { background: rgba(139,92,246,0.35); color: #c4b5fd; }
+.pos-badge.top50 { background: rgba(239,68,68,0.3); color: #fca5a5; }
+.pos-badge.out { background: rgba(100,116,139,0.35); color: #cbd5e1; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.clicks-badge { background: rgba(34,197,94,0.15); color: #4ade80; padding: 3px 9px; border-radius: 10px; font-size: 0.85em; font-weight: 600; }
+
+.pages-grid { display: flex; flex-direction: column; gap: 12px; }
+.page-row { display: grid; grid-template-columns: 50px 1fr 420px; align-items: center; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; gap: 20px; }
+.page-row:hover { background: rgba(255,255,255,0.06); transform: translateX(-5px); }
+.page-rank { font-size: 1.4em; font-weight: 800; color: #16a34a; }
+.page-url { font-weight: 600; color: #e2e8f0; word-break: break-word; }
+.page-metrics { display: flex; gap: 15px; }
+.metric-card { background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; text-align: center; min-width: 70px; }
+.metric-value { font-size: 1.1em; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.75em; color: #64748b; margin-top: 4px; }
+
+.ult-footer { text-align: center; padding: 30px 20px; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #16a34a 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+.se-ranking-section { background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.05) 100%); border: 1px solid rgba(139,92,246,0.3); }
+.se-ranking-badge { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75em; font-weight: 600; margin-right: 10px; }
+
+.comparison-block { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 20px; }
+.comp-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+.comp-card h4 { color: #fff; font-size: 1.05em; margin-bottom: 12px; }
+.comp-card table { width: 100%; }
+.comp-card td { padding: 6px 4px; font-size: 0.92em; color: #cbd5e1; }
+.comp-card td:last-child { text-align: left; font-weight: 600; }
+.comp-card span.up { color: #4ade80; }
+.comp-card span.down { color: #f87171; }
+.comp-card span.stable { color: #94a3b8; }
+
+.timeframes-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 25px; }
+.timeframe-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(139,92,246,0.25); border-radius: 14px; padding: 16px 14px; text-align: center; }
+.tf-label { font-size: 1em; font-weight: 700; color: #c4b5fd; margin-bottom: 3px; }
+.tf-date { font-size: 0.75em; color: #64748b; margin-bottom: 12px; }
+.tf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.tf-stat { display: flex; flex-direction: column; align-items: center; }
+.tf-num { font-size: 1.4em; font-weight: 800; }
+.tf-cap { font-size: 0.7em; color: #94a3b8; margin-top: 2px; }
+.tf-bar-container { display: flex; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.tf-bar { height: 100%; }
+.tf-bar-3 { background: #fbbf24; }
+.tf-bar-10 { background: #4ade80; }
+.tf-bar-20 { background: #60a5fa; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .organic-highlight { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .page-row { grid-template-columns: 50px 1fr; }
+    .page-metrics { display: none; }
+    .timeframes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .kw-table { font-size: 0.85em; }
+    .kw-table th, .kw-table td { padding: 8px 4px; }
+}
+.month-switcher { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; position: relative; z-index: 2; }
+.month-switcher .ms-label { color: rgba(255,255,255,0.8); font-size: 0.95em; margin-left: 6px; }
+.month-switcher .ms-btn { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9em; font-weight: 600; }
+.month-switcher .ms-btn:hover { background: rgba(255,255,255,0.25); }
+.month-switcher .ms-btn.active { background: rgba(22,163,74,0.5); border-color: rgba(22,163,74,0.8); }
+
+.bot-warning { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border: 2px solid rgba(251,191,36,0.4); border-radius: 14px; padding: 18px; margin-bottom: 25px; }
+.bot-warning h4 { color: #fbbf24; font-size: 1.1em; margin-bottom: 8px; }
+.bot-warning p { color: #cbd5e1; line-height: 1.6; margin-bottom: 8px; }
+.cat-tables-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:18px; }
+.note-box { margin-top:10px; padding:10px 14px; border-radius:8px; font-size:0.85em; line-height:1.65; }
+.def-note { margin-top:8px; font-size:0.8em; color:#94a3b8; line-height:1.6; }
+.added-tag { display:inline-block; margin-right:6px; padding:1px 7px; border-radius:8px; font-size:0.72em; background:rgba(148,163,184,0.18); color:#cbd5e1; }
+</style>
+<div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">Ultimate Report v3.0</div>
+        <div class="client-name">SP Data — אס.פי.דאטה (לשעבר Qlik Israel)</div>
+        <h1>דוח ביצועי SEO חודשי - ספטמבר 2026</h1>
+        <p class="subtitle">spdata.co.il (לשעבר qlik.co.il) | בינה עסקית, אנליטיקה ופתרונות דאטה B2B | ניתוח תנועה, דירוגים והמרות</p>
+        <div class="period-badge">ספטמבר 2026 | 01/09/2026 - 30/09/2026 vs אוגוסט 2026</div>
+        <div class="month-switcher">
+            <span class="ms-label">חודשים זמינים:</span>
+            <a href="/qlik-may-2026" class="ms-btn">מאי 2026</a>
+            <a href="/qlik-june-2026" class="ms-btn">יוני 2026</a>
+            <a href="/qlik-july-2026" class="ms-btn">יולי 2026</a>
+            <a href="/spdata-august-2026" class="ms-btn">אוגוסט 2026</a>
+            <a href="/spdata-september-2026" class="ms-btn active">ספטמבר 2026</a>
+        </div>
+    </div>
+    <div class="ult-wrapper">
+        <div class="success-banner">
+            <div class="title">252 קליקים אורגניים (-21.5%) | 99 אירועים מרכזיים (+25.3%) | 1,997 סשנים</div>
+            <div class="subtitle">421 סשנים אורגניים (21.1% מהתנועה) | 63 מילים במעקב | 15 ב-TOP 10 | חודש חגי תשרי</div>
+        </div>
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">📊</span><span>GA4: 1,997 סשנים</span></div>
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 252 קליקים / 37,378 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📈</span><span>SE Ranking: 63 מילים במעקב</span></div>
+            <div class="data-source-item"><span class="icon">🏆</span><span>15 מילים ב-Top 10</span></div>
+            <div class="data-source-item"><span class="icon">🎯</span><span>99 אירועים מרכזיים</span></div>
+        </div>
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="icon">🌱</div>
+                <div class="value">421</div>
+                <div class="label">סשנים אורגניים (GA4)</div>
+                <div class="secondary">21.1% מכלל התנועה</div>
+                <div class="compare down">-20.1% vs אוגוסט</div>
+            </div>
+            <div class="kpi-card ">
+                <div class="icon">🔍</div>
+                <div class="value">252</div>
+                <div class="label">קליקים מגוגל (GSC)</div>
+                <div class="secondary">CTR 0.67%</div>
+                <div class="compare down">-21.5% vs אוגוסט</div>
+            </div>
+            <div class="kpi-card gold">
+                <div class="icon">👁️</div>
+                <div class="value">37,378</div>
+                <div class="label">הופעות בגוגל (GSC)</div>
+                <div class="secondary">1,246/יום ממוצע</div>
+                <div class="compare down">-16.5% vs אוגוסט</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="icon">🏆</div>
+                <div class="value">15/63</div>
+                <div class="label">מילים ב-TOP 10</div>
+                <div class="secondary">20 מילים ב-TOP 20</div>
+                <div class="compare up">+8 מול 3 חודשים</div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>השוואת ביצועים חודשית (MoM)</h2>
+                    <div class="desc">ספטמבר 2026 מול אוגוסט 2026 | Apples-to-Apples: GA4 מול GA4, GSC מול GSC</div><div class="desc" style="font-size:0.82em; color:#94a3b8; margin-top:4px;">מדד GA4 בדוח זה הוא <b>סשנים</b> (ביקורים). סשן אחד = ביקור אחד; גולש יחיד עשוי לייצר כמה סשנים.</div>
+                </div>
+            </div>
+            <div class="comparison-block">
+                <div class="comp-card">
+                    <h4>📅 השוואה לחודש קודם (MoM) — אוגוסט 2026</h4>
+                    <table>
+                        <tr><td colspan="3" style="background:rgba(34,197,94,0.12); color:#86efac; font-weight:700; text-align:center; padding:6px;">GA4 — תנועה ואירועים (מקור זהה)</td></tr>
+                        <tr><td>סה"כ סשנים</td><td>1,997 ↔ 2,919</td><td><span class="down">-31.6%</span></td></tr>
+                        <tr style="background:rgba(251,191,36,0.05);"><td><b>Organic Search</b></td><td><b>421 ↔ 527</b></td><td><b><span class="down">-20.1%</span></b></td></tr>
+                        <tr><td>סושיאל אורגני</td><td>29 ↔ 39</td><td><span class="down">-25.6%</span></td></tr>
+                        <tr><td>חיפוש בתשלום</td><td>642 ↔ 734</td><td><span class="down">-12.5%</span></td></tr>
+                        <tr><td>סושיאל בתשלום</td><td>59 ↔ 992</td><td><span class="down">-94.1%</span></td></tr>
+                        <tr><td>הפניה</td><td>21 ↔ 47</td><td><span class="down">-55.3%</span></td></tr>
+                        <tr><td>ישיר</td><td>798 ↔ 547</td><td><span class="up">+45.9%</span></td></tr>
+                        <tr><td>AI Assistant</td><td>11 ↔ 16</td><td><span class="down">-31.2%</span></td></tr>
+                        <tr><td>אירועים מרכזיים</td><td>99 ↔ 79</td><td><span class="up">+25.3%</span></td></tr>
+                        <tr><td>אירועים סה"כ</td><td>10,960 ↔ 16,569</td><td><span class="down">-33.9%</span></td></tr>
+                        <tr><td colspan="3" style="background:rgba(59,130,246,0.12); color:#93c5fd; font-weight:700; text-align:center; padding:6px;">GSC — קליקים והופעות (מקור זהה)</td></tr>
+                        <tr><td>קליקים GSC</td><td>252 ↔ 321</td><td><span class="down">-21.5%</span></td></tr>
+                        <tr><td>הופעות GSC</td><td>37,378 ↔ 44,742</td><td><span class="down">-16.5%</span></td></tr>
+                        <tr><td>CTR ממוצע</td><td>0.67% ↔ 0.72%</td><td><span class="down">-0.05 נק'</span></td></tr>
+                        <tr><td>מיקום ממוצע</td><td>12.85 ↔ 8.76</td><td><span class="down">+4.09</span></td></tr>
+                        <tr><td>קליקים Brand (SP Data/Qlik/קליק) — מתוך השאילתות שגוגל חושף</td><td>66 ↔ 79</td><td><span class="down">-16.5%</span></td></tr>
+                        <tr><td>קליקים Non-Brand — מתוך השאילתות שגוגל חושף</td><td>45 ↔ 48</td><td><span class="down">-6.2%</span></td></tr>
+                    </table>
+                    <div class="note-box" style="background:rgba(59,130,246,0.12); color:#93c5fd;">📌 <b>חודש החגים, והאתר הופיע בפחות חיפושים בעמוד הראשון.</b> ראש השנה, יום כיפור ותחילת סוכות חלו כולם בספטמבר, ובחודש כזה פחות ארגונים מחפשים פתרונות BI. הקליקים מגוגל ירדו ל-252 (-21.5%) וההופעות ל-37,378 (-16.5%). המיקום הממוצע עלה מ-8.76 ל-12.85: בשאילתות שגוגל חושף, ההופעות במיקומים 1–10 ירדו מ-18,215 ל-13,638, וההופעות מעבר למקום 20 עלו מ-2,152 ל-4,291. הירידה בסשנים ב-GA4 (-31.6%) מגיעה בעיקר מסושיאל בתשלום, שירד מ-992 ל-59 סשנים. היחס בין קליקי GSC לסשנים האורגניים עומד על <b>0.60</b> (0.61 באוגוסט) — בתוך הטווח הבריא.</div>
+                    <div class="note-box" style="background:rgba(251,191,36,0.12); color:#fde68a;">🎯 <b>האירועים המרכזיים עלו ל-99 (+25.3%) למרות הירידה בתנועה.</b> שליחות הטפסים (SpData_forms) עלו מ-68 ל-89. חיפוש בתשלום הביא 69 מהאירועים, סושיאל אורגני 14 (מול 0 באוגוסט), והחיפוש האורגני 10.</div>
+                    <div class="def-note">נתוני GA4 בדוח זה הם חודשים קלנדריים מלאים. נתוני אוגוסט עודכנו בהתאם (בדוח אוגוסט: 2,971 סשנים, מתוכם 532 אורגניים). נתוני GSC הם של spdata.co.il בלבד.</div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <div class="section-title">
+                    <h2>תנועה אורגנית מגוגל</h2>
+                    <div class="desc">הערוץ שמבסס את הדומיין החדש לאחר המעבר מ-qlik.co.il</div>
+                </div>
+            </div>
+            <div class="organic-highlight">
+                <div class="organic-stat"><div class="value">421</div><div class="label">סשנים אורגניים</div></div>
+                <div class="organic-stat"><div class="value">21.1%</div><div class="label">מכלל התנועה</div></div>
+                <div class="organic-stat"><div class="value">252</div><div class="label">קליקים מגוגל</div></div>
+                <div class="organic-stat"><div class="value">0:59</div><div class="label">זמן מעורבות ממוצע לסשן</div></div>
+            </div>
+            <div class="organic-summary"><strong>אורגני מהווה 21.1% מהסשנים</strong> — 421 סשנים, -20.1% מאוגוסט. זמן המעורבות בערוץ האורגני עומד על 0:59 לסשן (מול 1:23 באוגוסט), הגבוה מכל הערוצים — כפליים ויותר מחיפוש בתשלום (0:25) ופי 7 מהתנועה הישירה (0:08).</div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה - התמונה המלאה</h2>
+                    <div class="desc">פילוח כל הערוצים | מקור: GA4 — סשנים (Sessions)</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area"><canvas id="trafficChart" height="300"></canvas></div>
+                <div class="traffic-breakdown">
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span><span>ישיר</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 100%; background: #3b82f6;"></div></div>
+                        <div class="users">798</div>
+                        <div class="pct">40.0%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ef4444;"></span><span>חיפוש בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 80%; background: #ef4444;"></div></div>
+                        <div class="users">642</div>
+                        <div class="pct">32.1%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span><span>חיפוש אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 53%; background: #22c55e;"></div></div>
+                        <div class="users">421</div>
+                        <div class="pct">21.1%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ec4899;"></span><span>סושיאל בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 7%; background: #ec4899;"></div></div>
+                        <div class="users">59</div>
+                        <div class="pct">3.0%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span><span>סושיאל אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 4%; background: #8b5cf6;"></div></div>
+                        <div class="users">29</div>
+                        <div class="pct">1.5%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #10b981;"></span><span>הפניה</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 3%; background: #10b981;"></div></div>
+                        <div class="users">21</div>
+                        <div class="pct">1.1%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #06b6d4;"></span><span>AI Assistant</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #06b6d4;"></div></div>
+                        <div class="users">11</div>
+                        <div class="pct">0.6%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #eab308;"></span><span>רשת חוצה</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #eab308;"></div></div>
+                        <div class="users">7</div>
+                        <div class="pct">0.4%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #64748b;"></span><span>לא מסווג</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #64748b;"></div></div>
+                        <div class="users">7</div>
+                        <div class="pct">0.4%</div>
+                    </div>
+<div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #14b8a6;"></span><span>וידאו אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #14b8a6;"></div></div>
+                        <div class="users">2</div>
+                        <div class="pct">0.1%</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 25px;">
+                <h3 style="color:#fff; font-size:1.1em; margin-bottom:12px;">📊 פילוח ערוצים - סשנים, אירועים מרכזיים וזמן</h3>
+                <table class="kw-table" style="background:rgba(0,0,0,0.2); border-radius:12px;">
+                    <thead><tr><th>ערוץ</th><th>ספטמבר</th><th>אוגוסט</th><th>אירועים מרכזיים</th><th>זמן מעורבות לסשן</th><th>שינוי סשנים</th></tr></thead>
+                    <tbody>
+<tr><td class="kw-name">ישיר</td><td><strong style="color:#60a5fa;">798</strong></td><td><strong style="color:#cbd5e1;">547</strong></td>
+                            <td><strong style="color:#fbbf24;">5</strong></td><td>0:08</td>
+                            <td><span class="change-badge up">+45.9%</span></td></tr>
+<tr><td class="kw-name">חיפוש בתשלום</td><td><strong style="color:#60a5fa;">642</strong></td><td><strong style="color:#cbd5e1;">734</strong></td>
+                            <td><strong style="color:#fbbf24;">69</strong></td><td>0:25</td>
+                            <td><span class="change-badge down">-12.5%</span></td></tr>
+<tr><td class="kw-name">חיפוש אורגני</td><td><strong style="color:#60a5fa;">421</strong></td><td><strong style="color:#cbd5e1;">527</strong></td>
+                            <td><strong style="color:#fbbf24;">10</strong></td><td>0:59</td>
+                            <td><span class="change-badge down">-20.1%</span></td></tr>
+<tr><td class="kw-name">סושיאל בתשלום</td><td><strong style="color:#60a5fa;">59</strong></td><td><strong style="color:#cbd5e1;">992</strong></td>
+                            <td><strong style="color:#fbbf24;">1</strong></td><td>0:36</td>
+                            <td><span class="change-badge down">-94.1%</span></td></tr>
+<tr><td class="kw-name">סושיאל אורגני</td><td><strong style="color:#60a5fa;">29</strong></td><td><strong style="color:#cbd5e1;">39</strong></td>
+                            <td><strong style="color:#fbbf24;">14</strong></td><td>0:53</td>
+                            <td><span class="change-badge down">-25.6%</span></td></tr>
+<tr><td class="kw-name">הפניה</td><td><strong style="color:#60a5fa;">21</strong></td><td><strong style="color:#cbd5e1;">47</strong></td>
+                            <td><strong style="color:#fbbf24;">0</strong></td><td>0:48</td>
+                            <td><span class="change-badge down">-55.3%</span></td></tr>
+<tr><td class="kw-name">AI Assistant</td><td><strong style="color:#60a5fa;">11</strong></td><td><strong style="color:#cbd5e1;">16</strong></td>
+                            <td><strong style="color:#fbbf24;">0</strong></td><td>0:30</td>
+                            <td><span class="change-badge down">-31.2%</span></td></tr>
+<tr><td class="kw-name">רשת חוצה</td><td><strong style="color:#60a5fa;">7</strong></td><td><strong style="color:#cbd5e1;">9</strong></td>
+                            <td><strong style="color:#fbbf24;">0</strong></td><td>0:08</td>
+                            <td><span class="change-badge down">-22.2%</span></td></tr>
+<tr><td class="kw-name">לא מסווג</td><td><strong style="color:#60a5fa;">7</strong></td><td><strong style="color:#cbd5e1;">7</strong></td>
+                            <td><strong style="color:#fbbf24;">0</strong></td><td>0:22</td>
+                            <td><span class="change-badge stable">+0.0%</span></td></tr>
+<tr><td class="kw-name">וידאו אורגני</td><td><strong style="color:#60a5fa;">2</strong></td><td><strong style="color:#cbd5e1;">1</strong></td>
+                            <td><strong style="color:#fbbf24;">0</strong></td><td>0:00</td>
+                            <td><span class="change-badge up">+100.0%</span></td></tr>
+                    </tbody>
+                </table>
+                <div class="note-box" style="background:rgba(251,191,36,0.12); color:#fde68a;">⚠️ <b>שני שינויים בולטים בערוצים.</b> סושיאל בתשלום ירד מ-992 ל-59 סשנים, ותנועה ישירה עלתה מ-547 ל-798 סשנים, אך עם 0:08 מעורבות בלבד לסשן. חיפוש בתשלום נשאר הערוץ שמייצר את רוב האירועים המרכזיים (69 מתוך 99).</div>
+            </div>
+        </div>
+        <div class="ult-section se-ranking-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>מגמת דירוגים - SE Ranking <span class="se-ranking-badge">4 טווחי זמן</span></h2>
+                    <div class="desc">63 מילים אסטרטגיות במעקב | אשכולות BI, דשבורדים, ETL ואנליטיקת נתונים | מקור: SE Ranking</div>
+                </div>
+            </div>
+            <div class="timeframes-grid">
+<div class="timeframe-card">
+                    <div class="tf-label">לפני 6 חודשים</div>
+                    <div class="tf-date">06.04.2026</div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">4</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">9</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">12</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">51</span><span class="tf-cap">מעבר ל-20</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:6%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:8%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:5%;"></div>
+                    </div>
+                </div>
+<div class="timeframe-card">
+                    <div class="tf-label">לפני 3 חודשים</div>
+                    <div class="tf-date">05.07.2026</div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">4</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">7</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">13</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">50</span><span class="tf-cap">מעבר ל-20</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:6%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:5%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:10%;"></div>
+                    </div>
+                </div>
+<div class="timeframe-card">
+                    <div class="tf-label">לפני חודש</div>
+                    <div class="tf-date">03.09.2026</div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">4</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">14</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">17</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">46</span><span class="tf-cap">מעבר ל-20</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:6%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:16%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:5%;"></div>
+                    </div>
+                </div>
+<div class="timeframe-card">
+                    <div class="tf-label">נוכחי (25.09.2026)</div>
+                    <div class="tf-date">25.09.2026</div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">4</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">15</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">20</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">43</span><span class="tf-cap">מעבר ל-20</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:6%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:17%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:8%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; margin-bottom:20px; font-size:0.9em; color:#cbd5e1; line-height:1.7;">🏆 <b>סיכום שינוי 3 חודשים ← נוכחי:</b> <span style="color:#4ade80; font-weight:700;">↑ 14 מילים עלו</span> | <span style="color:#f87171; font-weight:700;">↓ 3 מילים ירדו</span> | <span style="color:#93c5fd; font-weight:700;">✨ 9 נכנסו לדירוג או חזרו אליו</span> | <span style="color:#fca5a5; font-weight:700;">⚠️ 3 יצאו מדירוג</span> | <span style="color:#94a3b8; font-weight:700;">34 אינן מדורגות בשתי הנקודות</span><br><b>14 מילים עלו מול 3 שירדו, ו-9 נכנסו לדירוג או חזרו אליו.</b> מספר המילים ב-TOP 10 עלה מ-7 ל-15 וב-TOP 20 מ-13 ל-20 בשלושה חודשים. "מערכת bi" (210 חיפושים) עלתה מ-57 ל-7, "כלי bi" מ-48 ל-9, "דשבורד" (1,000) מ-9 ל-3 ו-"etl" (440) מ-11 ל-2. "data analyst" (880 חיפושים) חזרה לדירוג במקום 7.</div>
+            <div class="keywords-category" style="border-right-color:#3b82f6;">
+                <div class="category-header"><span class="cat-icon">📊</span><span class="cat-title">טבלת דירוגים מלאה - 63 מילות מפתח</span><span class="cat-count">ממוקמות לפי המיקום הנוכחי</span></div>
+                <div style="overflow-x:auto;">
+                <table class="kw-table">
+                    <thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>לפני 6 חודשים</th><th>לפני 3 חודשים</th><th>לפני חודש</th><th style="color:#d8b4fe;">נוכחי (25.09.2026)</th><th>שינוי 3 חודשים</th></tr></thead>
+                    <tbody>
+<tr>
+                                <td class="kw-name">etl</td>
+                                <td><span class="vol-badge">440</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge top20">11</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge p2">2</span></td><td><span class="change-badge up">+9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד ניהולי</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge top5">4</span></td><td><span class="pos-badge top10">6</span></td><td><span class="pos-badge p3">3</span></td><td><span class="pos-badge p2">2</span></td><td><span class="change-badge up">+4</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד bi</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge p1">1</span></td><td><span class="pos-badge top20">13</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge p2">2</span></td><td><span class="change-badge up">+11</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד</td>
+                                <td><span class="vol-badge">1,000</span></td>
+                                <td><span class="pos-badge top50">34</span></td><td><span class="pos-badge top10">9</span></td><td><span class="pos-badge top5">4</span></td><td><span class="pos-badge p3">3</span></td><td><span class="change-badge up">+6</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">בסיסי נתונים</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge top10">8</span></td><td><span class="pos-badge top10">9</span></td><td><span class="pos-badge top5">5</span></td><td><span class="pos-badge top5">4</span></td><td><span class="change-badge up">+5</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ניתוח דאטה</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top50">44</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge p3">3</span></td><td><span class="pos-badge top5">4</span></td><td><span class="change-badge up">✨ חזר לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ויזואליזציה</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge top20">18</span></td><td><span class="pos-badge top20">11</span></td><td><span class="pos-badge top10">6</span></td><td><span class="pos-badge top5">5</span></td><td><span class="change-badge up">+6</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מערכת בינה עסקית</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top50">25</span></td><td><span class="pos-badge top50">27</span></td><td><span class="pos-badge top10">6</span></td><td><span class="pos-badge top5">5</span></td><td><span class="change-badge up">+22</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data analyst</td>
+                                <td><span class="vol-badge">880</span></td>
+                                <td><span class="pos-badge top50">48</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top50">26</span></td><td><span class="pos-badge top10">7</span></td><td><span class="change-badge up">✨ חזר לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מערכת bi</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge top50">33</span></td><td><span class="pos-badge out">57</span></td><td><span class="pos-badge top10">10</span></td><td><span class="pos-badge top10">7</span></td><td><span class="change-badge up">+50</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">sense qlik</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="pos-badge p2">2</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge top10">9</span></td><td><span class="pos-badge top10">8</span></td><td><span class="change-badge down">-6</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">הטמעת bi</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="pos-badge top50">26</span></td><td><span class="pos-badge top50">21</span></td><td><span class="pos-badge top50">22</span></td><td><span class="pos-badge top10">8</span></td><td><span class="change-badge up">+13</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ביג דאטה</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge top20">11</span></td><td><span class="pos-badge top20">16</span></td><td><span class="pos-badge top20">16</span></td><td><span class="pos-badge top10">9</span></td><td><span class="change-badge up">+7</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד בעברית</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge top20">16</span></td><td><span class="pos-badge top20">18</span></td><td><span class="pos-badge top20">12</span></td><td><span class="pos-badge top10">9</span></td><td><span class="change-badge up">+9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">כלי bi</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top50">26</span></td><td><span class="pos-badge top50">48</span></td><td><span class="pos-badge top20">11</span></td><td><span class="pos-badge top10">9</span></td><td><span class="change-badge up">+39</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik-sense</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge top10">10</span></td><td><span class="pos-badge top20">12</span></td><td><span class="change-badge down">-10</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi business</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge top50">26</span></td><td><span class="pos-badge top50">31</span></td><td><span class="pos-badge top20">17</span></td><td><span class="change-badge up">+9</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi systems</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top20">17</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi and reporting</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top20">20</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi and analytics</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top20">20</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi intelligence</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top50">27</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik sense</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="pos-badge p2">2</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge top10">10</span></td><td><span class="pos-badge top50">29</span></td><td><span class="change-badge down">-27</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">אנליטיקה עסקית</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge top10">9</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top50">29</span></td><td><span class="change-badge up">✨ חזר לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">חברת bi</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge top50">48</span></td><td><span class="pos-badge top50">45</span></td><td><span class="pos-badge top50">27</span></td><td><span class="pos-badge top50">31</span></td><td><span class="change-badge up">+14</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi tool</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">63</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data and bi</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">65</span></td><td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">gis</td>
+                                <td><span class="vol-badge">8,000</span></td>
+                                <td><span class="pos-badge top50">29</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik</td>
+                                <td><span class="vol-badge">590</span></td>
+                                <td><span class="pos-badge p2">2</span></td><td><span class="pos-badge p2">2</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge down">⚠️ יצא</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">cdo</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business bi</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">קורס bi</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge top20">20</span></td><td><span class="pos-badge top10">6</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge down">⚠️ יצא</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data vizualization</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">cio</td>
+                                <td><span class="vol-badge">330</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">elt</td>
+                                <td><span class="vol-badge">140</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business analytics software</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business intelligence bi tools</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data governance</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">etl tool</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">הטמעת מערכות מידע</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">פיתוח bi</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">67</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge down">⚠️ יצא</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business intelligence dashboard</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi dashboard</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ai for data analytics</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">etl process</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">cdc data</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data lake vs data warehouse</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data warehouse vs data lake</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">predictive analytics</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">etl vs elt</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ניתוח מידע</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top10">10</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge top5">4</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business intelligence data</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">big data analytics</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ניתוח מערכות bi</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">בינה מלאכותית ai</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi reporting</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">business intelligence and analytics</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">bi israel</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top5">5</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">etl developer</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">datadog integrations</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">database etl</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מנתח bi</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">enterprise data warehouse</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">financial data intelligence</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="pos-badge out">-</span></td><td><span class="change-badge stable" title="לא דורג בשתי הבדיקות">—</span></td>
+                            </tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="note-box" style="background:rgba(59,130,246,0.12); color:#93c5fd;">🔎 <b>שלוש הערות על המדידה.</b> (1) <b>הדירוג הנוכחי מוצג לפי 25.09.2026.</b> מ-26.09 כלי המעקב הציג מיקומים לא יציבים בשני המנועים — למשל "etl" במקום 2, למחרת במקום 34 ושוב במקום 2 — ולכן נלקחה הבדיקה היציבה האחרונה. (2) <b>"qlik" מסומנת כמי שיצאה מהדירוג ו-"qlik sense" כירידה, אך GSC מראה אחרת</b>: "qlik" במיקום ממוצע 3 עם 10 קליקים בספטמבר, ו-"qlik sense" במיקום 4 עם 5 קליקים. (3) 34 מתוך 63 המילים אינן מדורגות בשתי נקודות הזמן — רשימת יעד שנבנתה לקראת המעבר, ולא ירידה.</div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>מילות מפתח מובילות ב-GSC — Brand vs Non-Brand</h2>
+                    <div class="desc">ספטמבר 2026 | מיקום = הטוב ביותר, מספר שלם | מקור: GSC</div><div class="desc" style="font-size:0.82em; color:#94a3b8; margin-top:4px;">מבוסס על 1,451 השאילתות שגוגל חושף בייצוא (111 קליקים). גוגל אינו חושף שאילתות בעלות נפח נמוך, ולכן הסכום כאן נמוך מסך 252 הקליקים באתר.</div>
+                </div>
+            </div>
+            <div class="cat-tables-grid">
+                <div class="keywords-category">
+                    <div class="category-header"><span class="cat-icon">🏢</span><span class="cat-title">Brand — SP Data/Qlik/קליק</span><span class="cat-count">136 מילים | 66 קליקים (59.5%)</span></div>
+                    <table class="kw-table"><thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>הופעות</th><th>מיקום (הטוב ביותר)</th><th>קליקים</th></tr></thead><tbody>
+<tr>
+                                <td class="kw-name">qlik israel</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="vol-badge">87</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">23</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik</td>
+                                <td><span class="vol-badge">590</span></td>
+                                <td><span class="vol-badge">568</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">10</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">קליק ישראל</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">42</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">7</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">sp data</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">6</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik sense</td>
+                                <td><span class="vol-badge">480</span></td>
+                                <td><span class="vol-badge">336</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">5</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">spdata</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">130</span></td>
+                                <td><span class="pos-badge top10">10</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">קליק סנס</td>
+                                <td><span class="vol-badge">0</span></td>
+                                <td><span class="vol-badge">25</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">sp data careers</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">3</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">קליקסנס</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="vol-badge">31</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik careers</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">חברת קליק</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik sence</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">3</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik sense may 2026</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">3</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlikview bi</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="vol-badge">2</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlik sense מדריך</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">1</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+                    </tbody></table>
+                </div>
+                <div class="keywords-category nonbrand">
+                    <div class="category-header"><span class="cat-icon">🎯</span><span class="cat-title">Non-Brand — BI, דאטה ואנליטיקה</span><span class="cat-count">1,315 מילים | 45 קליקים (40.5%)</span></div>
+                    <table class="kw-table"><thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>הופעות</th><th>מיקום (הטוב ביותר)</th><th>קליקים</th></tr></thead><tbody>
+<tr>
+                                <td class="kw-name">data lake</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">108</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">8</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דאטה אנליסט</td>
+                                <td><span class="vol-badge">270</span></td>
+                                <td><span class="vol-badge">424</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">4</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">dwh</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">99</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מה זה etl</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ניתוח נתונים</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="vol-badge">169</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">talend</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">152</span></td>
+                                <td><span class="pos-badge top50">23</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">קורס bi</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="vol-badge">109</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">datalake</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">48</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד</td>
+                                <td><span class="vol-badge">1,000</span></td>
+                                <td><span class="vol-badge">421</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דשבורד ניהולי</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="vol-badge">345</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">talend data fabric</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">306</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מערכת בינה עסקית</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="vol-badge">181</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">data analyst</td>
+                                <td><span class="vol-badge">880</span></td>
+                                <td><span class="vol-badge">146</span></td>
+                                <td><span class="pos-badge top50">21</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מערכות gis</td>
+                                <td><span class="vol-badge">320</span></td>
+                                <td><span class="vol-badge">71</span></td>
+                                <td><span class="pos-badge top10">10</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דאטה אנליסט מה זה</td>
+                                <td><span class="vol-badge">90</span></td>
+                                <td><span class="vol-badge">62</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">ניתוח נתונים במחקר איכותני</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="vol-badge">37</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מה זה data analyst</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">35</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">click israel</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">27</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דוחות bi</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="vol-badge">24</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דש בורד</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">16</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">מה זה מוצר saas</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">כלי etl</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">משרות bi</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="vol-badge">7</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">qlick sense</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">5</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+<tr>
+                                <td class="kw-name">דאטה לייק</td>
+                                <td><span class="vol-badge">אין נתון</span></td>
+                                <td><span class="vol-badge">4</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                            </tr>
+                    </tbody></table>
+                    <div class="note-box" style="background:rgba(59,130,246,0.12); color:#93c5fd;">💡 <b>59.5% מקליקי השאילתות עדיין מגיעים משמות המותג</b> (sp data, qlik israel, קליק ישראל). חיפושי השם החדש "spdata" עלו מ-51 ל-130 הופעות. בצד ה-Non-Brand, "דאטה אנליסט" הביאה 4 קליקים (מול 1 באוגוסט). "qlik" ו-"qlik sense" נספרים כמותג — הם גם שם המוצר שהחברה מפיצה בישראל וגם השם הקודם של החברה.</div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים</h2>
+                    <div class="desc">העמודים שמביאים הכי הרבה תנועה אורגנית בספטמבר 2026 | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+<div class="page-row">
+                    <div class="page-rank">#1</div>
+                    <div class="page-url">עמוד הבית</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">80</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,884</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.77%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">20</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#2</div>
+                    <div class="page-url">/קריירה/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">15</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">325</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">4.62%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#3</div>
+                    <div class="page-url">/פתרונות-אנליטיקה-בענן-קליק-סנס/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">14</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">820</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.71%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#4</div>
+                    <div class="page-url">/מה-זה-אגם-נתונים-data-lake/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">14</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">568</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.46%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">20</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#5</div>
+                    <div class="page-url">/מה-זה-דאטה-אנליסט-data-analyst/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">12</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">3,137</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.38%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">9</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#6</div>
+                    <div class="page-url">/מה-הם-בסיסי-נתונים-ואיך-מנהלים-אותם/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">9</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">2,350</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.38%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#7</div>
+                    <div class="page-url">/en/about-sp-data/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">9</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">345</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.61%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">9</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#8</div>
+                    <div class="page-url">/אקדמיה/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">611</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.31%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">16</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#9</div>
+                    <div class="page-url">/ניתוח-נתונים-מידע-ומה-שביניהם-המדריך/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">1,416</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.49%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+<div class="page-row">
+                    <div class="page-rank">#10</div>
+                    <div class="page-url">/אודות-sp-data/</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">קליקים</div></div>
+                        <div class="metric-card"><div class="metric-value">315</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.22%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">💡</span>
+                <div class="section-title">
+                    <h2>תובנות ומסקנות</h2>
+                    <div class="desc">סיכום מנהלים לחודש ספטמבר 2026</div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                <div style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#4ade80; margin-bottom:10px;">✅ מגמות חיוביות</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+<li>• <b>TOP 10 גדל מ-7 ל-15 מילים</b> ו-TOP 20 מ-13 ל-20 בשלושה חודשים</li><li>• <b>"מערכת bi" עלתה מ-57 ל-7 ב-SE Ranking</b>, וב-GSC המיקום הממוצע שלה השתפר מ-13 ל-8</li><li>• <b>שליחות הטפסים עלו מ-68 ל-89</b> והאירועים המרכזיים ל-99 (+25.3%), למרות הירידה בתנועה</li><li>• <b>חיפושי השם החדש "spdata" עלו מ-51 ל-130 הופעות</b></li>
+                    </ul>
+                </div>
+                <div style="background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#7dd3fc; margin-bottom:10px;">🎯 המלצות פעולה לאוקטובר</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.7;">
+<li style="margin-bottom:10px;">• <b>להוסיף תיאורי מטא לעמודי המדריכים ולעדכן את סיומת הכותרת</b><br>13 מתוך 15 העמודים עם הכי הרבה הופעות בגוגל אינם כוללים תיאור מטא כלל — רק עמוד הבית ועמוד Qlik Sense כוללים. בלי תיאור, גוגל בוחר בעצמו קטע מהעמוד — ושיעור ההקלקה של המדריכים נמוך (0.38% במדריך דאטה אנליסט, 0.11% במדריך BI). בעמודים שבדקנו התיאור כבר קיים בתגית og:description, ולכן ייתכן שמדובר בהגדרה אחת בתוסף ה-SEO. בנוסף, הכותרות של המדריכים מסתיימות ב-"- Qlik | sp.data", ומומלץ לקצר ל-"| sp.data". תיאורים מוצעים לארבעת המדריכים עם הכי הרבה הופעות:<br><b>/מה-זה-דאטה-אנליסט-data-analyst/</b> (3,137 הופעות, 12 קליקים): דאטה אנליסט אוסף, מארגן ומנתח נתונים בכלי BI כדי להפיק תובנות עסקיות. במה התפקיד עוסק, אילו סוגי אנליסטים קיימים ומה דאטה אנליסט טוב צריך לדעת.<br><b>/מה-זה-בינה-עסקית-bi-ואיך-היא-עובדת/</b> (2,651 הופעות, 3 קליקים): מה זה BI ואיך מערכת בינה עסקית עובדת: מקורות נתונים, דוחות ודשבורדים, והקשר לביג דאטה — כך ארגונים מפיקים תובנות בזמן אמת ומקבלים החלטות טובות יותר.<br><b>/מה-זה-saas/</b> (2,556 הופעות, 4 קליקים): מה זה SaaS (תוכנה כשירות)? המאפיינים, היתרונות והמונחים שחשוב להכיר, ואיך המודל משתלב במערכות BI בענן במנוי תקופתי.<br><b>/מה-הם-בסיסי-נתונים-ואיך-מנהלים-אותם/</b> (2,350 הופעות, 9 קליקים): מה הם בסיסי נתונים ואיך מנהלים אותם: המודלים והסוגים הנפוצים, מנגנוני הניהול ותפקיד ה-DBA — מדריך לארגונים שרוצים להפיק מהנתונים דוחות ותובנות.</li><li style="margin-bottom:10px;">• <b>לשלוח ייצוא GSC של qlik.co.il — פתוח מאוגוסט</b><br>הדוח מבוסס על נתוני spdata.co.il בלבד. בלי נתוני הדומיין הישן אי אפשר למדוד כמה תנועה עוד מגיעה דרכו ובאיזה קצב היא עוברת לדומיין החדש.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+<div class="ult-footer">
+            <div class="brand">Nadav Digital | נדב דיגיטל</div>
+            <div class="info">דוח זה נוצר אוטומטית עבור SP Data — אס.פי.דאטה (לשעבר Qlik Israel) | ספטמבר 2026 | נתונים: GSC + GA4 + SE Ranking (63 KW)</div>
+        </div>
+    </div>
+</div>
+<script>
+const ctx = document.getElementById('trafficChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels: ["ישיר", "חיפוש בתשלום", "חיפוש אורגני", "סושיאל בתשלום", "סושיאל אורגני", "הפניה", "AI Assistant", "רשת חוצה", "לא מסווג", "וידאו אורגני"],
+        datasets: [{ data: [798, 642, 421, 59, 29, 21, 11, 7, 7, 2], backgroundColor: ["#3b82f6", "#ef4444", "#22c55e", "#ec4899", "#8b5cf6", "#10b981", "#06b6d4", "#eab308", "#64748b", "#14b8a6"], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } }, cutout: '60%' }
+});
+</script>
+<!-- /wp:html -->
