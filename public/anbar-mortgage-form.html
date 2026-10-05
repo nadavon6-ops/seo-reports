@@ -514,7 +514,7 @@ const ROUTES = {
     lender:"כלל", lenderShort:"כלל", product:"reverse", productLabel:"משכנתא הפוכה",
     doc:"1875", ver:"07/25", pages:9, maxBorrowers:2, maxCollateral:2, maxOther:2, maxTracks:2,  
     annexes:[
-      {t:"שאלון הכר את הלקוח", d:"עמודים 6–7 · עותק נפרד לכל לווה", perBorrower:true},
+      {t:"שאלון הכר את הלקוח", d:"עמודים 6–7 · עמוד לכל לווה", perBorrower:true},
       {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"עמודים 8–9 · כולל אימות חתימה"},
       {t:"הודעה בנוגע לקבלת חיווי אשראי", d:"עמוד 5 · עברית וערבית"}
     ],
@@ -535,8 +535,7 @@ const ROUTES = {
     lender:"כלל", lenderShort:"כלל", product:"regular", productLabel:"משכנתא רגילה",
     doc:"119", ver:"5/25", pages:8, maxBorrowers:4, maxCollateral:2, maxOther:2, maxTracks:3, 
     annexes:[
-      {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"כולל אימות חתימה"},
-      {t:"שאלון הכר את הלקוח", d:"מסמך נפרד · עותק לכל לווה", perBorrower:true}
+      {t:"כתב הרשאה ליועץ משכנתאות חיצוני", d:"עמודים 7–8 · כולל אימות חתימה"}
     ],
     sections:["borrowers","residence","household","employment","income","obligations","bank",
               "collateral","other","purpose","purchase","tracks","consents","annexes"],
@@ -1869,13 +1868,23 @@ async function buildPdf(){
   const {PDFDocument} = PDFLib;
   const r = R();
   const doc = await PDFDocument.load(await template(r.pdfFile));
-  /* Clal regular's authorisation letter (pp. 7–8) carries interactive fields whose grey
+  /* Clal's authorisation letter (regular pp. 7–8, reverse pp. 8–9) carries interactive fields whose grey
      boxes paint over page content. Flatten them into the page (their current look is
      kept) so the values drawn below sit on top and stay visible in every viewer. */
-  if(r.pdfFile==="clal-regular"){ try{ doc.getForm().flatten({updateFieldAppearances:false}); }catch(e){ console.warn("flatten",e); } }
+  if(r.pdfFile==="clal-regular"||r.pdfFile==="clal-reverse"){ try{ doc.getForm().flatten({updateFieldAppearances:false}); }catch(e){ console.warn("flatten",e); } }
   await overlay(doc, r.pdfFile);   // map keys are the file names, not the route ids
 
-  if((r.annexes||[]).some(a=>a.perBorrower) && FIELD_MAP["clal-kyc"]){
+  if(r.pdfFile==="clal-reverse" && FIELD_MAP["clal-kyc"]){
+    /* Clal reverse already carries the KYC form as its own pages 6 and 7 — fill those,
+       one per borrower, so the document keeps its original 9 pages. */
+    const pages=doc.getPages();
+    for(let i=0;i<Math.min(S.data.borrowers.length,2);i++){
+      kycFor=i;
+      const page=pages[5+i], {width,height}=page.getSize();
+      page.drawImage(await doc.embedPng(await drawOverlay(FIELD_MAP["clal-kyc"]["1"],width,height)),{x:0,y:0,width,height});
+    }
+    kycFor=0;
+  } else if((r.annexes||[]).some(a=>a.perBorrower) && FIELD_MAP["clal-kyc"]){
     for(let i=0;i<S.data.borrowers.length;i++){
       kycFor = i;                                   // which borrower this copy is for
       const k = await PDFDocument.load(await template("clal-kyc"));
