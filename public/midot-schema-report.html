@@ -72,7 +72,8 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <summary>1. Exposed Google Cloud service-account key</summary>
   <div class="acc-body">
   <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
-  <h3>In Google Cloud (an admin of the project; the development team does not have access)</h3>
+  <h3>In Google Cloud (an admin of the project)</h3>
+  <p>The development team does not have access to this project. Midot needs to identify who administers it, for example the developer or agency that set up the site's Google integration, or the owner of the Google account that created the project.</p>
   <ol>
     <li><b>Disable the key now.</b> Disabling is reversible, so it can be re-enabled briefly if something on the site turns out to depend on it.</li>
     <li><b>Delete the old key</b> once the site steps below confirm nothing depends on it, or once a replacement key is in place.</li>
@@ -82,18 +83,18 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <ol>
     <li>Check whether any code still uses this service account (forms, scheduled tasks, other templates). If something does, it will need a new key from the project admin, stored outside the public web folder.</li>
     <li>Remove copies of the key file from backups, staging copies and code history.</li>
-    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. It still serves files to the public (for example <span class="type">composer.json</span> and <span class="type">README.md</span>).</li>
+    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. Its PHP files can still be run directly over the web (for example <span class="type">src/Google/Client.php</span> and <span class="type">vendor/autoload.php</span> return 200), and its other files can be downloaded (for example <span class="type">composer.json</span>).</li>
   </ol>
-  <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and the library folder no longer serves files to the public.</p>
+  <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and every file in the library folder, including the <span class="type">.php</span> files, returns 403 or 404 when requested directly.</p>
 </div>
 </details>
 
 <details class="acc">
-  <summary>2. FAQ schema missing on a new post</summary>
+  <summary>2. Schema code printed as visible text on a new post</summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> the post <a href="https://midot.co.il/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%9c%d7%a2%d7%95%d7%91%d7%93%d7%99%d7%9d-%d7%94%d7%90%d7%9d-%d7%90%d7%a4%d7%a9%d7%a8-%d7%9c%d7%a0%d7%94%d7%9c-%d7%a1%d7%99/" dir="ltr">midot.co.il/בדיקת-מהימנות-לעובדים-האם-אפשר-לנהל-סי/</a>, published after the last implementation round, shows a Q&amp;A section ("<span class="rtl">שאלות נפוצות על בדיקת מהימנות לעובדים</span>", 6 questions) but outputs no FAQ schema. The other 22 pages with a Q&amp;A section carry it.</div>
+  <div class="bad"><b>The problem:</b> on the post <a href="https://midot.co.il/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%9c%d7%a2%d7%95%d7%91%d7%93%d7%99%d7%9d-%d7%94%d7%90%d7%9d-%d7%90%d7%a4%d7%a9%d7%a8-%d7%9c%d7%a0%d7%94%d7%9c-%d7%a1%d7%99/" dir="ltr">midot.co.il/בדיקת-מהימנות-לעובדים-האם-אפשר-לנהל-סי/</a>, the FAQ code was pasted into the page's schema field without the <span class="type">&lt;script type="application/ld+json"&gt;</span> wrapper. Visitors see the raw JSON printed on the page (in <span class="type">section.section-schema</span>), and search engines get no FAQ schema. The code itself is valid and matches the page's 6 questions and answers. It is the only page on the site with this problem.</div>
   <h3>What to do</h3>
-  <p>Add the block below in the same way as on the other 22 pages. It is built word for word from the questions and answers on the page. New posts with a Q&amp;A section need the same block when they are published.</p>
+  <p>Replace the contents of that post's schema field with the block below: the same 6 questions and answers, wrapped in the script tag, in the same format as the 22 other pages that carry the block. Do not add it as a second block, or the raw text stays on the page. Google no longer shows FAQ rich results, so the value is consistency with the rest of the site and a machine-readable Q&amp;A, not a search feature.</p>
   <pre>&lt;script type=&quot;application/ld+json&quot;&gt;
 {
   &quot;@context&quot;: &quot;https://schema.org&quot;,
@@ -151,7 +152,7 @@ a{color:var(--cyan)} td a{word-break:break-all}
   ]
 }
 &lt;/script&gt;</pre>
-  <p class="kv"><b>Acceptance:</b> the post outputs one FAQ schema block whose 6 questions and answers match the page.</p>
+  <p class="kv"><b>Acceptance:</b> no JSON is visible on the post, and it outputs one FAQ schema block whose 6 questions and answers match the page.</p>
 </div>
 </details>
 
