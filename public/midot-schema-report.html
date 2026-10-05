@@ -61,10 +61,10 @@ a{color:var(--cyan)} td a{word-break:break-all}
 <header class="hero">
   <p class="kicker">NC Digital · Open Items</p>
   <h1>Midot: Open Items for the Dev Team</h1>
-  <p class="sub">What still needs to be done on midot.co.il. The last scan re-checked the items below; the last full scan of all 229 sitemap URLs was on 24 September 2026.</p>
+  <p class="sub">What still needs to be done on midot.co.il. The last scan covered all 229 URLs in the sitemap.</p>
   <div class="meta">
     <span class="chip">Original audit: <b>19 July 2026</b></span>
-    <span class="chip">Last scan: <b>27 September 2026</b></span>
+    <span class="chip">Last scan: <b>5 October 2026</b></span>
   </div>
 </header>
 
@@ -72,34 +72,90 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <summary>1. Exposed Google Cloud service-account key</summary>
   <div class="acc-body">
   <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
-  <h3>What to do</h3>
-  <p>These steps need someone with admin rights on the Google Cloud project.</p>
+  <h3>In Google Cloud (an admin of the project; the development team does not have access)</h3>
   <ol>
-    <li><b>Disable the key now.</b> Disabling is reversible, so it can be re-enabled briefly if something turns out to depend on it.</li>
-    <li>Check whether anything else on the site uses this service account (forms, scheduled tasks, other templates). If something does, create a new key with only the permissions it needs, store it outside the public web folder, and update the code.</li>
-    <li><b>Delete the old key.</b></li>
+    <li><b>Disable the key now.</b> Disabling is reversible, so it can be re-enabled briefly if something on the site turns out to depend on it.</li>
+    <li><b>Delete the old key</b> once the site steps below confirm nothing depends on it, or once a replacement key is in place.</li>
     <li>Review the Cloud audit logs for any use of the key, and review the service account's roles and the files shared with it.</li>
+  </ol>
+  <h3>On the site (development team)</h3>
+  <ol>
+    <li>Check whether any code still uses this service account (forms, scheduled tasks, other templates). If something does, it will need a new key from the project admin, stored outside the public web folder.</li>
     <li>Remove copies of the key file from backups, staging copies and code history.</li>
-    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. The rest of the folder is still publicly reachable (for example <span class="type">composer.json</span>).</li>
+    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. It still serves files to the public (for example <span class="type">composer.json</span> and <span class="type">README.md</span>).</li>
   </ol>
   <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and the library folder no longer serves files to the public.</p>
 </div>
 </details>
 
 <details class="acc">
-  <summary>2. Page with no data: /מטפלות-מתעללות/ (its Google Sheet was deleted)</summary>
+  <summary>2. FAQ schema missing on a new post</summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> <a href="https://midot.co.il/%d7%9e%d7%98%d7%a4%d7%9c%d7%95%d7%aa-%d7%9e%d7%aa%d7%a2%d7%9c%d7%9c%d7%95%d7%aa/" dir="ltr" style="white-space:nowrap">midot.co.il/מטפלות-מתעללות/</a> (page ID 1231) reads its list from a Google Sheet that has been deleted (ID <span class="type">1CLw0Z_ZhUAmfdAwhZ618YchPY8wrj6zNL-RmriFlfP0</span>). The page returns 200 with an empty results table ("<span class="rtl">לא נמצאו תוצאות</span>"), is set to index, and is listed in <span class="type">page-sitemap.xml</span>. The page text is intact; only the data is missing, so no new content needs to be written. Whether to restore the list is Midot's decision.</div>
+  <div class="bad"><b>The problem:</b> the post <a href="https://midot.co.il/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%9c%d7%a2%d7%95%d7%91%d7%93%d7%99%d7%9d-%d7%94%d7%90%d7%9d-%d7%90%d7%a4%d7%a9%d7%a8-%d7%9c%d7%a0%d7%94%d7%9c-%d7%a1%d7%99/" dir="ltr">midot.co.il/בדיקת-מהימנות-לעובדים-האם-אפשר-לנהל-סי/</a>, published after the last implementation round, shows a Q&amp;A section ("<span class="rtl">שאלות נפוצות על בדיקת מהימנות לעובדים</span>", 6 questions) but outputs no FAQ schema. The other 22 pages with a Q&amp;A section carry it.</div>
   <h3>What to do</h3>
-  <ol>
-    <li><b>Unpublish the page</b> until Midot decides. It had no Google search impressions in the 12 months to 23 September 2026 and has no known backlinks or internal links.</li>
-    <li>If Midot restores the list: the Sheet should be owned by a Midot account and shared read-only with the service account. When the Sheet cannot be read, the page should show a "temporarily unavailable" message instead of "no results" or a fatal error.</li>
-  </ol>
-  <p class="kv"><b>Acceptance:</b> the page is unpublished and no longer listed in <span class="type">page-sitemap.xml</span>, or it is restored with its list and the error handling above.</p>
+  <p>Add the block below in the same way as on the other 22 pages. It is built word for word from the questions and answers on the page. New posts with a Q&amp;A section need the same block when they are published.</p>
+  <pre>&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;FAQPage&quot;,
+  &quot;inLanguage&quot;: &quot;he-IL&quot;,
+  &quot;mainEntity&quot;: [
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה ההבדל בין בדיקת מהימנות לחקירת מהימנות עובדים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;בדיקת מהימנות היא כלי הערכה המשולב בתהליך המיון ובוחן עמדות והתנהלות הנוגעות ליושרה ולעמידה בנהלים. חקירת מהימנות עובדים היא פעולה אחרת, שמתבצעת כאשר כבר קיים חשד קונקרטי סביב אירוע שהתרחש, ומטרתה לברר עובדות. הראשונה מלווה החלטת גיוס, השנייה מלווה בירור.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם אפשר לבצע בדיקת מהימנות לעובדים קיימים ולא רק למועמדים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;כן, וזה נעשה בפועל. ההקשר שונה מגיוס והרגישות גבוהה יותר, ולכן נדרשת הקפדה על שקיפות, על הסבר מלא ועל בחינת ההיבטים המשפטיים לפני ההפעלה. בארגונים רבים הבדיקה נשקלת בעת מעבר לתפקיד רגיש יותר או בעת הרחבת הרשאות.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;כל כמה זמן נכון לבחון מחדש את סיכוני כוח האדם בארגון?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;אין מועד אחיד. נקודות הזמן המקובלות הן שינוי תפקיד, הרחבת סמכויות או הרשאות, שינוי מבני וסיום העסקה. בתפקידים רגישים מקובל לבחון את ההרשאות ואת הבקרות גם בקצב קבוע, ולא רק בעקבות אירוע.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;אילו תפקידים מצדיקים בדיקת מהימנות לעובדים?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;המבחן המעשי אינו שם התפקיד אלא רמת החשיפה שהוא מאפשר: האם ניתן ליזום פעולה רגישה וגם לאשר אותה, האם קיימת גישה לנכסים או למידע ללא בקרה שוטפת, ומה היקף הנזק האפשרי אם תתרחש חריגה. ככל שהתשובות מצביעות על חשיפה גבוהה יותר, כך עולה הרלוונטיות של הבדיקה ושל מנגנוני הבקרה המשלימים אותה.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;מה עושים כאשר מתעורר חשד למעילה או להונאה פנימית?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;עוצרים לפני שמסיקים מסקנות ואוספים את המידע המתועד הקיים, בודקים אם מדובר באירוע נקודתי או בדפוס חוזר, ורק אז בוחרים את כלי הבירור המתאים. בדיקת הונאות פנים ארגוניות בוחנת גם את נקודות הבקרה בתהליך ולא רק את הגורם האנושי.&quot;
+      }
+    },
+    {
+      &quot;@type&quot;: &quot;Question&quot;,
+      &quot;name&quot;: &quot;האם בדיקת מהימנות מבטיחה שלא תתרחש הונאה?&quot;,
+      &quot;acceptedAnswer&quot;: {
+        &quot;@type&quot;: &quot;Answer&quot;,
+        &quot;text&quot;: &quot;לא. הבדיקה מצמצמת אי ודאות בנקודת הכניסה ומוסיפה מידע לתמונה הכוללת, אך היא אינה ערובה. צמצום הסיכון בפועל נשען על שילוב בין הבדיקה לבין הרשאות מותאמות, הפרדת סמכויות, בקרות ותגובה עקבית לחריגות.&quot;
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+  <p class="kv"><b>Acceptance:</b> the post outputs one FAQ schema block whose 6 questions and answers match the page.</p>
 </div>
 </details>
 
-<footer>NC Digital · Open Items · Midot Institute · September 2026</footer>
+<footer>NC Digital · Open Items · Midot Institute · October 2026</footer>
 </div>
 </body>
 </html>
