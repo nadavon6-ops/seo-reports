@@ -147,6 +147,71 @@ if ( empty( $printed[ $youtube_id ] ) ) {
 /events/mindfulness_superpower_online_workshop/,/courses/mindfulness-course/
 /events/spiritual-accompaniment-workshop/,/courses/spiritual-accompaniment/
 </pre></div><p class="note">את 51 הקישורים הפנימיים אל <code>/לימודי-פסיכותרפיה/</code> מומלץ לעדכן ישירות לכתובת היעד, כדי שלא יעברו דרך הפניה.</p></div></details><details class="sec"><summary><span class="num">3</span><span class="stitle">עמוד המרצים חסום לאינדוקס</span><span class="scount"><span class="n">3 שלבים</span><span class="arrow">&#9660;</span></span></summary><div class="body"><p>עמוד <a href="https://bespirit.co.il/teachers/">/teachers/</a> מוגדר <code>noindex, follow</code>, אינו כולל תגית canonical ואינו נכלל במפת האתר. גוגל אינו רואה את העמוד, וממילא אינו רואה את סכמת ה-<code>CollectionPage</code> שבו.</p><ol class="steps"><li><b>הסרת ה-noindex.</b> העמוד הוא ארכיון סוג התוכן Teachers, ולא עמוד רגיל. לוח הבקרה, Yoast SEO, Settings, Content types, Teachers, ולהפעיל את "Show the archive for Teachers in search results". עמודי המרצים הבודדים כבר פתוחים לאינדוקס ואין לשנות אותם.</li><li><b>תגית canonical.</b> לוודא ש-Yoast מייצר canonical לעמוד לאחר פתיחתו.</li><li><b>מפת האתר.</b> לוודא שהעמוד מופיע ב-<code>teachers-sitemap.xml</code>.</li></ol><p class="note">נדרש אישור המכללה לפני הביצוע. המלצתנו לפתוח את העמוד: זהו עמוד הריכוז של 41 עמודי המרצים, והוא מחזק אותם בקישוריות הפנימית. בנוסף, עמוד ארכיון מאונדקס מאפשר להפנות אליו את עמודי המרצים שעזבו (סעיף 2).</p></div></details>
+<details class="sec"><summary><span class="num">4</span><span class="stitle">נתונים מובנים (Schema)</span><span class="scount"><span class="n">3 נושאים</span><span class="arrow">&#9660;</span></span></summary><div class="body"><h3>א. כפילות סכמת Course בחמישה עמודים</h3><p>בעמודים הבאים מופיעים שני בלוקים של <code>Course</code> לאותו קורס: הבלוק שמייצר מודול הסכמות (עם <code>@id</code> ו-<code>url</code>), ובלוק ישן שהיה בעמוד עוד קודם לכן. גוגל מקבל שתי ישויות קורס סותרות לאותו עמוד.</p><div class="tablewrap"><table><thead><tr><th>עמוד</th><th>בלוקי Course</th></tr></thead><tbody><tr><td><code>/courses/ארומתרפיה/</code></td><td>2</td></tr><tr><td><code>/plans/הכשרת-מטפלים-באקותרפיה/</code></td><td>2</td></tr><tr><td><code>/plans/נטורופתיה/</code></td><td>2</td></tr><tr><td><code>/plans/קורס-מורי-יוגה-קורס-מורים-ליוגה/</code></td><td>2</td></tr><tr><td><code>/plans/yoga-therapy/</code></td><td>2</td></tr></tbody></table></div><p><b>הפעולה:</b> להסיר את הבלוק הישן, זה שאין בו <code>@id</code> ו-<code>url</code>, ולהשאיר את בלוק המודול. הבלוק הישן נמצא בתוכן העמוד או בתבנית; אפשר לאתר אותו בחיפוש <code>"@type": "Course"</code>.</p><h3>ב. סכמת FAQ שבורה במאמר אחד</h3><p>בעמוד <code>/האם-ניתן-לשלב-בין-תרופות-מרשם-לצמחי-מרפ/</code> בלוק ה-<code>FAQPage</code> אינו JSON תקין: בטקסט אחת התשובות יש ירידת שורה גולמית, וגוגל אינו יכול לקרוא את הבלוק כלל. זה אותו גורם שתוקן בסכמות הווידאו.</p><p><b>הפעולה:</b> להסיר את ירידת השורה מטקסט התשובה, או להדפיס את הבלוק באמצעות <code>wp_json_encode</code>.</p><h3>ג. BreadcrumbList חסר בארכיוני הקטגוריות ובעמודי האירועים</h3><p>הסכמה פועלת בכל עמודי הקורסים, התוכניות, המרצים והמאמרים. היא חסרה בכל 37 ארכיוני הקטגוריות ובכל 19 עמודי האירועים.</p><details class="sub"><summary>קוד להוספה בפונקציה הקיימת</summary><div class="codebox"><button class="copybtn" onclick="cp(this)">העתקה</button><pre dir="ltr">// להוסיף למערך סוגי התוכן בפונקציה karkur_schema_breadcrumbs:
+&#x27;events&#x27; =&gt; array( &#x27;אירועים&#x27;, home_url( &#x27;/events/&#x27; ) ),
+
+// ולהוסיף ענף לארכיוני קטגוריה, לפני ה-else הסופי:
+} elseif ( is_category() ) {
+    $items[] = array(
+        &#x27;@type&#x27;    =&gt; &#x27;ListItem&#x27;,
+        &#x27;position&#x27; =&gt; 2,
+        &#x27;name&#x27;     =&gt; single_cat_title( &#x27;&#x27;, false ),
+    );</pre></div></details><details class="sub"><summary>רשימת 56 העמודים</summary><div class="codebox"><button class="copybtn" onclick="cp(this)">העתקה</button><pre dir="ltr">/category/uncategorized/
+/category/כללי/
+/category/כללי/nlp-2/
+/category/כללי/אינדקס-שמנים/
+/category/כללי/אקותרפיה/
+/category/כללי/ארומתרפיה/
+/category/כללי/דולות/
+/category/כללי/דיקור/
+/category/כללי/דמיון-מודרך/
+/category/כללי/הילינג/
+/category/כללי/הנחיית-קבוצות/
+/category/כללי/יוגה/
+/category/כללי/כתיבה-טיפולית/
+/category/כללי/ליווי-רוחני-למוות/
+/category/כללי/מאמרי-מטפלים/
+/category/כללי/מטפלים/
+/category/כללי/מיינדפולנס/
+/category/כללי/נטורולוגיה/
+/category/כללי/נטורופתיה/
+/category/כללי/נשימה-מודעת/
+/category/כללי/סביבה-וקיימות/
+/category/כללי/עיסוי/
+/category/כללי/פסיכותרפיה-גופנית-הוליסטית/
+/category/כללי/פרחי-באך/
+/category/כללי/פרסונולוגיה/
+/category/כללי/צמחי-מרפא/
+/category/כללי/קונסטלציה-משפחתית/
+/category/כללי/קורסים-מקצועיים/
+/category/כללי/קינסיולוגיה/
+/category/כללי/קשב-וריכוז/
+/category/כללי/רפואה-משלימה/
+/category/כללי/רפלקסולוגיה/
+/category/כללי/שיאצו/
+/category/כללי/שילוב-אומנויות/
+/category/כללי/תזונה/
+/category/כללי/תקשור/
+/category/כללי/תרפיה-בעזרת-סוסים/
+/events/creative-writing/
+/events/guided_imag_workshop/
+/events/healing_workshop/
+/events/holistic-medical-massage-workshop/
+/events/nerrative_writing_workshop/
+/events/nlp-master-workshop/
+/events/open_day_21_2_24/
+/events/open_day_7_11_23/
+/events/openday12_7_23/
+/events/openday_12_8_26/
+/events/openday_24-7-24/
+/events/openday_2_9_26/
+/events/openday_8-7-26/
+/events/openday_spring_4_26/
+/events/tarot_b/
+/events/the-new-nutrition/
+/events/transpersonal-psychotherapy/
+/events/בדיקה/
+/events/יום-פתוח-19-7-23/</pre></div></details></div></details>
 <footer><b>NC Digital</b> &nbsp;|&nbsp; מכללת כרכור &nbsp;|&nbsp; אוקטובר 2026</footer>
 </div>
 <script>
