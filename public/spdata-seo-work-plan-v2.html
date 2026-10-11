@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="he">
+    <script>document.documentElement.lang = 'he';</script>
+    <title>sp.data | תוכנית עבודה SEO (גרסה 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c11; --panel:#0f151d; --panel2:#141d27; --line:#1f2b38; --line2:#2b3a4a;
+  --txt:#e8eef5; --muted:#8ea1b4; --dim:#63768a;
+  --acc:#00c896; --acc2:#4aa8ff;
+  --high:#ff7a59; --med:#f0b429; --low:#7f93a8; --crit:#ff4d5e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:'Heebo',-apple-system,'Segoe UI',Arial,sans-serif;
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 500px at 88% -8%,rgba(0,200,150,.10),transparent 60%),
+             radial-gradient(700px 420px at 8% 4%,rgba(74,168,255,.07),transparent 60%)}
+.wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 22px 90px}
+
+header{padding:54px 0 24px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.brand .mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(140deg,var(--acc),#0a8f6e);
+  display:grid;place-items:center;font-weight:800;color:#04120d;font-size:15px;letter-spacing:-.5px}
+.brand .bn{font-weight:700;font-size:17px;letter-spacing:.2px}
+h1{font-size:42px;line-height:1.15;font-weight:800;margin:0 0 18px;letter-spacing:-.6px}
+h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hchips{display:flex;flex-wrap:wrap;gap:8px}
+.hchip{border:1px solid var(--line2);background:rgba(255,255,255,.02);border-radius:999px;
+  padding:5px 13px;font-size:13px;color:var(--muted)}
+.hchip b{color:var(--txt);font-weight:700}
+
+.toolbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  background:rgba(8,12,17,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  padding:12px 0;margin-bottom:26px}
+.tbtn{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:9px;
+  padding:7px 14px;font-family:inherit;font-size:13.5px;cursor:pointer;transition:.15s}
+.tbtn:hover{color:var(--txt);border-color:var(--acc)}
+.tbtn.on{background:rgba(0,200,150,.13);border-color:var(--acc);color:var(--acc)}
+.tsep{width:1px;height:22px;background:var(--line2);margin:0 6px}
+.tlbl{color:var(--dim);font-size:12.5px;margin-left:2px}
+
+details.block{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden}
+details.block>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;
+  padding:20px 24px;font-size:19px;font-weight:700}
+summary::-webkit-details-marker{display:none} summary::marker{content:""}
+details.block>summary:hover{background:rgba(255,255,255,.02)}
+.snum{width:32px;height:32px;border-radius:9px;background:var(--panel2);border:1px solid var(--line2);
+  display:grid;place-items:center;font-size:13px;color:var(--acc);font-weight:800;flex:none}
+.spill{margin-right:auto;font-size:12.5px;font-weight:500;color:var(--muted);
+  border:1px solid var(--line2);border-radius:999px;padding:3px 12px}
+.chev{width:9px;height:9px;border-left:2px solid var(--dim);border-bottom:2px solid var(--dim);
+  transform:rotate(-45deg);transition:.2s;flex:none}
+details[open]>summary .chev{transform:rotate(135deg)}
+.sinner{padding:4px 20px 22px}
+
+.gantt{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2)}
+.ghead,.grow{display:grid;grid-template-columns:minmax(230px,1.45fr) repeat(3,1fr)}
+.ghead{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01));
+  border-bottom:1px solid var(--line2)}
+.ghead-cell{padding:13px 16px}
+.mnum{font-weight:800;font-size:14.5px;color:var(--txt)}
+.glabel{display:flex;align-items:center;gap:8px;padding:11px 16px;border-left:1px solid var(--line2);
+  font-size:13.5px;min-width:0}
+.gname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell{padding:8px 10px;border-left:1px solid rgba(31,43,56,.6);display:flex;align-items:center}
+.cell:last-child{border-left:none}
+.grow{border-top:1px solid rgba(31,43,56,.55);transition:.18s}
+.grow:hover{background:rgba(255,255,255,.025)}
+.grow.mute{opacity:.2}
+.gtrack{padding:11px 16px;background:rgba(0,200,150,.06);border-top:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);font-weight:700;font-size:13.5px;color:var(--txt);
+  display:flex;align-items:center;gap:10px}
+.tnum{font-size:11px;color:var(--acc);border:1px solid rgba(0,200,150,.35);border-radius:6px;padding:1px 7px}
+.tcount{margin-right:auto;font-weight:400;font-size:12.5px;color:var(--dim)}
+.bar{width:100%;text-align:right;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;
+  font-family:inherit;font-size:12.5px;font-weight:600;color:#08110d;transition:.15s;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.bar.p-high{background:linear-gradient(90deg,#ff7a59,#ffa07f)}
+.bar.p-med{background:linear-gradient(90deg,#f0b429,#ffd06b)}
+.bar.p-low{background:linear-gradient(90deg,#7f93a8,#a3b4c4)}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.dot.p-high{background:var(--high)} .dot.p-med{background:var(--med)}
+.dot.p-low{background:var(--low)} .dot.p-crit{background:var(--crit)}
+.star{color:var(--acc);font-size:12px;font-style:normal;flex:none}
+
+.gfoot{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px;padding:13px 16px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:12px}
+.gfoot-lbl{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px}
+.gfoot-note{margin-right:auto;font-size:12px;color:var(--dim)}
+.tchip{border:none;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:inherit;
+  font-size:12.5px;font-weight:700;color:#08110d;transition:.15s}
+.tchip:hover{filter:brightness(1.12)}
+.tchip.p-crit{background:linear-gradient(90deg,#ff4d5e,#ff8a95)}
+.tchip.p-low{background:linear-gradient(90deg,#7f93a8,#a3b4c4)}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:14px 4px 2px;
+  font-size:12.5px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend .hint{margin-right:auto;color:var(--dim)}
+
+details.card{background:var(--panel2);border:1px solid var(--line);border-radius:13px;margin-bottom:10px;overflow:hidden}
+details.card[open]{border-color:var(--line2)}
+details.card.hide{display:none}
+.chead{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 18px;flex-wrap:wrap}
+.chead:hover{background:rgba(255,255,255,.02)}
+.ctitle{font-weight:700;font-size:15.5px}
+.ckw{font-size:12.5px;color:var(--acc);background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.22);
+  border-radius:6px;padding:2px 9px}
+.chead .chev{margin-right:auto}
+.badge{font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 10px;flex:none;border:1px solid transparent}
+.badge.p-high{color:var(--high);background:rgba(255,122,89,.12);border-color:rgba(255,122,89,.3)}
+.badge.p-med{color:var(--med);background:rgba(240,180,41,.12);border-color:rgba(240,180,41,.3)}
+.badge.p-low{color:var(--low);background:rgba(127,147,168,.12);border-color:rgba(127,147,168,.3)}
+.badge.p-crit{color:var(--crit);background:rgba(255,77,94,.12);border-color:rgba(255,77,94,.32)}
+.badge.month,.badge.area{color:var(--muted);background:rgba(255,255,255,.03);border-color:var(--line2);font-weight:500}
+.badge.geo{color:#8fb4ff;background:rgba(122,162,255,.12);border-color:rgba(122,162,255,.35)}.badge.imm{color:var(--acc);background:rgba(0,200,150,.10);border-color:rgba(0,200,150,.3)}
+.cbody{padding:2px 18px 20px;border-top:1px solid var(--line)}
+
+.mets{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;margin:18px 0}
+.met{background:var(--panel);padding:13px 14px;display:flex;flex-direction:column;gap:1px}
+.mlab{font-size:11.5px;color:var(--dim)}
+.mval{font-size:21px;font-weight:800;letter-spacing:-.4px}
+
+.target{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;background:var(--panel);
+  border:1px solid var(--line);border-right:3px solid var(--acc);border-radius:10px;padding:14px 16px;margin-bottom:18px}
+.tlab{font-size:12px;color:var(--dim);padding-top:2px;white-space:nowrap}
+.tval{font-size:14px}
+.tval p{margin:0 0 4px} .tval p:last-child{margin:0}
+
+.flds{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fld{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.fld.wide{grid-column:1/-1}
+.flab{font-size:12px;font-weight:700;color:var(--acc);letter-spacing:.3px;margin-bottom:7px;
+  padding-bottom:7px;border-bottom:1px solid var(--line)}
+.fval{font-size:14px;color:#d3dde7}
+.fval p{margin:0 0 9px} .fval p:last-child{margin:0}
+.fval ul,.fval ol{margin:0 0 9px;padding-right:19px}
+.fval li{margin-bottom:4px}
+.fval ul:last-child,.fval ol:last-child{margin-bottom:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.kw{font-size:12.5px;background:rgba(74,168,255,.08);border:1px solid rgba(74,168,255,.2);
+  color:#b9d9ff;border-radius:6px;padding:2px 9px}
+
+.subhead{font-size:13px;font-weight:700;color:var(--muted);margin:18px 4px 10px;
+  display:flex;align-items:center;gap:9px}
+.subhead::after{content:"";flex:1;height:1px;background:var(--line)}
+
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;color:var(--dim);font-size:12.5px}
+footer .fb{margin-right:auto}
+.scrollnote{display:none;font-size:12px;color:var(--dim);padding:8px 4px 0}
+
+@media(max-width:900px){
+  h1{font-size:31px}
+  .mets{grid-template-columns:repeat(2,1fr)}
+  .flds{grid-template-columns:1fr}
+  .target{grid-template-columns:1fr;gap:2px 0}
+  .tlab{margin-top:8px;white-space:normal}
+}
+@media(max-width:760px){
+  .wrap{padding:0 14px 70px}
+  header{padding:36px 0 20px}
+  .gwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px}
+  .gantt{min-width:680px;border:none;border-radius:0}
+  .bar{font-size:11.5px;padding:7px 9px}
+  details.block>summary{flex-wrap:wrap;padding:16px;font-size:17px}
+  .spill{margin-right:0;order:4;flex-basis:100%}
+  .sinner{padding:4px 12px 18px}
+  .scrollnote{display:block}
+  .gfoot-note{margin-right:0;flex-basis:100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <div class="mark">sp</div>
+    <div class="bn">sp.data</div>
+  </div>
+  <h1>תוכנית עבודה <span>SEO</span></h1>
+  <div class="hchips">
+    <span class="hchip"><b>11</b> עמודי שירות</span>
+    <span class="hchip"><b>35</b> מאמרים ועדכוני תוכן</span>
+    <span class="hchip"><b>12</b> משימות טכניות</span>
+    <span class="hchip">חודשים <b>1-3</b></span>
+    <span class="hchip">גרסה <b>2</b> · 11.10.2026</span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="tbtn" onclick="toggleAll(true)">הרחב הכל</button>
+  <button class="tbtn" onclick="collapseAll()">כווץ הכל</button>
+  <div class="tsep"></div>
+  <span class="tlbl">עדיפות</span>
+  <button class="tbtn on" data-f="all" onclick="filt(this,'all')">הכל</button>
+  <button class="tbtn" data-f="High" onclick="filt(this,'High')">High</button>
+  <button class="tbtn" data-f="Medium" onclick="filt(this,'Medium')">Medium</button>
+  <button class="tbtn" data-f="Low" onclick="filt(this,'Low')">Low</button>
+  <button class="tbtn" data-f="קריטי" onclick="filt(this,'קריטי')">קריטי</button>
+</div>
+
+<details class="block" open>
+  <summary><span class="snum">G</span> גאנט
+    <span class="chev"></span></summary>
+  <div class="sinner">
+<div class="gwrap">
+<div class="gantt">
+  <div class="ghead">
+    <div class="glabel ghead-lbl"></div>
+    <div class="cell ghead-cell"><span class="mnum">חודש 1</span></div>
+    <div class="cell ghead-cell"><span class="mnum">חודש 2</span></div>
+    <div class="cell ghead-cell"><span class="mnum">חודש 3</span></div>
+  </div>
+
+  <div class="gtrack"><span class="tnum">01</span> גאנט עמודי שירות
+    <span class="tcount">11 שורות</span></div>
+  <div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="star">★ מיידי</span><span class="gname">מערכת BI / כלי BI לארגונים</span></div><div class="cell"><button class="bar p-high" data-target="s0" title="מערכת BI / כלי BI לארגונים">מערכת bi</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="star">★ מיידי</span><span class="gname">דשבורד ניהולי (מיטוב הנכס המדורג)</span></div><div class="cell"><button class="bar p-high" data-target="s1" title="דשבורד ניהולי (מיטוב הנכס המדורג)">דשבורד ניהולי</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">אקדמיה / קורסי BI</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="s2" title="אקדמיה / קורסי BI">קורס bi</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">דוחות BI והתראות</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="s3" title="דוחות BI והתראות">דוחות bi</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">ניתוח נתונים / ניתוח מידע</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="s4" title="ניתוח נתונים / ניתוח מידע">ניתוח נתונים</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">אינטגרציית נתונים ו-ETL (איחוד קלאסטר)</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="s5" title="אינטגרציית נתונים ו-ETL (איחוד קלאסטר)">etl</button></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">Qlik Cloud Analytics / אנליטיקה בענן</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="s6" title="Qlik Cloud Analytics / אנליטיקה בענן">אנליטיקה</button></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">דאטה אנליסט / Data Analyst</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="s7" title="דאטה אנליסט / Data Analyst">data analyst</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">Agentic AI / עוזר AI</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="s8" title="Agentic AI / עוזר AI">agentic ai</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">בסיסי נתונים / מסדי נתונים</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="s9" title="בסיסי נתונים / מסדי נתונים">בסיסי נתונים</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">עמוד ההמלצות: פסקת פתיחה ושורת תוצאה לכל לקוח</span></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="s10" title="עמוד ההמלצות: פסקת פתיחה ושורת תוצאה לכל לקוח">המלצות לקוחות</button></div><div class="cell"></div></div>
+
+  <div class="gtrack"><span class="tnum">02</span> תוכנית תוכן - בלוג
+    <span class="tcount">35 שורות</span></div>
+  <div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">מה זה KPI, איך בוחרים מדדי ביצוע ואיך מנהלים אותם באמצעות BI</span></div><div class="cell"><button class="bar p-high" data-target="b0" title="מה זה KPI, איך בוחרים מדדי ביצוע ואיך מנהלים אותם באמצעות BI">מה זה KPI</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">מה זה אינטגרציה של מערכות ונתונים: המדריך הארגוני</span></div><div class="cell"><button class="bar p-high" data-target="b1" title="מה זה אינטגרציה של מערכות ונתונים: המדריך הארגוני">מה זה אינטגרציה</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">Power BI מול Qlik Sense: השוואה מקצועית לבחירת פלטפורמת BI</span></div><div class="cell"><button class="bar p-high" data-target="b2" title="Power BI מול Qlik Sense: השוואה מקצועית לבחירת פלטפורמת BI">power bi מה זה</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">אוטומציה עסקית מבוססת נתונים: איך הופכים תובנות לפעולות אוטומטיות</span></div><div class="cell"><button class="bar p-high" data-target="b3" title="אוטומציה עסקית מבוססת נתונים: איך הופכים תובנות לפעולות אוטומטיות">אוטומציה עסקית</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">איך מאפשרים ל-LLMs גישה מאובטחת לנתונים ארגוניים לצורך ניתוח וקבלת החלטות</span></div><div class="cell"><button class="bar p-high" data-target="b4" title="איך מאפשרים ל-LLMs גישה מאובטחת לנתונים ארגוניים לצורך ניתוח וקבלת החלטות">llm מה זה</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">10 אובייקטים שונים לוויזואליזציה של נתונים שאתם חייבים להכיר</span></div><div class="cell"><button class="bar p-med" data-target="b5" title="10 אובייקטים שונים לוויזואליזציה של נתונים שאתם חייבים להכיר">סוגי גרפים</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">איך מאפיינים מערכת BI לפני הפיתוח: 5 שלבים בראש המאמר הקיים</span></div><div class="cell"><button class="bar p-med" data-target="u1" title="איך מאפיינים מערכת BI לפני הפיתוח: 5 שלבים בראש המאמר הקיים">אפיון מערכת bi</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">איך מערכת BI עובדת בפועל: פרק שלבים במאמר ההגדרה הקיים</span></div><div class="cell"><button class="bar p-med" data-target="u2" title="איך מערכת BI עובדת בפועל: פרק שלבים במאמר ההגדרה הקיים">bi מה זה</button></div><div class="cell"></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">סוכני AI בארגון: איך הם עובדים, מה הם יכולים לעשות ובמה הם שונים מצ'אטבוטים</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="b6" title="סוכני AI בארגון: איך הם עובדים, מה הם יכולים לעשות ובמה הם שונים מצ&#x27;אטבוטים">סוכן AI</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">Tableau מול Qlik Sense: השוואת יכולות לארגונים</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b7" title="Tableau מול Qlik Sense: השוואת יכולות לארגונים">tableau מה זה</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">מעבר מדשבורדים באקסל למערכת BI: השיקולים והתהליך</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b8" title="מעבר מדשבורדים באקסל למערכת BI: השיקולים והתהליך">דשבורד באקסל</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">דוגמאות של דשבורדים לפי תחום</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b9" title="דוגמאות של דשבורדים לפי תחום">דשבורד ניהולי</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">QlikView מול Qlik Sense: מדריך מעבר מסודר לארגונים</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b10" title="QlikView מול Qlik Sense: מדריך מעבר מסודר לארגונים">qlikview bi</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">Data Governance: איך מבטיחים נתונים אמינים, מאובטחים ומוכנים ל-BI ול-AI</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b11" title="Data Governance: איך מבטיחים נתונים אמינים, מאובטחים ומוכנים ל-BI ול-AI">data governance</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">מה זה Embedded Analytics ואיך משלבים יכולות BI במוצרי תוכנה ו-SaaS</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b12" title="מה זה Embedded Analytics ואיך משלבים יכולות BI במוצרי תוכנה ו-SaaS">embedded analytics</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">ניהול מלאי ושרשרת אספקה עם מערכת בינה עסקית (BI)</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b13" title="ניהול מלאי ושרשרת אספקה עם מערכת בינה עסקית (BI)">ניהול מלאי עם מערכת BI</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">אילו שימושים ניתן לעשות ב-GenAI לניתוח נתונים עסקיים</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b14" title="אילו שימושים ניתן לעשות ב-GenAI לניתוח נתונים עסקיים">genai</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">איך משלבים Agentic AI עם אנליטיקה עסקית כדי לייצר ערך אמיתי מהדאטה</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b15" title="איך משלבים Agentic AI עם אנליטיקה עסקית כדי לייצר ערך אמיתי מהדאטה">בינה מלאכותית לעסקים</button></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">איך בוחרים קורס BI שמוביל לעבודה בתחום: מה לבדוק לפני ההרשמה</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="g1" title="איך בוחרים קורס BI שמוביל לעבודה בתחום: מה לבדוק לפני ההרשמה">לימודי bi</button></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">איך בוחרים כלי ETL להעברת נתונים למחסן נתונים בענן</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="g6" title="איך בוחרים כלי ETL להעברת נתונים למחסן נתונים בענן">etl tools</button></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">מה חשוב לבדוק כשבוחרים מערכת BI: רשימת בדיקה לארגון</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="g8" title="מה חשוב לבדוק כשבוחרים מערכת BI: רשימת בדיקה לארגון">בחירת מערכת bi</button></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">איך משלבים בינה מלאכותית במערכת BI קיימת: הרחבת הפרק במאמר הקיים על GenAI</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="u3" title="איך משלבים בינה מלאכותית במערכת BI קיימת: הרחבת הפרק במאמר הקיים על GenAI">בינה מלאכותית יוצרת</button></div><div class="cell"></div></div><div class="grow" data-pri="High"><div class="glabel"><span class="dot p-high"></span><span class="gname">איך עושים הסבה מקצועית לתחום ה-BI: שלבים בראש המאמר הקיים</span></div><div class="cell"></div><div class="cell"><button class="bar p-high" data-target="u4" title="איך עושים הסבה מקצועית לתחום ה-BI: שלבים בראש המאמר הקיים">הסבה מקצועית ל bi</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">דשבורד BI בעברית: מה בודקים בכלי BI לפני שבוחרים, ואיך זה עובד ב-Qlik Sense</span></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="g2" title="דשבורד BI בעברית: מה בודקים בכלי BI לפני שבוחרים, ואיך זה עובד ב-Qlik Sense">דשבורד בעברית</button></div><div class="cell"></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">ניתוח נתונים בשפה טבעית: איך AI מאפשר לשאול את הדאטה ולקבל תשובות עסקיות</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="b16" title="ניתוח נתונים בשפה טבעית: איך AI מאפשר לשאול את הדאטה ולקבל תשובות עסקיות">שאילתות בשפה טבעית</button></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">איך מגדירים התראה אוטומטית כשמדד עסקי חורג מהיעד</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="g5" title="איך מגדירים התראה אוטומטית כשמדד עסקי חורג מהיעד">התראות חכמות</button></div></div><div class="grow" data-pri="Medium"><div class="glabel"><span class="dot p-med"></span><span class="gname">איך מעבירים נתונים מ-SAP למחסן נתונים בזמן אמת</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-med" data-target="g7" title="איך מעבירים נתונים מ-SAP למחסן נתונים בזמן אמת">חילוץ נתוני SAP</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">ETL vs. ELT: מה ההבדל ואיך בוחרים את הגישה הנכונה לאינטגרציית נתונים</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b17" title="ETL vs. ELT: מה ההבדל ואיך בוחרים את הגישה הנכונה לאינטגרציית נתונים">etl vs elt</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">מה זה CDC (Change Data Capture) ואיך הוא מאפשר אינטגרציית נתונים בזמן אמת</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b18" title="מה זה CDC (Change Data Capture) ואיך הוא מאפשר אינטגרציית נתונים בזמן אמת">change data capture</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">Data Lake מול Data Warehouse מול Lakehouse: מה מתאים לארגון שלכם</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b19" title="Data Lake מול Data Warehouse מול Lakehouse: מה מתאים לארגון שלכם">data lake vs data warehouse</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">מה זה Data Pipeline ואיך בונים תהליך נתונים יעיל ואמין</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b20" title="מה זה Data Pipeline ואיך בונים תהליך נתונים יעיל ואמין">data pipeline</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">ניתוח והגדלת מכירות עם מערכות בינה עסקית (BI)</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b21" title="ניתוח והגדלת מכירות עם מערכות בינה עסקית (BI)">הגדלת מכירות</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">נרמול נתונים וסכמת כוכב: איך בונים מודל נתונים נכון ל-BI</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b22" title="נרמול נתונים וסכמת כוכב: איך בונים מודל נתונים נכון ל-BI">נרמול נתונים</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">מחולל דוחות ודוחות BI אוטומטיים: יכולות ויתרונות לארגון</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b23" title="מחולל דוחות ודוחות BI אוטומטיים: יכולות ויתרונות לארגון">מחולל דוחות</button></div></div><div class="grow" data-pri="Low"><div class="glabel"><span class="dot p-low"></span><span class="gname">מהי אנליטיקה חזויה (Predictive Analytics) ואיך AutoML עוזר לחזות תוצאות עסקיות</span></div><div class="cell"></div><div class="cell"></div><div class="cell"><button class="bar p-low" data-target="b24" title="מהי אנליטיקה חזויה (Predictive Analytics) ואיך AutoML עוזר לחזות תוצאות עסקיות">predictive analytics</button></div></div>
+</div>
+</div>
+<div class="scrollnote">ניתן לגלול את התרשים לצדדים</div>
+
+<div class="gfoot">
+  <span class="gfoot-lbl"><span class="tnum">03</span> משימות טכניות</span>
+  <button class="tchip p-crit" data-target="t-crit">קריטי · 2</button>
+  <button class="tchip p-low" data-target="t-rest">לא דחוף · 10</button>
+  <span class="gfoot-note">בגיליון זה אין עמודת חודש</span>
+</div>
+
+<div class="legend">
+  <span><i class="dot p-high"></i> High</span>
+  <span><i class="dot p-med"></i> Medium</span>
+  <span><i class="dot p-low"></i> Low</span>
+  <span><i class="dot p-crit"></i> קריטי</span>
+  <span><i class="star">★</i> מיידי</span>
+  <span class="hint">לחיצה על פס בתרשים פותחת את הכרטיס המלא</span>
+</div></div>
+</details>
+
+<details class="block">
+  <summary><span class="snum">01</span> גאנט עמודי שירות
+    <span class="spill">11 שורות</span>
+    <span class="chev"></span></summary>
+  <div class="sinner">
+<details class="card" id="s0" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">מערכת BI / כלי BI לארגונים</span>
+    <span class="ckw">מערכת bi</span>
+    <span class="badge imm">★ מיידי</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">350</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">11</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">0</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">24</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.00%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">6</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>★ עמוד חדש — יש להקים<br>/מערכת-bi/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Commercial Investigation</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>כן</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">מערכת בינה עסקית (90)</span><span class="kw">מערכות בינה עסקית (90)</span><span class="kw">תוכנת bi (150)</span><span class="kw">כלי bi (60)</span><span class="kw">חברות bi (150)</span><span class="kw">חברת bi (200)</span><span class="kw">פתרונות bi (30)</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>אף ביטוי מסחרי באתר לא מדורג דרך עמוד שירות.</p><p>לביטויים &quot;מערכת bi&quot;, &quot;כלי bi&quot;, &quot;תוכנת bi&quot;, &quot;חברות bi&quot; — אפס חשיפות ב-GSC ב-90 יום. האתר פשוט אינו נראה עליהם.</p><p>העמוד היחיד שנוגע בקלאסטר הוא מאמר הגדרה משנת 2020, שמדורג במקום 12-14 ומקבל 2,901 חשיפות שמניבות קליק אחד (CTR 0.03%).</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>להקים עמוד נחיתה מסחרי ייעודי.</p><p>למה לא לקדם את המאמר הקיים /מה-זה-בינה-עסקית-bi/ במקום זאת — ארבע סיבות:</p><p>1. אי-התאמת כוונה: המאמר הוא הגדרה (&quot;מה זה בינה עסקית ואיך היא עובדת&quot;), בעוד &quot;מערכת BI&quot; היא כוונה מסחרית. ה-SERP מאויש ב-100% בעמודי ספקים מסחריים עם טופס לידים.</p><p>2. הוא כבר ממוצב על הקלאסטר האינפורמטיבי: &quot;בינה עסקית&quot; (314 חשיפות), &quot;bi&quot; (242), &quot;bi מה זה&quot;. מיקוד מחדש לכוונה מסחרית יקריב את זה.</p><p>3. &quot;בינה עסקית&quot; סומן כתום בקובץ הלקוח — כלומר גם ככה לא מקדמים עליו, אך המאמר מחזיק בו טבעית וכדאי לשמר.</p><p>4. ה-CTR שלו 0.03% על 2,901 חשיפות. הבעיה אינה אופטימיזציה אלא שהוא מושך תנועה אינפורמטיבית שאינה ממירה. הוספת כוונה מסחרית לא תפתור זאת — עמוד נפרד כן.</p><p>התפקיד שלו בתוכנית: להישאר מאמר הגדרה, ולשמש מקור הקישור הפנימי החזק ביותר לעמוד החדש.</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title: &quot;מערכת BI לארגונים | תוכנת BI, הטמעה ותמיכה בעברית — sp.data&quot; (59 תווים)</li><li>Meta: לכלול &quot;לשעבר Qlik Israel&quot; + הנעה לייעוץ ללא עלות</li></ul><p>H1:</p><ul><li>&quot;מערכת BI לארגונים&quot; — תואם מדויק. datamind מדורג 4 עם H1 זהה</li></ul><p>פסקת פתיחה:</p><ul><li>הגדרה ישירה של מערכת BI ב-2-3 משפטים, לפני כל תוכן שיווקי — בסיס לציטוט ב-AI Overview</li></ul><p>סקשנים חדשים:</p><ul><li>חברות BI בישראל: איך בוחרים חברה להטמעת מערכת BI (תופס &quot;חברות bi&quot; 150 ו-&quot;חברת bi&quot; 200). הפרק נפתח במשפט על sp.data: הטמעה מקצה לקצה, לשעבר Qlik Israel</li><li>מתי ארגון צריך מערכת BI (5 סימנים)</li><li>מה כוללת מערכת BI ארגונית</li><li>7 קריטריונים לבחירה (H3 לכל קריטריון)</li><li>כמה עולה מערכת BI בישראל — אף מתחרה לא עונה</li><li>כמה זמן לוקח להטמיע מערכת BI? תהליך ההטמעה מאפיון ועד Go-Live. הפרק נפתח בטווח זמנים לפי גודל הפרויקט, שמתקבל מ-sp.data</li><li>מערכת BI מול Excel ודוחות ERP</li></ul><p>סקשן FAQ:</p><ul><li>5 שאלות: ההבדל מדשבורד · כמה עולה · חיבור לפריוריטי/SAP/חשבשבת · צריך צוות פנימי · איזו מערכת BI מתאימה לארגון בינוני (משך ההטמעה נענה בפרק תהליך ההטמעה ולא חוזר כאן)</li></ul><p>טופס לידים:</p><ul><li>חובה — לכל 5 המתחרים המדורגים יש טופס</li></ul><p>Schema:</p><ul><li>Service + FAQPage + BreadcrumbList</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>עמוד חדש במלואו. לפי מבנה המתחרים המדורגים: הגדרה · מתי צריך · מה כולל · קריטריונים לבחירה · עלויות · תהליך הטמעה · השוואה ל-Excel ו-ERP · מקרי לקוח · FAQ · טופס.</p><p>יעד אורך: 1,200-1,700 מילים (טווח המתחרים המדורגים 4 ו-10)</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>נכנסים: /מה-זה-בינה-עסקית-bi/ (הקישור הקריטי — 2,901 חשיפות) · /all-products/ · עמוד הבית · /כיצד-לאפיין-נכון-את-מערכת-ה-bi/ · /שיקולים-חשובים-בבחירת-פתרון-bi/ · /השילוב-בין-מערכות-bi-ו-erp/</p><p>אנקור: &quot;מערכת BI לארגונים&quot;, &quot;תוכנת BI&quot;</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Service + FAQPage + BreadcrumbList<br>לא SoftwareApplication — זהו עמוד קטגוריה</p><p>GEO: הגדרה חד-משפטית בפתיחה, טבלת השוואה BI מול Excel מול ERP, טווחי עלות</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>לא קיים עמוד ייעודי</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/מה-זה-בינה-עסקית-bi-ואיך-היא-עובדת/<br>מאמר הגדרה משנת 2020</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>Ahrefs — דרך מאמר ההגדרה<br>(ב-GSC: 0 חשיפות לביטוי)</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>CPC $1.40. ניתוח עמודי המתחרים: datamind (DR 13, מיקום 4) — H1 &quot;מערכת BI&quot; תואם מדויק, 1,726 מילים · menahel4u (DR 35) 1,349 · bionit (DR 8) 639 · datacube (DR 2.3) 483 · h-erp (DR 50) 356. אורך התוכן אינו הגורם המכריע — H1 תואם ומיקוד מסחרי כן. לכל החמישה טופס לידים.</p><p>&quot;חברות bi&quot; (150) ו-&quot;חברת bi&quot; (200) אוחדו לעמוד הזה במקום לעמוד נפרד: ניתוח SERP הראה ש-5 התוצאות הראשונות הן עמודי חברה ושירות מסחריים, כלומר אותה כוונה בדיוק. יטופלו כסקשן ייעודי בעמוד.</p><p>&quot;בינה עסקית&quot; לבדו סומן כתום ואינו ביטוי יעד.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s1" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">דשבורד ניהולי (מיטוב הנכס המדורג)</span>
+    <span class="ckw">דשבורד ניהולי</span>
+    <span class="badge imm">★ מיידי</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">200</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">4</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">9</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">2,165</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.42%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">7.9</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/איך-לאפיין-דשבורד-ניהולי/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Commercial + Informational (מעורב)</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">דשבורד (800)</span><span class="kw">דשבורדים (40)</span><span class="kw">דשבורד bi (40)</span><span class="kw">דשבורד בעברית (150)</span><span class="kw">ויזואליזציה של נתונים (150)</span><span class="kw">ויזואליזציה (140)</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>העמוד מדורג במקום 2-4 עם 386 חשיפות ל-&quot;דשבורד ניהולי&quot; ו-634 ל-&quot;דשבורד&quot; — אך ה-CTR עומד על 0.42% בלבד והוא אינו מוביל לשום עמוד מסחרי.</p><p>בנוסף: הוא מקשר החוצה באנקור &quot;מערכת ה-BI&quot; אל עמוד קליק סנס — קישור שגוי שכנראה נותר מהאתר הישן</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>מיטוב המאמר שכבר מדורג, ולא הרמת עמוד השירות.</p><p>ניתוח SERP: Rewire Solutions (#1), nogamy ו-poenta מדורגים שם עם מאמרים — ה-SERP מקבל מאמרים. עמוד השירות מדורג 15.3 עם 24 חשיפות בלבד, והניסיון להחליף בו את המאמר מסכן מיקום 2</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title: להוסיף שנה ומיקוד — &quot;איך לאפיין דשבורד ניהולי: מדריך מלא + דוגמאות | sp.data&quot;</li><li>Meta: אין היום Meta Description — חובה להוסיף. זו הסיבה המיידית ל-CTR 0.42%</li></ul><p>פסקת פתיחה:</p><ul><li>תשובה ישירה: &quot;דשבורד ניהולי הוא...&quot; ב-2 משפטים לפני התוכן. ה-AI Overview מצטט 3 מתחרים ולא אותנו</li></ul><p>סקשנים חדשים:</p><ul><li>דוגמאות דשבורדים לפי תחום (פיננסים, מכירות, תפעול)</li><li>כמה עולה בניית דשבורד ניהולי</li><li>כמה זמן לוקח לבנות</li><li>לשנות את הכותרת &quot;אז איך מאפיינים דשבורד?&quot; ל&quot;איך מאפיינים דשבורד ניהולי שמנהלים באמת משתמשים בו?&quot;, ולהוסיף לשלושת השלבים: מי משתמש בדשבורד ובאיזו ישיבה, מעט מדדים במסך הראשון, ובדיקה אחרי חודש מי נכנס ומה לא נפתח (שאלת GeckoCheck, נוכחות 0% בשלושת המנועים)</li></ul><p>סקשן FAQ:</p><ul><li>אין היום כלל — להוסיף 5 שאלות: מה זה דשבורד ניהולי · ההבדל מדוח BI · כמה עולה · כמה זמן · מאילו מערכות מושכים נתונים</li></ul><p>קישורים פנימיים:</p><ul><li>לתקן: האנקור &quot;מערכת ה-BI&quot; מפנה לקליק סנס — להעביר ל-/מערכת-bi/</li><li>להוסיף: קישור לעמוד השירות באנקור &quot;בניית דשבורדים לארגון&quot;</li></ul><p>Schema:</p><ul><li>Article (קיים) + FAQPage + BreadcrumbList</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>לשמר: כל המבנה הקיים — הוא עובד.<br>להוסיף: פסקת תשובה ישירה בפתיחה (&quot;דשבורד ניהולי הוא...&quot;) · סקשן דוגמאות לפי תחום · סקשן שאלות נפוצות (אין היום) · CTA לעמוד השירות<br>לתקן: האנקור &quot;מערכת ה-BI&quot; שמפנה לקליק סנס</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>יוצא: קישור חדש לעמוד השירות /ויזואליציה-ודשבורדים-אינטראקטיביים/ באנקור &quot;בניית דשבורדים לארגון&quot;, וקישור ל-/מערכת-bi/ החדש</p><p>לתקן: האנקור &quot;מערכת ה-BI&quot; ← מקליק סנס אל /מערכת-bi/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Article (קיים) + FAQPage (חדש) + BreadcrumbList</p><p>GEO: ה-AI Overview מצטט היום את rewire-solutions, nogamy ו-stsiconic ולא אותנו — למרות שאנחנו מדורגים מעליהם. תשובות ישירות וקצרות הן הפער</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים ומדורג היטב — 2,767 מילים</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/איך-לאפיין-דשבורד-ניהולי/  — זהו גם היעד</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>GSC (386 חשיפות) · Ahrefs · SERP חי</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>שינוי מהגרסה הקודמת: היעד הועבר מעמוד השירות אל המאמר המדורג, לאחר אימות ב-GSC וב-SERP חי.</p><p>&quot;דשבורד ניהולי&quot; מסומן ב-Ahrefs כ-Commercial וגם Transactional — אך ה-SERP בפועל מאויש במאמרים, ולכן מאמר מיטבי הוא הכלי הנכון.</p><p>עמוד השירות /ויזואליציה-ודשבורדים-אינטראקטיביים/ עובר לתפקיד תומך ומקבל קישורים</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s2" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">אקדמיה / קורסי BI</span>
+    <span class="ckw">קורס bi</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">300</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">15</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">9</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">1,042</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.86%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">11.5</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/אקדמיה/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Commercial Investigation / Transactional</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">קורסים bi (210)</span><span class="kw">קורסי bi (210)</span><span class="kw">לימודי bi (150)</span><span class="kw">בוטקאמפ (260)</span><span class="kw">bootcamp (610)</span><span class="kw">ללמוד bi</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>העמוד לא נכנס ל-10 הראשונים. באתר הישן היו עמודי קורסים ייעודיים שנעלמו באיחוד: /qlik-college/qlik-sense-courses/ (46 קליקים) ו-/qlik-bootcamp/ (35 קליקים).</p><p>בנוסף /אקדמיה/ ו-/qlik-college/ מתחרים על אותה כוונה</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>הגדרת /אקדמיה/ כעמוד נחיתה מסחרי ו-/qlik-college/ כקטלוג.<br>העמקה משמעותית — 724 מילים מול מתחרים עם עמודי קורס מפורטים</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title: להעביר את &quot;קורס BI&quot; לתחילת הכותרת</li><li>Meta: להוסיף סיוע בהשמה — הבידול החזק ביותר</li></ul><p>פסקת פתיחה:</p><ul><li>למי הקורס מיועד ומה מקבלים בסופו</li></ul><p>סקשנים חדשים:</p><ul><li>מסלולי לימוד ומשך</li><li>תנאי קבלה</li><li>מחירים</li><li>מרצים</li><li>סיפורי בוגרים והשמה</li></ul><p>לשמר:</p><ul><li>סקשן ההשמה הקיים — אין למתחרים</li></ul><p>סקשן FAQ:</p><ul><li>להוסיף: למי מתאים · תנאי קבלה · האם יש השמה · מחיר · אונליין או פרונטלי · משך הקורס</li></ul><p>הפרדת תפקידים:</p><ul><li>/אקדמיה/ = עמוד נחיתה מסחרי</li><li>/qlik-college/ = קטלוג קורסים</li></ul><p>Schema:</p><ul><li>Course + FAQPage + BreadcrumbList</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף: מסלולים ומשך, תנאי קבלה, מחירים, סיוע בהשמה, מרצים, סיפורי בוגרים.<br>לשמר: סקשן ההשמה (&quot;סיוע בהשמה והזדמנות להשתלב כמפתחי BI&quot;) — הבידול החזק ביותר מול המתחרים</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>נכנסים: /קריירה/ · /הסבה-מקצועית-לתחום-ה-bi/ · /גיוס-עובדים-בתחום-ה-bi/ · 23 עמודי הקורסים ב-/qlik-college/</p><p>אנקור: &quot;קורס BI&quot;, &quot;לימודי BI&quot;, &quot;בוטקאמפ BI&quot;</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Course + FAQPage + BreadcrumbList<br>AggregateRating רק אם יש המלצות מאומתות</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 724 מילים, מדורג 9-15</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/אקדמיה/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>GSC (90 יום)</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>מחקר המתחרים מאשר שזה מגרש אמיתי: naya-college (29 ביטויים משותפים, DR 34), רם קדם (12, DR 15), ג&#x27;ון ברייס (12, DR 54) הם המתחרים האורגניים החופפים ביותר לאתר.</p><p>יעד ריאלי: top-10 בחודשיים. CPC $1.50</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s3" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">דוחות BI והתראות</span>
+    <span class="ckw">דוחות bi</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">150</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">6.4</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">0</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">1</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.00%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">45</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Commercial Investigation</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">מחולל דוחות (90)</span><span class="kw">bi reporting</span><span class="kw">דוחות pixel perfect</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>Mismatch מובהק: הביטוי מדורג במקום 6.4 דרך מאמר על סמנכ&quot;לי כספים, בעוד עמוד השירות הייעודי מדורג 45 עם חשיפה אחת בלבד ב-90 יום</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>אופטימיזציה של עמוד השירות סביב &quot;דוחות BI&quot; ו&quot;מחולל דוחות&quot; + חיזוק קישורים פנימיים</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title ו-H1 הקיימים טובים וממוקדים — לשמר</li></ul><p>פסקת פתיחה:</p><ul><li>תשובה ישירה: &quot;מהם דוחות BI&quot; בפסקה הראשונה</li></ul><p>סקשנים חדשים:</p><ul><li>סוגי דוחות</li><li>תזמון והפצה אוטומטית</li><li>מחולל דוחות — סקשן ייעודי (90 חיפושים)</li><li>השוואה לדוחות סטנדרטיים מ-ERP</li></ul><p>סקשן FAQ:</p><ul><li>קיים ומצוין — &quot;מהם דוחות BI ומחולל דוחות?&quot; עונה בדיוק על מילת המפתח</li><li>להרחיב ולסמן ב-FAQPage</li></ul><p>לתקן:</p><ul><li>כפילות H3 של מקרי הלקוח</li></ul><p>קישורים פנימיים:</p><ul><li>מ-/כל-מה-שסמנכלי-כספים.../ — העמוד שמדורג בפועל במקום 6.4</li></ul><p>Schema:</p><ul><li>Service + FAQPage</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>לשמר: השאלות הנפוצות הקיימות — &quot;מהם דוחות BI ומחולל דוחות?&quot; כבר עונה בדיוק על מילת המפתח.<br>לתקן: כפילות ב-H3 של מקרי הלקוח.<br>להוסיף: סוגי דוחות, תזמון והפצה, השוואה לדוחות ERP סטנדרטיים</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>נכנסים: /כל-מה-שסמנכלי-כספים.../ (העמוד שמדורג בפועל) · /מה-זה-בינה-עסקית-bi/ · /all-products/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Service + FAQPage (4 שאלות קיימות כ-H3)</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 872 מילים, בלתי נראה לחלוטין</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/כל-מה-שסמנכלי-כספים-צריכים-לדעת-על-שימ/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>GSC — דרך מאמר לא רלוונטי</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>CPC $6.00 — הערך המסחרי הגבוה ביותר שנמדד במחקר. ה-SERP חלש במיוחד: התוצאה במקום 2 היא אתר עם DR 0</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s4" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">ניתוח נתונים / ניתוח מידע</span>
+    <span class="ckw">ניתוח נתונים</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">170</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">4</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">6</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">1,452</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.41%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">7.7</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/ניתוח-נתונים-מידע-ומה-שביניהם-המדריך/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Informational + Commercial<br>(Ahrefs מסמן &quot;ניתוח נתונים&quot; כמסחרי)</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">ניתוח מידע (40)</span><span class="kw">ניתוח דאטה (40)</span><span class="kw">אנליטיקה עסקית (40)</span><span class="kw">ניתוח אנליטי</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>1,452 חשיפות חודשיות עם 6 קליקים בלבד — CTR 0.41%.</p><p>נבדק בקוד המקור: אין Meta Description ואין סקשן שאלות נפוצות. רק 4 כותרות H2, מהן אחת היא &quot;מאמרים קשורים&quot;.</p><p>העמוד מקבל גם שאילתות ארוכות בסגנון פרומפט של AI — סימן לתנועה ממנועי חיפוש מבוססי AI</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>מיטוב CTR ומבנה. הביטוי &quot;ניתוח נתונים&quot; מסומן ב-Ahrefs כמסחרי — זהו העמוד בעל הערך העסקי הגבוה מבין השלושה</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Meta Description — אין כלל היום. זו הסיבה הישירה ל-CTR 0.41%</li><li>Title: להוסיף ערך — &quot;ניתוח נתונים: שיטות, תהליך ודוגמאות | sp.data&quot;</li></ul><p>פסקת פתיחה:</p><ul><li>תשובה ישירה: &quot;ניתוח נתונים הוא...&quot; לפני התוכן</li></ul><p>סקשנים חדשים:</p><ul><li>רק 3 סקשני תוכן היום — להרחיב</li><li>סוגי ניתוח: תיאורי, אבחוני, חזוי, מנחה</li><li>כלים לניתוח נתונים</li></ul><p>סקשן FAQ:</p><ul><li>אין כלל — להוסיף 4-5 שאלות</li></ul><p>קישורים פנימיים:</p><ul><li>לעמוד /מערכת-bi/ החדש באנקור &quot;מערכת BI&quot;</li></ul><p>Schema:</p><ul><li>Article (קיים) + FAQPage</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף: Meta Description · פסקת תשובה ישירה · סקשן שאלות נפוצות · הרחבת מבנה ה-H2 (רק 3 סקשני תוכן היום) · קישור לעמוד /מערכת-bi/</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>יוצא: /מערכת-bi/ · /ויזואליציה-ודשבורדים-אינטראקטיביים/<br>נכנס: /מה-זה-בינה-עסקית-bi/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Article (קיים) + FAQPage (חדש) + BreadcrumbList</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 2,764 מילים, מדורג 7.7</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>עמוד קיים — מיטוב<br>/ניתוח-נתונים-מידע-ומה-שביניהם-המדריך/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>SE Ranking (ל-&quot;ניתוח מידע&quot;) · GSC 7.7</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>כל הביטויים צהובים בקובץ הלקוח (ניתוח נתונים 170, ניתוח מידע 40, ניתוח דאטה 40, אנליטיקה עסקית 40).</p><p>נבדק: SE Ranking מיקום 4 ל-&quot;ניתוח מידע&quot;, GSC מיקום 7.7 לעמוד</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s5" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">אינטגרציית נתונים ו-ETL (איחוד קלאסטר)</span>
+    <span class="ckw">etl</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">800</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">3</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">0</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">175</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.00%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">23.5</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/אינטגרציית-נתונים-ואיכות-נתונים/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Informational (עיקר) + Commercial (משני)</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">etl tools (90)</span><span class="kw">כלי etl (20)</span><span class="kw">תהליכי etl (70)</span><span class="kw">אינטגרציית נתונים</span><span class="kw">טרנספורמציית נתונים</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>פיצול יתר: 5 עמודי שירות באותו קלאסטר. 4 מתוך 5 מקבלים 0 חשיפות ב-GSC — /טרנספורמציית-נתונים-תהליכי-etl-elt/, /טעינת-נתונים-etl-מתקדם/, /איכות-נתונים-ומשילות-נתונים/, /סטרימינג-נתונים-בזמן-אמת-cdc/</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>חיזוק עמוד ההאב כנקודת כניסה, קישור הדדי לכל תת-העמודים, והמרת הסמכות של מאמר ה-ETL (מיקום 3, 669 חשיפות) לכוונה מסחרית</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title לעמוד האב סביב &quot;אינטגרציית נתונים ו-ETL&quot;</li></ul><p>סקשן חדש בעמוד האב:</p><ul><li>טבלת ניווט בין 5 תת-הפתרונות</li><li>מתי בוחרים במה</li><li>ארכיטקטורה כוללת</li></ul><p>קישורים פנימיים:</p><ul><li>ממאמר ה-ETL (669 חשיפות, מיקום 3) אל עמוד האב — אנקור &quot;פתרונות אינטגרציית נתונים&quot;</li><li>האב ← 4 תת-העמודים, והפוך</li></ul><p>סקשן FAQ:</p><ul><li>להוסיף בכל אחד מ-5 עמודי הקלאסטר</li></ul><p>לוודא:</p><ul><li>תוכן ייחודי בכל תת-עמוד — כרגע 4 מתוך 5 עם 0 חשיפות</li></ul><p>Schema:</p><ul><li>Service + FAQPage + BreadcrumbList</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>בהאב: טבלת ניווט בין תת-הפתרונות, מתי בוחרים במה, ארכיטקטורה כוללת.<br>בתת-העמודים: לוודא תוכן ייחודי שאינו חופף</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>מאמר ה-ETL ← ההאב (אנקור &quot;פתרונות אינטגרציית נתונים&quot;)<br>ההאב ← 4 תת-העמודים, והפוך</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Service + FAQPage + BreadcrumbList</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>האב חלש, 4 תת-עמודים בלתי נראים</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/מה-זה-etl-ומהם-תהליכי-etl/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>Ahrefs + GSC — דרך מאמר הבלוג</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>&quot;טיוב נתונים&quot; (150 חיפושים, CPC $8.00) נבדק ונפסל: ניתוח SERP הראה מודעות דרושים ואתרי טיוב כתובות — לא תוכנת איכות נתונים ארגונית</p><p>הערה על חלוקת עבודה: elt, data pipeline ו-data governance הוסרו מהביטויים המשניים של עמוד האב והועברו למאמרים ייעודיים (טאב הבלוג), כדי למנוע קניבליזציה. האב מכסה רוחב, המאמרים מעמיקים לכל מונח ומקשרים אליו.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s6" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">Qlik Cloud Analytics / אנליטיקה בענן</span>
+    <span class="ckw">אנליטיקה</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">480</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">6.3</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">0</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">300</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.00%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">16.6</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/פתרונות-אנליטיקה-בענן-וניתוח-נתונים/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Commercial Investigation</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">אנליטיקה עסקית (40)</span><span class="kw">פתרונות אנליטיקה</span><span class="kw">cloud analytics</span><span class="kw">אנליטיקה בשירות עצמי</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>ה-Title ממותג-מוצר (&quot;Qlik Cloud Analytics®&quot;) ואינו תואם לאופן החיפוש בעברית. חופף חלקית לעמוד קליק סנס</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>הפרדת תפקידים מול עמוד קליק סנס: כאן ענן ופלטפורמה, שם מוצר ומותג. שכתוב Title לכיוון &quot;פתרונות אנליטיקה בענן לארגונים&quot;</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>שכתוב Title מ-&quot;Qlik Cloud Analytics®&quot; ל-&quot;פתרונות אנליטיקה בענן לארגונים&quot; — השם הממותג לא מחופש בעברית</li></ul><p>סקשנים חדשים:</p><ul><li>ענן מול On-Premises</li><li>אבטחה ורגולציה בישראל</li><li>תהליך מעבר לענן</li></ul><p>הפרדת תפקידים:</p><ul><li>כאן = ענן ופלטפורמה</li><li>/פתרונות-אנליטיקה-בענן-קליק-סנס/ = מוצר ומותג</li></ul><p>סקשן FAQ:</p><ul><li>להוסיף</li></ul><p>Schema:</p><ul><li>Service + FAQPage</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף: השוואת ענן מול On-Premises, אבטחה ורגולציה בישראל, תהליך מעבר לענן</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>נכנסים: /all-products/ · /פתרונות-אנליטיקה-בענן-קליק-סנס/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Service + FAQPage</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 1,405 מילים, מיקום 16.6</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>/הטמעת-פתרונות-אנליטיקה/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>GSC — דרך פוסט בלוג</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>לבצע רק אחרי שהעבודה על עמוד קליק סנס התייצבה, כדי למנוע קניבליזציה</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s7" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">דאטה אנליסט / Data Analyst</span>
+    <span class="ckw">data analyst</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">1,000</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">26</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">7</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">2,264</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.31%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">9</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/מה-זה-דאטה-אנליסט-data-analyst/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Informational (עיקר)</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">דאטה אנליסט</span><span class="kw">דאטה אנליסט מה זה</span><span class="kw">ניתוח דאטה (40)</span><span class="kw">data analyst bi (10)</span><span class="kw">מנתח נתונים</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>2,264 חשיפות חודשיות עם 7 קליקים — CTR 0.31%.</p><p>נבדק בקוד המקור: אין Meta Description ואין סקשן שאלות נפוצות.</p><p>פער מיקומים: &quot;דאטה אנליסט&quot; מדורג 10.0 עם 232 חשיפות, אך &quot;data analyst&quot; באנגלית מדורג 35.9 עם 124 חשיפות — כלומר הגרסה האנגלית חלשה משמעותית</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>מיטוב CTR + חיזוק הגרסה האנגלית של הביטוי בתוך העמוד העברי</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Meta Description — אין כלל היום</li><li>Title: לקצר ולמקד — &quot;מה זה דאטה אנליסט: תפקיד, כישורים ומסלול כניסה | sp.data&quot;</li></ul><p>פסקת פתיחה:</p><ul><li>תשובה ישירה בת 2 משפטים</li></ul><p>סקשנים חדשים:</p><ul><li>איך נכנסים לתפקיד — מסלול והכשרה</li><li>כישורים וכלים נדרשים</li><li>ההבדל בין דאטה אנליסט למפתח BI</li></ul><p>סקשן FAQ:</p><ul><li>אין כלל — להוסיף</li></ul><p>קישורים פנימיים:</p><ul><li>ל-/אקדמיה/ באנקור &quot;קורס BI&quot; — זהו הקישור בעל הערך העסקי</li></ul><p>Schema:</p><ul><li>Article (קיים) + FAQPage</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף: Meta Description · שאלות נפוצות · מסלול הכניסה לתפקיד וכישורים נדרשים · קישור לאקדמיה</p><p>לשכתב את פתיחת הפרק &quot;במה דאטה אנליסט (data analyst) עוסק?&quot;: משפט אחד שעונה ישירות על השאלה &quot;מה עושה דאטה אנליסט בארגון?&quot;, ואחריו 4-5 משימות</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>יוצא: /אקדמיה/ (הקישור החשוב — העמוד מזין את קהל הקורסים) · /qlik-college/<br>נכנס: /הסבה-מקצועית-לתחום-ה-bi/ · /גיוס-עובדים-בתחום-ה-bi/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Article (קיים) + FAQPage (חדש) + BreadcrumbList</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 3,197 מילים, מדורג 9.0</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>עמוד קיים — מיטוב<br>/מה-זה-דאטה-אנליסט-data-analyst/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>SE Ranking (ל-&quot;data analyst&quot;) · GSC 9.0</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>&quot;data analyst&quot; מסומן צהוב בלשונית Target Audience עם נפח 1,000 — הנפח הגבוה ביותר שנותר לא מטופל.</p><p>הערך העסקי אינו ישיר: זו שאילתת קריירה ולא רכישה. הערך הוא בהזנת האקדמיה, שמוכרת קורסים. לכן Medium ולא High.</p><p>נבדק: SE Ranking מיקום 26, GSC מיקום 9.0</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s8" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">Agentic AI / עוזר AI</span>
+    <span class="ckw">agentic ai</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">1,000</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">20.9</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">0</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">46</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.00%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">20.9</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/agentic-ai/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Informational / Commercial Investigation</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">עוזר ai</span><span class="kw">ai לעסקים (50)</span><span class="kw">agentic analytics</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>KD 79 — ה-SERP נשלט על ידי שחקנים גלובליים. פוטנציאל הדירוג בטווח הקצר נמוך</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>מיקוד ב-GEO ולא בדירוג אורגני: מבנה שאלה-תשובה, הגדרות מפורשות, ישויות מזוהות.</p><p>עמוד השירות מחזיק בביטוי הראשי &quot;agentic ai&quot;. המאמר בטאב הבלוג נכתב בזווית משלימה (&quot;סוכן AI&quot;) ובמכוון אינו פותח באותו מונח — כדי לתמוך ולא להתחרות</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Title: לשמר את &quot;Agentic AI&quot; בפתיחה — זהו העמוד שמחזיק בביטוי הראשי</li></ul><p>פסקת פתיחה:</p><ul><li>הגדרה חד-משפטית של Agentic AI — הבסיס לציטוט ב-AI</li></ul><p>סקשנים חדשים:</p><ul><li>ההבדל מ-Copilot ומצ׳אטבוט</li><li>תרחישי שימוש ישראליים</li></ul><p>סקשן FAQ:</p><ul><li>מבנה שאלה-תשובה לאורך העמוד, לא רק בסוף</li></ul><p>קישורים פנימיים:</p><ul><li>לקבל קישור מהמאמר החדש על סוכני AI, באנקור &quot;פתרון Agentic AI&quot;</li></ul><p>Schema:</p><ul><li>Service + FAQPage + DefinedTerm</li></ul><p>הערה:</p><ul><li>KD 79 — היעד הוא ציטוט ב-AI Overview, לא דירוג אורגני</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף הגדרה חד-משפטית, ההבדל מ-Copilot ומצ׳אטבוט, ותרחישי שימוש ישראליים</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>נכנסים: המאמר החדש על סוכני AI · /עוזר-ai-חכם/ · /מנוע-אסוציאטיבי-מבוסס-ai/ · 4 מאמרי ה-AI בבלוג</p><p>אנקור: &quot;Agentic AI&quot;, &quot;פתרון Agentic AI&quot;</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Service + FAQPage + DefinedTerm — גישת GEO-first</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 1,145 מילים, כמעט בלתי נראה</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>אין עמוד שמדורג בפועל</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>GSC</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>משימת מודעות ו-GEO, לא Quick Win. להעריך מחדש בסוף החודש השלישי.</p><p>חלוקת תפקידים מול הבלוג: עמוד השירות = הביטוי הראשי &quot;agentic ai&quot;. המאמר = &quot;סוכן AI&quot; (320 חיפושים) וזווית ההסבר וההשוואה</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s9" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">בסיסי נתונים / מסדי נתונים</span>
+    <span class="ckw">בסיסי נתונים</span>
+    
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="mets"><div class="met"><span class="mlab">נפח חיפוש</span><span class="mval">140</span></div><div class="met"><span class="mlab">מיקום נוכחי</span><span class="mval">4</span></div><div class="met"><span class="mlab">GSC קליקים</span><span class="mval">7</span></div><div class="met"><span class="mlab">GSC חשיפות</span><span class="mval">2,680</span></div><div class="met"><span class="mlab">GSC CTR</span><span class="mval">0.26%</span></div><div class="met"><span class="mlab">GSC מיקום</span><span class="mval">6.7</span></div></div>
+    <div class="target"><div class="tlab">עמוד יעד (חדש או קיים)</div><div class="tval"><p>עמוד קיים — מיטוב<br>/מה-הם-בסיסי-נתונים-ואיך-מנהלים-אותם/</p></div><div class="tlab">Search Intent</div><div class="tval"><p>Informational (עיקר)</p></div><div class="tlab">נדרש עמוד חדש?</div><div class="tval"><p>לא</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">מילות מפתח משניות (נפח)</div><div class="fval"><div class="chips"><span class="kw">בסיס נתונים (140)</span><span class="kw">מסד נתונים</span><span class="kw">מסדי נתונים</span><span class="kw">דאטה בייס</span><span class="kw">בסיס נתונים רלציוני</span></div></div></div>
+      <div class="fld wide"><div class="flab">הבעיה המרכזית</div><div class="fval"><p>המאמר עם החשיפות הגבוהות ביותר מבין המאמרים האינפורמטיביים — 2,680 חשיפות חודשיות — ומניב 7 קליקים בלבד. CTR 0.26%.</p><p>נבדק בקוד המקור: אין Meta Description ואין סקשן שאלות נפוצות</p></div></div>
+      <div class="fld wide"><div class="flab">פעולה מומלצת</div><div class="fval"><p>מיטוב CTR בלבד. אין להשקיע בתוכן — 3,480 מילים זה כבר מספיק</p></div></div>
+      <div class="fld wide"><div class="flab">המלצות אופטימיזציה (מטא · פסקאות · סקשנים · FAQ · Schema)</div><div class="fval"><p>תגיות מטא:</p><ul><li>Meta Description — אין כלל. הפעולה היחידה המשמעותית כאן</li><li>Title: לשמר</li></ul><p>פסקת פתיחה:</p><ul><li>תשובה ישירה: &quot;בסיס נתונים הוא...&quot;</li></ul><p>סקשן FAQ:</p><ul><li>אין כלל — להוסיף 4 שאלות</li></ul><p>קישורים פנימיים:</p><ul><li>לעמודי האינטגרציה ולמחסני נתונים</li></ul><p>Schema:</p><ul><li>Article (קיים) + FAQPage</li></ul><p>הערה:</p><ul><li>לא להשקיע בהרחבת תוכן — 3,480 מילים מספיקות. רק מטא ו-FAQ</li></ul></div></div>
+      <div class="fld"><div class="flab">עדכון תוכן</div><div class="fval"><p>להוסיף: Meta Description · פסקת תשובה ישירה · שאלות נפוצות · קישור לעמודי האינטגרציה</p></div></div>
+      <div class="fld"><div class="flab">קישורים פנימיים</div><div class="fval"><p>יוצא: /אינטגרציית-נתונים-ואיכות-נתונים/ · /מה-הם-מחסני-נתונים-data-warehouse/</p></div></div>
+      <div class="fld"><div class="flab">Schema / GEO</div><div class="fval"><p>Article (קיים) + FAQPage (חדש) + BreadcrumbList</p></div></div>
+      <div class="fld"><div class="flab">סטטוס העמוד</div><div class="fval"><p>קיים, 3,480 מילים — המאמר הארוך באתר</p></div></div>
+      <div class="fld"><div class="flab">עמוד שמדורג בפועל</div><div class="fval"><p>עמוד קיים — מיטוב<br>/מה-הם-בסיסי-נתונים-ואיך-מנהלים-אותם/</p></div></div>
+      <div class="fld"><div class="flab">מקור המיקום</div><div class="fval"><p>SE Ranking · GSC 6.7</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>ערך עסקי נמוך — זו שאילתה אינפורמטיבית טהורה שאינה מובילה לרכישה. נכלל אך ורק בגלל היקף החשיפות המבוזבז: 2,680 בחודש.</p><p>הביטויים צהובים בקובץ הלקוח (בסיס נתונים 140, בסיסי נתונים 140).</p><p>נבדק: SE Ranking מיקום 4, GSC מיקום 6.7</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="s10" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">עמוד ההמלצות: פסקת פתיחה ושורת תוצאה לכל לקוח</span>
+    <span class="ckw">המלצות לקוחות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>המלצות לקוחות: ללא נפח מדוד</p></div><div class="tlab">סוג העבודה</div><div class="tval"><p>עדכון עמוד קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>המלצות לקוחות</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איזו חברת BI בישראל לקוחות ממליצים עליה?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 27%</span>, <span dir="ltr">Gemini 3%</span>, סקירת ה-AI של גוגל <span dir="ltr">8%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מה מעדכנים</div><div class="fval"><p>בעמוד <span dir="ltr">/המלצות/</span> יש שש המלצות של לקוחות מוכרים, אבל הציטוטים לא מציגים תוצאה. מוסיפים פסקת פתיחה ושורה אחת לכל לקוח: מה sp.data עשתה אצלו ומה השתנה, עם מספר אחד אם אפשר. את המספרים צריך לקבל מ-sp.data.</p></div></div>
+      <div class="fld wide"><div class="flab">טקסט מוכן להעתקה</div><div class="fval"><p><b>פסקת פתיחה לעמוד (מעל ההמלצות)</b></p><p>sp.data (לשעבר Qlik Israel) מטמיעה פתרונות BI ודאטה בארגונים בישראל. כאן מספרים מנהלים מ-BriefCam, מפעל הפיס, סודה סטרים, יוחננוף, טבולה וחוות השמפיניון איך הם עובדים עם Qlik ומה השתנה אצלם.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>זה העמוד היחיד באתר עם המלצות לקוחות.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+</div>
+</details>
+
+<details class="block">
+  <summary><span class="snum">02</span> תוכנית תוכן - בלוג
+    <span class="spill">35 שורות</span>
+    <span class="chev"></span></summary>
+  <div class="sinner">
+<details class="card" id="b0" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">מה זה KPI, איך בוחרים מדדי ביצוע ואיך מנהלים אותם באמצעות BI</span>
+    <span class="ckw">מה זה KPI</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>מה זה KPI: 590 בקושי 15<br>KPI: 2,400 בקושי 68</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>מה זה KPI</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>מה זה KPI</b>, 590 חיפושים בקושי 15. אין באתר עמוד שמכוון לביטוי, ולכן המאמר עצמו הוא הנכס המדרג. הוא יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין מאמר ייעודי ואין עמוד שמכוון לנושא. המונח KPI מופיע כאזכור משני בשבעה מאמרים ובשישה עמודים, תמיד כרכיב בתוך נושא אחר ולא כנושא בפני עצמו.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: ויקיפדיה במקום 1, ואחריה <span dir="ltr">lastartup.co.il</span>, <span dir="ltr">smoove.io</span>, <span dir="ltr">archi-tech.co.il</span>, <span dir="ltr">bdo.co.il</span> ו<span dir="ltr">nihul4u.co.il</span>. כל התוצאות הן תוכן ניהולי, ייעוצי ושיווקי. אין ולו ספק BI אחד בעמוד הראשון.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הנפח הגבוה ביותר במסלול הדאטה, והאתרים המדורגים חלשים יחסית, ולכן הוא בר-השגה. שימו לב למתח שההסתייגות שלכם כבר זיהתה: התוצאות החיות מתגמלות תוכן ניהולי, ולא תוכן טכנולוגי. כדי לדרג, המאמר צריך להיפתח כמדריך מדדים לכל דבר, ורק בחלקו השני לעבור לניהול המדדים באמצעות BI.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b1" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">מה זה אינטגרציה של מערכות ונתונים: המדריך הארגוני</span>
+    <span class="ckw">מה זה אינטגרציה</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>אינטגרציה פירוש: 390 בקושי 8<br>מה זה אינטגרציה: 320 בקושי 7</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>מה זה אינטגרציה</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>מה זה אינטגרציה</b> ו<b>אינטגרציה פירוש</b>, יחד כ-710 חיפושים בקושי 7 עד 8. המאמר יקשר אל <span dir="ltr">/אינטגרציית-נתונים-ואיכות-נתונים/</span> ואל <span dir="ltr">/אינטגרציה-בין-אפליקציות-וממשקי-api/</span>, שני עמודי שירות קיימים שכמעט אינם מקבלים חשיפות.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין מאמר הסבר בעברית. קיים מאמר באנגלית, <span dir="ltr">what-is-data-integration</span>, ופוסט וובינר בעברית על אינטגרציית נתונים, אך שניהם אינם מדריך הסבר לביטוי החיפוש.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">milog.co.il</span>, ויקיפדיה, <span dir="ltr">leos.co.il</span>, <span dir="ltr">archi-tech.co.il</span> ו<span dir="ltr">milononline.net</span>, כלומר ערכי מילון. <span dir="ltr">sap.com</span> במקום 8 היא הגורם היחיד מעולם התוכנה הארגונית.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>אשכול הביקוש הגדול ביותר בתוכנית שנמצא בקושי נמוך, והאתרים המדורגים הם מילונים שקל לעקוף בעומק. ההסתייגות: הכוונה מילונית וכללית, ולכן חלק מהתנועה לא תהיה ארגונית. המבנה הנכון הוא הגדרה קצרה בפתיחה ומעבר מהיר לאינטגרציה של מערכות ונתונים בארגון. הערך העיקרי הוא הזנת עמודי האינטגרציה, שהם ליבת השירות.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b2" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">Power BI מול Qlik Sense: השוואה מקצועית לבחירת פלטפורמת BI</span>
+    <span class="ckw">power bi מה זה</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>power bi מה זה: 70 בקושי 6<br>power bi: 6,600 בקושי 94</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>power bi מה זה</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"מה ההבדל בין Qlik Sense ל-Power BI?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 17%</span>, <span dir="ltr">Gemini 17%</span>, סקירת ה-AI של גוגל <span dir="ltr">17%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>power bi מה זה</b>, 70 חיפושים בקושי 6, מתוך אשכול שראשו 6,600. המאמר יקשר אל <span dir="ltr">/למה-qlik-spdata/</span> ואל <span dir="ltr">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים עם השוואת פלטפורמות. קיימים מאמרים חד-צדדיים על יתרונות Qlik Sense, אך לא השוואה.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">microsoft.com</span> במקום 1 וויקיפדיה במקום 2, ואחריהן שרשרת של בתי הדרכה ישראליים: <span dir="ltr">datamind.co.il</span> במקום 3, <span dir="ltr">ctraining.co.il</span> במקום 4, <span dir="ltr">techmonster.co.il</span> במקום 5 ו<span dir="ltr">naya-college.co.il</span> במקום 6. ה-AI Overview מצטט את datamind, ctraining ו-naya-college. אף מפיץ BI אינו נוכח.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>כוונת החיפוש קרובה לבחירת ספק ומערכת, ומתאימה ישירות למיצוב שלכם כמפיצה הבלעדית של Qlik בישראל. המצב שבו ארבעה בתי הדרכה תופסים את מקומות 3 עד 6 ומצוטטים ב-AI Overview, בעוד המפיץ עצמו אינו מחזיק תוכן, הוא הפער הבולט במסלול הדאטה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b3" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">אוטומציה עסקית מבוססת נתונים: איך הופכים תובנות לפעולות אוטומטיות</span>
+    <span class="ckw">אוטומציה עסקית</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>אוטומציה עסקית: 590 בקושי 16, עלות קליק 1.57</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>אוטומציה עסקית</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>אוטומציה עסקית</b>, 590 חיפושים בקושי 16 ובעלות קליק 1.57. המאמר יקשר אל <span dir="ltr">/אוטומציה-של-תהליכים-עסקיים/</span> ואל <span dir="ltr">/אוטומציה-והפעלת-תהליכים-מבוססי-דאטה/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים. קיימים חמישה עמודי פתרון בתחום, בהם <span dir="ltr">/אוטומציה-והפעלת-תהליכים-מבוססי-דאטה/</span> ו<span dir="ltr">/אוטומציה-של-תהליכים-עסקיים/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">best-it.co.il</span>, <span dir="ltr">smartup.co.il</span>, <span dir="ltr">auto-flow.co.il</span>, <span dir="ltr">prog.co.il</span>, <span dir="ltr">johnbryce.co.il</span> ו<span dir="ltr">automationbp.co.il</span>. כולם אתרים ישראליים, מיישמי אוטומציה ובתי הדרכה, ואף אחד מהם אינו ספק דאטה.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הנושא החזק ביותר בתוכנית המאמרים מבחינת נתונים: 590 חיפושים, קושי 16, עלות קליק 1.57 וכוונה מסחרית מפורשת. גם היחיד שכל התוצאות בו הן אתרים ישראליים ברמה שאפשר להתחרות בה, וזה מה שמבדיל אותו משאר הנושאים. זהו גם הנושא עם הכי הרבה עמודי פתרון קיימים שממתינים לתוכן.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>הסתייגות:</b> העמוד הראשון שייך למיישמי אוטומציית תהליכים ולבתי הדרכה, ולא לספקי דאטה. הזווית שלכם, הפיכת תובנה מהדאטה לפעולה אוטומטית, אינה מה שהקהל הזה מחפש היום. כדי לדרג, המאמר צריך לכסות אוטומציה עסקית במובן הרחב, ורק אז להציג את שכבת הדאטה כהבדל.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b4" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">איך מאפשרים ל-LLMs גישה מאובטחת לנתונים ארגוניים לצורך ניתוח וקבלת החלטות</span>
+    <span class="ckw">llm מה זה</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>llm מה זה: 320 בקושי 13<br>llm: 3,600 בקושי 98</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>llm מה זה</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מחברים כלי AI כמו ChatGPT לנתונים הארגוניים בצורה מאובטחת?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>llm מה זה</b>, 320 חיפושים בקושי 13, ולא הביטוי הרחב llm שעומד על 3,600 בקושי 98 ומחזיר תוצאות גלובליות. המאמר יקשר אל <span dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים פוסט דמו על חיבור AI ל-Qlik עם MCP, ושני מאמרים על אבטחת AI בתוך ה-BI הארגוני ועל חיבור מאובטח בין כלי AI חיצוניים. קיים עמוד <span dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על llm מה זה: ויקיפדיה במקום 1, <span dir="ltr">sap.com</span> במקום 2, <span dir="ltr">oracle.com</span> במקום 3, ואחריהם <span dir="ltr">toolai.co</span>, <span dir="ltr">atidcollege.co.il</span> ו<span dir="ltr">yeshnoseo.co.il</span>. תמהיל של גלובלי וישראלי, עם אתרים ישראליים חלשים יחסית במקומות 4 עד 10.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>שימו לב שקיימים כבר שני מאמרים שנוגעים באבטחת AI בסביבה הארגונית. מה שאינו קיים הוא ההסבר הבסיסי, מה זה LLM, שהוא גם הביטוי בר-ההשגה היחיד באשכול. לכן המאמר צריך לפתוח בהסבר ולהמשיך לזווית הגישה המאובטחת שניסחתם, ולקשר אל שני המאמרים הקיימים כדי שלא יתחרה בהם.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b5" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 1</span>
+    <span class="ctitle">10 אובייקטים שונים לוויזואליזציה של נתונים שאתם חייבים להכיר</span>
+    <span class="ckw">סוגי גרפים</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>סוגי גרפים: 210 בקושי 15<br>ויזואליזציה: 110 בקושי 13<br>1,891 מילים, כתוב</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>סוגי גרפים</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>הביטוי סוגי גרפים מחזיר קהל חינוכי ולא עסקי, ולכן זהו מאמר תומך ולא מאמר לדירוג. הוא יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל המאמר הקיים על ויזואליזציה של נתונים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיימים שלושה מאמרי ויזואליזציה: ויזואליזציה של נתונים ומאגרי מידע בקליק משנת 2022, ושני מאמרי חידושי ויזואליזציות ב-Qlik. אף אחד מהם אינו סוקר סוגי אובייקטים. בבדיקת חפיפת טקסט מול כל 95 המאמרים, הטיוטה שלכם אינה חופפת לאף מאמר קיים.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על סוגי גרפים: ויקיפדיה במקום 1, <span dir="ltr">il.tradingview.com</span> במקום 2, <span dir="ltr">hadasshezaf.com</span> במקום 3, יוטיוב, מיקרוסופט ו<span dir="ltr">limudnaim.co.il</span>. תוכן חינוכי וגרפים של מסחר, ולא ויזואליזציה עסקית.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>המאמר כתוב במלואו, 1,891 מילים, ומוכן לפרסום. הוא מציג עשרה סוגי אובייקטים עם דוגמה עסקית לכל אחד, וזו בדיוק הזווית שחסרה בשלושת המאמרים הקיימים, שעוסקים בהגדרה ובחידושי גרסה. הערך העיקרי הוא הזנת עמוד הוויזואליזציה והדשבורדים, שהוא עמוד מוצר מרכזי.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>כתוב על ידכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>לתשומת לבכם:</b> המאמר הקיים ויזואליזציה של נתונים ומאגרי מידע בקליק הוא משנת 2022 ומכיל דוגמאות מתקופת הקורונה. מכיוון ששני המאמרים חולקים את אותו מונח ראשי, כדאי לקשר ביניהם, ולשקול רענון של המאמר הישן במקביל.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="u1" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 1</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך מאפיינים מערכת BI לפני הפיתוח: 5 שלבים בראש המאמר הקיים</span>
+    <span class="ckw">אפיון מערכת bi</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>אפיון מערכת bi: ללא נפח מדוד</p></div><div class="tlab">סוג העבודה</div><div class="tval"><p>עדכון מאמר קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>אפיון מערכת bi</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מאפיינים נכון מערכת BI לפני שמתחילים בפיתוח?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 7%</span>, סקירת ה-AI של גוגל <span dir="ltr">14%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מה מעדכנים</div><div class="fval"><p>במאמר <span dir="ltr">/כיצד-לאפיין-נכון-את-מערכת-ה-bi/</span> התשובה מופיעה רק בסיכום שבסוף. מעבירים אותה לראש המאמר, מיד אחרי פסקת הפתיחה, כפרק של חמישה שלבים, ומוחקים את הסיכום מהסוף.</p></div></div>
+      <div class="fld wide"><div class="flab">טקסט מוכן להעתקה</div><div class="fval"><p><b>איך מאפיינים מערכת BI לפני שמתחילים בפיתוח: 5 שלבים</b></p><p>מאפיינים מערכת BI לפני הפיתוח כדי שכל מי שמעורב יידע בדיוק מה נבנה, מאילו נתונים ולמי. התהליך כולל חמישה שלבים:</p><p>1. דרישות עסקיות: אילו החלטות המערכת צריכה לשרת, ואילו פערים קיימים היום בין המצב הקיים למצב הרצוי.</p><p>2. מקורות המידע: אילו מערכות מזינות את ה-BI, למשל ERP, CRM וקבצים, ובאיזו תדירות הנתונים מתרעננים.</p><p>3. ממדים ומדדים: לפי מה מקבצים את המידע (תקופה, לקוח, מוצר, סניף) ואילו מדדי ביצוע מחשבים ממנו.</p><p>4. מסמך אפיון: מסמך אחד ברור שמפרט מה כלול בעבודה ומה לא, כולל הלוגיקות, שפת המערכת והתקופה שעליה מוצגים הנתונים.</p><p>5. אישור: עוברים על המסמך עם הלקוח, לעיתים בישיבת הקראה, מתקנים ומאשרים לפני שמתחילים לפתח.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>המאמר הקיים הוא הנכס היחיד בנושא. לא נדרש עמוד חדש.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="u2" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 1</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך מערכת BI עובדת בפועל: פרק שלבים במאמר ההגדרה הקיים</span>
+    <span class="ckw">bi מה זה</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>bi מה זה: 70</p></div><div class="tlab">סוג העבודה</div><div class="tval"><p>עדכון מאמר קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>bi מה זה</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מערכת BI עובדת בפועל?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 8%</span>, <span dir="ltr">Gemini 8%</span>, סקירת ה-AI של גוגל <span dir="ltr">6%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מה מעדכנים</div><div class="fval"><p>במאמר <span dir="ltr">/מה-זה-בינה-עסקית-bi-ואיך-היא-עובדת/</span> השלבים מפוזרים בכמה פרקים. מוסיפים פרק קצר שמרכז אותם לפי הסדר, מיד אחרי הפרק "אז מה זה BI?".</p></div></div>
+      <div class="fld wide"><div class="flab">טקסט מוכן להעתקה</div><div class="fval"><p><b>איך מערכת BI עובדת בפועל, שלב אחרי שלב</b></p><p>1. חיבור למקורות: המערכת מתחברת למערכות הארגון, כמו ERP, CRM, קבצי אקסל ומערכות ענן.</p><p>2. טעינה וניקוי: הנתונים נטענים למקום אחד, מתוקנים ומאוחדים כך שלאותו לקוח או מוצר יש הגדרה אחת.</p><p>3. מודל נתונים: המערכת מקשרת בין הטבלאות, למשל בין מכירות, לקוחות ומלאי, כדי שאפשר יהיה לשאול שאלות שחוצות מחלקות.</p><p>4. דשבורדים ודוחות: המשתמשים רואים את הנתונים בגרפים ובטבלאות, מסננים ומתחקרים בעצמם, בלי לחכות לצוות הפיתוח.</p><p>5. החלטה: מנהלים עוקבים אחרי מדדי הביצוע ומחליטים על בסיס נתונים עדכניים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>המאמר הוא מאמר ההגדרה של האתר ומקור הקישור לעמוד מערכת BI החדש. הפרק לא משנה את המיקוד שלו.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+
+
+<details class="card" id="b6" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">סוכני AI בארגון: איך הם עובדים, מה הם יכולים לעשות ובמה הם שונים מצ'אטבוטים</span>
+    <span class="ckw">סוכן AI</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>סוכן AI: 320 בקושי 44, עלות קליק 1.39<br>agentic ai: 760 בקושי 95</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>סוכן AI</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"במה סוכן AI בארגון שונה מצ'אטבוט?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>סוכן AI</b> בעברית, 320 חיפושים, ולא הביטויים האנגליים agentic ai ו-ai agents שעומדים על קושי 95 עד 100 ומחזירים תוצאות גלובליות. המאמר יקשר אל <span dir="ltr">/agentic-ai/</span> ואל <span dir="ltr">/עוזר-ai-חכם/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>שלושה מאמרים קיימים: Agentic AI Assistant, Qlik Discovery Agent ו-Agentic Data Engineering, לצד ארבעה עמודי פתרון. נושא שכבר מכוסה באתר.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">eyalmarcus.com</span> במקום 1, <span dir="ltr">ynet.co.il</span> במקום 2, <span dir="ltr">codelabs.developers.google.com</span> במקום 3, <span dir="ltr">microsoft.com</span> במקום 4, ואחריהם ויקיפדיה, <span dir="ltr">oracle.com</span> ו<span dir="ltr">sap.com</span>. תמהיל של תוכן AI כללי ושל ספקי ענק.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>ציינתם שהנושא דחוף, אך זהו נושא שכבר מכוסה באתר, ולכן הוא דורש זהירות. הזווית שניסחתם, ההשוואה לצ'אטבוט וההסבר התפעולי, היא בדיוק מה שלא קיים באף אחד משלושת המאמרים, והיא זו שמצדיקה מאמר נוסף.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>הקושי על סוכן AI עומד על 44, והתוצאות החיות מעורבות: לצד אתרי תוכן ישראליים נמצאים מיקרוסופט, אורקל ו-SAP.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b7" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">Tableau מול Qlik Sense: השוואת יכולות לארגונים</span>
+    <span class="ckw">tableau מה זה</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>tableau מה זה: 30 בקושי 7</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>tableau מה זה</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"מה ההבדל בין Qlik Sense ל-Tableau?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 17%</span>, <span dir="ltr">Gemini 17%</span>, סקירת ה-AI של גוגל <span dir="ltr">17%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>tableau מה זה</b>, 30 חיפושים בקושי 7. המאמר יקשר אל <span dir="ltr">/למה-qlik-spdata/</span>, אל <span dir="ltr">/פתרונות-אנליטיקה-בענן-קליק-סנס/</span> ואל מאמר ההשוואה מול Power BI.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים בנושא.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">naya-college.co.il</span> במקום 1, <span dir="ltr">johnbryce.co.il</span> במקום 2, <span dir="ltr">malamteam.com</span> במקום 3, <span dir="ltr">techmonster.co.il</span> במקום 4, ואחריהם ויקיפדיה ו<span dir="ltr">salesforce.com</span>. <span dir="ltr">bina-bi.co.il</span> במקום 14. שוב בתי הדרכה, ואף מפיץ Qlik אינו נוכח.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>אותו דפוס בדיוק כמו בהשוואת Power BI, ובקושי דומה. יחד השניים מבססים את האתר כמקור הישראלי להשוואות פלטפורמות BI, פורמט שמנועי AI מרבים לצטט. נפח נמוך יותר, ולכן הוא בא אחרי ההשוואה מול Power BI.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b8" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">מעבר מדשבורדים באקסל למערכת BI: השיקולים והתהליך</span>
+    <span class="ckw">דשבורד באקסל</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>דשבורד באקסל: 30 בקושי 4<br>אשכול של כ-70</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר לדירוג</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>דשבורד באקסל</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>דשבורד באקסל</b>, 30 חיפושים בקושי 4. המאמר יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל המאמר הקיים על אפיון דשבורד ניהולי.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין תוכן ייעודי בנושא.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">excelwiz.co.il</span>, <span dir="ltr">excel-pedia.co.il</span>, <span dir="ltr">excel-vba.co.il</span>, <span dir="ltr">excel.kova.co.il</span> ו<span dir="ltr">naya-college.co.il</span> במקום 9. כל העמוד שייך לאתרי לימוד אקסל.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>כאב עסקי ברור וקהל יעד מדויק: ארגונים שהגיעו לגבול היכולת של אקסל. ההסתייגות: העמוד כולו שייך לאתרי הדרכת אקסל, כלומר קהל שמחפש איך לבנות באקסל ולא איך לעזוב אותו. הזווית חייבת להיות מתי אקסל מפסיק להספיק, וגם אז חלק מהתנועה לא תהיה רלוונטית. נפח קטן, ולכן זהו מאמר נישה ולא עוגן.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b9" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">דוגמאות של דשבורדים לפי תחום</span>
+    <span class="ckw">דשבורד ניהולי</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>דשבורד ניהולי: 110 בקושי 4<br>דשבורד BI: 30, עלות קליק 2.14</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>דשבורד ניהולי</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>דשבורד ניהולי</b>, 110 חיפושים בקושי 4. המאמר יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיימים שלושה מאמרים על דשבורדים: מהו דשבורד BI, איך לאפיין דשבורד ניהולי, והאם הדשבורד מת. אין תוכן שמציג דוגמאות לפי תעשייה.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">rewire-solutions.com</span> במקום 1, אתר משרד החינוך במקום 2, ומיד אחריהם <span dir="ltr">spdata.co.il</span> במקום 3. האתר שלכם גם מצוטט ב-AI Overview על הביטוי, לצד <span dir="ltr">bionit.co.il</span> ו<span dir="ltr">esurvey.co.il</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הביטוי דשבורד BI נושא עלות קליק 2.14, מהגבוהות במסלול הדאטה, ולכן הנושא רלוונטי מסחרית. הערך הוא בתמיכה בעמודי הפתרונות ובשימוש במכירות. בתשובה לשאלתכם על מקור לדוגמאות: <span dir="ltr">qlik.com/us/dashboard-examples</span> מחזיק שלושה חלקים רלוונטיים, Dashboard Examples by Industry, Examples by Job Function ו-KPI Dashboards, ו<span dir="ltr">demos.qlik.com</span> מציג דמואים חיים. שני המקורות של Qlik עצמה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>spdata.co.il כבר מדורג במקום 3 על דשבורד ניהולי ומצוטט ב-AI Overview. לכן המאמר צריך להיות גלריית דוגמאות לפי תעשייה בלבד, ולא הסבר נוסף על מהו דשבורד, כדי שלא יתחרה בעמוד שכבר מדורג.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b10" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">QlikView מול Qlik Sense: מדריך מעבר מסודר לארגונים</span>
+    <span class="ckw">qlikview bi</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>qlikview: 170 בקושי 31, עלות קליק 1.40<br>qlikview bi: 30 בקושי 18</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>qlikview bi</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"האם כדאי לעבור מ-QlikView ל-Qlik Sense?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 33%</span>, <span dir="ltr">Gemini 33%</span>, סקירת ה-AI של גוגל <span dir="ltr">33%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>qlikview bi</b>, 30 חיפושים בקושי 18 ובעלות קליק 1.84. המאמר יקשר אל <span dir="ltr">/qlik-sense-clinet-manage/</span>, אל <span dir="ltr">/למה-qlik-spdata/</span> ואל <span dir="ltr">/אקדמיה/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים בנושא. קיים עמוד <span dir="ltr">/qlik-sense-clinet-manage/</span> וקורסי QlikView באקדמיה.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>על qlikview bi בתוצאות החיות: <span dir="ltr">qlik.com</span> במקום 1, ומיד אחריו <span dir="ltr">spdata.co.il</span> <b>במקום 2</b> וגם במקום 9. על הביטוי הרחב qlikview, <span dir="ltr">community.qlik.com</span> תופס שבעה מתוך עשרת המקומות הראשונים.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הקהל קטן אך הכוונה העסקית מדויקת: בסיס לקוחות QlikView הוותיק ששוקל מעבר ל-Qlik Sense. עלות קליק 1.84 היא מהגבוהות במסלול הדאטה, והמאמר משרת גם את מסלול ההדרכות. הערך הוא בעיקר תמיכה במכירה ובשימור לקוחות ולא בתנועה חדשה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>spdata.co.il כבר מדורג במקום 2 על qlikview bi. המאמר צריך להיכתב כהעמקה שמחזקת את העמוד הקיים ומקשרת אליו, ולא כעמוד מתחרה על אותו ביטוי.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b11" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">Data Governance: איך מבטיחים נתונים אמינים, מאובטחים ומוכנים ל-BI ול-AI</span>
+    <span class="ckw">data governance</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>data governance: 70, עלות קליק 0.50</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>data governance</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"למה משילות נתונים חשובה לפני פרויקט AI?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p><p>"איך משפרים את איכות הנתונים בארגון לפני הטמעת מערכת BI?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">17%</span>.</p><p>המאמר כולל פרק לכל אחת משתי השאלות. בפרק על איכות הנתונים יש רשימת בדיקות מעשיות לפני פרויקט BI: איתור כפילויות ושדות חסרים, זיהוי הגדרות סותרות בין מערכות, והגדרת אחריות על כל נתון. הפרק מקשר אל <span dir="ltr">/איכות-נתונים-ומשילות-נתונים/</span> בעוגן "איכות נתונים".</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>data governance</b>, 70 חיפושים. המאמר יקשר אל <span dir="ltr">/איכות-נתונים-ומשילות-נתונים/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים. קיימים שני עמודי פתרון, <span dir="ltr">/איכות-נתונים-ומשילות-נתונים/</span> והגרסה האנגלית.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">ibm.com</span>, <span dir="ltr">databricks.com</span>, <span dir="ltr">dataversity.net</span>, <span dir="ltr">aws.amazon.com</span>, <span dir="ltr">collibra.com</span>, <span dir="ltr">sap.com</span> ו<span dir="ltr">gartner.com</span>. עמוד ראשון של ספקי Enterprise גלובליים בלבד.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>יש לכם כבר בריף מוכן לנושא, משילות נתונים אפקטיבית עם Talend, 1,500 מילים בשמונה פרקים עם רשימת ביטויים. אפשר להתחיל ממנו. המיקוד שבחרתם, נתונים שמוכנים ל-BI ול-AI, הוא מה שמחבר את המאמר למסלול ה-AI ולא משאיר אותו נושא תשתית מבודד. הערה טרמינולוגית: בחומרים שלכם מופיעים גם משילות נתונים וגם מימשל נתונים. כדאי לקבע מונח עברי אחד לגוף המאמר.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>מדד הקושי של ספק הנתונים מציג 0, אך התוצאות החיות מורכבות כולן מ-IBM, Databricks, AWS, Collibra, SAP ו-Gartner. מאמר בעברית לא ידרג כאן. זהו מאמר תומך לעמוד הפתרון, וכך צריך למדוד את הצלחתו.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b12" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">מה זה Embedded Analytics ואיך משלבים יכולות BI במוצרי תוכנה ו-SaaS</span>
+    <span class="ckw">embedded analytics</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>embedded analytics: 10 בקושי 56<br>נושא מכירה</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>embedded analytics</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>הנפח הנמדד נמוך מאוד, ולכן זהו מאמר תומך מכירה ולא מאמר לדירוג. הוא יקשר אל <span dir="ltr">/אנליטיקה-מוטמעת/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים מאמר אחד באנגלית, <span dir="ltr">increasing-revenue-with-embedded-analytics</span>, ושני עמודי פתרון, <span dir="ltr">/אנליטיקה-מוטמעת/</span> והגרסה האנגלית.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>אין תוכן עברי בנושא אצל אף מתחרה ישראלי. השוק קטן ומקצועי והתחרות בעברית אפסית.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הערך אינו בתנועה אורגנית אלא בתמיכה במכירה מול ISVs וחברות תוכנה, וזהו נושא שמצדיק את עצמו עסקית ולא לפי נפח. יש לכם כבר בריף מוכן: במייל מדצמבר 2024 מהחברה הקודמת קיים בריף מלא של 1,800 מילים בדיוק לנושא הזה, עם מבנה בן שבעה פרקים, קהל יעד מוגדר ומקרי בוחן. לא נמצא מאמר תואם באתר, ולכן ככל הנראה מעולם לא נכתב. אפשר להתחיל ממנו במקום מאפס.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b13" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">ניהול מלאי ושרשרת אספקה עם מערכת בינה עסקית (BI)</span>
+    <span class="ckw">ניהול מלאי עם מערכת BI</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>ניהול מלאי: 170 בקושי 7, עלות קליק 2.34<br>מערכת ניהול מלאי: 90, עלות קליק 2.46<br>שרשרת אספקה: 260 בקושי 14</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>ניהול מלאי עם מערכת BI</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>עלות הקליק כאן היא הגבוהה ביותר בתוכנית המאמרים: 2.34 על ניהול מלאי ו-2.46 על מערכת ניהול מלאי. המאמר יקשר אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span> ואל <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים ואפס עמודים בנושא ניהול מלאי או שרשרת אספקה. הנושא נעדר לחלוטין מהאתר.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על ניהול מלאי: <span dir="ltr">icount.co.il</span>, <span dir="ltr">invoice4u.co.il</span>, <span dir="ltr">sap.com</span>, <span dir="ltr">minet.co.il</span>, <span dir="ltr">verifone.com</span> ו<span dir="ltr">almogerp.com</span>. על מערכת ניהול מלאי מצטרפים <span dir="ltr">comaxerp.com</span> ו<span dir="ltr">priority-software.com</span>. כל העמוד שייך לספקי ERP והנהלת חשבונות.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>יש לכם בריף מלא ומוכן לנושא, 1,600 מילים בשבעה פרקים, כולל פרק אינטגרציה עם מערכות ERP ופרק מקרי הצלחה. הנושא נעדר מהאתר לגמרי, והוא מדבר בשפה של תעשייה ספציפית ולא בשפה של טכנולוגיה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>בריף שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>הסתייגות חשובה:</b> עלות הקליק הגבוהה מגיעה מספקי ERP שמתחרים על מכירת מערכות מלאי, ולא מעולם ה-BI. לכן אין לכוון את המאמר לביטוי הראשי ניהול מלאי, שבו לא תדרגו מול Priority ו-SAP, אלא לצירוף שכבר מופיע בכותרת הבריף שלכם, ניהול מלאי עם מערכת BI, ולזווית האנליטית: חיזוי ביקושים, זיהוי חוסרים ואופטימיזציה.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b14" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">אילו שימושים ניתן לעשות ב-GenAI לניתוח נתונים עסקיים</span>
+    <span class="ckw">genai</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>genai: 480 בקושי 69<br>generative ai: 590, עלות קליק 1.45<br>1,741 מילים, כתוב</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>genai</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>הביטויים האנגליים אינם בני-השגה בקושי 69 עד 83. המאמר יקשר אל <span dir="ltr">/agentic-ai/</span> ואל <span dir="ltr">/חיבור-ai-llm-לדאטה-הארגונית/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים מאמר קרוב מאוד: איך בינה מלאכותית יוצרת משפיעה על בינה עסקית, באורך 2,849 מילים. בבדיקת חפיפת טקסט הטיוטה שלכם אינה חוזרת עליו מילולית, אך שני המאמרים עוסקים באותו צירוף של GenAI ובינה עסקית.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על genai: <span dir="ltr">generativeai.net</span>, <span dir="ltr">oracle.com</span>, ויקיפדיה, <span dir="ltr">int-college.co.il</span>, <span dir="ltr">ibm.com</span> ו<span dir="ltr">oecd.org</span>. תמהיל גלובלי בקושי 69.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>המאמר כתוב במלואו, 1,741 מילים, ומוכן. הוא בנוי סביב שימושים קונקרטיים, מחקר שוק וניתוח הרגלי לקוחות, בעוד המאמר הקיים עוסק בהשפעה הכללית של GenAI על BI.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>כתוב על ידכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>פריט זה דורש החלטה שלכם לפני פרסום.</b> הטיוטה והמאמר הקיים חולקים את אותו נושא ואת אותם ביטויי חיפוש, ופרסום כפי שהוא עלול ליצור תחרות בין שני עמודים שלכם. שתי דרכים: לחדד את הטיוטה לזווית השימושים בלבד, בלי פרקי הגדרה, ולקשר אל המאמר הקיים; או לשלב את פרקי השימושים לתוך המאמר הקיים ולוותר על פרסום נפרד. ההמלצה היא האפשרות הראשונה.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b15" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="ctitle">איך משלבים Agentic AI עם אנליטיקה עסקית כדי לייצר ערך אמיתי מהדאטה</span>
+    <span class="ckw">בינה מלאכותית לעסקים</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>בינה מלאכותית לעסקים: 110 בקושי 17, עלות קליק 1.97</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>בינה מלאכותית לעסקים</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך משלבים בינה מלאכותית במערכת BI קיימת?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 5%</span>, <span dir="ltr">Gemini 8%</span>, סקירת ה-AI של גוגל <span dir="ltr">5%</span>. התשובה לשאלה נכתבת בפרק המורחב במאמר הקיים <span dir="ltr">/how-gen-ai-affects-bi/</span>, שיש לו כרטיס משלו בתוכנית. המאמר הזה מקשר לפרק ולא כותב פרק משלו.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>בינה מלאכותית לעסקים</b>, 110 חיפושים בקושי 17 ובעלות קליק 1.97. המאמר יקשר אל <span dir="ltr">/agentic-ai/</span> ואל <span dir="ltr">/מנוע-אסוציאטיבי-מבוסס-ai/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין מאמר שמחבר בין agentic AI לאנליטיקה עסקית. המאמרים הקיימים עוסקים ביכולות בודדות ולא בשילוב.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">stsiconic.com</span>, <span dir="ltr">emyoli.com</span>, יוטיוב, <span dir="ltr">ortech-digital.co.il</span>, פייסבוק, <span dir="ltr">y-law.co.il</span> וטיקטוק. תוכן ייעוץ AI לעסקים קטנים ובינוניים ולרשתות חברתיות.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>זהו מאמר האב של מסלול ה-AI מבחינת מבנה, וכל שאר המאמרים במסלול יקשרו אליו. הערך העיקרי הוא ארגון האשכול הפנימי.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>העמוד הראשון מורכב מיועצי AI לעסקים קטנים, מפייסבוק ומטיקטוק, ולא מקהל אנליטיקה ארגונית. הנפח אמיתי אך הקהל אינו הקהל שלכם, ולכן זהו מאמר תומך ולא מאמר עוגן.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="g1" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך בוחרים קורס BI שמוביל לעבודה בתחום: מה לבדוק לפני ההרשמה</span>
+    <span class="ckw">לימודי bi</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>לימודי bi: 150</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>לימודי bi</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איפה כדאי ללמוד קורס BI בישראל?" וגם "איך עושים הסבה מקצועית לתחום ה-BI?". שתיהן בעדיפות גבוהה ב-GeckoCheck. בשאלת הקורס, נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>. בשאלת ההסבה: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 2%</span>, סקירת ה-AI של גוגל <span dir="ltr">3%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>לימודי bi</b>, 150 חיפושים. הביטוי שייך לעמוד האקדמיה, ולכן המאמר לא מתחרה עליו: הוא יקשר אל <span dir="ltr">/אקדמיה/</span> בעוגן "לימודי BI", כדי לחזק את העמוד.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיימים שני מאמרים: <span dir="ltr">/הסבה-מקצועית-לתחום-ה-bi/</span> (2022, על הבוטקאמפ) ו-<span dir="ltr">/bi-course-teaching-principles/</span> (על שיטת הלימוד). באתר אין מאמר שמסייע בבחירת קורס. המאמר החדש יקשר לשני המאמרים הקיימים ולא יחזור על תוכנם.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>ג'ון ברייס מוזכר בכל שלושת מנועי ה-AI, לצד בתי ספר נוספים להדרכה. sp.data אינה מוזכרת באף אחד מהם. סקירת ה-AI של גוגל מצטטת עמודי קורסים ומדריך בחירה של אתר ביקורות.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>שתי שאלות אלו בתחום הלימודים קיבלו עדיפות גבוהה ב-GeckoCheck, ו-sp.data כמעט אינה מופיעה בתשובות אליהן. סקירת ה-AI של גוגל מצטטת מדריך בחירה של אתר אחר, לכן המאמר המוצע הוא מדריך לבחירת קורס. המדריך יפרט מה לבדוק בתוכנית הלימודים, כמה תרגול מעשי נכלל בקורס, אילו כלים נלמדים ואיזה ליווי ניתן בסיומו. המאמר יציג את האקדמיה כדוגמה. נושא ההסבה המקצועית יסוקר בפסקה קצרה, עם קישור למאמר הקיים.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="g6" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך בוחרים כלי ETL להעברת נתונים למחסן נתונים בענן</span>
+    <span class="ckw">etl tools</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>etl tools: 90<br>כלי etl: 20</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>etl tools</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איזה כלי ETL מתאים לארגון שמעביר נתונים למחסן נתונים בענן?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 1%</span>, <span dir="ltr">Gemini 3%</span>, סקירת ה-AI של גוגל <span dir="ltr">1%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>כלי ETL</b> (etl tools, 90 חיפושים). הביטוי שייך לעמוד האינטגרציה, ולכן המאמר יקשר אל <span dir="ltr">/אינטגרציית-נתונים-ואיכות-נתונים/</span> בעוגן "כלי ETL", וגם אל <span dir="ltr">/qlik-talend-cloud/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים מאמר המסביר מהו ETL בכתובת <span dir="ltr">/מה-זה-etl-ומהם-תהליכי-etl/</span>. בנוסף, קיים בתוכנית מאמר המשווה בין ETL ל-ELT. המאמר המוצע עוסק בבחירת כלי, ומעביר את ביטויי החיפוש לעמוד האינטגרציה במקום להתחרות בו.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>Fivetran, Airbyte, Informatica ו-Matillion מוזכרים בכל שלושת מנועי ה-AI. sp.data כמעט אינה מוזכרת.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>את השאלה שואל ארגון שבוחר כלי למעבר לענן, כלומר לקוח פוטנציאלי ל-Qlik Talend Cloud. כיום, מנועי ה-AI ממליצים על כלים של מתחרים. המאמר יתבסס על קריטריונים לבחירת כלי, כגון סוגי מקורות הנתונים, טעינה בזמן אמת, איכות נתונים, אבטחה ועלות.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="g8" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">מה חשוב לבדוק כשבוחרים מערכת BI: רשימת בדיקה לארגון</span>
+    <span class="ckw">בחירת מערכת bi</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>בחירת מערכת bi: ללא נפח מדוד</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>עדכון מאמר קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>בחירת מערכת bi</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"מה חשוב לבדוק כשבוחרים מערכת BI לארגון?". שאלה בעדיפות גבוהה ב-GeckoCheck. נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 6%</span>, סקירת ה-AI של גוגל <span dir="ltr">18%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>בחירת מערכת bi</b>. לביטוי אין נפח חיפוש מדוד, והמאמר נבנה סביב השאלה שנשאלת במנועי AI. הביטוי <b>מערכת bi</b> שייך לעמוד <span dir="ltr">/מערכת-bi/</span>, שמוקם בחודש 1 לפי התוכנית, ולכן המאמר יקשר אליו בעוגן "מערכת BI לארגונים", כפי שמוגדר בתוכנית עמודי השירות, וגם אל <span dir="ltr">/יישום-והטמעה/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>יש לכם מאמר קיים בנושא משנת 2020, <span dir="ltr">/שיקולים-חשובים-בבחירת-פתרון-bi/</span>. מעדכנים אותו ולא יוצרים כתובת חדשה. העמוד <span dir="ltr">/מערכת-bi/</span> יציג את הקריטריונים לבחירה, ולכן המאמר לא חוזר עליהם: הוא עוסק בתהליך הבחירה ומפנה לעמוד לגבי הקריטריונים.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>Gemini מזכיר את Power BI, Tableau, Looker ו-Sisense. סקירת ה-AI של גוגל מזכירה את Power BI ו-Tableau לצד חברות BI ישראליות, ומצטטת את המאמר שלכם משנת 2020. ChatGPT לא מזכיר אף ספק.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>זו שאלת רכישה, בעדיפות גבוהה ב-GeckoCheck. סקירת ה-AI של גוגל כבר מצטטת את המאמר שלכם כמקור, אבל נוכחות sp.data בתשובות נמוכה: 18% בסקירת ה-AI של גוגל, 6% ב-Gemini ו-0% ב-ChatGPT. העדכון הופך את המאמר לרשימת בדיקה לתהליך הבחירה עצמו: אילו שאלות לשאול את הספק, איך בודקים דמו על הנתונים שלכם, איך מריצים פיילוט ומי בארגון צריך להיות שותף להחלטה. לארגונים בינוניים המאמר כולל משפט אחד עם קישור לשאלה הנפוצה בעמוד מערכת BI, שם נמצאת התשובה המלאה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="u3" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך משלבים בינה מלאכותית במערכת BI קיימת: הרחבת הפרק במאמר הקיים על GenAI</span>
+    <span class="ckw">בינה מלאכותית יוצרת</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>בינה מלאכותית יוצרת: ללא נפח מדוד</p></div><div class="tlab">סוג העבודה</div><div class="tval"><p>עדכון מאמר קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>בינה מלאכותית יוצרת</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך משלבים בינה מלאכותית במערכת BI קיימת?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 5%</span>, <span dir="ltr">Gemini 8%</span>, סקירת ה-AI של גוגל <span dir="ltr">5%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מה מעדכנים</div><div class="fval"><p>במאמר <span dir="ltr">/how-gen-ai-affects-bi/</span> משנים את הכותרת "איך משלבים בינה מלאכותית יוצרת בבינה עסקית?" ל"איך משלבים בינה מלאכותית במערכת BI קיימת?". בתחילת הפרק מוסיפים שלבים למערכת שכבר פועלת בארגון, ואחריהם נשארות הדוגמאות לפי תחום.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>המאמר הקיים כבר כולל פרק בכותרת כמעט זהה. המאמר המתוכנן על Agentic AI מקשר לפרק הזה ולא כותב פרק משלו, כדי ששני עמודים לא יענו על אותה שאלה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="u4" data-pri="High">
+  <summary class="chead">
+    <span class="badge p-high">High</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך עושים הסבה מקצועית לתחום ה-BI: שלבים בראש המאמר הקיים</span>
+    <span class="ckw">הסבה מקצועית ל bi</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>הסבה מקצועית ל bi: ללא נפח מדוד</p></div><div class="tlab">סוג העבודה</div><div class="tval"><p>עדכון מאמר קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>הסבה מקצועית ל bi</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך עושים הסבה מקצועית לתחום ה-BI?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 2%</span>, סקירת ה-AI של גוגל <span dir="ltr">3%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">מה מעדכנים</div><div class="fval"><p>במאמר <span dir="ltr">/הסבה-מקצועית-לתחום-ה-bi/</span> מוסיפים פרק של חמישה שלבים מיד אחרי פסקת הפתיחה, ומעדכנים את הפרק "הביקוש למפתחי BI בשנת 2022". המאמר במקום הראשון בגוגל על "הסבה מקצועית ל bi", ולכן הכותרת הראשית וכותרת העמוד לא משתנות.</p></div></div>
+      <div class="fld wide"><div class="flab">טקסט מוכן להעתקה</div><div class="fval"><p><b>איך עושים הסבה מקצועית לתחום ה-BI?</b></p><p>הסבה לתחום ה-BI מתאימה במיוחד למי שכבר עובד עם נתונים, למשל בכספים, בכלכלה, בתפעול או בהנדסת תעשייה וניהול. התהליך כולל חמישה שלבים:</p><p>1. בסיס: עבודה מתקדמת באקסל והיכרות עם SQL, שפת השאילתות של בסיסי הנתונים.</p><p>2. כלי BI אחד לעומק: למשל Qlik Sense, כולל טעינת נתונים, בניית מודל נתונים ודשבורדים.</p><p>3. פרויקט על נתונים אמיתיים: מאפיינים, בונים ומציגים מערכת מלאה, כמו בעבודה.</p><p>4. תיק עבודות: הדשבורדים ופרויקט הגמר, כדי שיהיה מה להציג בראיון.</p><p>5. השתלבות בעבודה: חיפוש משרה ראשונה בתחום. ב-Bootcamp של האקדמיה של sp.data לומדים את השלבים האלה במסגרת אחת, עם פרויקט גמר על נתונים אמיתיים וסיוע בהשמה.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>מאמר בחירת הקורס המתוכנן מקשר למאמר הזה בפסקה קצרה, ולא עונה על שאלת ההסבה בעצמו.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+
+
+<details class="card" id="g2" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 2</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">דשבורד BI בעברית: מה בודקים בכלי BI לפני שבוחרים, ואיך זה עובד ב-Qlik Sense</span>
+    <span class="ckw">דשבורד בעברית</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>דשבורד בעברית: 150</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>דשבורד בעברית</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איזה כלי BI מאפשר לבנות דשבורד בעברית מימין לשמאל?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 20%</span>, <span dir="ltr">Gemini 8%</span>, סקירת ה-AI של גוגל <span dir="ltr">7%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>דשבורד בעברית</b>, 150 חיפושים. הביטוי משויך בתוכנית למאמר <span dir="ltr">/איך-לאפיין-דשבורד-ניהולי/</span>, ולכן המאמר יקשר אליו בעוגן "דשבורד בעברית", וגם אל <span dir="ltr">/ויזואליזציה-ודשבורדים-אינטראקטיביים/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין מאמר בנושא באתר.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>Power BI מוזכר בכל שלושת מנועי ה-AI, לצד Tableau, Looker ו-Sisense. sp.data מוזכרת רק בחלק קטן מהתשובות.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>לביטוי דשבורד בעברית יש ביקוש מדוד בישראל. התיעוד הרשמי של Qlik מסביר שב-Qlik Sense ניתן להגדיר קריאה מימין לשמאל בהגדרות התצוגה של האפליקציה. המאמר ידגים את ההבדל באמצעות צילומי מסך של דשבורד בעברית.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>התיעוד הרשמי של Qlik מתאר את ההגדרה ב-Qlik Sense בהתקנה מקומית. לפני כתיבת המאמר, יש לאשר עם הצוות שהגדרה זו זמינה גם ב-Qlik Cloud. במידה שלא, המאמר יתמקד בהתקנה מקומית בלבד.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b16" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">ניתוח נתונים בשפה טבעית: איך AI מאפשר לשאול את הדאטה ולקבל תשובות עסקיות</span>
+    <span class="ckw">שאילתות בשפה טבעית</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>Qlik Answers: ללא נפח נמדד<br>שאילתות בשפה טבעית: ללא נפח</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>שאילתות בשפה טבעית</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך אפשר לשאול שאלות על הנתונים העסקיים בשפה חופשית?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">ביטוי יעד חדש</div><div class="fval"><p><div class="newkw"><b>ביטוי חדש: לשם המוצר Qlik Answers ולביטוי שאילתות בשפה טבעית אין נפח חיפוש מדוד.</b> לכן המאמר ייכתב סביב הצורך ולא סביב שם המוצר, ויקשר אל <span dir="ltr">/עוזר-ai-חכם/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים. המוצר כן מכוסה בצד העמודים: הוא מוזכר בארבעה עמודים, ואחד מהם, <span dir="ltr">/עוזר-ai-חכם/</span>, הוא עמוד מוצר ייעודי שכותרתו עוזר AI חכם: Qlik Answers. בנוסף, שאילתות בשפה טבעית מוזכרות בעשרים עמודים ומאמרים.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>לא נמצא תוכן ישראלי בנושא שאילתות בשפה טבעית מול דאטה ארגונית. הקטגוריה פנויה בעברית.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הפער הוא בשכבת המאמרים בלבד: יש עמוד מוצר, אך אין ולו מאמר אחד שמסביר את הצורך ומוביל אליו. מכיוון שלשם המוצר אין נפח חיפוש, המאמר צריך להיבנות סביב הצורך, כלומר שאילתות בשפה טבעית וקבלת תשובות עסקיות מהדאטה, והמוצר מוצג בתוכו כפתרון.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>באתר קיים עמוד מוצר ייעודי ל-Qlik Answers, /עוזר-ai-חכם/, והמוצר מוזכר בארבעה עמודים. החסר הוא מאמר תומך שמסביר את הצורך ומוביל לעמוד המוצר.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="g5" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך מגדירים התראה אוטומטית כשמדד עסקי חורג מהיעד</span>
+    <span class="ckw">התראות חכמות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>התראות חכמות: ללא נפח מדוד</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>הרחבת עמוד קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>התראות חכמות</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מקבלים התראה אוטומטית כשמדד עסקי חורג מהיעד?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>התראות חכמות</b>. לביטוי אין נפח חיפוש מדוד. הביטוי שייך לעמוד <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span>, ולכן העמוד המורחב לא מתחרה עליו: הוא עונה על השאלה שנשאלת במנועי AI ומקשר לעמוד בעוגן "התראות חכמות", וגם אל <span dir="ltr">/זיהוי-אנומליות/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים עמוד וידאו משנת 2023 על Qlik Alerting בכתובת <span dir="ltr">/מערכת-ליצירת-התראות-של-קליק-ישראל-qlik-alerting/</span>, המכיל טקסט מועט. מאמר 'מחולל הדוחות' המתוכנן יעסוק בדוחות מתוזמנים, והעמוד הזה יעסוק בהתראות על חריגות. בעמוד השירות <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span> יש פרק שיווקי על התראות, בלי שלבים. המדריך מקשר אליו ואל עמוד זיהוי האנומליות.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>Power BI, Tableau ו-Looker מוזכרים בכל שלושת מנועי ה-AI. sp.data אינה מוזכרת.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>ל-sp.data יש את היכולת הזו ועמוד שירות ייעודי לה. עם זאת, מנועי ה-AI אינם מזכירים את sp.data בתשובותיהם לשאלה זו. ההמלצה היא לעדכן את עמוד הווידאו הקיים ולהפוך אותו למדריך מלא. המדריך יסביר איך להגדיר סף להתראה, מי יקבל אותה ובאיזה ערוץ. הסרטון יישאר בעמוד המעודכן.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="g7" data-pri="Medium">
+  <summary class="chead">
+    <span class="badge p-med">Medium</span>
+    <span class="badge month">חודש 3</span>
+    <span class="badge geo">GEO Questions</span>
+    <span class="ctitle">איך מעבירים נתונים מ-SAP למחסן נתונים בזמן אמת</span>
+    <span class="ckw">חילוץ נתוני SAP</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>חילוץ נתוני SAP: ללא נפח מדוד</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>הרחבת עמוד קיים</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>חילוץ נתוני SAP</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מעבירים נתונים מ-SAP למחסן נתונים בזמן אמת?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 15%</span>, סקירת ה-AI של גוגל <span dir="ltr">17%</span>. כשהשאלה מזכירה את sp.data בשמה: <span dir="ltr">ChatGPT 88%</span>, <span dir="ltr">Gemini 60%</span>, סקירת ה-AI של גוגל <span dir="ltr">83%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>חילוץ נתוני SAP</b>. לביטוי אין נפח חיפוש מדוד. הביטוי שייך לעמוד הפתרון <span dir="ltr">/פתרונות-אינטגרציית-sap-חילוץ-נתוני-sap-בזמן/</span>, ולכן העמוד המורחב לא מתחרה עליו: הוא עונה על השאלה שנשאלת במנועי AI ומקשר לעמוד הפתרון בעוגן "חילוץ נתוני SAP", וגם אל <span dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים עמוד וובינר משנת 2023, <span dir="ltr">/העברת-מידע-מ-sap-בפשטות-ובזמן-אמת-אל-יעדים/</span>, כמעט ללא טקסט. מאמר ה-CDC שבתוכנית מסביר את הטכנולוגיה, והעמוד הזה מיישם אותה על SAP.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מופיע היום בתשובות AI</div><div class="fval"><p>Gemini מזכיר את Fivetran ו-Informatica, וסקירת ה-AI של גוגל מזכירה את Fivetran ו-Airbyte. ChatGPT מצטט רק את אתר התיעוד של SAP.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>כשהשאלה מזכירה את sp.data בשמה, הנוכחות שלה בתשובות גבוהה: 60% עד 88%. כשהשאלה כללית, הנוכחות יורדת ל-0% עד 17%. GeckoCheck ממליצה במפורש על תוכן בנושא SAP. במקום כתובת חדשה, מרחיבים את עמוד הוובינר הקיים למדריך מלא: אילו נתונים מעבירים, איך עובדת טעינה בזמן אמת ומה צריך להכין בצד ה-SAP. הוובינר נשאר בעמוד.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>GEO Questions</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b17" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">ETL vs. ELT: מה ההבדל ואיך בוחרים את הגישה הנכונה לאינטגרציית נתונים</span>
+    <span class="ckw">etl vs elt</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>etl vs elt: 50 בקושי 44<br>תהליכי etl: 40 בקושי 9</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>etl vs elt</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"מה ההבדל בין ETL ל-ELT?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 14%</span>, סקירת ה-AI של גוגל <span dir="ltr">11%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>etl vs elt</b>, 50 חיפושים. המאמר יקשר אל <span dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</span> ואל <span dir="ltr">/טעינת-נתונים-etl-מתקדם/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים מאמר אחד, מה זה ETL ומהם תהליכי ETL, ושלושה עמודי פתרון בהם <span dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</span>. בנוסף, בעמוד <span dir="ltr">/טרנספורמציית-נתונים-תהליכי-etl-elt/</span> יש שאלה נפוצה "מהו ETL ומה ההבדל בינו לבין ELT?". הפרק הקצר במאמר ה-ETL והשאלה הנפוצה נשארים קצרים ומקשרים למאמר החדש.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">rivery.io</span>, <span dir="ltr">aws.amazon.com</span>, <span dir="ltr">databricks.com</span>, <span dir="ltr">qlik.com</span> במקום 6, <span dir="ltr">getdbt.com</span> ו<span dir="ltr">matillion.com</span>. עמוד גלובלי לחלוטין באנגלית, ללא אף אתר ישראלי.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>ההשוואה עצמה אינה מכוסה אצלכם: המאמר הקיים מסביר מה זה ETL ואינו עוסק בבחירה בין הגישות. חשוב שהמאמר החדש יתמקד בהשוואה בלבד ויקשר אל הקיים, כדי שלא יתחרה בו.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>הסתייגות על הנפח:</b> העמוד הראשון מורכב כולו מספקי דאטה גלובליים באנגלית. מאמר בעברית לא ידרג על הביטוי הזה בפועל, ולכן זהו מאמר תומך שמשלים אשכול ומזין את עמודי הפתרון, ולא מאמר שיביא תנועה.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b18" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">מה זה CDC (Change Data Capture) ואיך הוא מאפשר אינטגרציית נתונים בזמן אמת</span>
+    <span class="ckw">change data capture</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>change data capture: ללא נפח נמדד<br>cdc data: 70 אך רב-משמעי</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>change data capture</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך CDC מאפשר אינטגרציית נתונים בזמן אמת?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 17%</span>, סקירת ה-AI של גוגל <span dir="ltr">25%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">ביטוי יעד חדש</div><div class="fval"><p><div class="newkw"><b>הביטוי cdc data אינו יעד אפשרי.</b> המאמר ייכתב סביב <b>change data capture</b> ו<b>אינטגרציית נתונים בזמן אמת</b>, שאין להם נפח מדוד בעברית. הוא יקשר אל <span dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים מתוך 95. המונח מופיע בחמישה עמודי פתרון, ובראשם <span dir="ltr">/סטרימינג-נתונים-בזמן-אמת-cdc/</span>, אך אף מאמר אינו מסביר אותו.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על cdc data: <span dir="ltr">data.cdc.gov</span>, <span dir="ltr">cdc.gov</span>, <span dir="ltr">wonder.cdc.gov</span> ואתרי בריאות אמריקאיים. <span dir="ltr">striim.com</span> במקום 8 היא התוצאה היחידה מעולם הדאטה.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>בתשובה לשאלתכם: אכן אין מאמר, והפער מול עמוד הפתרון אמיתי. הכותרת שניסחתם, שמפרשת את ראשי התיבות ומוסיפה את הקשר זמן האמת, נכונה בדיוק מהסיבה הזו.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>הביטוי cdc data נמדד ב-70 חיפושים, אך כל העמוד הראשון שייך למרכז לבקרת מחלות האמריקאי. הנפח הזה אינו רלוונטי לנושא, ואין לבנות עליו יעד.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b19" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">Data Lake מול Data Warehouse מול Lakehouse: מה מתאים לארגון שלכם</span>
+    <span class="ckw">data lake vs data warehouse</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>data lake vs data warehouse: 40 בקושי 46</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>data lake vs data warehouse</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"מה ההבדל בין מחסן נתונים לאגם נתונים?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 0%</span>, סקירת ה-AI של גוגל <span dir="ltr">14%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>data lake vs data warehouse</b>, 40 חיפושים. המאמר יקשר אל <span dir="ltr">/open-lakehouse/</span>, אל <span dir="ltr">/מודרניזציה-של-מחסני-נתונים-בענן/</span> ואל שני המאמרים הקיימים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיימים שני מאמרים נפרדים, על אגם נתונים ועל מחסני נתונים, ומאמר על ניהול Data Lakehouses. אין מאמר השוואה שמחבר ביניהם, ועמוד <span dir="ltr">/open-lakehouse/</span> נותר ללא תוכן תומך.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">databricks.com</span> במקום 1, <span dir="ltr">qlik.com</span> <b>במקום 2</b>, <span dir="ltr">ibm.com</span> במקום 3 ו<span dir="ltr">aws.amazon.com</span> במקום 5. עמוד גלובלי באנגלית.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הערך אינו תנועה ישירה אלא סגירת אשכול: שלושה נכסים קיימים ללא מאמר שמחבר ביניהם, ועמוד מוצר ללא תוכן תומך. יתרון נוסף: qlik.com מדורג במקום 2 על הביטוי, כלומר קיים מודל תוכן מוכן של היצרן שאפשר להתאים לעברית.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b20" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">מה זה Data Pipeline ואיך בונים תהליך נתונים יעיל ואמין</span>
+    <span class="ckw">data pipeline</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>ללא נפח נמדד בעברית<br>קיים מאמר באנגלית</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>data pipeline</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">ביטוי יעד חדש</div><div class="fval"><p><div class="newkw"><b>אין נפח מדוד לביטוי בעברית</b>, ולכן זהו מאמר תומך ולא מאמר לדירוג. הוא יקשר אל <span dir="ltr">/qlik-data-integration/</span>, אל <span dir="ltr">/מחברים-ואינטגרציות-למקורות-דאטה/</span> ואל המאמר האנגלי הקיים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים מאמר אחד, <span dir="ltr">what-are-data-pipelines</span>, באנגלית בלבד.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>לא נמצא תוכן עברי משמעותי בנושא אצל אף מתחרה ישראלי. גם הביטוי העברי צינור נתונים אינו נושא נפח מדוד.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>המאמר החדש אינו כפילות אלא הגרסה העברית שחסרה, וכדאי לקשר בין השניים. בעולם ה-B2B הטכני בישראל היעדר נפח מדוד לביטוי עברי נובע לרוב מכך שאנשי המקצוע מחפשים באנגלית, ואינו מעיד על היעדר ביקוש.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b21" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">ניתוח והגדלת מכירות עם מערכות בינה עסקית (BI)</span>
+    <span class="ckw">הגדלת מכירות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>הגדלת מכירות: 30 בקושי 4<br>ניתוח מכירות: ללא נפח נמדד<br>חיזוי ביקושים: 10</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>הגדלת מכירות</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>הנפח נמוך והתוצאות שייכות לייעוץ מכירות, ולכן זהו מאמר תומך. הוא יקשר אל <span dir="ltr">/אנליטיקה-בשירות-עצמי/</span> ואל <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span>, וכן אל שני המאמרים הקיימים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיימים שני מאמרים נושקים: כיצד מכונה לומדת יכולה לעזור בהגדלת המכירות, וניתוח הרגלי צריכה וסל מכירות עם Qlik. אין מאמר שמציג את מערכת ה-BI ככלי לניתוח מכירות.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות על הגדלת מכירות: <span dir="ltr">insight-marketing.co.il</span>, <span dir="ltr">activedirector.co.il</span>, <span dir="ltr">danielzrihen.co.il</span> ו<span dir="ltr">simple-tafnit.co.il</span>. יועצי מכירות ושיווק. <span dir="ltr">datacore.co.il</span> במקום 10 היא הגורם היחיד מעולם הדאטה.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>יש לכם בריף מלא ומוכן, 1,525 מילים בשמונה פרקים. הערך הוא בהשלמת סדרת מאמרי השימוש לפי תחום יחד עם מאמר ניהול המלאי, ובשימוש במכירות מול לקוחות פוטנציאליים.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>בריף שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p><b>לתשומת לבכם:</b> זהו הנושא החלש ביותר מבין השלושה שהתחלתם, גם בנפח וגם בהתאמת הקהל. אם צריך לבחור סדר, מאמר ניהול המלאי קודם לו.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b22" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">נרמול נתונים וסכמת כוכב: איך בונים מודל נתונים נכון ל-BI</span>
+    <span class="ckw">נרמול נתונים</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>נרמול נתונים: 20 בקושי 12<br>סכמת כוכב: ללא נפח נמדד</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>נרמול נתונים</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">ביטוי יעד חדש</div><div class="fval"><p><div class="newkw"><b>ביטוי חדש: אין באתר עמוד שמכוון לנרמול נתונים או למידול נתונים.</b> המאמר יקשר אל המאמר הקיים על מחסני נתונים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אין תוכן ייעודי. נרמול מוזכר פעם אחת בלבד, כאזכור אגבי בתוך מאמר על AI במערכות נתונים, ולסכמת כוכב אין אף אזכור באתר.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: ויקיפדיה במקום 1, <span dir="ltr">webmaster.org.il</span> במקום 2 ו<span dir="ltr">ramkedem.com</span> במקום 3, שהוא גם המתחרה המסחרי היחיד ומצוטט ב-AI Overview.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הנושא הנישתי ביותר בתוכנית המאמרים. הערך הוא סמכות מקצועית ונוכחות במנועי AI ולא תנועה או המרה.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b23" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">מחולל דוחות ודוחות BI אוטומטיים: יכולות ויתרונות לארגון</span>
+    <span class="ckw">מחולל דוחות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>מחולל דוחות: 50 בקושי 10</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>מחולל דוחות</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך מפיקים דוחות BI מתוזמנים שנשלחים אוטומטית למנהלים?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 2%</span>, סקירת ה-AI של גוגל <span dir="ltr">0%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>מחולל דוחות</b>, 50 חיפושים בקושי 10. המאמר יקשר אל <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span> ואל קורס nPrinting באקדמיה.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>אפס מאמרים ייעודיים. המונח מופיע פעמיים: כאזכור אגב במאמר על בינה עסקית, וכשאלה בשאלות הנפוצות בעמוד <span dir="ltr">/דוחות-bi-והתראות-חכמות-מבוססות-נתונים/</span> עצמו.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">fliphtml5.com</span>, <span dir="ltr">seapik.com</span>, יוטיוב, <span dir="ltr">financer.co.il</span> ו<span dir="ltr">jobify360.co.il</span>. ה-AI Overview מצטט את <span dir="ltr">sumit.co.il</span>, <span dir="ltr">wizcloud.co.il</span> ו<span dir="ltr">tamal.co.il</span>, כלומר ספקי הנהלת חשבונות ו-ERP.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>העמוד שאליו הוא מקשר קיים וממתין לתוכן תומך, וזו הסיבה העיקרית להשאיר אותו בתוכנית.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>תוספת ממחקר</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>העמוד הראשון מורכב מכלי עיצוב חוברות, יוטיוב ואתרי פיננסים, ו-AI Overview מפרש את המונח כמחולל דוחות בתוך מערכות הנהלת חשבונות ו-ERP. זהו אינו קהל BI, ולכן הנושא בעדיפות נמוכה, ואם ייכתב, רק כמאמר תומך לעמוד הדוחות.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="b24" data-pri="Low">
+  <summary class="chead">
+    <span class="badge p-low">Low</span>
+    <span class="badge month">חודש 3</span>
+    <span class="ctitle">מהי אנליטיקה חזויה (Predictive Analytics) ואיך AutoML עוזר לחזות תוצאות עסקיות</span>
+    <span class="ckw">predictive analytics</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">נתוני חיפוש</div><div class="tval"><p>predictive analytics: 50<br>למידת מכונה: 260 בקושי 27<br>אנליטיקה חזויה: ללא נפח</p></div><div class="tlab">סוג המאמר</div><div class="tval"><p>מאמר תומך</p></div><div class="tlab">מילת יעד</div><div class="tval"><p>predictive analytics</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">השאלה במנועי AI (GeckoCheck, ספטמבר 2026)</div><div class="fval"><p>"איך ארגון מתחיל להשתמש באנליטיקה חזויה?". נוכחות sp.data בתשובות: <span dir="ltr">ChatGPT 0%</span>, <span dir="ltr">Gemini 4%</span>, סקירת ה-AI של גוגל <span dir="ltr">33%</span>.</p></div></div>
+      <div class="fld wide"><div class="flab">יעד קישור פנימי</div><div class="fval"><p>מילת היעד: <b>predictive analytics</b>, 50 חיפושים. המאמר יקשר אל <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span> ואל פוסט הוובינר הקיים.</p></div></div>
+      <div class="fld wide"><div class="flab">תוכן דומה קיים באתר</div><div class="fval"><p>קיים פוסט וובינר על Qlik AutoML ומאמר על למידת מכונה, וכן עמוד <span dir="ltr">/אנליטיקה-חזויה-ולמידת-מכונה/</span>. אין מאמר הסבר.</p></div></div>
+      <div class="fld wide"><div class="flab">מי מדורג היום (בדיקה חיה, ספטמבר 2026)</div><div class="fval"><p>בתוצאות החיות: <span dir="ltr">ibm.com</span> במקום 1, <span dir="ltr">tableau.com</span> במקום 2, <span dir="ltr">online.hbs.edu</span> במקום 3, ואחריהם ויקיפדיה, <span dir="ltr">databricks.com</span>, <span dir="ltr">sas.com</span> ו<span dir="ltr">salesforce.com</span>. עמוד גלובלי לחלוטין.</p></div></div>
+      <div class="fld wide"><div class="flab">למה כדאי לכתוב</div><div class="fval"><p>הפוסט הקיים הוא סיכום וובינר ולא מאמר הסבר, ולכן אין כפילות, אך כדאי לקשר אליו ואל עמוד הפתרון. ביקשתם לפצל את הנושא לחמישה מאמרים. ההמלצה היא להתחיל במאמר הסבר אחד ולפצל רק אם יוכח ביקוש, מכיוון שהנפח באשכול אינו מצדיק חמישה מאמרים נפרדים.</p></div></div>
+      <div class="fld"><div class="flab">מקור הרעיון</div><div class="fval"><p>הצעה שלכם</p></div></div>
+      <div class="fld wide"><div class="flab">הערות</div><div class="fval"><p>מדד הקושי של ספק הנתונים מציג 0, אך העמוד הראשון מורכב מ-IBM, Tableau, בית הספר למנהל עסקים של הרווארד, Databricks ו-SAS. מאמר בעברית לא ידרג על הביטוי האנגלי.</p></div></div>
+    </div>
+  </div>
+</details>
+</div>
+</details>
+
+<details class="block">
+  <summary><span class="snum">03</span> משימות טכניות
+    <span class="spill">12 שורות</span>
+    <span class="chev"></span></summary>
+  <div class="sinner">
+    <div class="subhead" id="t-crit">קריטי</div>
+    
+<details class="card" id="t0" data-pri="קריטי">
+  <summary class="chead">
+    <span class="badge p-crit">קריטי</span>
+    <span class="badge area">Titles / CTR</span>
+    <span class="ctitle">החזרת עוגן המותג ל-7 עמודי המותג</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>נוגע ל-82% מחשיפות המותג באתר, שהן מקור 93% מהירידה בקליקים.</p><p>הבנצ׳מרק: עמוד הבית, שנושא את הניסוח, משיג CTR של 18.3% ל-&quot;qlik israel&quot;. עמודי המותג שאינם נושאים אותו עומדים על כ-0.5%.</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>SEO + עורך תוכן</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>ה-CTR הכלל-אתרי ירד מ-1.57% ל-0.77% אחרי הרימותג, למרות שהמיקום הממוצע השתפר מ-14.7 ל-8.6. פילוח GSC מראה ש-93% מהירידה בקליקים מגיעה מביטויי מותג.</p><p>&quot;עמודי מותג&quot; הוגדרו מהנתונים — 7 העמודים שמקבלים בפועל חשיפות משאילתות מותג (qlik, קליק, qlikview, spdata, talend) לפי GSC ב-90 יום. הם מרכזים 3,562 מתוך 4,361 חשיפות המותג באתר (82%).</p><p>מצב קיים לפי סריקת קוד מקור:</p><ul><li>/ — 1,466 חשיפות מותג · &quot;Qlik&quot; בכותרת ✓ · &quot;לשעבר Qlik Israel&quot; ✓ · תקין, זהו הבנצ׳מרק</li><li>/פתרונות-אנליטיקה-בענן-קליק-סנס/ — 761 · &quot;Qlik&quot; ✓ · &quot;לשעבר&quot; ✗</li><li>/qlik-college/ — 369 · &quot;Qlik&quot; ✓ · &quot;לשעבר&quot; ✗</li><li>/אקדמיה/ — 301 · &quot;Qlik&quot; ✗ · &quot;לשעבר&quot; ✗</li><li>/קריירה/ — 295 · &quot;Qlik&quot; ✗ · &quot;לשעבר&quot; ✗</li><li>/אודות-sp-data/ — 273 · &quot;Qlik&quot; ✓ · &quot;לשעבר&quot; ✓ · תקין</li><li>/השותפים-שלנו/ — 97 · &quot;Qlik&quot; ✗ · &quot;לשעבר&quot; ✗</li></ul><p>כלומר: 2 עמודים כבר תקינים ואין לגעת בהם, ו-5 דורשים תיקון.</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>לתקן 5 עמודים. הניסוח המוצע לכל אחד:</p><p>▸ /פתרונות-אנליטיקה-בענן-קליק-סנס/<br>  Title: קליק סנס (Qlik Sense) בישראל | הטמעה, רישוי ותמיכה — sp.data<br>  Meta : קליק סנס מ-sp.data, לשעבר Qlik Israel — הנציגה הרשמית של Qlik בישראל. הטמעה, רישוי, הדרכה ותמיכה בעברית. תיאום דמו ללא עלות.</p><p>▸ /qlik-college/<br>  Title: לשמר — כבר כולל Qlik<br>  Meta : Qlik College של sp.data, לשעבר Qlik Israel — קורסי Qlik Sense, QlikView ו-SaaS, Bootcamp ואוריינות נתונים, בהדרכת מומחי Qlik בישראל.</p><p>▸ /אקדמיה/<br>  Title: האקדמיה של sp.data (לשעבר Qlik Israel) | קורסי BI, דאטה ואנליטיקה<br>  Meta : האקדמיה של sp.data, לשעבר Qlik Israel, מציעה קורסי BI ודאטה למשתמשי Qlik, מפתחי BI ומבקשי הסבה מקצועית, כולל Bootcamp עם סיוע בהשמה.</p><p>▸ /קריירה/<br>  Title: קריירה ב-sp.data (לשעבר Qlik Israel) | דרושים BI ודאטה<br>  Meta : משרות BI Developers, Data Engineers ו-Presale ב-sp.data, לשעבר Qlik Israel — המשווקת הבלעדית של Qlik בישראל. מודל היברידי ופרויקטים בארגונים מובילים.</p><p>▸ /השותפים-שלנו/<br>  Title: השותפים העסקיים של sp.data (לשעבר Qlik Israel)<br>  Meta : מערך השותפים של sp.data, לשעבר Qlik Israel, ובהם NESS, ONE datAI, Matrix DNA ו-Logical, מלווה פרויקטי דאטה ו-AI מהתכנון ועד ההטמעה.</p><p>▸ / ו-/אודות-sp-data/ — תקינים, אין לשנות</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t1" data-pri="קריטי">
+  <summary class="chead">
+    <span class="badge p-crit">קריטי</span>
+    <span class="badge area">קישורים פנימיים</span>
+    <span class="ctitle">אנקור &quot;מערכת BI&quot; מפנה לעמודי מוצר ממותגים</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>כוח הקישורים הפנימיים על האנקור &quot;מערכת BI&quot; כבר מושקע, אך מפוזר לשני עמודי מוצר ממותגים. ריכוזו לעמוד אחד הוא מהצעדים המהירים להנעת העמוד החדש</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>SEO</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>נסרקו 22 העמודים המובילים בחשיפות. נמצאו 5 קישורים באנקור &quot;מערכת BI&quot; / &quot;מערכת ה-BI&quot; / &quot;מערכות BI&quot;, מפוצלים בין שני עמודים — ואף אחד מהם אינו עמוד מערכת BI:</p><ul><li>/מה-זה-בינה-עסקית-bi/ (מדורג #1) ← &quot;מערכות ה-BI&quot; → קליק סנס</li><li>/מה-זה-דאטה-אנליסט/ ← &quot;מערכת ה-BI&quot; → קליק סנס</li><li>/איך-לאפיין-דשבורד-ניהולי/ ← &quot;מערכת ה-BI&quot; → קליק סנס</li><li>/מה-זה-saas/ ← &quot;מערכות BI&quot; → Qlik Cloud Analytics</li><li>/מהו-דשבורד-bi/ ← &quot;מערכות BI&quot; → Qlik Cloud Analytics</li></ul><p>ככל הנראה שריד מהאתר הישן</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>להפנות את כל 5 הקישורים אל /מערכת-bi/ החדש (חודש 1). עד להקמתו — להשאיר כפי שהם</p></div></div>
+    </div>
+  </div>
+</details>
+    <div class="subhead" id="t-rest">לא דחוף</div>
+    
+<details class="card" id="t2" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">רידיירקטים</span>
+    <span class="ctitle">רידיירקט שבור בעמוד יחסי ציבור ישן</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>נמוך. מטופל כניקיון טכני ולא כשחזור תנועה</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>מפתח</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/qlik-מובילה-בגרטנר-בעולם/ בדומיין הישן מפנה ב-301 לכתובת עם קידוד כפול, שמחזירה 404.</p><p>היקף הנזק בפועל — נמוך מאוד: פוסט יחסי ציבור משנת 2021 על דירוג Gartner. 4 קליקים בשנה שלמה בדומיין הישן, 0 קליקים ב-90 הימים שלפני המעבר, ו-0 אחריו. לשם השוואה, חציון הקליקים לעמוד באתר הישן היה 3.</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>להפנות ל-301 אל עמוד הבית או אל /מרכז-הידע/, ולסגור. אין צורך בשחזור התוכן</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t3" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">רידיירקטים</span>
+    <span class="ctitle">רידיירקט 302 במקום 301</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>אובדן העברת סמכות מארכיון המאמרים הישן</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>מפתח</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/category/מאמרים/ מפנה ב-302 (זמני) לעמוד הבית, במקום ב-301 ל-/category/articles/</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>לשנות ל-301 ולכוון לארכיון המאמרים החדש</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t4" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">Schema</span>
+    <span class="ctitle">FAQPage לכל עמודי השירות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>Rich Results + שיפור סיכויי ציטוט ב-AI Overviews</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>מפתח</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>כל עמודי השירות כוללים H2 בשם &quot;שאלות נפוצות&quot; עם השאלות עצמן כ-H3 — התוכן קיים במלואו, חסרה רק הסכמה.</p><p>לדוגמה: /ויזואליציה-ודשבורדים-אינטראקטיביים/ ו-/דוחות-bi-והתראות/ מכילים כל אחד 4 שאלות מנוסחות</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>להוסיף JSON-LD מסוג FAQPage לכל עמוד שירות, על בסיס ה-H3 הקיימים</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t5" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">גרסה אנגלית</span>
+    <span class="ctitle">37 עמודי /en/ מנותקים מהאתר — נדרשת החלטה עסקית</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>במצב הנוכחי ההשפעה על התנועה זניחה — 0.4% מהקליקים.</p><p>הסיכון העיקרי אינו כמותי: בלי hreflang גוגל עלול להציג לגולש ישראלי את הגרסה האנגלית. זה כבר נצפה — SE Ranking הראה שלביטוי &quot;qlik sense&quot; מדורג /en/qlik-sense-clinet-manage/ ולא העמוד העברי (אם כי ב-GSC לעמוד האנגלי 19 חשיפות בלבד).</p></div><div class="tlab">מאמץ</div><div class="tval"><p>תלוי בהחלטה</p></div><div class="tlab">אחריות</div><div class="tval"><p>הלקוח (החלטה) → מפתח (ביצוע)</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>נסרקו כל 37 עמודי /en/ שבסייטמאפ, וכן 5 עמודים מרכזיים בעברית כולל עמוד הבית. הממצאים:</p><p>▸ אין שום גישה אליהם מהאתר העברי. אפס קישורים מעמודים בעברית אל /en/, ואפס קישורים מ-/en/ חזרה לעברית. אין מחליף שפה בתפריט. הם מקשרים רק זה לזה — רשת מנותקת של 37 עמודים.</p><p>▸ הדרך היחידה להגיע אליהם: כתובת ישירה, ה-sitemap, או גוגל.</p><p>▸ ביצועים ב-GSC ב-90 יום: 27 מתוך 37 העמודים קיבלו חשיפות, וסך הכול 1 קליק ו-180 חשיפות. זהו 0.4% מהקליקים של האתר ו-0.5% מהחשיפות.</p><p>▸ מצב טכני: תגית השפה תקינה — lang=&quot;en-US&quot; בכל 37. hreflang חסר ב-37 מתוך 37. Meta Description חסר ב-36 מתוך 37. כולם ניתנים לאינדוקס עם canonical עצמי תקין.</p><p>כלומר תגיות השפה אינן הבעיה. הבעיה היא נכס שלם שאינו מחובר לאתר, אינו מתוחזק, ואינו מייצר תנועה.</p><p>הערה: בגרסה מוקדמת של הדוח הומלץ להוסיף hreflang ל-37 זוגות ולכתוב 36 תיאורים. לאחר בדיקת הקישוריות והביצועים ההמלצה עודכנה — זו השקעה לא פרופורציונלית לנכס שמייצר קליק אחד ב-90 יום ושאף עמוד באתר אינו מקשר אליו.</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>נדרשת החלטה עסקית מהלקוח לפני כל עבודה טכנית — האם לגרסה האנגלית יש קהל יעד בפועל?</p><p>א. אם אין קהל בינלאומי (ההמלצה שלנו): להסיר את 37 העמודים מהאינדקס בתגית noindex, או להפנותם ב-301 למקבילות בעברית. חוסך את כל עבודת הפיתוח, מרכז את הסמכות בעברית, ומבטל את הסיכון שגוגל יציג לגולש ישראלי עמוד באנגלית.</p><p>ב. אם יש קהל בינלאומי: נדרשת החבילה המלאה — hreflang דו-כיווני ל-37 זוגות, מחליף שפה בתפריט, ו-36 Meta Descriptions. זו השקעה אמיתית ולא תיקון נקודתי.</p><p>ג. אם לא ברור: לא לגעת כרגע ולחזור לנושא ברבעון הבא.</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t6" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">On-page</span>
+    <span class="ctitle">שגיאת כתיב בסלאג וב-H1</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>העמוד מכוון ל-&quot;ויזואליזציה&quot; (140 חיפושים) עם שגיאת כתיב במילה</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>מפתח + עורך תוכן</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/ויזואליציה-ודשבורדים-אינטראקטיביים/ — חסרה האות ז. הצורה הנכונה: ויזואליזציה.<br>השגיאה מופיעה גם ב-H1 של העמוד. ה-Title דווקא תקין</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>תיקון ה-H1 מיידית. שינוי הסלאג עם 301 — לתאם עם עבודת הדשבורדים בחודש 1</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t7" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">On-page</span>
+    <span class="ctitle">כפילות בכותרות H3</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>מבנה כותרות לא תקין — מקשה על הבנת העמוד</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>מפתח</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>בעמודי השירות מקרי הלקוח מופיעים פעמיים כ-H3. לדוגמה ב-/ויזואליציה-ודשבורדים/: &quot;ייעול מלאי בקמעונאות&quot; מופיע פעמיים, וכך גם שני המקרים האחרים</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>בדיקה אם מדובר בכפילות ויזואלית (דסקטופ/מובייל) ותיקון ברמת ה-DOM</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t8" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">קישורים פנימיים</span>
+    <span class="ctitle">מאמרי הבלוג המדורגים לא מקשרים לעמודי השירות</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>הפניית התנועה האורגנית הקיימת אל עמודים שממירים</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>SEO</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/מה-זה-בינה-עסקית-bi/ מקבל 2,901 חשיפות חודשיות ומדורג #1 — ולא מוביל לשום עמוד מסחרי.<br>אותו דבר ב-/איך-לאפיין-דשבורד-ניהולי/ (2,165 חשיפות) וב-/מה-זה-etl/ (1,194 חשיפות)</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>הוספת קישורים מהמאמרים המדורגים לעמודי השירות המתאימים, עם אנקור מסחרי</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t9" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">אינדוקס</span>
+    <span class="ctitle">הדומיין הישן עדיין מדורג</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>פיצול סמכות בין שני הדומיינים</p></div><div class="tlab">מאמץ</div><div class="tval"><p>נמוך</p></div><div class="tlab">אחריות</div><div class="tval"><p>SEO</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>qlik.co.il מופיע ב-Ahrefs עם 6 ביטויים ותנועה מוערכת של 48 — לא יצא לגמרי מהאינדקס חודש אחרי המעבר</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>מעקב ב-GSC אחר הפרופרטי הישנה. אם נמשך מעבר ל-3 חודשים — בדיקת כיסוי רידיירקטים</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t10" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">תוכן דק</span>
+    <span class="ctitle">עמודים עם תוכן דק מאוד</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>נמוך בטווח הקצר, משפיע על תפיסת איכות האתר</p></div><div class="tlab">מאמץ</div><div class="tval"><p>בינוני</p></div><div class="tlab">אחריות</div><div class="tval"><p>עורך תוכן</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/מרכז-הידע/ — 196 מילים<br>/all-products/ — 261 מילים (מטופל בחודש 1 בטאב הגאנט)</p><p>בבלוג: 36 מתוך 93 המאמרים מתחת ל-500 מילים — רובם עדכוני וובינרים</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>/מרכז-הידע/ — להעשיר או להסיר מהסייטמאפ.<br>עדכוני הוובינרים — לשקול איחוד לעמוד ריכוז אחד</p></div></div>
+    </div>
+  </div>
+</details>
+<details class="card" id="t11" data-pri="לא דחוף">
+  <summary class="chead">
+    <span class="badge p-low">לא דחוף</span>
+    <span class="badge area">קניבליזציה</span>
+    <span class="ctitle">שלושה עמודים מתחרים על Qlik Sense</span>
+    <span class="chev"></span>
+  </summary>
+  <div class="cbody">
+    <div class="target"><div class="tlab">השפעה צפויה</div><div class="tval"><p>בהירות מול גוגל, מניעת פיצול</p></div><div class="tlab">מאמץ</div><div class="tval"><p>בינוני</p></div><div class="tlab">אחריות</div><div class="tval"><p>SEO + עורך תוכן</p></div></div>
+    <div class="flds">
+      <div class="fld wide"><div class="flab">הממצא</div><div class="fval"><p>/פתרונות-אנליטיקה-בענן-קליק-סנס/ · /qlik-sense-clinet-manage/ · /פתרונות-אנליטיקה-בענן-וניתוח-נתונים/ — שלושתם עוסקים ב-Qlik Sense ובאנליטיקה</p></div></div>
+      <div class="fld wide"><div class="flab">הפעולה הנדרשת</div><div class="fval"><p>הגדרת תפקידים: הראשון = מוצר ומותג, השני = סביבה מקומית, השלישי = ענן. קישור הדדי מפורש</p></div></div>
+    </div>
+  </div>
+</details>
+  </div>
+</details>
+
+<footer>
+  <span>sp.data · תוכנית עבודה SEO</span>
+  <span class="fb">NC Digital</span>
+</footer>
+</div>
+
+<script>
+function toggleAll(o){document.querySelectorAll('details.block, details.card').forEach(d=>d.open=o);}
+function collapseAll(){
+  document.querySelectorAll('details.card').forEach(d=>d.open=false);
+  document.querySelectorAll('details.block').forEach((d,i)=>d.open=(i===0));
+}
+function filt(btn,v){
+  document.querySelectorAll('.toolbar .tbtn[data-f]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.grow').forEach(r=>{
+    r.classList.toggle('mute', v!=='all' && r.dataset.pri!==v);
+  });
+  document.querySelectorAll('details.card').forEach(c=>{
+    const hide = v!=='all' && c.dataset.pri!==v;
+    c.classList.toggle('hide', hide);
+    if(hide) c.open=false;
+  });
+}
+document.querySelectorAll('[data-target]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const el=document.getElementById(b.dataset.target);
+    if(!el) return;
+    let p=el.parentElement;
+    while(p){ if(p.tagName==='DETAILS') p.open=true; p=p.parentElement; }
+    if(el.tagName==='DETAILS') el.open=true;
+    setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'center'}),80);
+  });
+});
+</script>
+</body>
+</html>
