@@ -31,7 +31,7 @@
   --sans:"Assistant",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%;max-width:100%;overflow-x:hidden}
+html,body{margin:0;padding:0;max-width:100%;overflow-x:clip}
 body{
   font-family:var(--sans); background:var(--paper); color:var(--ink);
   font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
@@ -588,7 +588,7 @@ const ROUTES = {
     childrenLabel:"מספר ילדים",
     relationOpts:["בן/בת זוג","בן, בת או הורה","אח או אחות","אבא/אמא","אחר"],
     rateOpts:["קבועה צמודה","קבועה לא צמודה (קל\"צ)","משתנה פריים"],
-    repayOpts:["שפיצר","גרייס חלקי","בלון חלקי","משולב"],
+    repayOpts:["שפיצר","גרייס חלקי","בלון מלא","משולב"],
     purposeOpts:["עזרה לבן משפחה","מחיה, הוצאות שוטפות","טיפול רפואי","מיחזור משכנתא מבנק או גורם חוץ בנקאי",
                  "מעבר לדיור מוגן","סילוק הלוואה או התחייבות אחרת","שיפוץ","מטרה אחרת"],
     propTypeOpts:["בית פרטי","דירה","נכס מסחרי"],
@@ -607,7 +607,7 @@ const ROUTES = {
     residenceOpts:["דירה בבעלותי","דירה בשכירות","אצל ההורים","דיור מוגן","אחר"],
     childrenLabel:"מספר ילדים מתחת לגיל 25",
     relationOpts:["בן/בת זוג","אח או אחות","בן, בת או הורה","שותף עסקי","אחר"],
-    rateOpts:["קבועה צמודה","קבועה לא צמודה (קל\"צ)","משתנה פריים","משתנה צמודה"],
+    rateOpts:["קבועה צמודה","קבועה לא צמודה (קל\"צ)","משתנה פריים","משתנה צמודה","משתנה לא צמודה"],
     repayOpts:["שפיצר","גרייס חלקי","בלון חלקי","בלון מלא"],
     purposeOpts:["רכישת נכס","השקעה","מיחזור משכנתא","סילוק הלוואה או התחייבות אחרת","שיפוץ",
                  "בניה עצמית","מטרה אחרת"],
@@ -640,7 +640,7 @@ const S = {
     other:[],
     tracks:[blankTrack()],
     bank:{}, purpose:{}, purchase:{}, consents:{}, annexes:{}, insurance:{}, deal:{}, clal:{}, kyc:{}, hasOccupants:"",
-    credit:{}, signDate:todayISO()
+    credit:{}, signDate:todayISO(), referrer:{name:"",id:"",phone:""}
   },
   errors:{}
 };
@@ -756,7 +756,11 @@ function go(n){
   S.visited.add(S.step);
   S.step = n;
   render();
-  window.scrollTo({top:0,behavior:"smooth"});
+  /* land on the start of the form (below the sticky bar and company band; on phones the
+     step list sits above the form, so the page top would hide the new step's heading) */
+  const main=document.getElementById("main");
+  const sticky=[...document.querySelectorAll(".bar,.coband")].filter(x=>!x.hidden).reduce((a,x)=>a+x.offsetHeight,0);
+  window.scrollTo(0, n===0?0:Math.max(0,main.getBoundingClientRect().top+window.scrollY-sticky));
 }
 
 /* ---------- persistent document pane: what am I actually sending? -------- */
@@ -895,7 +899,7 @@ function fRadio(path,label,opts,o={}){
     <label>${esc(label)}${o.req?' <span class="req">*</span>':""}</label>
     <div class="opts ${o.stack?"stack":""}">
       ${opts.map(x=>`<label class="opt ${v===x?"sel":""}"><input type="radio" data-p="${esc(path)}" value="${esc(x)}" ${v===x?"checked":""}><span>${esc(x)}</span></label>`).join("")}
-    </div></div>`;
+    </div>${S.errors[path]?`<div class="msg">${esc(S.errors[path])}</div>`:""}</div>`;
 }
 function fCheck(path,label){
   const v=!!getv(path);
@@ -904,7 +908,7 @@ function fCheck(path,label){
 function fArea(path,label,o={}){
   const v=getv(path), id="f_"+path.replace(/[^\w]/g,"_");
   return `<div class="f wide"><label for="${id}">${esc(label)}</label>
-    <textarea id="${id}" data-p="${esc(path)}" rows="${o.rows||3}">${esc(v)}</textarea></div>`;
+    <textarea id="${id}" data-p="${esc(path)}" rows="${o.rows||3}" class="${S.errors[path]?"bad":""}">${esc(v)}</textarea>${S.errors[path]?`<div class="msg">${esc(S.errors[path])}</div>`:""}</div>`;
 }
 function when(cond,html){ return `<div class="when ${cond?"on":""}">${html}</div>`; }
 
@@ -919,6 +923,7 @@ function getv(path){
   return o==null?"":o;
 }
 function setv(path,val){
+  if(S.errors[path]) delete S.errors[path];
   const parts = path.split(".");
   let o = S.data;
   for(let i=0;i<parts.length-1;i++){
@@ -946,6 +951,14 @@ function rowsBlock(key,label,max,render,blank,addLabel){
 function step1(){
   const r=R();
   let h = `<div class="head"><h1>לווים ומשק בית</h1><p>${esc(r.lender)} · ${esc(r.productLabel)} — עד ${r.maxBorrowers} לווים בטופס זה.</p></div>`;
+  if(!S.data.referrer) S.data.referrer={name:"",id:"",phone:""};
+  h += sec("היועץ המפנה","אם יש",
+    `<div class="note info" style="margin:0 0 13px">אם הגעתם אלינו דרך יועץ משכנתאות, מלאו את פרטיו. הפרטים יופיעו בכתב ההסמכה ליועץ שבטופס החברה.</div>
+     <div class="grid">
+      ${fInput("referrer.name","שם היועץ המפנה")}
+      ${fInput("referrer.id","ת.ז / ח.פ של היועץ",{maxlength:9})}
+      ${fInput("referrer.phone","טלפון היועץ",{type:"tel"})}
+     </div>`);
 
   h += sec("פרטי הלווים", `עד ${r.maxBorrowers}`, rowsBlock("borrowers","לווה",r.maxBorrowers,i=>{
     const b=S.data.borrowers[i];
@@ -1259,13 +1272,15 @@ function step4(){
       </div><div class="note info" style="margin-top:10px">תשובה חיובית משמעה הסכמה למסירת פרטי הלווים והנכס לסוכנות הביטוח.</div>`)}`);
   }
 
+  if(r.pdfFile==="credit360") h += sec("תיאור העסקה","שדה חובה",
+    fArea("purpose.notes","תיאור העסקה במלל חופשי",{rows:4}));
   return h + nav();
 }
 
 /* ---------- STEP 5 · annexes & consents ---------- */
 function step5(){
   const r=R();
-  let h=`<div class="head"><h1>נספחים והצהרות</h1><p>הנספחים שהטופס של ${esc(r.lender)} נושא, ומצב ההשלמה של כל אחד.</p></div>`;
+  let h=`<div class="head"><h1>נספחים והצהרות</h1><p>${LOCKED?`הנספחים וההצהרות שבטופס של ${esc(r.lender)}.`:`הנספחים שהטופס של ${esc(r.lender)} נושא, ומצב ההשלמה של כל אחד.`}</p></div>`;
 
   h += sec("נספחי הטופס",`${r.annexes.length} נספחים`,
     r.annexes.map((a,ai)=>{
@@ -1273,10 +1288,10 @@ function step5(){
         return `<div class="row" style="margin-bottom:11px"><header>${esc(a.t)}</header><div class="rbody">
           <div style="color:var(--text);font-size:13px;margin-bottom:11px">${esc(a.d)}</div>
           ${S.data.borrowers.map((b,i)=>`<div class="grid" style="margin-bottom:9px">
-            ${fRadio(`borrowers.${i}.kyc`,`לווה ${i+1}${b.firstName?" · "+esc(b.firstName)+" "+esc(b.lastName):""}`,["חסר","הושלם","נדרשת בדיקה"],{wide:true})}
+            ${LOCKED?"":fRadio(`borrowers.${i}.kyc`,`לווה ${i+1}${b.firstName?" · "+esc(b.firstName)+" "+esc(b.lastName):""}`,["חסר","הושלם","נדרשת בדיקה"],{wide:true})}
           </div>`).join("")}
-          <div class="note info" style="margin:4px 0 0">ההתראה במייל נושאת את <b>מצב</b> ההשלמה בלבד — לא את תוכן שאלון הכר את הלקוח.</div>
-          <hr class="rule">
+          ${LOCKED?"":`<div class="note info" style="margin:4px 0 0">ההתראה במייל נושאת את <b>מצב</b> ההשלמה בלבד — לא את תוכן שאלון הכר את הלקוח.</div>
+          <hr class="rule">`}
           <div class="subhead">תוכן השאלון (מודפס כנספח נפרד לכל לווה)</div>
           <div class="grid">
             ${fRadio("kyc.purpose","מטרת נטילת ההלוואה",["רכישת דירה","בנייה עצמית","שיפוצים","מיחזור","אחר"],{wide:true})}
@@ -1288,7 +1303,7 @@ function step5(){
       }
       return `<div class="row" style="margin-bottom:11px"><header>${esc(a.t)}</header><div class="rbody">
         <div style="color:var(--text);font-size:13px;margin-bottom:11px">${esc(a.d)}</div>
-        ${fRadio(`annexes.a${ai}`,"מצב",["חסר","הושלם","נדרשת בדיקה"],{wide:true})}
+        ${LOCKED?"":fRadio(`annexes.a${ai}`,"מצב",["חסר","הושלם","נדרשת בדיקה"],{wide:true})}
       </div></div>`;
     }).join(""));
 
@@ -1389,14 +1404,14 @@ function step5(){
 
   h += sec("הסכמות והצהרות","",
     `<div class="opts stack">
-      ${fCheck("consents.insurance","הלווים מסכימים להעברת פרטי הקשר לצורך קבלת הצעות לביטוח הנכס המשועבד")}
-      ${fCheck("consents.credit","נמסרה ההודעה בנוגע לקבלת חיווי אשראי")}
-      ${fCheck("consents.declarations","הלווים אישרו את הצהרות הלווים כמפורט בטופס")}
-      ${fCheck("consents.privacy","נמסרה הודעת הפרטיות והשימוש במידע")}
+      ${fCheck("consents.insurance","אנו מסכימים להעברת פרטי הקשר שלנו לצורך קבלת הצעות לביטוח הנכס המשועבד")}
+      ${fCheck("consents.credit","קראנו את ההודעה בנוגע לקבלת חיווי אשראי")}
+      ${fCheck("consents.declarations","קראנו את הצהרות הלווים המופיעות בטופס החברה ואנו מאשרים אותן")}
+      ${fCheck("consents.privacy","קראנו את הודעת הפרטיות והשימוש במידע")}
     </div>
-    <div class="note warn" style="margin-top:14px">ההצהרות נחתמות בפועל על ידי הלקוח ב־iSign, על גבי מסמך המקור של החברה. הסימון כאן הוא מעקב היועץ בלבד.</div>`);
+    <div class="note info" style="margin-top:14px">הנוסח המלא של ההצהרות וההסכמות מופיע בטופס של ${esc(r.lender)}, והן נחתמות בעת החתימה על הטופס.</div>`);
 
-  h += sec("פרטי מגיש הבקשה", r.agentPreprinted?"מודפס מראש בטופס":"קבוע",
+  if(!LOCKED) h += sec("פרטי מגיש הבקשה", r.agentPreprinted?"מודפס מראש בטופס":"קבוע",
     (r.agentPreprinted
       ? `<div class="note info" style="margin:0 0 13px">פרטי היועץ כבר מודפסים על גבי עותק הטופס של ${esc(r.lender)} (בשורת «שם גורם מתפעל»), ולכן אינם מוטבעים שוב על המסמך. השדות כאן משמשים לתיק בלבד.</div>`
       : "")
@@ -1406,7 +1421,7 @@ function step5(){
       ${fInput("agent.number","מספר סוכן")}
     </div>`);
 
-  h += fArea("purpose.notes","הערות נוספות",{rows:3});
+  if(r.pdfFile!=="credit360") h += fArea("purpose.notes","הערות נוספות",{rows:3});
 
   return h + nav();
 }
@@ -1427,7 +1442,7 @@ function step6(){
   if(missing.length){
     h += `<div class="note warn"><b>חסרים ${missing.length} שדות:</b>
       <div class="miss-list">${missing.map(m=>
-        `<button type="button" data-jump="${m.step}">${esc(m.label)}<span>שלב ${m.step} ←</span></button>`).join("")}</div></div>`;
+        `<button type="button" data-jump="${m.step}" data-path="${esc(m.path||"")}">${esc(m.label)}<span>שלב ${m.step} ←</span></button>`).join("")}</div></div>`;
   } else {
     h += `<div class="note ok"><b>כל שדות החובה מולאו.</b></div>`;
   }
@@ -1576,38 +1591,61 @@ function reviewBlocks(){
    ======================================================================== */
 function collectMissing(){
   const out=[]; S.errors={};
+  const need=(step,label,path)=>out.push({step,label,path});
+  const bad=(step,label,path,msg)=>{ out.push({step,label,path}); S.errors[path]=msg; };
+  const rf=S.data.referrer||{};
+  if(rf.id&&!validId(rf.id)) bad(1,"היועץ המפנה — ת.ז לא תקינה (ספרת ביקורת)","referrer.id","ספרת ביקורת שגויה");
   S.data.borrowers.forEach((b,i)=>{
-    if(!b.firstName) out.push({step:1,label:`לווה ${i+1} — שם פרטי`});
-    if(!b.lastName)  out.push({step:1,label:`לווה ${i+1} — שם משפחה`});
-    if(!b.id)        out.push({step:1,label:`לווה ${i+1} — תעודת זהות`});
-    if(!b.gender)    out.push({step:1,label:`לווה ${i+1} — מגדר`});
-    else if(!validId(b.id)){ out.push({step:1,label:`לווה ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`borrowers.${i}.id`]="ספרת ביקורת שגויה"; }
-    if(!b.phone)     out.push({step:1,label:`לווה ${i+1} — טלפון נייד`});
-    else if(!validPhone(b.phone)){ out.push({step:1,label:`לווה ${i+1} — טלפון לא תקין`}); S.errors[`borrowers.${i}.phone`]="מספר לא תקין"; }
-    if(b.email&&!validEmail(b.email)){ out.push({step:1,label:`לווה ${i+1} — דוא"ל לא תקין`}); S.errors[`borrowers.${i}.email`]="כתובת לא תקינה"; }
-    if(!b.residence) out.push({step:1,label:`לווה ${i+1} — מקום מגורי`});
+    const P=k=>`borrowers.${i}.${k}`;
+    if(!b.firstName) need(1,`לווה ${i+1} — שם פרטי`,P("firstName"));
+    if(!b.lastName)  need(1,`לווה ${i+1} — שם משפחה`,P("lastName"));
+    if(!b.id)        need(1,`לווה ${i+1} — תעודת זהות`,P("id"));
+    else if(!validId(b.id)) bad(1,`לווה ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`,P("id"),"ספרת ביקורת שגויה");
+    if(!b.gender)    need(1,`לווה ${i+1} — מגדר`,P("gender"));
+    if(!b.phone)     need(1,`לווה ${i+1} — טלפון נייד`,P("phone"));
+    else if(!validPhone(b.phone)) bad(1,`לווה ${i+1} — טלפון לא תקין`,P("phone"),"מספר לא תקין");
+    if(b.email&&!validEmail(b.email)) bad(1,`לווה ${i+1} — דוא"ל לא תקין`,P("email"),"כתובת לא תקינה");
+    if(!b.residence) need(1,`לווה ${i+1} — מקום מגורי`,P("residence"));
   });
   S.data.occupants.forEach((o,i)=>{
-    if(o.id&&!validId(o.id)){ out.push({step:1,label:`דייר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`occupants.${i}.id`]="ספרת ביקורת שגויה"; }
+    if(o.id&&!validId(o.id)) bad(1,`דייר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`,`occupants.${i}.id`,"ספרת ביקורת שגויה");
   });
   S.data.contacts.forEach((c,i)=>{
-    if(c.id&&!validId(c.id)){ out.push({step:1,label:`איש קשר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`}); S.errors[`contacts.${i}.id`]="ספרת ביקורת שגויה"; }
+    if(c.id&&!validId(c.id)) bad(1,`איש קשר ${i+1} — ת.ז לא תקינה (ספרת ביקורת)`,`contacts.${i}.id`,"ספרת ביקורת שגויה");
   });
-  if(!S.data.purpose.amount) out.push({step:4,label:"סכום ההלוואה המבוקש"});
+  const c=S.data.collateral[0];
+  if(!c.city&&!c.gush) need(3,"נכס לשעבוד — כתובת או גוש/חלקה","collateral.0.city");
+  if(!c.value) need(3,"נכס לשעבוד — שווי להערכתי","collateral.0.value");
+  if(!S.data.purpose.amount) need(4,"סכום ההלוואה המבוקש","purpose.amount");
+  if(!(S.data.purpose.list||[]).length) need(4,"מטרת ההלוואה","purpose.list");
+  if(R().pdfFile==="credit360"&&!(S.data.purpose.notes||"").trim()) need(4,"תיאור העסקה במלל חופשי","purpose.notes");
   S.data.tracks.forEach((t,i)=>{
     if(!t.amount) return;
-    if(!t.rate)  out.push({step:4,label:`מסלול ${i+1} — סוג ריבית`});
-    if(!t.repay) out.push({step:4,label:`מסלול ${i+1} — ${R().pdfFile==="ayalon-reverse"?"מסלול מבוקש (בלון / ריבית בלבד / קרן + ריבית)":"אופן ההחזר"}`});
+    if(!t.rate)  need(4,`מסלול ${i+1} — סוג ריבית`,`tracks.${i}.rate`);
+    if(!t.repay) need(4,`מסלול ${i+1} — ${R().pdfFile==="ayalon-reverse"?"מסלול מבוקש (בלון / ריבית בלבד / קרן + ריבית)":"אופן ההחזר"}`,`tracks.${i}.repay`);
   });
-  if(R().hasAnnuity&&S.data.purpose.annuity&&!S.data.purpose.annuityRate) out.push({step:4,label:"סוג ריבית למסלול האנונה"});
+  if(R().hasAnnuity&&S.data.purpose.annuity&&!S.data.purpose.annuityRate) need(4,"סוג ריבית למסלול האנונה","purpose.annuityRate");
   const sum=S.data.tracks.reduce((a,t)=>a+(+t.amount||0),0);
   const req=+S.data.purpose.amount||0;
-  if(req&&sum&&sum!==req) out.push({step:4,label:`סך המסלולים (${nis(sum)}) אינו תואם לסכום המבוקש (${nis(req)})`});
-  if(!(S.data.purpose.list||[]).length) out.push({step:4,label:"מטרת ההלוואה"});
-  const c=S.data.collateral[0];
-  if(!c.city&&!c.gush) out.push({step:3,label:"נכס לשעבוד — כתובת או גוש/חלקה"});
-  if(!c.value) out.push({step:3,label:"נכס לשעבוד — שווי להערכתי"});
+  if(req&&sum&&sum!==req) need(4,`סך המסלולים (${nis(sum)}) אינו תואם לסכום המבוקש (${nis(req)})`,"tracks.0.amount");
   return out;
+}
+
+/* Scroll so a field sits just below the sticky bar + company band, and focus it. */
+function focusField(path){
+  const el=path==="purpose.list"?document.querySelector("[data-purpose]"):document.querySelector(`[data-p="${CSS.escape(path)}"]`);
+  if(!el) return false;
+  const box=el.closest(".f")||el.closest(".row")||el;
+  const top=[...document.querySelectorAll(".bar,.coband")].filter(x=>!x.hidden).reduce((a,x)=>a+x.offsetHeight,0)+14;
+  window.scrollTo(0,box.getBoundingClientRect().top+window.scrollY-top);
+  if(el.type!=="radio"&&el.type!=="checkbox") el.focus({preventScroll:true});
+  return true;
+}
+/* "Next": stop at the first unfilled required field of this step and take the user to it. */
+function stepMissing(){
+  const miss=collectMissing().filter(m=>m.step===S.step&&m.path);
+  miss.forEach(m=>{ if(!S.errors[m.path]) S.errors[m.path]="שדה חובה"; });
+  return miss;
 }
 
 // the sections Anbar's document will contain for the selected route
@@ -1626,8 +1664,18 @@ function bind(){
   const m=$("#main");
 
   m.querySelectorAll("[data-route]").forEach(b=>b.onclick=()=>pickRoute(b.dataset.route));
-  m.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>go(S.step+(+b.dataset.nav)));
-  m.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>go(+b.dataset.jump));
+  m.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{
+    const d=+b.dataset.nav;
+    if(d>0&&S.step>0){
+      const miss=stepMissing();
+      if(miss.length){ const errs=S.errors; render(); S.errors=errs; focusField(miss[0].path); return; }
+    }
+    go(S.step+d);
+  });
+  m.querySelectorAll("[data-jump]").forEach(b=>b.onclick=()=>{
+    go(+b.dataset.jump);
+    if(b.dataset.path){ const errs=stepMissing(); render(); focusField(b.dataset.path); }
+  });
 
   m.querySelectorAll("input[data-p],select[data-p],textarea[data-p]").forEach(el=>{
     const p=el.dataset.p;
@@ -1965,6 +2013,16 @@ function drawOverlay(items,w,h){
       ctx.font=`${size}px Assistant, Arial, sans-serif`;
       ctx.textAlign=it.ctr?"center":(it.align||"right");
       const text=String(v);
+      if(it.lines>1){                    // multi-line box (e.g. 360 free-text description): wrap words, RTL
+        const lh=it.lh||size*1.35, out=[]; let cur="";
+        for(const w of text.split(/\s+/).filter(Boolean)){
+          const t=cur?cur+" "+w:w;
+          if(ctx.measureText(t).width>it.w&&cur){ out.push(cur); cur=w; } else cur=t;
+        }
+        if(cur) out.push(cur);
+        out.slice(0,it.lines).forEach((ln,k)=>ctx.fillText(ln,it.x,h-it.y+k*lh));
+        return;
+      }
       // shrink to fit the slot rather than overflow into the next label
       if(it.w){
         while(ctx.measureText(text).width>it.w && size>5.5){
@@ -2019,6 +2077,11 @@ const FN = {
   /* other occupants besides the borrowers — answered by the occupants list itself */
   hasOcc: (d,_,arg) => { const n=d.occupants.filter(o=>o.firstName||o.lastName).length; return arg==="כן"?n>0:n===0; },
   addr2: d => addrOf(d.borrowers[2]),
+  /* referring advisor — filled by the customer, printed in each company's authorisation letter */
+  refName:  d => (d.referrer||{}).name||"",
+  refId:    d => (d.referrer||{}).id||"",
+  refPhone: d => (d.referrer||{}).phone||"",
+  refIndep: d => !!((d.referrer||{}).name),
   /* Ayalon p.4, borrower 1: name and ID labels share one line, so print them together */
   benLine0: d => { const a=(d.borrowers[0]||{}).ay||{}; return a.beneficiary==="נהנה אחר"?[a.benName,a.benId].filter(Boolean).join("  "):""; },
   addr3: d => addrOf(d.borrowers[3]),
@@ -2340,6 +2403,7 @@ function demoData(){
     annexes:{a0:"הושלם",a1:"חסר",a2:"הושלם"},
     insurance:{exists:"לא",wantOffer:"כן"},
     credit:{bounced:"לא",execution:"לא",restricted:"לא",reportPositive:"כן",rejected:"לא"},
+    referrer:{name:"דנה כהן",id:"024561235",phone:"052-4417733"},
     signDate:todayISO(),
     clal:{existingMortgage:"כן",existingOnListed:"לא"},
     hasOccupants:S.data.occupants.length?"כן":"לא",
@@ -2382,7 +2446,7 @@ $("#loadDemo").onclick=()=>{
 $("#clearAll").onclick=()=>{
   S.data={borrowers:[blankBorrower()],occupants:[],contacts:[],collateral:[blankCollateral()],
           other:[],tracks:[blankTrack()],bank:{},purpose:{},purchase:{},consents:{},
-          annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",credit:{},signDate:todayISO(),agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"}};
+          annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",credit:{},signDate:todayISO(),referrer:{name:"",id:"",phone:""},agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"}};
   S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
 };
 
