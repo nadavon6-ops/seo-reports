@@ -457,6 +457,10 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
   .d-tbl thead{display:table-header-group}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
+.sigs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.sigbox{border:1px solid var(--rule);border-radius:3px;padding:10px;background:#fff}
+.sig-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sigpad{width:100%;height:auto;aspect-ratio:3/1;border:1px dashed var(--rule2,#aab);border-radius:3px;touch-action:none;cursor:crosshair;background:#fcfcfd}
 /* company band — shown on the per-company pages so the client always sees whose form this is */
 .coband{position:sticky;top:60px;z-index:59;background:var(--navy);color:#fff;padding:12px 34px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .coband b{font-size:19px;font-weight:800;letter-spacing:-.01em}
@@ -656,7 +660,7 @@ function blankBorrower(){return{
   incOtherSrc:"",incOtherAmt:"",
   oblLoanM:"",oblLoanB:"",oblMortM:"",oblMortB:"",oblRent:"",oblAlimony:"",
   oblOtherName:"",oblOtherM:"",oblOtherB:"",attachment:"לא",
-  kyc:"חסר", isOwner:"", otherIncome:"", incWorkSelf:"", hasRealEstate:"",
+  kyc:"חסר", isOwner:"", occupation:"", otherIncome:"", incWorkSelf:"", hasRealEstate:"",
   /* מגדל · הכר את הלקוח — one block per borrower, printed on page 4 */
   mk:{originCountry:"",residenceLocation:"",occupationField:"",seniorityYears:"",
       restricted:"",bankrupt:"",criminal:"",criminalDetail:"",
@@ -903,7 +907,7 @@ function fRadio(path,label,opts,o={}){
 }
 function fCheck(path,label){
   const v=!!getv(path);
-  return `<label class="opt ${v?"sel":""}"><input type="checkbox" data-p="${esc(path)}" ${v?"checked":""}><span>${esc(label)}</span></label>`;
+  return `<label class="opt ${v?"sel":""}"><input type="checkbox" data-p="${esc(path)}" ${v?"checked":""}><span>${esc(label)}</span></label>${S.errors[path]&&!v?`<div class="msg">${esc(S.errors[path])}</div>`:""}`;
 }
 function fArea(path,label,o={}){
   const v=getv(path), id="f_"+path.replace(/[^\w]/g,"_");
@@ -1207,6 +1211,8 @@ function step4(){
         return `<label class="pcard ${on?"sel":""}"><input type="checkbox" data-purpose="${esc(o)}" ${on?"checked":""}> ${esc(o)}</label>`;
       }).join("")}
     </div>
+    ${S.errors["purpose.list"]&&!(p.list||[]).length?`<div class="msg" style="margin-top:6px">שדה חובה</div>`:""}
+    ${r.pdfFile==="credit360"?when((p.list||[]).includes("מיחזור משכנתא"),`<div class="grid">${fInput("collateral.0.mortgageBalance","יתרת המשכנתא הקיימת לסילוק (למיחזור)",{money:true})}</div>`):""}
     ${when((p.list||[]).includes("מטרה אחרת"),fInput("purpose.otherDetail","פרט את המטרה",{wide:true}))}
     ${when((p.list||[]).includes("השקעה"),fInput("purpose.investDetail","פרטי ההשקעה",{wide:true}))}
     ${when((p.list||[]).some(x=>x.indexOf("סילוק הלוואה")===0),`<div class="grid">
@@ -1292,6 +1298,7 @@ function step5(){
           </div>`).join("")}
           ${LOCKED?"":`<div class="note info" style="margin:4px 0 0">ההתראה במייל נושאת את <b>מצב</b> ההשלמה בלבד — לא את תוכן שאלון הכר את הלקוח.</div>
           <hr class="rule">`}
+          <div class="grid">${S.data.borrowers.map((b,i)=>fInput(`borrowers.${i}.occupation`,`עיסוק / מקצוע — לווה ${i+1}${b.firstName?" · "+esc(b.firstName):""}`,{req:true})).join("")}</div>
           <div class="subhead">תוכן השאלון (מודפס כנספח נפרד לכל לווה)</div>
           <div class="grid">
             ${fRadio("kyc.purpose","מטרת נטילת ההלוואה",["רכישת דירה","בנייה עצמית","שיפוצים","מיחזור","אחר"],{wide:true})}
@@ -1457,6 +1464,13 @@ function step6(){
     `<div class="grid">${fInput("signDate","תאריך החתימה",{type:"date",hint:"מודפס בטופס בשורות התאריך שליד חתימות הלווים. ברירת המחדל היא היום, וניתן לשנות"})}</div>`);
   h += reviewBlocks();
 
+  h += sec("חתימת הלווים","חתימה חופשית",
+    `<div class="note info" style="margin:0 0 13px">כל לווה חותם במסגרת שלו בעכבר או באצבע. החתימה מוטבעת בטופס בכל מקום שבו נדרשת חתימת הלווה.</div>
+     <div class="sigs">${S.data.borrowers.map((b,i)=>`<div class="sigbox">
+       <div class="sig-h"><b>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</b>
+         <button type="button" class="ghost" data-sigclear="${i}">נקה</button></div>
+       <canvas class="sigpad" data-sig="${i}" width="600" height="200"></canvas>
+     </div>`).join("")}</div>`);
   h += `<div class="send"><div class="send-h">הפקת המסמך ושליחה לחתימה</div><div class="send-b">
     <div class="flow">
       <div class="fl"><i>1</i><div><b>מילוי טופס ${esc(r.lender)}</b>
@@ -1628,11 +1642,83 @@ function collectMissing(){
   const sum=S.data.tracks.reduce((a,t)=>a+(+t.amount||0),0);
   const req=+S.data.purpose.amount||0;
   if(req&&sum&&sum!==req) need(4,`סך המסלולים (${nis(sum)}) אינו תואם לסכום המבוקש (${nis(req)})`,"tracks.0.amount");
+  routeRequired(need);
   return out;
+}
+
+/* Required fields the lenders' forms need, per route (client requests, Oct 2026).
+   Employment details are required only for a borrower who actually works. */
+function routeRequired(need){
+  const r=R(), pf=r.pdfFile, d=S.data;
+  const working=b=>b.employment&&b.employment!=="לא עובד/ת"&&b.employment.indexOf("חל")!==0;
+  const B=(i,k)=>`borrowers.${i}.${k}`;
+  d.borrowers.forEach((b,i)=>{
+    const L=t=>`לווה ${i+1} — ${t}`;
+    if(pf==="migdal"||pf==="credit360"){
+      if(!b.birthDate) need(1,L("תאריך לידה"),B(i,"birthDate"));
+      if(!b.marital)   need(1,L("מצב משפחתי"),B(i,"marital"));
+      if(b.children===""||b.children==null) need(1,L("מספר ילדים"),B(i,"children"));
+    }
+    if(has("employment")){
+      if(!b.employment) need(2,L("מצב תעסוקתי"),B(i,"employment"));
+      if(working(b)){
+        if(!b.workplace) need(2,L("מקום העבודה הראשי"),B(i,"workplace"));
+        if(!b.netIncome) need(2,L("הכנסה חודשית ממקום העבודה הראשי"),B(i,"netIncome"));
+        if(pf!=="migdal"){
+          if(!b.seniority) need(2,L("ותק"),B(i,"seniority"));
+          if(!b.role)      need(2,L("תפקיד / תחום עיסוק"),B(i,"role"));
+        }
+      }
+      if(pf==="credit360"&&!b.education) need(2,L("השכלה"),B(i,"education"));
+    }
+    if(pf==="clal-reverse"&&!b.incNone&&!["incWork","incAllowance","incRent","incPension","incAlimony","incOtherAmt"].some(k=>+b[k]>0))
+      need(2,L("הכנסה חודשית (או סימון \"אין הכנסה\")"),B(i,"incWork"));
+    if(pf==="clal-reverse"&&!b.occupation) need(5,L("עיסוק / מקצוע (הכר את הלקוח)"),B(i,"occupation"));
+    if(pf==="migdal"){
+      const m=b.mk||{}, K=k=>`borrowers.${i}.mk.${k}`;
+      [["originCountry","ארץ מוצא"],["residenceLocation","מיקום מגורים"],["occupationField","תחום עיסוק"],["seniorityYears","ותק במקום העבודה"],
+       ["restricted","האם הלקוח מוגבל"],["criminal","הליכים פליליים"],["bankrupt","האם פושט רגל"],["publicFigure","תפקיד ציבורי"]]
+        .forEach(([k,t])=>{ if(k==="seniorityYears"&&!working(b)) return; if(m[k]===""||m[k]==null) need(5,L(t),K(k)); });
+    }
+  });
+  if(has("contact")){
+    d.contacts.forEach((c,i)=>{
+      const L=t=>`איש קשר ${i+1} — ${t}`, P=k=>`contacts.${i}.${k}`;
+      if(!c.firstName) need(1,L("שם פרטי"),P("firstName"));
+      if(!c.lastName)  need(1,L("שם משפחה"),P("lastName"));
+      if(!c.phone)     need(1,L("טלפון"),P("phone"));
+      if(!c.relation)  need(1,L("קרבה ללווים"),P("relation"));
+      if(pf==="migdal"){
+        if(!c.id)        need(1,L("תעודת זהות"),P("id"));
+        if(!c.birthDate) need(1,L("תאריך לידה"),P("birthDate"));
+        if(!c.address)   need(1,L("כתובת"),P("address"));
+      }
+    });
+  }
+  d.collateral.forEach((c,i)=>{
+    const L=t=>`נכס ${i+1} — ${t}`, P=k=>`collateral.${i}.${k}`;
+    if(c.mortgaged==="כן"&&!c.mortgageBalance) need(3,L("יתרת המשכנתא לסילוק"),P("mortgageBalance"));
+    if(c.rented==="כן"&&!c.rentAmount) need(3,L("דמי השכירות החודשיים"),P("rentAmount"));
+    if(pf==="credit360"){
+      if(!c.street||!c.city) need(3,L("כתובת מלאה (רחוב ויישוב)"),P(c.street?"city":"street"));
+      if(!c.type)     need(3,L("סוג הנכס"),P("type"));
+      if(!c.registry) need(3,L("היכן רשום הנכס"),P("registry"));
+      if(c.mortgaged==="כן"&&!c.mortgageMonthly) need(3,L("גובה ההחזר החודשי במשכנתא"),P("mortgageMonthly"));
+    }
+  });
+  if(pf==="credit360"){
+    if(!d.deal.rank) need(4,"דרגת המשכנתא","deal.rank");
+    if((d.purpose.list||[]).includes("מיחזור משכנתא")&&!(d.collateral[0]||{}).mortgageBalance) need(4,"יתרת המשכנתא למיחזור","purpose.refiBalance");
+    [["bounced","חזרו שיקים / הוראות קבע"],["execution","תיק בהוצאה לפועל"],["restricted","לקוח מוגבל"],["reportPositive","דו\"ח נתוני אשראי"],["rejected","תשובה שלילית לבקשת משכנתא"]]
+      .forEach(([k,t])=>{ if(!(d.credit||{})[k]) need(5,`היסטוריית אשראי — ${t}`,`credit.${k}`); });
+    [["insurance","הסכמה להעברת פרטים לביטוח"],["credit","הודעה בנוגע לחיווי אשראי"],["declarations","הצהרות הלווים"],["privacy","הודעת הפרטיות"]]
+      .forEach(([k,t])=>{ if(!(d.consents||{})[k]) need(5,`אישור — ${t}`,`consents.${k}`); });
+  }
 }
 
 /* Scroll so a field sits just below the sticky bar + company band, and focus it. */
 function focusField(path){
+  if(path==="purpose.refiBalance") path="collateral.0.mortgageBalance";
   const el=path==="purpose.list"?document.querySelector("[data-purpose]"):document.querySelector(`[data-p="${CSS.escape(path)}"]`);
   if(!el) return false;
   const box=el.closest(".f")||el.closest(".row")||el;
@@ -1699,6 +1785,9 @@ function bind(){
       el.onblur=()=>{ if(S.step===6) render(); };
     }
   });
+
+  m.querySelectorAll("canvas[data-sig]").forEach(bindSigPad);
+  m.querySelectorAll("[data-sigclear]").forEach(b=>b.onclick=()=>{ delete SIG[+b.dataset.sigclear]; render(); });
 
   m.querySelectorAll("[data-purpose]").forEach(el=>{
     el.onchange=()=>{
@@ -1957,6 +2046,7 @@ async function buildPdf(){
     }
     kycFor = 0;
   }
+  if(r.pdfFile==="migdal" && S.data.borrowers.length<3) doc.removePage(5);   // client: two KYC pages, not three
   return await doc.save();
 }
 
@@ -1975,6 +2065,30 @@ async function overlayPages(doc,mapKey,pages){
   }
 }
 let kycFor = 0;
+
+/* Freehand signatures, one per borrower — kept in memory only (never stored or sent).
+   SIG[i] = {url, img}; img is a loaded Image ready for the overlay canvas. */
+const SIG = {};
+function bindSigPad(cv){
+  const i=+cv.dataset.sig, ctx=cv.getContext("2d");
+  ctx.lineWidth=3.2; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle="#0b1a3a";
+  if(SIG[i]) ctx.drawImage(SIG[i].img,0,0,cv.width,cv.height);
+  let drawing=false, last=null, dirty=false;
+  const pt=e=>{ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]; };
+  cv.onpointerdown=e=>{ drawing=true; dirty=true; last=pt(e); cv.setPointerCapture(e.pointerId); e.preventDefault(); };
+  cv.onpointermove=e=>{ if(!drawing) return; const p=pt(e); ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(p[0],p[1]); ctx.stroke(); last=p; e.preventDefault(); };
+  const end=()=>{ if(!drawing) return; drawing=false;
+    if(dirty){ const url=cv.toDataURL("image/png"), img=new Image(); img.onload=()=>{ SIG[i]={url,img}; }; img.src=url; } };
+  cv.onpointerup=end; cv.onpointerleave=end; cv.onpointercancel=end;
+}
+/* bounding box of the ink, so a small signature is not lost in a large empty canvas */
+function inkBox(img){
+  const c=document.createElement("canvas"); c.width=img.width; c.height=img.height;
+  const x=c.getContext("2d"); x.drawImage(img,0,0);
+  const d=x.getImageData(0,0,c.width,c.height).data; let x0=c.width,y0=c.height,x1=0,y1=0;
+  for(let y=0;y<c.height;y++) for(let xx=0;xx<c.width;xx++){ if(d[(y*c.width+xx)*4+3]>20){ if(xx<x0)x0=xx; if(xx>x1)x1=xx; if(y<y0)y0=y; if(y>y1)y1=y; } }
+  return x1>x0?[x0,y0,x1-x0+1,y1-y0+1]:null;
+}
 
 // Render one page's values into a transparent canvas at 3x, using the browser's
 // own text engine so bidi and digit order are correct by construction.
@@ -1999,6 +2113,14 @@ function drawOverlay(items,w,h){
         ctx.stroke(); ctx.restore();
         return;
       }
+      if(it.sig){                        // freehand signature of a borrower, fitted into its box
+        const idx = it.arg==="kyc" ? kycFor : +it.arg;
+        const sg = SIG[idx]; if(!sg||!S.data.borrowers[idx]) return;
+        const b = inkBox(sg.img); if(!b) return;
+        const sc = Math.min(it.w/b[2], it.h/b[3]); const dw=b[2]*sc, dh=b[3]*sc;
+        ctx.drawImage(sg.img,b[0],b[1],b[2],b[3], it.x-it.w/2-dw/2, h-it.y-dh, dw, dh);
+        return;
+      }
       if(it.mark){                       // checkbox / radio tick
         ctx.save();
         ctx.strokeStyle="#0b1a3a"; ctx.lineWidth=1.6; ctx.lineCap="round";
@@ -2013,6 +2135,9 @@ function drawOverlay(items,w,h){
       ctx.font=`${size}px Assistant, Arial, sans-serif`;
       ctx.textAlign=it.ctr?"center":(it.align||"right");
       const text=String(v);
+      if(it.bg){                         // cover a pre-printed value on the lender's form (white box)
+        ctx.save(); ctx.fillStyle="#fff"; ctx.fillRect(it.bg[0],h-it.bg[3],it.bg[2]-it.bg[0],it.bg[3]-it.bg[1]); ctx.restore();
+      }
       if(it.lines>1){                    // multi-line box (e.g. 360 free-text description): wrap words, RTL
         const lh=it.lh||size*1.35, out=[]; let cur="";
         for(const w of text.split(/\s+/).filter(Boolean)){
@@ -2082,6 +2207,15 @@ const FN = {
   refId:    d => (d.referrer||{}).id||"",
   refPhone: d => (d.referrer||{}).phone||"",
   refIndep: d => !!((d.referrer||{}).name),
+  constText: (d,_,arg) => arg||"",
+  refNameFor: (d,_,arg) => d.borrowers[+arg] ? ((d.referrer||{}).name||"") : "",
+  /* Migdal prints the work income from the income table; fall back to net income from the employment block */
+  incomeWork0: d => { const b=d.borrowers[0]||{}; const v=b.incWork||b.netIncome; return v?Number(v).toLocaleString("en-US"):""; },
+  incomeWork1: d => { const b=d.borrowers[1]||{}; const v=b.incWork||b.netIncome; return v?Number(v).toLocaleString("en-US"):""; },
+  incomeWork2: d => { const b=d.borrowers[2]||{}; const v=b.incWork||b.netIncome; return v?Number(v).toLocaleString("en-US"):""; },
+  kycOccupation: d => (d.borrowers[kycFor]||{}).occupation||"",
+  /* a borrower's signing date, only when that borrower exists (Ayalon p.11 option A rows) */
+  borrowerExists: (d,_,arg) => !!d.borrowers[+arg],
   /* Ayalon p.4, borrower 1: name and ID labels share one line, so print them together */
   benLine0: d => { const a=(d.borrowers[0]||{}).ay||{}; return a.beneficiary==="נהנה אחר"?[a.benName,a.benId].filter(Boolean).join("  "):""; },
   addr3: d => addrOf(d.borrowers[3]),
@@ -2192,6 +2326,7 @@ function bankLine(d){ const b=d.bank||{};
   return [b.name,b.branch&&`סניף ${b.branch}`,b.account&&`חשבון ${b.account}`].filter(Boolean).join(" · "); }
 
 function resolveVal(it){
+  if(it.sig) return true;
   if(it.fnKey){
     // "mk:field" reads the Migdal KYC block of whichever borrower this copy is for
     if(it.fnKey.indexOf("mk:")===0){
@@ -2350,7 +2485,7 @@ function demoData(){
   Object.assign(c,{gush:"6128",helka:"447",sub:"12",builtArea:"92",lotArea:"",
     street:"הרצל",num:"118",apt:"7",city:"רמת גן",type:"דירה",value:"2450000",
     mortgaged:"כן",mortgagedTo:"בנק לאומי למשכנתאות",mortgageBalance:"318000",
-    seized:"לא",rented:"לא",mortgageMonthly:"2150"});
+    seized:"לא",rented:"לא",mortgageMonthly:"2150",registry:"טאבו"});
   const o=blankOther();
   Object.assign(o,{type:"דירה",address:"ויצמן 22, כפר סבא",value:"1780000",
     rentIncome:"5200",mortgagedTo:"מזרחי טפחות",mortgageBalance:"240000",mortgageMonthly:"1680"});
@@ -2375,6 +2510,7 @@ function demoData(){
     cpaConfirm:"לא",fundsSource:"חסכונות ופנסיה",publicFigure:"לא",seniorIntl:"לא",
     accountRelation:"הורה/ילד",accountRelationOther:"",accountReason:"סיוע ברכישת דירה לבן",
     equitySource:"חסכונות והורים",equityProof:"כן",proofType:"תדפיסי בנק"},o);
+  b1.occupation="גמלאית"; b2.occupation="מנהל פיתוח";
   b1.mk=MK({occupationField:"גמלאית"});
   b2.mk=MK({occupationField:"מנהל פיתוח",seniorityYears:"7"});
   // Ayalon pages 4–5: one borrower answers "no" throughout, the other exercises every "yes" branch
