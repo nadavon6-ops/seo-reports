@@ -670,7 +670,7 @@ function blankBorrower(){return{
       accountRelation:"",accountRelationOther:"",accountReason:"",
       equitySource:"",equityProof:"",proofType:""},
   /* איילון · עמודים 4–5 — שאלון הכר את הלקוח, עמודה לכל לווה */
-  ay:{beneficiary:"",benName:"",benId:"",benRelation:"",
+  ay:{beneficiary:"הלווה",benName:"",benId:"",benRelation:"",
       refusedCredit:"",refusedCreditDetail:"",refusedAccount:"",refusedAccountDetail:"",
       bankrupt:"",bankruptDetail:"",incapacity:"",incapacityDetail:"",
       hasPoa:"",poaName:"",poaId:"",poaBirth:"",poaAddress:"",
@@ -1470,6 +1470,7 @@ function step6(){
        <div class="sig-h"><b>לווה ${i+1}${b.firstName?" · "+esc(b.firstName+" "+b.lastName):""}</b>
          <button type="button" class="ghost" data-sigclear="${i}">נקה</button></div>
        <canvas class="sigpad" data-sig="${i}" width="600" height="200"></canvas>
+       ${S.errors[`sig.${i}`]&&!SIG[i]?'<div class="msg">שדה חובה</div>':""}
      </div>`).join("")}</div>`);
   h += `<div class="send"><div class="send-h">הפקת המסמך ושליחה לחתימה</div><div class="send-b">
     <div class="flow">
@@ -1659,6 +1660,11 @@ function routeRequired(need){
       if(!b.marital)   need(1,L("מצב משפחתי"),B(i,"marital"));
       if(b.children===""||b.children==null) need(1,L("מספר ילדים"),B(i,"children"));
     }
+    if(pf==="clal-regular"||pf==="ayalon-reverse"){
+      if(!b.birthDate) need(1,L("תאריך לידה"),B(i,"birthDate"));
+      if(!b.marital)   need(1,L("מצב משפחתי"),B(i,"marital"));
+      if(!b.email)     need(1,L("דוא\"ל"),B(i,"email"));
+    }
     if(has("employment")){
       if(!b.employment) need(2,L("מצב תעסוקתי"),B(i,"employment"));
       if(working(b)){
@@ -1674,7 +1680,15 @@ function routeRequired(need){
     }
     if(pf==="clal-reverse"&&!b.incNone&&!["incWork","incAllowance","incRent","incPension","incAlimony","incOtherAmt"].some(k=>+b[k]>0))
       need(2,L("הכנסה חודשית (או סימון \"אין הכנסה\")"),B(i,"incWork"));
-    if(pf==="clal-reverse"&&!b.occupation) need(5,L("עיסוק / מקצוע (הכר את הלקוח)"),B(i,"occupation"));
+    if((pf==="clal-reverse"||pf==="clal-regular")&&!b.occupation) need(5,L("עיסוק / מקצוע (הכר את הלקוח)"),B(i,"occupation"));
+    if(pf==="ayalon-reverse"){
+      const a=b.ay||{}, K=k=>`borrowers.${i}.ay.${k}`;
+      if(!a.beneficiary) need(5,L("הצהרת נהנה"),K("beneficiary"));
+      [["refusedCredit","סירוב לאשראי"],["refusedAccount","סירוב לפתיחת חשבון"],["bankrupt","פשיטת רגל / חדלות פירעון"],["incapacity","פסלות דין / אפוטרופוס"],
+       ["hasPoa","מיופה כוח"],["pep","תפקיד ציבורי בכיר"],["pepFam","בן משפחה / שותף בתפקיד ציבורי"]]
+        .forEach(([k,t])=>{ if(!a[k]) need(5,L(`הכר את הלקוח — ${t}`),K(k)); });
+    }
+    if((pf==="clal-regular"||pf==="clal-reverse"||pf==="ayalon-reverse")&&!SIG[i]) need(6,L("חתימה"),`sig.${i}`);
     if(pf==="migdal"){
       const m=b.mk||{}, K=k=>`borrowers.${i}.mk.${k}`;
       [["originCountry","ארץ מוצא"],["residenceLocation","מיקום מגורים"],["occupationField","תחום עיסוק"],["seniorityYears","ותק במקום העבודה"],
@@ -1724,7 +1738,9 @@ function routeRequired(need){
 /* Scroll so a field sits just below the sticky bar + company band, and focus it. */
 function focusField(path){
   if(path==="purpose.refiBalance") path="collateral.0.mortgageBalance";
-  const el=path==="purpose.list"?document.querySelector("[data-purpose]"):document.querySelector(`[data-p="${CSS.escape(path)}"]`);
+  const el=path==="purpose.list"?document.querySelector("[data-purpose]")
+    :path.indexOf("sig.")===0?document.querySelector(`[data-sig="${+path.slice(4)}"]`)
+    :document.querySelector(`[data-p="${CSS.escape(path)}"]`);
   if(!el) return false;
   const box=el.closest(".f")||el.closest(".row")||el;
   const top=[...document.querySelectorAll(".bar,.coband")].filter(x=>!x.hidden).reduce((a,x)=>a+x.offsetHeight,0)+14;
@@ -2083,7 +2099,7 @@ function bindSigPad(cv){
   cv.onpointerdown=e=>{ drawing=true; dirty=true; last=pt(e); cv.setPointerCapture(e.pointerId); e.preventDefault(); };
   cv.onpointermove=e=>{ if(!drawing) return; const p=pt(e); ctx.beginPath(); ctx.moveTo(last[0],last[1]); ctx.lineTo(p[0],p[1]); ctx.stroke(); last=p; e.preventDefault(); };
   const end=()=>{ if(!drawing) return; drawing=false;
-    if(dirty){ const url=cv.toDataURL("image/png"), img=new Image(); img.onload=()=>{ SIG[i]={url,img}; }; img.src=url; } };
+    if(dirty){ const url=cv.toDataURL("image/png"), img=new Image(); img.onload=()=>{ const had=!!SIG[i]; SIG[i]={url,img}; if(!had){ delete S.errors[`sig.${i}`]; if(S.step===6){ const y=window.scrollY; render(); window.scrollTo(0,y); } } }; img.src=url; } };
   cv.onpointerup=end; cv.onpointerleave=end; cv.onpointercancel=end;
 }
 /* bounding box of the ink, so a small signature is not lost in a large empty canvas */
