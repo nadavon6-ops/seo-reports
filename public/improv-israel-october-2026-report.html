@@ -1,0 +1,878 @@
+<!-- wp:html -->
+<meta http-equiv="Content-Language" content="he">
+<script>document.documentElement.lang = 'he';</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+html, body, .wp-site-blocks, .page, .site, #page, #content, .site-content {
+    background: #0f172a !important; background-color: #0f172a !important; margin: 0 !important; padding: 0 !important;
+}
+@media (min-width: 1024px) {
+    .ult-container { width: 100vw !important; max-width: 100vw !important; margin-left: calc(-50vw + 50%) !important; margin-right: calc(-50vw + 50%) !important; padding: 0 !important; }
+    .ult-wrapper { width: 100% !important; max-width: 100% !important; padding: 20px 2% !important; margin: 0 !important; }
+    .ult-header { width: 100% !important; max-width: 100% !important; border-radius: 0 !important; margin: 0 0 25px 0 !important; }
+    .ult-section, .success-banner, .data-sources-strip, .hero-stats { width: 100% !important; max-width: 100% !important; }
+}
+body { background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important; padding-top: 0 !important; margin-top: 0 !important; min-height: 100vh !important; }
+html { background: #0f172a !important; direction: rtl !important; }
+html.admin-bar body, body.admin-bar { margin-top: 0 !important; padding-top: 0 !important; }
+.site, .wp-site-blocks, article, .entry-content, .wp-block-post-content, header.site-header, footer.site-footer, nav, .site-navigation, .wp-block-post-title, .entry-header, h1.entry-title { all: unset !important; display: block !important; }
+header, footer, nav, .site-header, .site-footer, .site-navigation, .wp-block-post-title, .entry-header, .entry-title { display: none !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
+html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; background: transparent !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important; }
+.entry-content, .wp-block-post-content, .wp-site-blocks, main, article { max-width: none !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; position: relative !important; left: 50% !important; right: 50% !important; margin-left: -50vw !important; margin-right: -50vw !important; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.ult-container { direction: rtl; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); min-height: 100vh; color: #e2e8f0; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+.ult-wrapper { max-width: 100%; width: 100%; margin: 0; padding: 20px 16px; }
+
+.ult-header { background: linear-gradient(135deg, #c2410c 0%, #ea580c 50%, #1e293b 100%); padding: 50px 25px; text-align: center; position: relative; overflow: hidden; border-radius: 0 0 30px 30px; margin-bottom: 25px; }
+.ult-header::before { content: ''; position: absolute; top: -100%; right: -50%; width: 200%; height: 300%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%); animation: headerPulse 6s ease-in-out infinite; }
+@keyframes headerPulse { 0%,100%{transform:scale(1) rotate(0deg);} 50%{transform:scale(1.1) rotate(5deg);} }
+.ult-header .version-badge { position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.8em; z-index: 10; }
+.ult-header .client-name { font-size: 2.8em; font-weight: 800; color: #fff; text-shadow: 2px 4px 12px rgba(0,0,0,0.3); margin-bottom: 10px; position: relative; z-index: 1; }
+.ult-header h1 { font-size: 1.8em; color: rgba(255,255,255,0.95); margin-bottom: 8px; position: relative; z-index: 1; }
+.ult-header .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.85); margin-bottom: 15px; position: relative; z-index: 1; }
+.ult-header .period-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px 30px; border-radius: 30px; font-size: 1.05em; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); position: relative; z-index: 1; }
+
+.success-banner { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 25px; animation: successPulse 3s ease-in-out infinite; }
+@keyframes successPulse { 0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(234,88,12,0.4);} 50%{transform:scale(1.01); box-shadow:0 0 20px 10px rgba(234,88,12,0.2);} }
+.success-banner .title { font-size: 1.8em; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.success-banner .subtitle { font-size: 1.1em; color: rgba(255,255,255,0.9); }
+
+.data-sources-strip { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 15px 20px; background: linear-gradient(135deg, rgba(234,88,12,0.15), rgba(194,65,12,0.1)); border: 1px solid rgba(234,88,12,0.3); border-radius: 16px; margin-bottom: 25px; }
+.data-source-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(0,0,0,0.2); border-radius: 20px; font-size: 0.85em; color: #fca5a5; }
+.data-source-item .icon { font-size: 1.2em; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: linear-gradient(135deg, rgba(14,165,233,0.15) 0%, rgba(6,182,212,0.08) 100%); border: 1px solid rgba(14,165,233,0.3); border-radius: 18px; padding: 22px 16px; text-align: center; }
+.kpi-card.red { background: linear-gradient(135deg, rgba(234,88,12,0.15) 0%, rgba(194,65,12,0.08) 100%); border-color: rgba(234,88,12,0.3); }
+.kpi-card.gold { background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 100%); border-color: rgba(251,191,36,0.3); }
+.kpi-card.green { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.08) 100%); border-color: rgba(34,197,94,0.3); }
+.kpi-card.purple { background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(124,58,237,0.08) 100%); border-color: rgba(139,92,246,0.3); }
+.kpi-card .icon { font-size: 2.2em; margin-bottom: 10px; }
+.kpi-card .value { font-size: 2em; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.1; }
+.kpi-card .secondary { font-size: 1.05em; color: #cbd5e1; margin-bottom: 6px; }
+.kpi-card .label { font-size: 0.85em; color: #94a3b8; margin-bottom: 8px; }
+.kpi-card .compare { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.kpi-card .compare.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.kpi-card .compare.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.kpi-card .compare.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+
+.ult-section { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 28px 24px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+.section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 2px solid rgba(234,88,12,0.4); }
+.section-icon { font-size: 2em; }
+.section-title h2 { margin: 0; font-size: 1.5em; color: #fff; font-weight: 700; }
+.section-title .desc { font-size: 0.9em; color: #94a3b8; margin-top: 4px; }
+
+.organic-highlight { background: linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border: 2px solid rgba(34,197,94,0.4); border-radius: 18px; padding: 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
+.organic-stat { text-align: center; }
+.organic-stat .value { font-size: 2em; font-weight: 800; color: #4ade80; margin-bottom: 6px; }
+.organic-stat .label { font-size: 0.9em; color: #94a3b8; }
+.organic-summary { text-align: center; padding: 18px; background: rgba(34,197,94,0.1); border-radius: 12px; font-size: 1.1em; line-height: 1.6; }
+.organic-summary strong { color: #4ade80; }
+
+.traffic-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 30px; align-items: start; }
+.traffic-chart-area { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 25px; min-width: 0; overflow: visible; }
+.traffic-breakdown { display: flex; flex-direction: column; gap: 10px; }
+.traffic-item { display: grid; grid-template-columns: 180px 1fr 90px 70px; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 14px; border-radius: 12px; gap: 15px; }
+.traffic-item:hover { background: rgba(255,255,255,0.08); transform: translateX(-5px); }
+.traffic-item .source { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.source-dot { width: 12px; height: 12px; border-radius: 50%; }
+.bar-container { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.bar { height: 100%; border-radius: 4px; }
+.traffic-item .users { font-weight: 700; font-size: 1.05em; text-align: left; }
+.traffic-item .pct { color: #94a3b8; font-size: 0.9em; text-align: left; }
+
+.keywords-category { background: rgba(0,0,0,0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+.keywords-category.brand { border-right: 4px solid #ea580c; }
+.keywords-category.nonbrand { border-right: 4px solid #8b5cf6; }
+.category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.cat-icon { font-size: 1.5em; }
+.cat-title { font-size: 1.2em; font-weight: 700; color: #fff; }
+.cat-count { margin-right: auto; background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; color: #94a3b8; }
+
+.kw-table { width: 100%; border-collapse: collapse; }
+.kw-table th { text-align: right; padding: 12px 10px; font-size: 0.85em; color: #64748b; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 600; }
+.kw-table td { padding: 14px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.kw-table tr:hover { background: rgba(255,255,255,0.03); }
+.kw-name { font-weight: 600; color: #e2e8f0; }
+.vol-badge { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+.pos-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 0 10px; border-radius: 18px; font-weight: 800; font-size: 0.95em; color: #fff; }
+.pos-badge.p1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
+.pos-badge.p2 { background: linear-gradient(135deg, #e5e7eb, #d1d5db); color: #1e293b; }
+.pos-badge.p3 { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1e293b; }
+.pos-badge.top5 { background: rgba(34,197,94,0.35); color: #86efac; }
+.pos-badge.top10 { background: rgba(59,130,246,0.35); color: #93c5fd; }
+.pos-badge.top20 { background: rgba(139,92,246,0.35); color: #c4b5fd; }
+.pos-badge.top50 { background: rgba(239,68,68,0.3); color: #fca5a5; }
+.pos-badge.out { background: rgba(100,116,139,0.35); color: #cbd5e1; }
+.change-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
+.change-badge.up { background: rgba(34,197,94,0.2); color: #4ade80; }
+.change-badge.down { background: rgba(239,68,68,0.2); color: #f87171; }
+.change-badge.stable { background: rgba(100,116,139,0.2); color: #94a3b8; }
+.clicks-badge { background: rgba(34,197,94,0.15); color: #4ade80; padding: 3px 9px; border-radius: 10px; font-size: 0.85em; font-weight: 600; }
+
+.pages-grid { display: flex; flex-direction: column; gap: 12px; }
+.page-row { display: grid; grid-template-columns: 50px 1fr 420px; align-items: center; background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; gap: 20px; }
+.page-row:hover { background: rgba(255,255,255,0.06); transform: translateX(-5px); }
+.page-rank { font-size: 1.4em; font-weight: 800; color: #ea580c; }
+.page-url { font-weight: 600; color: #e2e8f0; word-break: break-word; }
+.page-metrics { display: flex; gap: 15px; }
+.metric-card { background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 10px; text-align: center; min-width: 70px; }
+.metric-value { font-size: 1.1em; font-weight: 700; color: #fff; }
+.metric-label { font-size: 0.75em; color: #64748b; margin-top: 4px; }
+
+.ult-footer { text-align: center; padding: 30px 20px; margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+.ult-footer .brand { font-size: 1.3em; font-weight: 700; background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.ult-footer .info { color: #64748b; font-size: 0.9em; }
+
+.se-ranking-section { background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(124,58,237,0.05) 100%); border: 1px solid rgba(139,92,246,0.3); }
+.se-ranking-badge { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.75em; font-weight: 600; margin-right: 10px; }
+
+.comparison-block { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 20px; }
+.comp-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+.comp-card h4 { color: #fff; font-size: 1.05em; margin-bottom: 12px; }
+.comp-card table { width: 100%; }
+.comp-card td { padding: 6px 4px; font-size: 0.92em; color: #cbd5e1; }
+.comp-card td:last-child { text-align: left; font-weight: 600; }
+.comp-card span.up { color: #4ade80; }
+.comp-card span.down { color: #f87171; }
+.comp-card span.stable { color: #94a3b8; }
+
+.timeframes-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 25px; }
+.timeframe-card { background: rgba(0,0,0,0.25); border: 1px solid rgba(139,92,246,0.25); border-radius: 14px; padding: 16px 14px; text-align: center; }
+.tf-label { font-size: 1em; font-weight: 700; color: #c4b5fd; margin-bottom: 3px; }
+.tf-date { font-size: 0.75em; color: #64748b; margin-bottom: 12px; }
+.tf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.tf-stat { display: flex; flex-direction: column; align-items: center; }
+.tf-num { font-size: 1.4em; font-weight: 800; }
+.tf-cap { font-size: 0.7em; color: #94a3b8; margin-top: 2px; }
+.tf-bar-container { display: flex; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+.tf-bar { height: 100%; }
+.tf-bar-3 { background: #fbbf24; }
+.tf-bar-10 { background: #4ade80; }
+.tf-bar-20 { background: #60a5fa; }
+
+@media (max-width: 1024px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .organic-highlight { grid-template-columns: repeat(2, 1fr); }
+    .traffic-grid { grid-template-columns: 1fr; }
+    .page-row { grid-template-columns: 50px 1fr; }
+    .page-metrics { display: none; }
+    .timeframes-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+    .ult-header .client-name { font-size: 2em; }
+    .kw-table { font-size: 0.85em; }
+    .kw-table th, .kw-table td { padding: 8px 4px; }
+}
+.month-switcher { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; position: relative; z-index: 2; }
+.month-switcher .ms-label { color: rgba(255,255,255,0.8); font-size: 0.95em; margin-left: 6px; }
+.month-switcher .ms-btn { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9em; font-weight: 600; }
+.month-switcher .ms-btn:hover { background: rgba(255,255,255,0.25); }
+.month-switcher .ms-btn.active { background: rgba(234,88,12,0.5); border-color: rgba(234,88,12,0.8); }
+</style>
+
+<style>/* WP override rules use all:unset on ancestors, which kills inherited colour - any cell without its own colour renders black */ .ult-container td{color:#e2e8f0 !important;} .ult-container th{color:#94a3b8 !important;} .ult-container td b:not([style*="color"]),.ult-container td strong:not([style*="color"]){color:#fff !important;} .ult-container .kw-table th,.ult-container .kw-table td{text-align:center;} .ult-container .kw-table td.kw-name,.ult-container .kw-table th:first-child{text-align:right;}</style><div class="ult-container">
+    <div class="ult-header">
+        <div class="version-badge">Ultimate Report v3.0</div>
+        <div class="client-name">אימפרוב ישראל | Improv Israel</div>
+        <h1>דוח ביצועי SEO חודשי - אוקטובר 2026</h1>
+        <p class="subtitle">improvisrael.co.il | בית הספר לאימפרוב של ישראל | ניתוח תנועה, דירוגים ותובנות</p>
+        <div class="period-badge">אוקטובר 2026 | <bdi dir="ltr" style="white-space:nowrap">01/10/2026 - 31/10/2026</bdi> מול ספטמבר 2026</div>
+        <div class="month-switcher">
+            <span class="ms-label">חודשים זמינים:</span>
+            <a href="/improv-israel-september-2026" class="ms-btn">ספטמבר 2026</a>
+            <a href="/improv-israel-october-2026" class="ms-btn active">אוקטובר 2026</a>
+        </div>
+    </div>
+
+    <div class="ult-wrapper">
+        <div class="success-banner">
+            <div class="title">307 קליקים מגוגל (‎+44.8%) | 6,316 הופעות | 354 סשנים ב-GA4</div>
+            <div class="subtitle">214 סשנים אורגניים נמדדו ב-GA4 (גולשים שאישרו עוגיות) | 19 מילים במעקב ב-Top 10 | "אימפרוב ישראל" במיקום 1 עם 98 קליקים</div>
+        </div>
+
+        <div class="data-sources-strip">
+            <div class="data-source-item"><span class="icon">📊</span><span>GA4: 354 סשנים</span></div>
+            <div class="data-source-item"><span class="icon">🔍</span><span>GSC: 307 קליקים / 6,316 הופעות</span></div>
+            <div class="data-source-item"><span class="icon">📈</span><span>SE Ranking: 89 מילים במעקב</span></div>
+            <div class="data-source-item"><span class="icon">🏆</span><span>11 מילים ב-Top 3</span></div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="icon">🌱</div>
+                <div class="value">307</div>
+                <div class="label">תנועה אורגנית מגוגל (קליקים, GSC)</div>
+                <div class="secondary">CTR 4.86%</div>
+                <div class="compare up">‎+44.8% מול ספטמבר</div>
+            </div>
+            <div class="kpi-card red">
+                <div class="icon">🔍</div>
+                <div class="value">214</div>
+                <div class="label">סשנים אורגניים שנמדדו ב-GA4</div>
+                <div class="secondary">גולשים שאישרו עוגיות בלבד</div>
+                <div class="compare up">‎+87.7% מול ספטמבר</div>
+            </div>
+            <div class="kpi-card gold">
+                <div class="icon">👁️</div>
+                <div class="value">6,316</div>
+                <div class="label">הופעות בגוגל (GSC)</div>
+                <div class="secondary">204/יום ממוצע</div>
+                <div class="compare up">‎+29.4% מול ספטמבר</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="icon">🏆</div>
+                <div class="value">19</div>
+                <div class="label">מילות מפתח ב-Top 10</div>
+                <div class="secondary">מתוך 89 מילים במעקב</div>
+                <div class="compare up">17 בתחילת החודש</div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📊</span>
+                <div class="section-title">
+                    <h2>השוואת ביצועים חודשית (MoM)</h2>
+                    <div class="desc">אוקטובר 2026 מול ספטמבר 2026 | השוואה מקור מול מקור: GA4 מול GA4, GSC מול GSC</div>
+                </div>
+            </div>
+            <div class="comparison-block">
+                <div class="comp-card">
+                    <h4>📅 השוואה לחודש קודם (MoM) | ספטמבר 2026</h4>
+                    <table>
+                        <tr><td colspan="3" style="background:rgba(34,197,94,0.12); color:#86efac; font-weight:700; text-align:center; padding:6px;">GA4 | תנועה (מקור זהה)</td></tr>
+                        <tr><td>סה"כ סשנים</td><td>354 ↔ 214</td><td><span class="up">‎+65.4%</span></td></tr><tr><td>סשנים אורגניים ב-GA4 (Organic Search)</td><td>214 ↔ 114</td><td><span class="up">‎+87.7%</span></td></tr><tr><td>סשנים אורגניים עם מעורבות</td><td>133 ↔ 75</td><td><span class="up">‎+77.3%</span></td></tr><tr><td>שיעור מעורבות בתנועה האורגנית</td><td>62.1% ↔ 65.8%</td><td><span class="down">‎-3.6 נק'</span></td></tr><tr><td>Paid Social</td><td>44 ↔ 14</td><td><span class="up">‎+214.3%</span></td></tr><tr><td>Organic Social</td><td>48 ↔ 30</td><td><span class="up">‎+60.0%</span></td></tr><tr><td>Direct</td><td>29 ↔ 45</td><td><span class="down">‎-35.6%</span></td></tr><tr><td>AI Assistant</td><td>17 ↔ 7</td><td><span class="up">‎+142.9%</span></td></tr>
+                        <tr><td colspan="3" style="background:rgba(59,130,246,0.12); color:#93c5fd; font-weight:700; text-align:center; padding:6px;">GSC | קליקים והופעות (מקור זהה)</td></tr>
+                        <tr><td>קליקים GSC</td><td>307 ↔ 212</td><td><span class="up">‎+44.8%</span></td></tr><tr><td>הופעות GSC</td><td>6,316 ↔ 4,880</td><td><span class="up">‎+29.4%</span></td></tr><tr><td>CTR ממוצע</td><td>4.86% ↔ 4.34%</td><td><span class="up">‎+0.52 נק'</span></td></tr><tr><td>מיקום ממוצע</td><td>8 ↔ 7</td><td><span class="stable">ראו הסבר</span></td></tr><tr><td>קליקים Brand (אימפרוב ישראל)</td><td>98 ↔ 54</td><td><span class="up">‎+81.5%</span></td></tr><tr><td>קליקים Non-Brand</td><td>55 ↔ 55</td><td><span class="stable">‎0.0%</span></td></tr><tr><td>קליקים משאילתות של מותגים אחרים / לא קשורות</td><td>0 ↔ 2</td><td><span class="down">‎-100.0%</span></td></tr><tr><td>קליקים משאילתות שגוגל לא חושף</td><td>154 ↔ 101</td><td><span class="up">‎+52.5%</span></td></tr><tr><td>הופעות Brand</td><td>229 ↔ 99</td><td><span class="up">‎+131.3%</span></td></tr><tr><td>הופעות Non-Brand</td><td>3,024 ↔ 1,864</td><td><span class="up">‎+62.2%</span></td></tr><tr><td>הופעות משאילתות של מותגים אחרים / לא קשורות</td><td>730 ↔ 604</td><td><span class="up">‎+20.9%</span></td></tr><tr><td>הופעות משאילתות שגוגל לא חושף</td><td>2,333 ↔ 2,313</td><td><span class="up">‎+0.9%</span></td></tr>
+                    </table>
+                    <div style="margin-top:8px; font-size:0.8em; color:#94a3b8;">Brand, Non-Brand, שאילתות של מותגים אחרים והשאילתות שגוגל לא חושף מסתכמים יחד לסך הקליקים וההופעות. שאילתות של מותגים אחרים / לא קשורות הן בעיקר חיפושים של בתי ספר אחרים (למשל <bdi dir="ltr" style="white-space:nowrap">iscool</bdi>). נתוני GA4 לספטמבר הם החודש המלא <bdi dir="ltr" style="white-space:nowrap">1-30.9</bdi>, כפי שהופיעו בדוח הקודם.</div>
+                    <div style="margin-top:10px; padding:10px; background:rgba(59,130,246,0.12); border-radius:8px; font-size:0.85em; color:#93c5fd; line-height:1.6;">
+                        <b>מה קרה באוקטובר:</b> הקליקים מגוגל עלו ‎+44.8% (מ-212 ל-307). העלייה הגיעה מחיפושי המותג (מ-54 ל-98 קליקים) ומשאילתות שגוגל לא חושף (מ-101 ל-154). הקליקים מחיפושים כלליים (Non-Brand) נשארו 55, אבל ההופעות שלהם עלו ‎+62.2% (מ-1,864 ל-3,024), על 93 שאילתות שונות מול 84. המיקום הממוצע באתר עבר מ-7 ל-8 בגלל תמהיל השאילתות: בשאילתות שהופיעו בשני החודשים המיקום הממוצע עבר מ-9 ל-10, ו-53 שאילתות חדשות הוסיפו 310 הופעות במיקום ממוצע 12. ב-GA4 הסשנים האורגניים עלו ‎+87.7% (מ-114 ל-214), וסה"כ הסשנים עלו ‎+65.4%, גם בזכות סושיאל בתשלום (מ-14 ל-44) וסושיאל אורגני (מ-30 ל-48). יחס GSC/GA4-Organic = <b>1.43</b> באוקטובר (מול 1.86 בספטמבר), בתוך הטווח <bdi dir="ltr" style="white-space:nowrap">0.5-1.5</bdi>. מדד GA4 בדוח הוא <b>סשנים</b> (העמודה "פעילויות באתר" בייצוא).
+                    </div>
+                    <div style="margin-top:10px; padding:10px; background:rgba(234,88,12,0.12); border-radius:8px; font-size:0.85em; color:#fdba74; line-height:1.6;">
+                        <b>פער מדידה בין גוגל ל-GA4:</b> Google Search Console מדווח על 307 קליקים מתוצאות החיפוש האורגניות, ו-GA4 מדד 214 סשנים אורגניים. 93 קליקים (30.3%) לא נקלטו ב-GA4. חלק גדול מהפער נובע מהסכמה לעוגיות: באתר פועל באנר הסכמה לעוגיות (CookieYes), ו-GA4 אינו מודד באופן מלא גולשים שלא אישרו עוגיות סטטיסטיקה, בעוד ש-Search Console סופר כל קליק מגוגל בלי תלות בעוגיות. לכן הנתון של Search Console משקף טוב יותר את התנועה האורגנית בפועל, וסביר שחסר דומה קיים גם בשאר ערוצי GA4.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <div class="section-title">
+                    <h2>תנועה אורגנית מגוגל</h2>
+                    <div class="desc">קליקים מגוגל (GSC) הם נתון הייחוס | ב-GA4 החיפוש האורגני הוא הערוץ הגדול באתר, 60.5% מהסשנים</div>
+                </div>
+            </div>
+            <div class="organic-highlight">
+                <div class="organic-stat"><div class="value">307</div><div class="label">קליקים מגוגל (GSC)</div></div>
+                <div class="organic-stat"><div class="value">214</div><div class="label">סשנים אורגניים (נמדד ב-GA4)</div></div>
+                <div class="organic-stat"><div class="value">4.86%</div><div class="label">CTR ממוצע</div></div>
+                <div class="organic-stat"><div class="value">227</div><div class="label">קליקים מנייד (73.9%)</div></div>
+            </div>
+            <div class="organic-summary">
+                <strong>גוגל שלח לאתר 307 קליקים</strong> באוקטובר, ממוצע של <strong>9.9</strong> קליקים ביום מול 7.1 בספטמבר. ה-CTR עלה ל-<strong>4.86%</strong> (מול 4.34%). חיפוש המותג "אימפרוב ישראל" הביא <strong>98 קליקים</strong> (מול 54) במיקום 1, והמילה הכללית "אימפרוב" הביאה 27 קליקים (מול 22) במיקום ממוצע 4 בגוגל (מול 2). מהנייד הגיעו 227 קליקים (73.9%), מהמחשב השולחני 80 ומטאבלט 0. ב-GA4 נמדדו 214 סשנים אורגניים, מתוכם 133 עם מעורבות (מול 75 בספטמבר); משך ההתעניינות הממוצע בסשן אורגני: <strong>44 שניות</strong> (מול 49 שניות). GA4 עדיין לא מודד המרות באתר: 0 אירועים מרכזיים בכל הערוצים.
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div class="section-title">
+                    <h2>מקורות תנועה - התמונה המלאה</h2>
+                    <div class="desc">פילוח כל הערוצים | מקור: GA4 (6 ערוצים פעילים) | נמדד אצל גולשים שאישרו עוגיות</div>
+                </div>
+                <div class="total-badge" style="margin-right: auto; background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); color: white; padding: 12px 24px; border-radius: 12px; text-align: center;">
+                    <div style="font-size: 1.8em; font-weight: 800;">354</div>
+                    <div style="font-size: 0.85em; opacity: 0.9;">סה"כ סשנים</div>
+                </div>
+            </div>
+            <div class="traffic-grid">
+                <div class="traffic-chart-area"><canvas id="trafficChart" height="300"></canvas></div>
+                <div class="traffic-breakdown">
+                    <div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #22c55e;"></span><span>חיפוש אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 100%; background: #22c55e;"></div></div>
+                        <div class="users">214</div>
+                        <div class="pct">60.5%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #8b5cf6;"></span><span>סושיאל אורגני</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 22%; background: #8b5cf6;"></div></div>
+                        <div class="users">48</div>
+                        <div class="pct">13.6%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #ec4899;"></span><span>סושיאל בתשלום</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 21%; background: #ec4899;"></div></div>
+                        <div class="users">44</div>
+                        <div class="pct">12.4%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #3b82f6;"></span><span>ישיר</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 14%; background: #3b82f6;"></div></div>
+                        <div class="users">29</div>
+                        <div class="pct">8.2%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #06b6d4;"></span><span>AI Assistant</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 8%; background: #06b6d4;"></div></div>
+                        <div class="users">17</div>
+                        <div class="pct">4.8%</div>
+                    </div><div class="traffic-item">
+                        <div class="source"><span class="source-dot" style="background: #10b981;"></span><span>הפניה (Referral)</span></div>
+                        <div class="bar-container"><div class="bar" style="width: 1%; background: #10b981;"></div></div>
+                        <div class="users">2</div>
+                        <div class="pct">0.6%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="keywords-category" style="border-right-color:#22c55e; margin-top:20px;">
+                <div class="category-header">
+                    <span class="cat-icon">📊</span>
+                    <span class="cat-title">פילוח ערוצים: אוקטובר 2026 מול ספטמבר 2026</span>
+                    <span class="cat-count">סשנים לפי ערוץ</span>
+                </div>
+                <div style="overflow-x:auto;">
+                <table class="kw-table">
+                    <thead><tr><th>ערוץ</th><th>אוקטובר</th><th>ספטמבר</th><th>שינוי</th></tr></thead>
+                    <tbody><tr><td class="kw-name">חיפוש אורגני</td><td>214</td><td>114</td><td><span class="change-badge up">‎+87.7%</span></td></tr><tr><td class="kw-name">סושיאל אורגני</td><td>48</td><td>30</td><td><span class="change-badge up">‎+60.0%</span></td></tr><tr><td class="kw-name">סושיאל בתשלום</td><td>44</td><td>14</td><td><span class="change-badge up">‎+214.3%</span></td></tr><tr><td class="kw-name">ישיר</td><td>29</td><td>45</td><td><span class="change-badge down">‎-35.6%</span></td></tr><tr><td class="kw-name">AI Assistant</td><td>17</td><td>7</td><td><span class="change-badge up">‎+142.9%</span></td></tr><tr><td class="kw-name">הפניה (Referral)</td><td>2</td><td>0</td><td><span class="change-badge up">חדש</span></td></tr><tr><td class="kw-name">לא מסווג</td><td>0</td><td>4</td><td><span class="change-badge down">‎-100.0%</span></td></tr><tr><td class="kw-name"><b>סה"כ</b></td><td><b>354</b></td><td><b>214</b></td><td><span class="change-badge up">‎+65.4%</span></td></tr></tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section se-ranking-section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <div class="section-title">
+                    <h2>מגמת דירוגים - SE Ranking <span class="se-ranking-badge">2 נקודות מדידה</span></h2>
+                    <div class="desc">89 מילים במעקב | גוגל ישראל, מחשב ונייד | מקור: SE Ranking, וגם הממוצע החודשי ב-GSC</div>
+                </div>
+            </div>
+
+            <div class="timeframes-grid" style="grid-template-columns:repeat(2,1fr);">
+                <div class="timeframe-card">
+                    <div class="tf-label">תחילת החודש</div>
+                    <div class="tf-date">הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">27.09-03.10.2026</bdi></div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">4</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">17</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">19</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">68</span><span class="tf-cap">לא מדורג</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:4%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:15%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:2%;"></div>
+                    </div>
+                </div>
+                <div class="timeframe-card">
+                    <div class="tf-label">נוכחי</div>
+                    <div class="tf-date">הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi></div>
+                    <div class="tf-stats">
+                        <div class="tf-stat"><span class="tf-num" style="color:#fbbf24;">11</span><span class="tf-cap">Top 3</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#4ade80;">19</span><span class="tf-cap">Top 10</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#60a5fa;">22</span><span class="tf-cap">Top 20</span></div>
+                        <div class="tf-stat"><span class="tf-num" style="color:#94a3b8;">66</span><span class="tf-cap">לא מדורג</span></div>
+                    </div>
+                    <div class="tf-bar-container">
+                        <div class="tf-bar tf-bar-3" style="width:12%;"></div>
+                        <div class="tf-bar tf-bar-10" style="width:9%;"></div>
+                        <div class="tf-bar tf-bar-20" style="width:3%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:12px; margin-bottom:20px; font-size:0.9em; color:#cbd5e1; line-height:1.7;">
+                🏆 <b>סיכום שינוי חודשי (הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">27.09-03.10.2026</bdi> ← הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi>):</b>
+                <span style="color:#4ade80; font-weight:700;">↑ 13 מילים עלו</span> |
+                <span style="color:#f87171; font-weight:700;">↓ 5 מילים ירדו</span> |
+                <span style="color:#94a3b8; font-weight:700;">= 3 שמרו על מיקומן</span> |
+                <span style="color:#93c5fd; font-weight:700;">✨ 2 נכנסו לדירוג</span> |
+                <span style="color:#94a3b8; font-weight:700;">0 יצאו מהדירוג</span> |
+                <span style="color:#94a3b8; font-weight:700;">66 עדיין מחוץ ל-100 הראשונים</span>
+                <div style="margin-top:8px; color:#94a3b8; font-size:0.95em;">📏 <b>איך נמדד המיקום:</b> המיקום של כל מילה הוא <b>המיקום הטוב ביותר שנמדד בשבוע</b>, מבין שני מקורות: בדיקות SE Ranking היומיות בדסקטופ ובמובייל, והמיקום הממוצע של אותה שאילתה ב-Search Console לכל החודש (רק כשהיו לה 10 הופעות ומעלה). המיקום הנוכחי נמדד ב-<bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi> מול אוקטובר ב-GSC, והמיקום בתחילת החודש ב-<bdi dir="ltr" style="white-space:nowrap">27.09-03.10.2026</bdi> מול ספטמבר ב-GSC. לגוגל אין כאן נתונים יומיים, ולכן הצד של GSC הוא הממוצע החודשי. רוב המילים נבדקו לראשונה ב-<bdi dir="ltr" style="white-space:nowrap">03.10.2026</bdi>, ואצלן נקודת ההשוואה היא הבדיקה הזו בלבד. נקודת ההשוואה חושבה מחדש בשיטה זו, ולכן היא יכולה להיות שונה מהנתונים שהופיעו בדוח ספטמבר. מיקום שמקורו ב-GSC מסומן GSC. מאחר שנלקחת התוצאה הטובה ביותר בשבוע, מיקום נוכחי גבוה יכול לשקף יום בודד; הממוצע החודשי ב-GSC מופיע בטבלאות GSC בהמשך.</div>
+            </div>
+
+            <div class="keywords-category" style="border-right-color:#8b5cf6;">
+                <div class="category-header">
+                    <span class="cat-icon">📊</span>
+                    <span class="cat-title">מילות מפתח מדורגות - 23 מתוך 89</span>
+                    <span class="cat-count">ממוינות לפי המיקום הנוכחי (הטוב ביותר קודם)</span>
+                </div>
+                <div style="overflow-x:auto;">
+                <table class="kw-table">
+                    <thead>
+                        <tr>
+                            <th>מילת מפתח</th>
+                            <th>נפח חיפוש חודשי</th>
+                            <th>תחילת החודש: הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">27.09-03.10.2026</bdi></th>
+                            <th style="color:#a78bfa;">נוכחי: הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi></th>
+                            <th>שינוי חודשי</th>
+                            <th>עמוד מדורג (בדיקה אחרונה)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                                <td class="kw-name">אימפרוב</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוב ישראל</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">סדנאות אימפרוביזציה</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge up">↑ 7</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/experts/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">תיאטרון אימפרוביזציה</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top10">8</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge up">↑ 7</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">קורס אלתור</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td><span class="pos-badge top10">10</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge up">↑ 9</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/school/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">מה זה סדנת אלתור</td>
+                                <td><span class="vol-badge">0</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה פירוש</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="change-badge up">↑ 5</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr">/‎ההיסטוריה-‎של-‎האימפרוביזציה/‎</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה תל אביב</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td><span class="pos-badge p2">2</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="change-badge down">↓ 1</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/‎בלוג/‎</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">אלתור</td>
+                                <td><span class="vol-badge">260</span></td>
+                                <td><span class="pos-badge top10">7</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="change-badge up">↑ 4</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אימפרוב</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="change-badge up">↑ 6</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/beginners/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">קורס אימפרוביזציה</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td><span class="pos-badge top10">9</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="change-badge up">↑ 6</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/‎בלוג/‎</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="change-badge down">↓ 1</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/‎בלוג/‎</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אלתור</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="change-badge up">↑ 4</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/experts/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">שיעורי אימפרוביזציה</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="change-badge up">↑ 4</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/‎tag/‎סדנאות-‎למבוגרים/‎</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אימפרוביזציה</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge top10">8</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="change-badge up">↑ 3</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/experts/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אימפרוביזציה תל אביב</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top20">16</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="pos-badge top5">5</span></td>
+                                <td><span class="change-badge up">↑ 11</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/school/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">איפה לומדים אימפרוביזציה</td>
+                                <td><span class="vol-badge">0</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="change-badge stable">=</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אילתורים</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top20">19</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="change-badge up">↑ 13</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">אילתור</td>
+                                <td><span class="vol-badge">260</span></td>
+                                <td><span class="pos-badge top50">33</span></td>
+                                <td><span class="pos-badge top10">10</span></td>
+                                <td><span class="change-badge up">↑ 23</span></td>
+                                <td style="font-size:0.85em;"><bdi dir="ltr" style="white-space:nowrap">/experts/</bdi></td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרו</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td><span class="pos-badge out">-</span></td>
+                                <td><span class="pos-badge top20">11</span></td>
+                                <td><span class="change-badge up">✨ נכנס לדירוג</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">מופע אימפרוביזציה</td>
+                                <td><span class="vol-badge">50</span></td>
+                                <td><span class="pos-badge top10">6</span></td>
+                                <td><span class="pos-badge top20">12</span></td>
+                                <td><span class="change-badge down">↓ 6</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">תיאטרון האימפרוב</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td><span class="pos-badge top10">9</span></td>
+                                <td><span class="pos-badge top20">14</span></td>
+                                <td><span class="change-badge down">↓ 5</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr><tr>
+                                <td class="kw-name">משחקי אלתור</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td><span class="pos-badge top50">22</span></td>
+                                <td><span class="pos-badge top50">24</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="change-badge down">↓ 2</span></td>
+                                <td style="font-size:0.85em;">עמוד הבית</td>
+                            </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+            <div class="keywords-category" style="border-right-color:#64748b;">
+                <div class="category-header">
+                    <span class="cat-icon">🚀</span>
+                    <span class="cat-title">מילות יעד מחוץ ל-100 הראשונים - 66 מילים</span>
+                    <span class="cat-count">נפח חיפוש חודשי ליד כל מילה</span>
+                </div>
+                <div style="line-height:2;"><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פלייבק <b style="color:#93c5fd;">810</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי היכרות <b style="color:#93c5fd;">590</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">תיאטרון פלייבק <b style="color:#93c5fd;">480</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום גיבוש <b style="color:#93c5fd;">390</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום גיבוש לצוות קטן <b style="color:#93c5fd;">390</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">מיומנויות חברתיות <b style="color:#93c5fd;">390</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">לימודי משחק <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש לעובדים <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש לצוות קטן <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש לעובדים <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש לצוות עובדים <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש לצוות קטן <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">קורס משחק <b style="color:#93c5fd;">320</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">טיפול פסיכודרמה <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום כיף לעובדים <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום כיף לצוות עובדים <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ימי גיבוש לעובדים <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">מופנמת <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחק גיבוש <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי גיבוש <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי גיבוש קלילים <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש לצוות <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש לצוות <b style="color:#93c5fd;">260</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ערב גיבוש <b style="color:#93c5fd;">210</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">קבוצות תמיכה <b style="color:#93c5fd;">210</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">חרדה חברתית טיפול עצמי <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">טיפול בחרדה חברתית <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנא לעובדים <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנאות גיבוש <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנאות גיבוש לעובדים <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנאות לעובדים <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנאות לצוות עובדים <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנת גיבוש <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנת גיבוש לעובדים <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש לקבוצה <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילויות גיבוש לקבוצות <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פעילות גיבוש לקבוצה <b style="color:#93c5fd;">170</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">פסיכודרמה <b style="color:#93c5fd;">160</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">גיבוש צוות <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">חוג תיאטרון <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">חרדה חברתית טיפול <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום כיף לחברה <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">יום כיף לחברות <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ימי גיבוש לעובדים רעיונות <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ימי כיף <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ימי כיף לעובדים <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנאות לחברות <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ערב צוות <b style="color:#93c5fd;">140</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ימי גיבוש <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי גיבוש מצחיקים <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי היכרות לקבוצה <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">משחקי היכרות מצחיקים <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סדנת משחק <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ערב גיבוש לעובדים <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ערב גיבוש לצוות עובדים <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">ערבי גיבוש לעובדים <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">קורס דיבור מול קהל <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">קורס עמידה מול קהל <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">רעיונות לגיבוש צוות <b style="color:#93c5fd;">110</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">סטודיו למשחק <b style="color:#93c5fd;">90</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">קורס משחק למתחילים <b style="color:#93c5fd;">90</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">בית ספר למשחק באר שבע <b style="color:#93c5fd;">70</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">בית ספר למשחק תל אביב <b style="color:#93c5fd;">70</b></span><span style="display:inline-block; background:rgba(100,116,139,0.18); color:#cbd5e1; border-radius:10px; padding:4px 10px; margin:3px; font-size:0.85em;">חוג תיאטרון למבוגרים <b style="color:#93c5fd;">70</b></span></div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">🔑</span>
+                <div class="section-title">
+                    <h2>מילות מפתח מובילות ב-GSC | Brand מול Non-Brand</h2>
+                    <div class="desc">פילוח הקליקים ממנוע החיפוש לפי סוג מילת מפתח | מקור: GSC | בטבלאות: שאילתות עם 10 הופעות ומעלה</div>
+                </div>
+            </div>
+
+            <div class="cat-tables-grid">
+                <div class="keywords-category brand">
+                    <div class="category-header">
+                        <span class="cat-icon">🏷️</span>
+                        <span class="cat-title">מותג (Brand) | אימפרוב ישראל</span>
+                        <span class="cat-count">2 וריאציות | 98 קליקים (64.1% מהקליקים בשאילתות המזוהות)</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="kw-table">
+                        <thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>הופעות (אוקטובר)</th><th>מיקום: הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi></th><th>קליקים (אוקטובר)</th><th>קליקים (ספטמבר)</th></tr></thead>
+                        <tbody><tr>
+                                <td class="kw-name">אימפרוב ישראל</td>
+                                <td><span class="vol-badge">70</span></td>
+                                <td>228</td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">98</span></td>
+                                <td>54</td>
+                            </tr></tbody>
+                    </table>
+                    </div>
+                </div>
+
+                <div class="keywords-category nonbrand">
+                    <div class="category-header">
+                        <span class="cat-icon">🌐</span>
+                        <span class="cat-title">גנרי (Non-Brand) | חיפושים כלליים</span>
+                        <span class="cat-count">93 שאילתות | 3,024 הופעות | 55 קליקים (35.9% מהקליקים בשאילתות המזוהות)</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                    <table class="kw-table">
+                        <thead><tr><th>מילת מפתח</th><th>נפח חיפוש חודשי</th><th>הופעות (אוקטובר)</th><th>מיקום: הטוב ביותר <bdi dir="ltr" style="white-space:nowrap">26.10-01.11.2026</bdi></th><th>קליקים (אוקטובר)</th><th>קליקים (ספטמבר)</th></tr></thead>
+                        <tbody><tr>
+                                <td class="kw-name">אימפרוב</td>
+                                <td><span class="vol-badge">210</span></td>
+                                <td>275</td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">27</span></td>
+                                <td>22</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוב חיפה</td>
+                                <td><span style="color:#94a3b8;">אין נתון</span></td>
+                                <td>12</td>
+                                <td><span class="pos-badge p1">1</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="clicks-badge">6</span></td>
+                                <td>6</td>
+                            </tr><tr>
+                                <td class="kw-name">קורס אימפרוביזציה</td>
+                                <td><span class="vol-badge">110</span></td>
+                                <td>170</td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">4</span></td>
+                                <td>6</td>
+                            </tr><tr>
+                                <td class="kw-name">קורס אלתור</td>
+                                <td><span class="vol-badge">20</span></td>
+                                <td>129</td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                                <td>1</td>
+                            </tr><tr>
+                                <td class="kw-name">חוג אימפרוביזציה</td>
+                                <td><span style="color:#94a3b8;">אין נתון</span></td>
+                                <td>48</td>
+                                <td><span class="pos-badge top20">11</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                                <td>2</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה ירושלים</td>
+                                <td><span style="color:#94a3b8;">אין נתון</span></td>
+                                <td>18</td>
+                                <td><span class="pos-badge top10">6</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="clicks-badge">3</span></td>
+                                <td>0</td>
+                            </tr><tr>
+                                <td class="kw-name">קורס אימפרוב</td>
+                                <td><span style="color:#94a3b8;">אין נתון</span></td>
+                                <td>16</td>
+                                <td><span class="pos-badge p2">2</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="clicks-badge">2</span></td>
+                                <td>5</td>
+                            </tr><tr>
+                                <td class="kw-name">סדנת אלתור</td>
+                                <td><span class="vol-badge">30</span></td>
+                                <td>137</td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>0</td>
+                            </tr><tr>
+                                <td class="kw-name">סדנאות אימפרוביזציה</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td>136</td>
+                                <td><span class="pos-badge p1">1</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>1</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה תל אביב</td>
+                                <td><span class="vol-badge">40</span></td>
+                                <td>87</td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>0</td>
+                            </tr><tr>
+                                <td class="kw-name">שיעורי אימפרוביזציה</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td>65</td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>0</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרו</td>
+                                <td><span class="vol-badge">170</span></td>
+                                <td>65</td>
+                                <td><span class="pos-badge top20">11</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>0</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוב תל אביב</td>
+                                <td><span style="color:#94a3b8;">אין נתון</span></td>
+                                <td>15</td>
+                                <td><span class="pos-badge top5">4</span> <span style="font-size:0.72em;color:#93c5fd;font-weight:600;">GSC</span></td>
+                                <td><span class="clicks-badge">1</span></td>
+                                <td>3</td>
+                            </tr><tr>
+                                <td class="kw-name">אימפרוביזציה</td>
+                                <td><span class="vol-badge">10</span></td>
+                                <td>283</td>
+                                <td><span class="pos-badge top5">4</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                                <td>3</td>
+                            </tr><tr>
+                                <td class="kw-name">אלתור</td>
+                                <td><span class="vol-badge">260</span></td>
+                                <td>278</td>
+                                <td><span class="pos-badge p3">3</span></td>
+                                <td><span class="clicks-badge">0</span></td>
+                                <td>0</td>
+                            </tr></tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:10px; font-size:0.82em; color:#94a3b8;">בנוסף, 15 שאילתות של בתי ספר ומותגים אחרים או חיפושים לא קשורים (730 הופעות, 0 קליקים) אינן נכללות בטבלאות ובסיכום. מילים שאינן במעקב SE Ranking מקבלות את המיקום הממוצע שלהן ב-GSC לאוקטובר (מסומן GSC).</div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">📄</span>
+                <div class="section-title">
+                    <h2>עמודים מובילים</h2>
+                    <div class="desc">העמודים שמביאים הכי הרבה תנועה אורגנית באוקטובר 2026 | מקור: GSC</div>
+                </div>
+            </div>
+            <div class="pages-grid">
+                <div class="page-row">
+                    <div class="page-rank">#1</div>
+                    <div class="page-url">עמוד הבית</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">237</div><div class="metric-label">קליקים (ספטמבר: 152)</div></div>
+                        <div class="metric-card"><div class="metric-value">4,238</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">5.59%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">7</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#2</div>
+                    <div class="page-url"><bdi dir="ltr" style="white-space:nowrap">/beginners/</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">23</div><div class="metric-label">קליקים (ספטמבר: 16)</div></div>
+                        <div class="metric-card"><div class="metric-value">756</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">3.04%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">33</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#3</div>
+                    <div class="page-url"><bdi dir="ltr" style="white-space:nowrap">/teachers/</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">17</div><div class="metric-label">קליקים (ספטמבר: 13)</div></div>
+                        <div class="metric-card"><div class="metric-value">1,260</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.35%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">40</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#4</div>
+                    <div class="page-url">עמוד הבית (http)</div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">קליקים (ספטמבר: 2)</div></div>
+                        <div class="metric-card"><div class="metric-value">1,304</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.61%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">6</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#5</div>
+                    <div class="page-url"><bdi dir="ltr">/product/improv-beginners-haifa218/</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">8</div><div class="metric-label">קליקים (ספטמבר: 9)</div></div>
+                        <div class="metric-card"><div class="metric-value">400</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">2.00%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">59</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#6</div>
+                    <div class="page-url"><bdi dir="ltr" style="white-space:nowrap">/contact/</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">5</div><div class="metric-label">קליקים (ספטמבר: 2)</div></div>
+                        <div class="metric-card"><div class="metric-value">269</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">1.86%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">2</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#7</div>
+                    <div class="page-url"><bdi dir="ltr" style="white-space:nowrap">/advanced/</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">3</div><div class="metric-label">קליקים (ספטמבר: 5)</div></div>
+                        <div class="metric-card"><div class="metric-value">869</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">0.35%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">60</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div><div class="page-row">
+                    <div class="page-rank">#8</div>
+                    <div class="page-url"><bdi dir="ltr">/‎product/‎קורס-‎מתחילים-‎באר-‎שבע/‎</bdi></div>
+                    <div class="page-metrics">
+                        <div class="metric-card"><div class="metric-value">3</div><div class="metric-label">קליקים (ספטמבר: 1)</div></div>
+                        <div class="metric-card"><div class="metric-value">28</div><div class="metric-label">הופעות</div></div>
+                        <div class="metric-card"><div class="metric-value">10.71%</div><div class="metric-label">CTR</div></div>
+                        <div class="metric-card"><div class="metric-value">4</div><div class="metric-label">מיקום</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ult-section">
+            <div class="section-header">
+                <span class="section-icon">💡</span>
+                <div class="section-title">
+                    <h2>תובנות ומסקנות</h2>
+                    <div class="desc">סיכום מנהלים לחודש אוקטובר 2026</div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                <div style="background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#4ade80; margin-bottom:10px;">מגמות חיוביות</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• <b>המותג מביא כמעט פי שניים קליקים</b>: "אימפרוב ישראל" במיקום 1 עם 98 קליקים מול 54 בספטמבר, ו-228 הופעות מול 98</li><li>• <b>החשיפה בחיפושים כלליים עלתה ‎+62.2%</b>: 3,024 הופעות מול 1,864, על 93 שאילתות שונות מול 84</li><li>• <b>שיפור במיקום הממוצע בגוגל על מילות הקורסים</b>: "קורס אימפרוביזציה" (נפח 110) מ-9 ל-7 עם 170 הופעות, "סדנת אימפרוביזציה" (נפח 170) מ-16 ל-13, ו"אלתור" (נפח 260) מ-7 ל-6</li><li>• <b>בטבלת הדירוגים: 19 מילים ב-Top 10 מול 17 בתחילת החודש</b>, ו-11 ב-Top 3 מול 4; 13 מילים עלו ו-5 ירדו</li><li>• <b>השינויים מאוקטובר כבר באתר</b> (נבדק ב-<bdi dir="ltr" style="white-space:nowrap">01.11.2026</bdi>): הכותרות החדשות בעמוד הבית, בעמוד בית הספר, במאמר "מה זה אימפרוביזציה", בעמוד המופעים ובמאמר על פלייבק; 12 עמודי מחזורים שהסתיימו מופנים לעמודי הרמות, עמוד החנות מופנה לעמוד בית הספר, ועמודי המוצר, הסל והתשלום יצאו ממפת האתר</li><li>• <b>GA4: הסשנים האורגניים עלו ‎+87.7%</b> (מ-114 ל-214), והסשנים עם מעורבות עלו מ-75 ל-133; גם התנועה מעוזרי AI עלתה (מ-7 ל-17 סשנים)</li>
+                    </ul>
+                </div>
+                <div style="background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.3); border-radius:14px; padding:18px;">
+                    <div style="font-size:1.1em; font-weight:700; color:#7dd3fc; margin-bottom:10px;">המלצות פעולה לנובמבר</div>
+                    <ul style="list-style:none; padding:0; margin:0; color:#cbd5e1; font-size:0.92em; line-height:1.8;">
+                        <li>• <b>לקשר מעמוד הבית למאמר "מה זה אימפרוביזציה"</b> (<bdi dir="ltr" style="white-space:nowrap">/‎ההיסטוריה-‎של-‎האימפרוביזציה‎/</bdi>): "אלתור" ו"אימפרוביזציה" קיבלו יחד 561 הופעות באוקטובר ואפס קליקים, ובבדיקה האחרונה של SE Ranking העמוד המדורג על "אלתור" הוא עמוד הבית ועל "אימפרוביזציה" <bdi dir="ltr" style="white-space:nowrap">/‎בלוג/‎</bdi>. המאמר שעונה בדיוק על החיפושים האלה מופיע בגוגל במיקום ממוצע 51 על כל החיפושים שלו (395 הופעות), ועמוד הבית ועמוד בית הספר לא מקשרים אליו. בסוף פסקת "אימפרוביזציה What?!" בעמוד הבית, אחרי "ולתקשר בצורה טובה ומקרבת יותר.", להוסיף: "רוצים להכיר את הסיפור המלא? <u>מה זה אימפרוביזציה ומאיפה היא הגיעה</u>", עם קישור מהטקסט המסומן למאמר</li><li>• <b>לקשר מעמוד הבית לעמוד בית הספר עם שם הקורס</b> (<bdi dir="ltr" style="white-space:nowrap">/school/</bdi>): מילות הקורס ("קורס אימפרוביזציה", "קורס אלתור", "חוג אימפרוביזציה", "קורס אימפרוב") קיבלו 363 הופעות ו-12 קליקים, אבל עמוד בית הספר, שהכותרת שלו כבר "קורס אימפרוביזציה ואלתור בארבע רמות", מופיע בגוגל במיקום ממוצע 48 על כל החיפושים שלו, ו-SE Ranking מראה את הבלוג ואת עמוד הבית על "קורס אימפרוביזציה". עמוד הבית מקשר לבית הספר רק מהתפריט ("בית הספר"). בפסקה "הקורסים שלנו" להוסיף בסוף: "כל הרמות, הערים והמועדים בעמוד <u>קורסי אימפרוביזציה בארבע רמות</u>", עם קישור מהטקסט המסומן ל-<bdi dir="ltr" style="white-space:nowrap">/school/</bdi></li><li>• <b>להסתיר מגוגל את עמודי התגיות</b>: 25 עמודי תגית קיבלו 268 הופעות באוקטובר (מול 60 בספטמבר), ו-SE Ranking הציג באוקטובר את <bdi dir="ltr" style="white-space:nowrap">/‎tag/‎סדנאות-‎תיאטרון/‎</bdi> כעמוד המדורג על "אימפרוב" (נפח 210), המילה הכללית עם הכי הרבה קליקים, שהמיקום הממוצע שלה ירד מ-2 ל-4; באותו חודש SE Ranking רשם באוקטובר 7 עמודים שונים של האתר כעמוד המדורג עליה. ב-Yoast, תחת Settings ← Taxonomies ← Tags, לכבות את "Show tags in search results". כך 111 עמודי התגית יוצאים גם ממפת האתר. כך גם ב-Content types ← course_card (5 עמודים כפולים לעמודי הקורסים)</li>
+                    </ul>
+                    <div style="margin-top:10px; font-size:0.85em; color:#94a3b8; line-height:1.6;">מהדוח של ספטמבר: נתוני GSC מוצגים כעת בהשוואה חודשית, ונקודת המדידה של מילות המעקב נמדדת בדוח הזה. החיפושים מחוץ לרשימת המעקב שהוזכרו בספטמבר ("אימפרוביזציות", "מופע אלתור", "<bdi dir="ltr" style="white-space:nowrap">improv theater israel</bdi>") קיבלו באוקטובר 11, 12 ו-0 הופעות, ולכן לא נכנסו להמלצות.</div>
+                </div>
+            </div>
+        </div><div class="ult-footer">
+            <div class="brand">NC Digital</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('trafficChart').getContext('2d');
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ["חיפוש אורגני", "סושיאל אורגני", "סושיאל בתשלום", "ישיר", "AI Assistant", "הפניה (Referral)"],
+        datasets: [{
+            data: [214, 48, 44, 29, 17, 2],
+            backgroundColor: ["#22c55e", "#8b5cf6", "#ec4899", "#3b82f6", "#06b6d4", "#10b981"],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 12, font: { size: 11 } } } },
+        cutout: '60%'
+    }
+});
+</script>
+<!-- /wp:html -->
