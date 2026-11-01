@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Midot: Open Items</title>
+<title>Midot: Implementation Status</title>
 <style>
 :root{--bg:#0b1220;--panel:#111a2e;--panel2:#0e1728;--line:#1e2b47;--txt:#e6ecf7;--muted:#93a1bf;
 --cyan:#22c3e6;--cyan2:#0891b2;--gold:#f0b429;--green:#31c48d;--red:#ff7a7a;--code:#0a1120;}
@@ -53,25 +53,29 @@ footer{color:var(--muted);text-align:center;font-size:13px;margin-top:36px;paddi
 ol li,ul li{margin:5px 0}
 a{color:var(--cyan)} td a{word-break:break-all}
 @media (max-width:700px){table{display:block;overflow-x:auto;max-width:100%}th,td{min-width:120px}}
+.status{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin-inline-start:8px;vertical-align:middle}
+.st-part{background:#3a2f0b;color:var(--gold)}
+.st-done{background:#0c2e22;color:var(--green)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header class="hero">
-  <p class="kicker">NC Digital · Open Items</p>
-  <h1>Midot: Open Items for the Dev Team</h1>
-  <p class="sub">What still needs to be done on midot.co.il. The last scan covered all 229 URLs in the sitemap.</p>
+  <p class="kicker">NC Digital · Implementation Status</p>
+  <h1>Midot: Implementation Status for the Dev Team</h1>
+  <p class="sub">2 items still open, both partly done · 12 items done. The last scan covered all 230 URLs in the sitemap plus a crawl of the site.</p>
   <div class="meta">
     <span class="chip">Original audit: <b>19 July 2026</b></span>
-    <span class="chip">Last scan: <b>5 October 2026</b></span>
+    <span class="chip">Last scan: <b>1 November 2026</b></span>
   </div>
 </header>
 
 <details class="acc">
-  <summary>1. Exposed Google Cloud service-account key</summary>
+  <summary>1. Exposed Google Cloud service-account key <span class="status st-part">Partly done</span></summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
+  <p class="kv"><b>Status:</b> partly done. The key file no longer loads. Remaining: every step below. The library folder still serves files, and the key's status in Google Cloud cannot be checked from outside the account; please confirm once it is disabled and deleted.</p>
+<div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
   <h3>In Google Cloud (an admin of the project)</h3>
   <p>The development team does not have access to this project. Midot needs to identify who administers it, for example the developer or agency that set up the site's Google integration, or the owner of the Google account that created the project.</p>
   <ol>
@@ -83,18 +87,22 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <ol>
     <li>Check whether any code still uses this service account (forms, scheduled tasks, other templates). If something does, it will need a new key from the project admin, stored outside the public web folder.</li>
     <li>Remove copies of the key file from backups, staging copies and code history.</li>
-    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. Its PHP files can still be run directly over the web (for example <span class="type">src/Google/Client.php</span> and <span class="type">vendor/autoload.php</span> return 200), and its other files can be downloaded (for example <span class="type">composer.json</span>).</li>
+    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. Its PHP files can still be run directly over the web (for example <span class="type">src/Google/Client.php</span>, <span class="type">src/Google/Service.php</span> and <span class="type">vendor/autoload.php</span> return 200), and its other files can be downloaded (for example <span class="type">composer.json</span> and <span class="type">README.md</span>).</li>
   </ol>
   <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and every file in the library folder, including the <span class="type">.php</span> files, returns 403 or 404 when requested directly.</p>
 </div>
 </details>
 
 <details class="acc">
-  <summary>2. Schema code printed as visible text on a new post</summary>
+  <summary>2. Core issue: FAQ schema <span class="status st-part">Partly done</span></summary>
   <div class="acc-body">
-  <div class="bad"><b>The problem:</b> on the post <a href="https://midot.co.il/%d7%91%d7%93%d7%99%d7%a7%d7%aa-%d7%9e%d7%94%d7%99%d7%9e%d7%a0%d7%95%d7%aa-%d7%9c%d7%a2%d7%95%d7%91%d7%93%d7%99%d7%9d-%d7%94%d7%90%d7%9d-%d7%90%d7%a4%d7%a9%d7%a8-%d7%9c%d7%a0%d7%94%d7%9c-%d7%a1%d7%99/" dir="ltr">midot.co.il/בדיקת-מהימנות-לעובדים-האם-אפשר-לנהל-סי/</a>, the FAQ code was pasted into the page's schema field without the <span class="type">&lt;script type="application/ld+json"&gt;</span> wrapper. Visitors see the raw JSON printed on the page (in <span class="type">section.section-schema</span>), and search engines get no FAQ schema. The code itself is valid and matches the page's 6 questions and answers. It is the only page on the site with this problem.</div>
+  <p class="kv"><b>Status:</b> partly done. 23 pages now output FAQ schema correctly. Remaining: one post shows the code as text, and the same mistake has now happened on two new posts.</p>
+  <div class="bad"><b>The problem:</b> on the post <a href="https://midot.co.il/%d7%9e%d7%aa%d7%99-%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a8%d7%92%d7%99%d7%9c-%d7%9c%d7%90-%d7%9e%d7%a1%d7%a4%d7%99%d7%a7-%d7%9b%d7%93%d7%99-%d7%9c%d7%9e%d7%a0%d7%95%d7%a2/" dir="ltr">midot.co.il/מתי-ראיון-עבודה-רגיל-לא-מספיק-כדי-למנוע/</a>, the FAQ code was pasted into the page's schema field without the <span class="type">&lt;script type="application/ld+json"&gt;</span> wrapper. Visitors see the raw JSON printed on the page (in <span class="type">section.section-schema</span>), and search engines get no FAQ schema. The code itself is valid and matches the page's 5 questions and answers.</div>
   <h3>What to do</h3>
-  <p>Replace the contents of that post's schema field with the block below: the same 6 questions and answers, wrapped in the script tag, in the same format as the 22 other pages that carry the block. Do not add it as a second block, or the raw text stays on the page. Google no longer shows FAQ rich results, so the value is consistency with the rest of the site and a machine-readable Q&amp;A, not a search feature.</p>
+  <ol>
+    <li>Replace the contents of that post's schema field with the block below: the same 5 questions and answers, wrapped in the script tag. Do not add it as a second block, or the raw text stays on the page.</li>
+    <li>Prevent it from happening again: in the template that prints the schema field, wrap the field's contents in <span class="type">&lt;script type="application/ld+json"&gt;</span> … <span class="type">&lt;/script&gt;</span> whenever they do not already start with <span class="type">&lt;script</span>. Editors can then paste the JSON alone, and the 23 pages whose field already includes the tag are not affected.</li>
+  </ol>
   <pre>&lt;script type=&quot;application/ld+json&quot;&gt;
 {
   &quot;@context&quot;: &quot;https://schema.org&quot;,
@@ -103,60 +111,60 @@ a{color:var(--cyan)} td a{word-break:break-all}
   &quot;mainEntity&quot;: [
     {
       &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;מה ההבדל בין בדיקת מהימנות לחקירת מהימנות עובדים?&quot;,
+      &quot;name&quot;: &quot;מה כוללת בדיקת מהימנות עובדים בתפקידי מפתח?&quot;,
       &quot;acceptedAnswer&quot;: {
         &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;בדיקת מהימנות היא כלי הערכה המשולב בתהליך המיון ובוחן עמדות והתנהלות הנוגעות ליושרה ולעמידה בנהלים. חקירת מהימנות עובדים היא פעולה אחרת, שמתבצעת כאשר כבר קיים חשד קונקרטי סביב אירוע שהתרחש, ומטרתה לברר עובדות. הראשונה מלווה החלטת גיוס, השנייה מלווה בירור.&quot;
+        &quot;text&quot;: &quot;בדיקת מהימנות עובדים בתפקידי מפתח משלבת לרוב מבדק ממוחשב עם ראיון מהימנות פרונטאלי. המבדק מספק תמונה רחבה ואחידה, והראיון מעמיק בנושאים שעלו ממנו ומאמת אותם מול מקורות שונים. התוצר הסופי הוא דוח מידע וחוות דעת מסכמת שמשמשים את מקבלי ההחלטה בארגון.&quot;
       }
     },
     {
       &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;האם אפשר לבצע בדיקת מהימנות לעובדים קיימים ולא רק למועמדים?&quot;,
+      &quot;name&quot;: &quot;כמה זמן אורכת בדיקת מהימנות עובדים בראיון פרונטאלי?&quot;,
       &quot;acceptedAnswer&quot;: {
         &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;כן, וזה נעשה בפועל. ההקשר שונה מגיוס והרגישות גבוהה יותר, ולכן נדרשת הקפדה על שקיפות, על הסבר מלא ועל בחינת ההיבטים המשפטיים לפני ההפעלה. בארגונים רבים הבדיקה נשקלת בעת מעבר לתפקיד רגיש יותר או בעת הרחבת הרשאות.&quot;
+        &quot;text&quot;: &quot;הראיון הפרונטאלי נמשך כשעה. המבדק הממוחשב לעובדים קיימים אורך כשלושים וחמש דקות, והדוח שלו זמין מיד עם סיומו, כך שאפשר להיכנס לראיון עם תמונה מוכנה. בפועל שני השלבים יחד נכנסים למשבצת של יום עבודה אחד ואינם מאריכים את תהליך הגיוס באופן משמעותי.&quot;
       }
     },
     {
       &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;כל כמה זמן נכון לבחון מחדש את סיכוני כוח האדם בארגון?&quot;,
+      &quot;name&quot;: &quot;האם בדיקת מהימנות עובדים מתאימה גם לעובדים קיימים?&quot;,
       &quot;acceptedAnswer&quot;: {
         &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;אין מועד אחיד. נקודות הזמן המקובלות הן שינוי תפקיד, הרחבת סמכויות או הרשאות, שינוי מבני וסיום העסקה. בתפקידים רגישים מקובל לבחון את ההרשאות ואת הבקרות גם בקצב קבוע, ולא רק בעקבות אירוע.&quot;
+        &quot;text&quot;: &quot;כן. מבדק לעובדים קיימים משמש להערכה תקופתית ולבחינה לפני קידום או מעבר בין תפקידים. הראיון הפרונטאלי מתאים גם הוא למועמדים ולעובדים, בכל הדרגים. בחירת העיתוי נגזרת מרמת הסיכון בתפקיד ולא מוותק העובד.&quot;
       }
     },
     {
       &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;אילו תפקידים מצדיקים בדיקת מהימנות לעובדים?&quot;,
+      &quot;name&quot;: &quot;האם אפשר להסתמך על בדיקת מהימנות עובדים כשיקול יחיד?&quot;,
       &quot;acceptedAnswer&quot;: {
         &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;המבחן המעשי אינו שם התפקיד אלא רמת החשיפה שהוא מאפשר: האם ניתן ליזום פעולה רגישה וגם לאשר אותה, האם קיימת גישה לנכסים או למידע ללא בקרה שוטפת, ומה היקף הנזק האפשרי אם תתרחש חריגה. ככל שהתשובות מצביעות על חשיפה גבוהה יותר, כך עולה הרלוונטיות של הבדיקה ושל מנגנוני הבקרה המשלימים אותה.&quot;
+        &quot;text&quot;: &quot;לא מומלץ. חוות הדעת נועדה לשמש מידע משלים לצד הראיון המקצועי, בדיקת הממליצים והניסיון בתפקיד. הסתמכות על מקור יחיד עלולה להוביל להחלטות פחות מדויקות בשני הכיוונים, גם בפסילה של אנשים מתאימים וגם בקבלה של סיכון שלא זוהה.&quot;
       }
     },
     {
       &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;מה עושים כאשר מתעורר חשד למעילה או להונאה פנימית?&quot;,
+      &quot;name&quot;: &quot;מי בארגון מקבל את תוצאות בדיקת מהימנות עובדים?&quot;,
       &quot;acceptedAnswer&quot;: {
         &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;עוצרים לפני שמסיקים מסקנות ואוספים את המידע המתועד הקיים, בודקים אם מדובר באירוע נקודתי או בדפוס חוזר, ורק אז בוחרים את כלי הבירור המתאים. בדיקת הונאות פנים ארגוניות בוחנת גם את נקודות הבקרה בתהליך ולא רק את הגורם האנושי.&quot;
-      }
-    },
-    {
-      &quot;@type&quot;: &quot;Question&quot;,
-      &quot;name&quot;: &quot;האם בדיקת מהימנות מבטיחה שלא תתרחש הונאה?&quot;,
-      &quot;acceptedAnswer&quot;: {
-        &quot;@type&quot;: &quot;Answer&quot;,
-        &quot;text&quot;: &quot;לא. הבדיקה מצמצמת אי ודאות בנקודת הכניסה ומוסיפה מידע לתמונה הכוללת, אך היא אינה ערובה. צמצום הסיכון בפועל נשען על שילוב בין הבדיקה לבין הרשאות מותאמות, הפרדת סמכויות, בקרות ותגובה עקבית לחריגות.&quot;
+        &quot;text&quot;: &quot;הגישה צריכה להיות מוגבלת למי שמעורבים בפועל בהחלטה, לרוב הצוות המגייס והדרג המנהל הישיר. מומלץ להגדיר את ההרשאות מראש ולתעד גם את משך שמירת המידע ואת המטרה שלשמה נאסף. הגדרה מסודרת של ההרשאות חוסכת גם את השאלה החוזרת מי רשאי לראות מה בכל תהליך מחדש.&quot;
       }
     }
   ]
 }
 &lt;/script&gt;</pre>
-  <p class="kv"><b>Acceptance:</b> no JSON is visible on the post, and it outputs one FAQ schema block whose 6 questions and answers match the page.</p>
+  <p class="kv"><b>Acceptance:</b> no JSON is visible on the post, it outputs one FAQ schema block whose 5 questions and answers match the page, and a test post whose schema field contains only the JSON outputs it inside a script tag.</p>
 </div>
 </details>
 
-<footer>NC Digital · Open Items · Midot Institute · October 2026</footer>
+<details class="acc acc-bg">
+  <summary>Done (12)</summary>
+  <div class="acc-body">
+  <p class="h2sub">Items from earlier rounds of this report, each re-checked on the live site on 1 November 2026.</p>
+  <table><thead><tr><th>Assigned</th><th>Item</th><th>Status</th></tr></thead><tbody><tr><td>2. Pages with Q&amp;A but no FAQ schema</td><td>19 July 2026</td><td><span class="status st-done">Done</span> FAQ schema is output on all 14 pages listed.</td></tr><tr><td>9 additional pages for manual review</td><td>19 July 2026</td><td><span class="status st-done">Done</span> 3 of them now carry FAQ schema; the scan found no Q&amp;A section without FAQ schema on the other 6.</td></tr><tr><td>3. Inconsistent Product schema on product pages</td><td>19 July 2026</td><td><span class="status st-done">Done</span> All 13 product pages output Product schema.</td></tr><tr><td>4. Acceptance tests for the developer</td><td>19 July 2026</td><td><span class="status st-done">Done</span> No page in the sitemap has a duplicate FAQPage, Product, Organization or WebPage node.</td></tr><tr><td>1. Duplicate Organization and WebSite nodes on the homepage</td><td>15 September 2026</td><td><span class="status st-done">Done</span> The homepage outputs one Organization node and one WebSite node.</td></tr><tr><td>2. Server error (HTTP 500) on 59 sitemap URLs</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 230 URLs in the sitemap return 200.</td></tr><tr><td>3. Product schema not output on 3 product pages</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 3 pages output Product schema next to their FAQ schema.</td></tr><tr><td>4. FAQPage missing on 3 posts with a Q&amp;A section</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 3 posts output FAQ schema.</td></tr><tr><td>5. Leftover FAQ code in the polygraph-concerns article</td><td>15 September 2026</td><td><span class="status st-done">Done</span> The old <span class="type">application/json</span> block is gone.</td></tr><tr><td>Server error (HTTP 500) on /מטפלות-מתעללות/</td><td>24 September 2026</td><td><span class="status st-done">Done</span> The page is unpublished and returns 404.</td></tr><tr><td>2. Page with no data: /מטפלות-מתעללות/ (its Google Sheet was deleted)</td><td>27 September 2026</td><td><span class="status st-done">Done</span> The page is unpublished, returns 404 and is no longer in the sitemap.</td></tr><tr><td>2. Schema code printed as visible text on a new post</td><td>5 October 2026</td><td><span class="status st-done">Done</span> No code is visible on the post, and its FAQ schema matches the block supplied in the report.</td></tr></tbody></table>
+</div>
+</details>
+
+<footer>NC Digital · Implementation Status · Midot Institute · November 2026</footer>
 </div>
 </body>
 </html>
