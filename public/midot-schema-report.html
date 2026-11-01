@@ -54,6 +54,7 @@ ol li,ul li{margin:5px 0}
 a{color:var(--cyan)} td a{word-break:break-all}
 @media (max-width:700px){table{display:block;overflow-x:auto;max-width:100%}th,td{min-width:120px}}
 .status{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;margin-inline-start:8px;vertical-align:middle}
+.st-open{background:#3a1414;color:var(--red)}
 .st-part{background:#3a2f0b;color:var(--gold)}
 .st-done{background:#0c2e22;color:var(--green)}
 </style>
@@ -64,7 +65,7 @@ a{color:var(--cyan)} td a{word-break:break-all}
 <header class="hero">
   <p class="kicker">NC Digital · Implementation Status</p>
   <h1>Midot: Implementation Status for the Dev Team</h1>
-  <p class="sub">2 items still open, both partly done · 12 items done. The last scan covered all 230 URLs in the sitemap plus a crawl of the site.</p>
+  <p class="sub"><b>Not ready to close:</b> 2 items open and 2 partly done; 11 items done. The last scan covered all 230 URLs in the sitemap and a crawl of the site, with the flagged pages rendered in a real browser.</p>
   <div class="meta">
     <span class="chip">Original audit: <b>19 July 2026</b></span>
     <span class="chip">Last scan: <b>1 November 2026</b></span>
@@ -72,10 +73,11 @@ a{color:var(--cyan)} td a{word-break:break-all}
 </header>
 
 <details class="acc">
-  <summary>1. Exposed Google Cloud service-account key <span class="status st-part">Partly done</span></summary>
+  <summary>1. Exposed Google Cloud service-account key <span class="status st-open">Open</span></summary>
   <div class="acc-body">
-  <p class="kv"><b>Status:</b> partly done. The key file no longer loads. Remaining: the steps below. The library folder still serves files (checked on 1 November 2026). The Google Cloud steps, the code check and the removal of copies cannot be checked from outside, so please confirm each one once it is done.</p>
-<div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
+  <p class="kv"><b>Assigned:</b> 27 September 2026.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> open. None of the steps below can be confirmed yet. The library folder still serves files: <span class="type">src/Google/Client.php</span>, <span class="type">src/Google/Service.php</span>, <span class="type">vendor/autoload.php</span>, <span class="type">composer.json</span> and <span class="type">README.md</span> all return 200 (the folder's own address returning 403 is not a pass). If the code check finds that nothing uses this library, delete the folder; if something does, install a current version of the library outside the public web folder. The Google Cloud steps cannot be checked from outside the account, so please confirm them once done.</p>
+  <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
   <h3>In Google Cloud (an admin of the project)</h3>
   <p>The development team does not have access to this project. Midot needs to identify who administers it, for example the developer or agency that set up the site's Google integration, or the owner of the Google account that created the project.</p>
   <ol>
@@ -87,21 +89,21 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <ol>
     <li>Check whether any code still uses this service account (forms, scheduled tasks, other templates). If something does, it will need a new key from the project admin, stored outside the public web folder.</li>
     <li>Remove copies of the key file from backups, staging copies and code history.</li>
-    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. Its PHP files can still be run directly over the web (for example <span class="type">src/Google/Client.php</span>, <span class="type">src/Google/Service.php</span> and <span class="type">vendor/autoload.php</span> return 200), and its other files can be downloaded (for example <span class="type">composer.json</span> and <span class="type">README.md</span>).</li>
+    <li>Move the library folder <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/</span> out of the public theme folder, or block the whole folder at the server level. Its PHP files can still be run directly over the web (for example <span class="type">src/Google/Client.php</span> and <span class="type">vendor/autoload.php</span> return 200), and its other files can be downloaded (for example <span class="type">composer.json</span>).</li>
   </ol>
   <p class="kv"><b>Acceptance:</b> the old key is deleted in Google Cloud, and every file in the library folder, including the <span class="type">.php</span> files, returns 403 or 404 when requested directly.</p>
 </div>
 </details>
 
 <details class="acc">
-  <summary>2. Core issue: FAQ schema <span class="status st-part">Partly done</span></summary>
+  <summary>2. Schema code printed as visible text on another new post <span class="status st-open">Open · new</span></summary>
   <div class="acc-body">
-  <p class="kv"><b>Status:</b> partly done. 23 pages now output FAQ schema correctly. Remaining: one post shows the code as text, and the same mistake has now happened on two new posts.</p>
-  <div class="bad"><b>The problem:</b> on the post <a href="https://midot.co.il/%d7%9e%d7%aa%d7%99-%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a8%d7%92%d7%99%d7%9c-%d7%9c%d7%90-%d7%9e%d7%a1%d7%a4%d7%99%d7%a7-%d7%9b%d7%93%d7%99-%d7%9c%d7%9e%d7%a0%d7%95%d7%a2/" dir="ltr">midot.co.il/מתי-ראיון-עבודה-רגיל-לא-מספיק-כדי-למנוע/</a>, the FAQ code was pasted into the page's schema field without the <span class="type">&lt;script type="application/ld+json"&gt;</span> wrapper. Visitors see the raw JSON printed on the page (in <span class="type">section.section-schema</span>), and search engines get no FAQ schema. The code itself is valid and matches the page's 5 questions and answers.</div>
+  <div class="bad"><b>The problem:</b> on the post <a href="https://midot.co.il/%d7%9e%d7%aa%d7%99-%d7%a8%d7%90%d7%99%d7%95%d7%9f-%d7%a2%d7%91%d7%95%d7%93%d7%94-%d7%a8%d7%92%d7%99%d7%9c-%d7%9c%d7%90-%d7%9e%d7%a1%d7%a4%d7%99%d7%a7-%d7%9b%d7%93%d7%99-%d7%9c%d7%9e%d7%a0%d7%95%d7%a2/" dir="ltr">midot.co.il/מתי-ראיון-עבודה-רגיל-לא-מספיק-כדי-למנוע/</a>, the FAQ code was pasted into the page's schema field without the <span class="type">&lt;script type="application/ld+json"&gt;</span> wrapper. Visitors see the raw JSON printed on the page (in <span class="type">section.section-schema</span>), and search engines get no FAQ schema. The code itself is valid and matches the page's 5 questions and answers. This is the same mistake as on the post in the 5 October round, which is now fixed.</div>
   <h3>What to do</h3>
   <ol>
     <li>Replace the contents of that post's schema field with the block below: the same 5 questions and answers, wrapped in the script tag. Do not add it as a second block, or the raw text stays on the page.</li>
-    <li>Prevent it from happening again: in the template that prints the schema field, wrap the field's contents in <span class="type">&lt;script type="application/ld+json"&gt;</span> … <span class="type">&lt;/script&gt;</span> whenever they do not already start with <span class="type">&lt;script</span>. Editors can then paste the JSON alone, and the 23 pages whose field already includes the tag are not affected.</li>
+    <li>Make the template that prints the schema field safe, so this cannot recur: trim the field's contents; if they are already wrapped in a script tag, print them unchanged; if they are valid JSON on their own, print them inside <span class="type">&lt;script type="application/ld+json"&gt;</span> (for example with <span class="type">wp_json_encode</span>); otherwise print nothing on the page and show a warning to the editor in the admin.</li>
+    <li>When publishing a post with a Q&amp;A section, open the live post and confirm no code is visible on it.</li>
   </ol>
   <pre>&lt;script type=&quot;application/ld+json&quot;&gt;
 {
@@ -152,15 +154,30 @@ a{color:var(--cyan)} td a{word-break:break-all}
   ]
 }
 &lt;/script&gt;</pre>
-  <p class="kv"><b>Acceptance:</b> no JSON is visible on the post, it outputs one FAQ schema block whose 5 questions and answers match the page, and a test post whose schema field contains only the JSON outputs it inside a script tag.</p>
+  <p class="kv"><b>Acceptance:</b> no JSON is visible on the post and it outputs one FAQ schema block whose 5 questions and answers match the page; a test post whose field holds only the JSON outputs it inside a script tag; a test post whose field holds invalid text shows nothing on the page.</p>
+</div>
+</details>
+
+<details class="acc">
+  <summary>3. Core issue: FAQ schema <span class="status st-part">Partly done</span></summary>
+  <div class="acc-body">
+  <p class="kv"><b>Assigned:</b> 19 July 2026.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> partly done. FAQ schema is now output on 23 pages, through a per-page schema field rather than the structured question and answer fields this item proposed. Remaining: the field still lets pasted code print as visible text, which has now happened twice. Step 2 of item 2 closes this.</p>
+</div>
+</details>
+
+<details class="acc">
+  <summary>4. Acceptance tests for the developer <span class="status st-part">Partly done</span></summary>
+  <div class="acc-body">
+  <p class="kv"><b>Assigned:</b> 19 July 2026.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> partly done. Test 5 passes: no page in the sitemap has a duplicate FAQPage, Product, Organization or WebPage node. Remaining: test 1 fails on the post in item 2 (the code shows as text instead of valid JSON-LD). Tests 2 to 4 and 6 should be run against the template change in item 2, as its acceptance line describes, with each changed page checked in Google's Rich Results Test.</p>
 </div>
 </details>
 
 <details class="acc acc-bg">
-  <summary>Done (12)</summary>
+  <summary>Done (11)</summary>
   <div class="acc-body">
-  <p class="h2sub">Items from earlier rounds of this report, each re-checked on the live site on 1 November 2026.</p>
-  <table><thead><tr><th>Assigned</th><th>Item</th><th>Status</th></tr></thead><tbody><tr><td>2. Pages with Q&amp;A but no FAQ schema</td><td>19 July 2026</td><td><span class="status st-done">Done</span> FAQ schema is output on all 14 pages listed.</td></tr><tr><td>9 additional pages for manual review</td><td>19 July 2026</td><td><span class="status st-done">Done</span> 3 of them now carry FAQ schema; the scan found no Q&amp;A section without FAQ schema on the other 6.</td></tr><tr><td>3. Inconsistent Product schema on product pages</td><td>19 July 2026</td><td><span class="status st-done">Done</span> All 13 product pages output Product schema.</td></tr><tr><td>4. Acceptance tests for the developer</td><td>19 July 2026</td><td><span class="status st-done">Done</span> No page in the sitemap has a duplicate FAQPage, Product, Organization or WebPage node.</td></tr><tr><td>1. Duplicate Organization and WebSite nodes on the homepage</td><td>15 September 2026</td><td><span class="status st-done">Done</span> The homepage outputs one Organization node and one WebSite node.</td></tr><tr><td>2. Server error (HTTP 500) on 59 sitemap URLs</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 230 URLs in the sitemap return 200.</td></tr><tr><td>3. Product schema not output on 3 product pages</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 3 pages output Product schema next to their FAQ schema.</td></tr><tr><td>4. FAQPage missing on 3 posts with a Q&amp;A section</td><td>15 September 2026</td><td><span class="status st-done">Done</span> All 3 posts output FAQ schema.</td></tr><tr><td>5. Leftover FAQ code in the polygraph-concerns article</td><td>15 September 2026</td><td><span class="status st-done">Done</span> The old <span class="type">application/json</span> block is gone.</td></tr><tr><td>Server error (HTTP 500) on /מטפלות-מתעללות/</td><td>24 September 2026</td><td><span class="status st-done">Done</span> The page is unpublished and returns 404.</td></tr><tr><td>2. Page with no data: /מטפלות-מתעללות/ (its Google Sheet was deleted)</td><td>27 September 2026</td><td><span class="status st-done">Done</span> The page is unpublished, returns 404 and is no longer in the sitemap.</td></tr><tr><td>2. Schema code printed as visible text on a new post</td><td>5 October 2026</td><td><span class="status st-done">Done</span> No code is visible on the post, and its FAQ schema matches the block supplied in the report.</td></tr></tbody></table>
+  <table><thead><tr><th>Assigned</th><th>Item</th><th>Status</th></tr></thead><tbody><tr><td>19 July 2026</td><td>2. Pages with Q&amp;A but no FAQ schema</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>FAQ schema is output on all 14 pages listed.</td></tr><tr><td>19 July 2026</td><td>9 additional pages for manual review (question-form headings, no explicit Q&amp;A section)</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>3 of them now carry FAQ schema; the other 6 still have no Q&amp;A section, so none is needed.</td></tr><tr><td>19 July 2026</td><td>3. Inconsistent Product schema on product pages</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>All 13 product pages output Product schema.</td></tr><tr><td>15 September 2026</td><td>1. Duplicate Organization and WebSite nodes on the homepage</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>The homepage outputs one Organization node and one WebSite node.</td></tr><tr><td>15 September 2026</td><td>2. Server error (HTTP 500) on 59 sitemap URLs</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>The 58 conference URLs return 200. The 59th, <span dir="ltr">/מטפלות-מתעללות/</span>, was set to private instead: it returns 404 and is no longer in the sitemap.</td></tr><tr><td>15 September 2026</td><td>3. Product schema not output on 3 product pages</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>All 3 pages output Product schema.</td></tr><tr><td>15 September 2026</td><td>4. FAQPage missing on 3 posts with a Q&amp;A section</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>All 3 posts output FAQ schema.</td></tr><tr><td>15 September 2026</td><td>5. Leftover FAQ code in the polygraph-concerns article</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>The old <span class="type">application/json</span> block is gone.</td></tr><tr><td>24 September 2026</td><td>Server error (HTTP 500) on <span dir="ltr">/מטפלות-מתעללות/</span></td><td><span class="status st-done">Done · verified 1 November 2026</span><br>The page was set to private: it returns 404 and is no longer in the sitemap.</td></tr><tr><td>27 September 2026</td><td>2. Page with no data: <span dir="ltr">/מטפלות-מתעללות/</span> (its Google Sheet was deleted)</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>The page was set to private: it returns 404 and is no longer in the sitemap.</td></tr><tr><td>5 October 2026</td><td>2. Schema code printed as visible text on a new post</td><td><span class="status st-done">Done · verified 1 November 2026</span><br>No code is visible on the post, and its FAQ schema matches the block supplied in the report.</td></tr></tbody></table>
 </div>
 </details>
 
