@@ -76,7 +76,7 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <summary>1. Exposed Google Cloud service-account key <span class="status st-open">Open</span></summary>
   <div class="acc-body">
   <p class="kv"><b>Assigned:</b> 27 September 2026.</p>
-  <p class="kv"><b>Status (1 November 2026):</b> open. None of the steps below can be confirmed yet. The library folder still serves files: <span class="type">src/Google/Client.php</span>, <span class="type">src/Google/Service.php</span>, <span class="type">vendor/autoload.php</span>, <span class="type">composer.json</span> and <span class="type">README.md</span> all return 200 (the folder's own address returning 403 is not a pass). If the code check finds that nothing uses this library, delete the folder; if something does, install a current version of the library outside the public web folder. The Google Cloud steps cannot be checked from outside the account, so please confirm them once done.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> open. None of the steps below can be confirmed yet. The library folder still serves files: <span class="type">src/Google/Client.php</span>, <span class="type">src/Google/Service.php</span>, <span class="type">vendor/autoload.php</span>, <span class="type">composer.json</span> and <span class="type">README.md</span> all return 200 (the folder's own address returning 403 is not a pass). For that step: if no code on the site uses this Google library, deleting the folder is the simplest way to do it; if something does, a current version of the library installed outside the public web folder is better than moving the old one (the folder holds version 2.2.4). The Google Cloud steps cannot be checked from outside the account, so please confirm them once done.</p>
   <div class="bad"><b>The problem:</b> a key file for the service account <span class="type">website@midot-website-1575970550589.iam.gserviceaccount.com</span> (Google Cloud project <span class="type">midot-website-1575970550589</span>, key ID starting <span class="type">1c07522</span>) was publicly downloadable at <span class="type">wp-content/themes/midot-th/inc/google-api-php-client-2.2.4/credentials.json</span>. The file no longer loads, but any copy downloaded before then can be used for as long as the key remains active in Google Cloud.</div>
   <h3>In Google Cloud (an admin of the project)</h3>
   <p>The development team does not have access to this project. Midot needs to identify who administers it, for example the developer or agency that set up the site's Google integration, or the owner of the Google account that created the project.</p>
@@ -162,7 +162,60 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <summary>3. Core issue: FAQ schema <span class="status st-part">Partly done</span></summary>
   <div class="acc-body">
   <p class="kv"><b>Assigned:</b> 19 July 2026.</p>
-  <p class="kv"><b>Status (1 November 2026):</b> partly done. FAQ schema is now output on 23 pages, through a per-page schema field rather than the structured question and answer fields this item proposed. Remaining: the field still lets pasted code print as visible text, which has now happened twice. Step 2 of item 2 closes this.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> partly done. FAQ schema is now output on 23 pages. On the pages checked it comes from the page's schema field, not from the structured question and answer fields this item proposed. Remaining: the field still lets pasted code print as visible text, which has happened on two new posts since 5 October. Step 2 of item 2 closes this. Note: the original text's line on FAQ rich results is out of date; Google stopped showing FAQ rich results for all sites in May 2026.</p>
+  <details><summary>Original item text (19 July 2026)</summary>
+<div class="bad"><b>The problem:</b> FAQPage schema cannot be added through the site's content editor. Per the client's report, when the schema is added via the editor it renders as <b>visible code in the page body</b> instead of valid JSON-LD. Our scan of all 220 pages confirms the outcome and locates a live example: <b>no page on the site carries a valid FAQPage</b>, and on one page, <span class="type" dir="ltr">/polygraph-concerns-and-how-to-handle-them/</span>, a <b>broken</b> FAQ attempt is present.</div>
+  <p class="kv"><b>The live example (the only page with a FAQ attempt):</b> the JSON itself is valid and contains 5 questions, but it fails for two reasons: it is declared as <span class="type">type="application/json"</span> instead of <span class="type">application/ld+json</span> (Google ignores it entirely), and it sits inside a <span class="type">&lt;p&gt;</span> tag in the body content. This is exactly what the client reported.</p>
+  <pre>&lt;!-- What currently exists on /polygraph-concerns-and-how-to-handle-them/ --&gt;
+&lt;p&gt;
+  &lt;script id="data" type="application/json"&gt;
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [ { "@type": "Question", "name": "איך נראה מבחן אמינות?", ... } ]
+  }
+  &lt;/script&gt;
+&lt;/p&gt;</pre>
+  <h3>Root cause (what actually happens)</h3>
+  <div class="bad"><b>The technical issue:</b> the site is built on a custom theme (<span class="type">midot-th</span>), with no page builder on the content pages. When the content team pastes <span class="type">&lt;script type="application/ld+json"&gt;</span> code into the WordPress content field, WordPress treats it as <b>untrusted</b> editor content: the sanitization layer (<span class="type">wp_kses</span>) strips the <span class="type">&lt;script&gt;</span> tag on save (for users without the <span class="type">unfiltered_html</span> capability), or TinyMCE converts it to entities. What remains, the JSON body, is printed by the theme as <b>visible text</b> on the page. This is not a one-off glitch but a structural mismatch: schema code cannot live inside an editor content field.</div>
+  <p class="kv"><b>Why it cannot be fixed through the editor:</b> the <span class="type">unfiltered_html</span> capability must not be granted (stored-XSS risk), switching between editor modes re-encodes the code, and maintaining visible text plus separate JSON in parallel drifts over time. On top of that, a manual <span class="type">&lt;script&gt;</span> creates a second graph that conflicts with Yoast's graph. <b>The fix must be at the template/code level, not in the editor.</b></p>
+  <h3>The correct fix (for the dev team)</h3>
+  <ol>
+    <li><b>Structured fields:</b> add a repeating question+answer field group (ACF repeater: <span class="type">faq_items[question, answer]</span>) to the <span class="type">product</span> and <span class="type">post</span> content types. The content editor fills in a question and an answer, not code.</li>
+    <li><b>One source, dual render:</b> the theme PHP renders both the visible text and the JSON-LD from the same fields, so the visible content and the schema are always identical (a Google requirement).</li>
+    <li><b>Integrate into Yoast's graph:</b> add the FAQPage via the <span class="type">wpseo_schema_graph</span> filter. Extend the existing <span class="type">WebPage</span> node (add the FAQPage type to it) and add <span class="type">Question</span> nodes with <span class="type">acceptedAnswer</span>, instead of injecting a second <span class="type">&lt;script&gt;</span>. This avoids a duplicate/conflicting graph.</li>
+    <li><b>Only when content exists:</b> emit a FAQPage only when at least one complete question+answer pair exists. An empty field produces no schema.</li>
+    <li><b>Where to put the code:</b> place the schema logic in a small functionality plugin rather than the theme itself, so it survives a theme swap/update.</li>
+  </ol>
+  <p class="kv legend">Note: the attempt on the polygraph page survived as a script tag with the wrong type (application/json). Other attempts may be re-encoded as visible text (as the client reported). Both cases share the same root cause: schema code cannot be added correctly through the editor.</p>
+  <p class="kv"><b>A valid JSON-LD structure</b> (real example from the IntegriTEST page):</p>
+  <pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "isPartOf": { "@id": "https://midot.co.il/product/integritest/" },
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "מהו מבחן אמינות ממוחשב IntegriTEST ומה הוא בודק?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "מבחן IntegriTEST של מכון מידות הוא כלי אבחון ממוחשב, שנועד להעריך את רמת היושרה והאמינות של מועמדים לעבודה. המבחן מתמקד בזיהוי נטיות להתנהגויות בלתי רצויות במקום העבודה, כגון גניבה, הונאה, שימוש בסמים ואלכוהול, ושוחד."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "מהי המטרה של מבחן אמינות ממוחשב?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "המטרה המרכזית היא לספק למעסיקים כלי מדעי ומדויק להערכת הסבירות שמועמד יפגין התנהגויות בלתי הולמות במקום העבודה, ובכך לסייע בקבלת החלטות מושכלות בתהליך הגיוס."
+      }
+    }
+  ]
+}
+&lt;/script&gt;</pre>
+  <div class="note"><b>Setting expectations:</b> Google narrowed FAQ rich results to government and health sites only, and Midot is neither. So the value of FAQPage here is not a rich result in Google but a <b>machine-readable Q&amp;A structure</b> that helps search engines and AI engines understand the content (the AI-engine value is a working assumption, not a guaranteed outcome). It is also the foundation that will let the content team add Q&amp;A correctly from now on.</div>
+  </details>
 </div>
 </details>
 
@@ -170,7 +223,18 @@ a{color:var(--cyan)} td a{word-break:break-all}
   <summary>4. Acceptance tests for the developer <span class="status st-part">Partly done</span></summary>
   <div class="acc-body">
   <p class="kv"><b>Assigned:</b> 19 July 2026.</p>
-  <p class="kv"><b>Status (1 November 2026):</b> partly done. Test 5 passes: no page in the sitemap has a duplicate FAQPage, Product, Organization or WebPage node. Remaining: test 1 fails on the post in item 2 (the code shows as text instead of valid JSON-LD). Tests 2 to 4 and 6 should be run against the template change in item 2, as its acceptance line describes, with each changed page checked in Google's Rich Results Test.</p>
+  <p class="kv"><b>Status (1 November 2026):</b> partly done. Test 5 passes: no page in the sitemap has a duplicate FAQPage, Product, Organization or WebPage node. Remaining: test 1 fails on the post in item 2 (the code shows as text instead of valid JSON-LD). Tests 2 to 4 assume the structured fields item 3 proposed, which were not built; for the schema field in use now, the acceptance line of item 2 takes their place. Test 6 still applies: check each changed page in Google's Rich Results Test.</p>
+  <details><summary>Original item text (19 July 2026)</summary>
+<p class="h2sub">To confirm the fix works correctly:</p>
+  <ul>
+    <li>Adding a Q&amp;A row renders a readable question+answer <b>and</b> valid JSON-LD.</li>
+    <li>Removing all rows removes the FAQPage block entirely.</li>
+    <li>A partial row (question without an answer) produces no schema.</li>
+    <li>HTML inside an answer is safely encoded (without breaking the JSON).</li>
+    <li>A single page has no duplicate FAQPage / Product / Organization / WebPage.</li>
+    <li>Validate each page in Google's Rich Results Test <b>after</b> rendering, not just the template snippet.</li>
+  </ul>
+  </details>
 </div>
 </details>
 
