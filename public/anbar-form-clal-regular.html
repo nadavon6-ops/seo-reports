@@ -460,6 +460,12 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 .sigs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.mrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--rule,#e3e6ee)}
+.mrow:last-of-type{border-bottom:0}
+.mrow .opt{margin:0}
+.mstat{font-size:13.5px}.mstat.ok{color:var(--ok,#1d6b3a)}.mstat.warn{color:var(--warn)}
+.mnote{font-size:12.5px;color:var(--text);opacity:.85;flex-basis:100%}
+.coband .ghost{color:#fff;border-color:rgba(255,255,255,.55);margin-inline-start:6px}
 .sigbox{border:1px solid var(--rule);border-radius:3px;padding:10px;background:#fff}
 .sig-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .sigpad{width:100%;height:auto;aspect-ratio:3/1;border:1px dashed var(--rule2,#aab);border-radius:3px;touch-action:none;cursor:crosshair;background:#fcfcfd}
@@ -495,6 +501,7 @@ h1,h2,h3,h4{margin:0;font-weight:800;letter-spacing:-.015em;color:var(--navy)}
 
 <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <!-- One place to repoint when this moves onto anbar.co.il.
      Set window.ANBAR_BASE to wherever /assets and /pdf are hosted, e.g.
      "/wp-content/uploads/anbar-form/". Leave as-is for the staging host. -->
@@ -819,7 +826,8 @@ function renderDocPane(){
    6. RENDER — router
    ======================================================================== */
 function render(){
-  renderRail(); renderDocPane();
+  if(S.multi&&S.multi.home&&!inExtraView()) S.multi.homeData=S.data;   // demo / clear replace S.data
+  renderRail(); renderDocPane(); setBand();
   const m=$("#main");
   m.innerHTML = [step0,step1,step2,step3,step4,step5,step6][S.step]();
   bind();
@@ -1447,6 +1455,12 @@ function step6(){
     <p>בדיקה אחרונה לפני הפקת הטופס.</p></div>
     <div class="note info"><b>המסמך שיופק:</b> ${esc(r.lender)} · ${esc(r.productLabel)}${r.doc&&r.doc!=="—"?` — טופס ${esc(r.doc)}${r.ver&&r.ver!=="—"?`, גרסה ${esc(r.ver)}`:""}`:""}, ${r.pages} עמודים.</div>`;
 
+  if(inExtraView()){
+    const hr=ROUTES[S.multi.home];
+    h += `<div class="note info"><b>השלמת פרטים לטופס ${esc(r.lender)} · ${esc(r.productLabel)}.</b>
+      הנתונים מטופס ${esc(hr.lender)} כבר הועברו לכאן, ונותר להשלים רק את מה שטופס זה דורש בנוסף. החתימה שנחתמה משמשת גם בטופס זה.
+      <div style="margin-top:10px"><button type="button" class="btn n" data-mview="${esc(S.multi.home)}">חזרה לטופס ${esc(hr.lender)} ←</button></div></div>`;
+  }
   if(S.data.demoNote){
     h += `<div class="note info">${esc(S.data.demoNote)}</div>`;
   }
@@ -1476,6 +1490,7 @@ function step6(){
        <canvas class="sigpad" data-sig="${i}" width="600" height="200"></canvas>
        ${S.errors[`sig.${i}`]&&!SIG[i]?'<div class="msg">שדה חובה</div>':""}
      </div>`).join("")}</div>`);
+  if(!inExtraView()) h += multiSection();
   h += `<div class="send"><div class="send-h">הפקת המסמך ושליחה לחתימה</div><div class="send-b">
     <div class="flow">
       <div class="fl"><i>1</i><div><b>מילוי טופס ${esc(r.lender)}</b>
@@ -1835,7 +1850,7 @@ function bind(){
     S.data[k].splice(+i,1); render();
   });
 
-  if(S.step===6) bindSend();
+  if(S.step===6){ bindSend(); bindMulti(m); }
 }
 
 // keep the running totals honest while the operator types, without re-rendering
@@ -1860,6 +1875,7 @@ function liveTotals(){
 function pickRoute(key){
   const r=ROUTES[key];
   if(!r||r.unavailable) return;
+  if(S.multi.home){ if(inExtraView()) enterView(S.multi.home,true); if(key!==S.multi.home) resetMulti(); }
   if(!S.route||S.route===key){ S.route=key; ensureCaps(); render(); return; }
   impactReport(S.route,key);
 }
@@ -2603,6 +2619,8 @@ function demoData(){
 }
 
 $("#loadDemo").onclick=()=>{
+  if(inExtraView()) enterView(S.multi.home,true);
+  resetMulti();
   if(!S.route){ S.route="clal-reverse"; }
   S.data=demoData(); ensureCaps();
   S.visited=new Set([0,1,2,3,4,5]); S.step=6; render();
@@ -2612,8 +2630,245 @@ $("#clearAll").onclick=()=>{
   S.data={borrowers:[blankBorrower()],occupants:[],contacts:[],collateral:[blankCollateral()],
           other:[],tracks:[blankTrack()],bank:{},purpose:{},purchase:{},consents:{},
           annexes:{},insurance:{},deal:{},clal:{},kyc:{},hasOccupants:"",credit:{},signDate:todayISO(),referrer:{name:"",id:"",phone:""},agent:{name:"אמיר נוה",phone:"054-2844111",number:"4390",email:"amir@anbar.co.il"}};
-  S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
+  resetMulti(); S.route=null; S.step=0; S.visited=new Set(); pdfState.out=null; render();
 };
+
+/* ===========================================================================
+   11b. MORE COMPANIES — one filled form, a PDF for every lender ticked.
+   The form the customer filled stays the source (S.multi.homeData). Each added
+   company works on a copy derived from it: capped to that document's limits,
+   with option values the document does not offer cleared, plus the answers given
+   only for that company (S.multi.edits[key], a diff kept while its view is open).
+   The drawn signatures are shared — the client approved one signature for all forms.
+   ======================================================================== */
+const MULTI_MAX_BORROWERS = 2;
+const ROW_NEW = {borrowers:blankBorrower,occupants:blankOccupant,contacts:blankContact,
+                 collateral:blankCollateral,other:blankOther,tracks:blankTrack};
+const PRIM_ARRAYS = new Set(["purpose.list"]);
+/* answers given in a company view that also fill an EMPTY field of the main form,
+   so the next company does not ask for them again (personal details only) */
+const SHARE_BACK = /^(borrowers\.\d+\.(firstName|lastName|id|gender|birthDate|marital|children|phone|email|street|city|zip|employment|workplace|workCity|role|seniority|seniorityYears|netIncome|education|occupation)|contacts\.\d+\.\w+)$/;
+S.multi = {home:null, homeData:null, keys:[], edits:{}, outs:null, stamp:""};
+const jclone = o => JSON.parse(JSON.stringify(o));
+
+function resetMulti(){ S.multi = {home:null, homeData:null, keys:[], edits:{}, outs:null, stamp:""}; }
+function inExtraView(){ return !!S.multi.home && S.route!==S.multi.home; }
+function multiCandidates(){
+  return Object.keys(ROUTES).filter(k=>ROUTES[k].pdfReady && !ROUTES[k].unavailable && k!==(S.multi.home||S.route));
+}
+
+function optionOk(r,path,val){
+  if(val===""||val==null) return true;
+  const L = /^borrowers\.\d+\.residence$/.test(path)?r.residenceOpts
+          : /^borrowers\.\d+\.relation$/.test(path)?r.relationOpts
+          : /^tracks\.\d+\.rate$/.test(path)?r.rateOpts
+          : /^tracks\.\d+\.repay$/.test(path)?r.repayOpts
+          : /^collateral\.\d+\.type$/.test(path)?r.propTypeOpts : null;
+  if(path==="purpose.list") return (val||[]).every(x=>(r.purposeOpts||[]).includes(x));
+  return !L || L.includes(val);
+}
+
+function deriveFor(key){
+  const r=ROUTES[key], d=jclone(S.multi.homeData);
+  [["borrowers","maxBorrowers"],["collateral","maxCollateral"],["other","maxOther"],["tracks","maxTracks"]]
+    .forEach(([k,m])=>{ if(r[m]&&d[k].length>r[m]) d[k]=d[k].slice(0,r[m]); });
+  if(!(r.sections||[]).includes("contact")) d.contacts=[];
+  else { d.contacts=d.contacts.slice(0,r.maxContacts||1); if(!d.contacts.length) d.contacts.push(blankContact()); }
+  d.borrowers.forEach((b,i)=>["residence","relation"].forEach(k=>{ if(!optionOk(r,`borrowers.${i}.${k}`,b[k])) b[k]=""; }));
+  d.tracks.forEach((t,i)=>["rate","repay"].forEach(k=>{ if(!optionOk(r,`tracks.${i}.${k}`,t[k])) t[k]=""; }));
+  d.collateral.forEach((c,i)=>{ if(!optionOk(r,`collateral.${i}.type`,c.type)) c.type=""; });
+  d.purpose.list=(d.purpose.list||[]).filter(x=>(r.purposeOpts||[]).includes(x));
+  delete d.demoNote;
+  return d;
+}
+
+function leaves(o,pre,out){
+  if(Array.isArray(o)){
+    if(PRIM_ARRAYS.has(pre)||o.some(x=>x===null||typeof x!=="object")){ out[pre]=JSON.stringify(o); return out; }
+    o.forEach((x,i)=>leaves(x,pre+"."+i,out)); return out;
+  }
+  if(o&&typeof o==="object"){ Object.keys(o).forEach(k=>leaves(o[k],pre?pre+"."+k:k,out)); return out; }
+  out[pre]=JSON.stringify(o===undefined?null:o); return out;
+}
+function getPath(d,path){
+  let o=d; for(const k of path.split(".")){ if(o==null) return undefined; o=/^\d+$/.test(k)?o[+k]:o[k]; } return o;
+}
+function putPath(d,path,val,grow){
+  const ps=path.split("."); let o=d;
+  for(let i=0;i<ps.length-1;i++){
+    const k=ps[i], nk=ps[i+1];
+    if(Array.isArray(o)){
+      const n=+k;
+      if(o.length<=n){ const f=ROW_NEW[ps[i-1]]; if(!grow||!f) return false; while(o.length<=n) o.push(f()); }
+      o=o[n];
+    } else {
+      if(o[k]==null){ if(!grow) return false; o[k]=/^\d+$/.test(nk)?[]:{}; }
+      o=o[k];
+    }
+    if(o==null||typeof o!=="object") return false;
+  }
+  o[ps[ps.length-1]]=val; return true;
+}
+function dataFor(key){
+  if(key===S.multi.home) return S.multi.homeData;
+  const d=deriveFor(key), ed=S.multi.edits[key]||{};
+  Object.keys(ed).forEach(p=>putPath(d,p,jclone(ed[p]),true));
+  return d;
+}
+/* close the open company view: keep what differs from the derived copy as its own answers */
+function syncView(){
+  if(!inExtraView()) return;
+  const key=S.route, base=leaves(deriveFor(key),"",{}), cur=leaves(S.data,"",{}), ed={};
+  Object.keys(cur).forEach(p=>{ if(cur[p]!==base[p]) ed[p]=JSON.parse(cur[p]); });
+  const home=S.multi.homeData, hr=ROUTES[S.multi.home];
+  Object.keys(ed).forEach(p=>{
+    const hv=getPath(home,p);
+    if(SHARE_BACK.test(p) && (hv===""||hv==null) && ed[p]!==""&&ed[p]!=null && optionOk(hr,p,ed[p]) && putPath(home,p,jclone(ed[p]),false)) delete ed[p];
+  });
+  S.multi.edits[key]=ed;
+}
+function enterView(key,quiet){
+  syncView();
+  if(key===S.multi.home){ S.route=key; S.data=S.multi.homeData; }
+  else { S.route=key; S.data=dataFor(key); }
+  S.errors={};
+  if(!quiet) render();
+}
+function withRoute(key,data,fn){
+  const sr=S.route, sd=S.data, se=S.errors;
+  S.route=key; S.data=data;
+  try{ return fn(); } finally{ S.route=sr; S.data=sd; S.errors=se; }
+}
+async function withRouteAsync(key,data,fn){
+  const sr=S.route, sd=S.data, se=S.errors;
+  S.route=key; S.data=data;
+  try{ return await fn(); } finally{ S.route=sr; S.data=sd; S.errors=se; }
+}
+function multiStamp(){
+  return JSON.stringify([S.multi.home,S.multi.keys,S.multi.homeData,S.multi.edits,Object.keys(SIG).map(i=>SIG[i].url.length+":"+SIG[i].url.slice(-40))]);
+}
+/* what the smaller document leaves out of the data entered */
+function capNotes(key){
+  const r=ROUTES[key], d=S.multi.homeData, n=[];
+  if(r.maxTracks&&d.tracks.length>r.maxTracks) n.push(`נכלל${r.maxTracks>1?"ים":""} ${r.maxTracks===1?"מסלול 1 בלבד":`${r.maxTracks} המסלולים הראשונים`}`);
+  if(r.maxCollateral&&d.collateral.length>r.maxCollateral) n.push(`נכלל${r.maxCollateral>1?"ים":""} ${r.maxCollateral===1?"הנכס הראשון בלבד":`${r.maxCollateral} הנכסים הראשונים`}`);
+  if(r.maxOther&&d.other.length>r.maxOther) n.push(`נכללים ${r.maxOther} הנכסים הנוספים הראשונים`);
+  return n;
+}
+
+function multiSection(){
+  const home=S.multi.home||S.route, hr=ROUTES[home], nb=S.data.borrowers.length;
+  let body;
+  if(nb>MULTI_MAX_BORROWERS){
+    body=`<div class="note info" style="margin:0">הפקה לחברות נוספות זמינה לבקשה עם עד ${MULTI_MAX_BORROWERS} לווים. בבקשה זו ${nb} לווים.</div>`;
+  } else {
+    const rows=multiCandidates().map(k=>{
+      const r=ROUTES[k], on=S.multi.keys.includes(k);
+      let stat="";
+      if(on){
+        const miss=withRoute(k,dataFor(k),()=>collectMissing()).filter(m=>!/^sig\./.test(m.path||""));
+        const notes=capNotes(k);
+        stat = miss.length
+          ? `<span class="mstat warn">חסרים ${miss.length} פרטים שטופס זה דורש</span>
+             <button type="button" class="btn g" data-mview="${esc(k)}" data-mstep="${miss[0].step}" data-mpath="${esc(miss[0].path||"")}">השלם את הפרטים ←</button>`
+          : `<span class="mstat ok">✓ כל הפרטים קיימים</span>
+             <button type="button" class="ghost" data-mview="${esc(k)}" data-mstep="1">צפה ועדכן</button>`;
+        if(notes.length) stat += `<div class="mnote">בטופס ${esc(r.lender)}: ${esc(notes.join(" · "))}.</div>`;
+      }
+      return `<div class="mrow"><label class="opt ${on?"sel":""}"><input type="checkbox" data-mpick="${esc(k)}" ${on?"checked":""}><span>${esc(r.lender)} · ${esc(r.productLabel)}</span></label>${stat}</div>`;
+    }).join("");
+    const keys=S.multi.keys, fresh=S.multi.outs&&S.multi.stamp===multiStamp();
+    let out="";
+    if(keys.length){
+      out=`<div class="nav" style="margin:14px 0 0;padding:0;border:0">
+        <button class="btn n" id="genAll">הפק את כל הטפסים (${keys.length+1})</button></div>
+        <div id="multiOut" style="margin-top:12px">${fresh?multiOutHtml():(S.multi.outs?`<div class="note warn" style="margin:0">הנתונים או החתימה השתנו מאז ההפקה. יש להפיק את הטפסים מחדש.</div>`:"")}</div>`;
+    }
+    body=`<p style="margin:0 0 8px;color:var(--text);font-size:13.5px">סמנו חברות נוספות, והטופס של כל אחת יופק מהנתונים שכבר מולאו כאן, עם החתימה שנחתמה למעלה.
+      אם חברה דורשת פרטים שלא נשאלו בטופס ${esc(hr.lender)}, יופיע קישור להשלמתם.</p>${rows}${out}`;
+  }
+  return sec("הפקה לחברות נוספות","אותם נתונים, טופס נוסף",body);
+}
+function pdfName(key,data){
+  const r=ROUTES[key];
+  return `${r.lenderShort}-${r.product==="reverse"?"הפוכה":r.product==="both"?"רגילה והפוכה":"רגילה"}-${(data.borrowers[0].lastName||"טופס")}.pdf`;
+}
+function multiOutHtml(){
+  const o=S.multi.outs; if(!o) return "";
+  return `<div class="note ok" style="margin:0"><b>הופקו ${Object.keys(o).length} טפסים.</b>
+    <div class="miss-list">${Object.keys(o).map(k=>`<button type="button" data-mdl="${esc(k)}">הורד · ${esc(o[k].name)}<span>PDF</span></button>`).join("")}
+    <button type="button" id="mZip"><b>הורד את כל הטפסים בקובץ אחד</b><span>ZIP</span></button></div></div>`;
+}
+function saveBlob(blob,name){
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+async function generateAll(){
+  syncView();
+  const box=$("#multiOut"), btn=$("#genAll");
+  const keys=[S.multi.home,...S.multi.keys];
+  for(const k of keys){
+    const miss=withRoute(k,dataFor(k),()=>collectMissing());
+    if(miss.length){
+      box.innerHTML=`<div class="note warn" style="margin:0">טופס ${esc(ROUTES[k].lender)}: חסרים ${miss.length} פרטים (${esc(miss.slice(0,3).map(m=>m.label).join(" · "))}${miss.length>3?" …":""}). יש להשלים לפני ההפקה.</div>`;
+      return;
+    }
+  }
+  btn.disabled=true;
+  box.innerHTML=`<div><div class="spin"></div>מפיק ${keys.length} טפסים…</div>`;
+  try{
+    const outs={};
+    for(const k of keys){
+      const data=dataFor(k);
+      outs[k]={bytes:await withRouteAsync(k,data,()=>buildPdf()), name:pdfName(k,data)};
+    }
+    S.multi.outs=outs; S.multi.stamp=multiStamp();
+    box.innerHTML=multiOutHtml(); bindMultiOut();
+  }catch(err){
+    box.innerHTML=`<div style="color:var(--err)">לא ניתן היה להפיק את הטפסים: ${esc(err.message||err)}</div>`;
+  }finally{ btn.disabled=false; }
+}
+function bindMultiOut(){
+  document.querySelectorAll("[data-mdl]").forEach(b=>b.onclick=()=>{
+    const o=S.multi.outs[b.dataset.mdl]; if(o) saveBlob(new Blob([o.bytes],{type:"application/pdf"}),o.name);
+  });
+  const z=$("#mZip");
+  if(z) z.onclick=async()=>{
+    const zip=new JSZip(); Object.values(S.multi.outs).forEach(o=>zip.file(o.name,o.bytes));
+    saveBlob(await zip.generateAsync({type:"blob"}),`אנבר-טפסים-${(S.multi.homeData.borrowers[0].lastName||"בקשה")}.zip`);
+  };
+}
+function openExtra(b){
+  const key=b.dataset.mview, step=+(b.dataset.mstep||6), path=b.dataset.mpath||"";
+  enterView(key,true);
+  if(key===S.multi.home){ go(6); return; }
+  go(step);
+  if(path){ stepMissing(); render(); focusField(path); }
+}
+function bindMulti(m){
+  m.querySelectorAll("[data-mpick]").forEach(el=>el.onchange=()=>{
+    const k=el.dataset.mpick;
+    if(!S.multi.home){ S.multi.home=S.route; S.multi.homeData=S.data; }
+    if(el.checked){ if(!S.multi.keys.includes(k)) S.multi.keys.push(k); }
+    else { S.multi.keys=S.multi.keys.filter(x=>x!==k); delete S.multi.edits[k]; }
+    const y=window.scrollY; render(); window.scrollTo(0,y);
+  });
+  m.querySelectorAll("[data-mview]").forEach(b=>b.onclick=()=>openExtra(b));
+  const g=$("#genAll"); if(g) g.onclick=generateAll;
+  bindMultiOut();
+}
+/* the navy band: company pages always; on any page while an added company is open */
+function setBand(){
+  const band=document.getElementById("coBand"); if(!band) return;
+  const extra=inExtraView();
+  if(!LOCKED&&!extra){ band.hidden=true; return; }
+  const r=R();
+  band.innerHTML = extra
+    ? `<b>השלמת פרטים · טופס ${esc(r.lender)}</b><span>${esc(r.productLabel)}</span><button type="button" class="ghost" data-mview="${esc(S.multi.home)}">חזרה לטופס ${esc(ROUTES[S.multi.home].lender)}</button>`
+    : `<b>טופס בקשה להלוואה — ${esc(r.lender)}</b><span>${esc(r.productLabel)}</span>`;
+  band.hidden=false;
+  band.querySelectorAll("[data-mview]").forEach(b=>b.onclick=()=>openExtra(b));
+}
 
 /* ===========================================================================
    12. BOOT
@@ -2625,9 +2880,7 @@ if(!S.data.agent) S.data.agent={name:"אמיר נוה",phone:"054-2844111",numbe
 const DEMO = new URLSearchParams(location.search).has("demo");
 if(LOCKED){
   S.route=LOCKED; S.step=1;
-  const r=ROUTES[LOCKED], band=document.getElementById("coBand");
-  band.innerHTML=`<b>טופס בקשה להלוואה — ${esc(r.lender)}</b><span>${esc(r.productLabel)}</span>`;
-  band.hidden=false;
+  const r=ROUTES[LOCKED];
   document.title=`אנבר · טופס בקשה להלוואה — ${r.lender} · ${r.productLabel}`;
 }
 if(DEMO){ ["loadDemo","clearAll","demoPill"].forEach(id=>{const e=document.getElementById(id); if(e) e.hidden=false;}); }
