@@ -956,9 +956,9 @@ function rowsBlock(key,label,max,render,blank,addLabel){
   const arr = S.data[key];
   return `<div class="rows">
     ${arr.map((_,i)=>`<article class="row"><div class="row-h"><i>${i+1}</i><b>${esc(label)}</b>
-        ${arr.length>1?`<button type="button" class="del" data-del="${key}:${i}">הסר</button>`:""}
+        ${arr.length>1&&!inExtraView()?`<button type="button" class="del" data-del="${key}:${i}">הסר</button>`:""}
       </div><div class="row-b">${render(i)}</div></article>`).join("")}
-    <button type="button" class="addrow" data-add="${key}" ${arr.length>=max?"disabled":""}>+ ${esc(addLabel)}${arr.length>=max?` · מקסימום ${max}`:""}</button>
+    ${key==="borrowers"&&inExtraView()?"":`<button type="button" class="addrow" data-add="${key}" ${arr.length>=max?"disabled":""}>+ ${esc(addLabel)}${arr.length>=max?` · מקסימום ${max}`:""}</button>`}
   </div>`;
 }
 
@@ -1847,7 +1847,10 @@ function bind(){
   });
   m.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
     const [k,i]=b.dataset.del.split(":");
-    S.data[k].splice(+i,1); render();
+    S.data[k].splice(+i,1);
+    if(S.multi.home&&!inExtraView()) shiftEdits(k,+i);
+    if(k==="borrowers") shiftSigs(+i);
+    render();
   });
 
   if(S.step===6){ bindSend(); bindMulti(m); }
@@ -2651,6 +2654,27 @@ const SHARE_BACK = /^(borrowers\.\d+\.(firstName|lastName|id|gender|birthDate|ma
 S.multi = {home:null, homeData:null, keys:[], edits:{}, outs:null, stamp:""};
 const jclone = o => JSON.parse(JSON.stringify(o));
 
+/* row `idx` of `key` was removed from the main form: drop the answers given for it in
+   every added company and move the answers for later rows up by one */
+function shiftEdits(key,idx){
+  const re=new RegExp("^"+key+"\\.(\\d+)(\\..*)?$");
+  Object.keys(S.multi.edits).forEach(c=>{
+    const ed=S.multi.edits[c], out={};
+    Object.keys(ed).forEach(p=>{
+      const m=p.match(re);
+      if(!m){ out[p]=ed[p]; return; }
+      const n=+m[1];
+      if(n===idx) return;
+      out[n>idx?`${key}.${n-1}${m[2]||""}`:p]=ed[p];
+    });
+    S.multi.edits[c]=out;
+  });
+}
+/* signatures follow their borrower when a borrower row is removed */
+function shiftSigs(idx){
+  const n=Math.max(...Object.keys(SIG).map(Number),-1);
+  for(let i=idx;i<=n;i++){ if(SIG[i+1]) SIG[i]=SIG[i+1]; else delete SIG[i]; }
+}
 function resetMulti(){ S.multi = {home:null, homeData:null, keys:[], edits:{}, outs:null, stamp:""}; }
 function inExtraView(){ return !!S.multi.home && S.route!==S.multi.home; }
 function multiCandidates(){
