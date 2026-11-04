@@ -1465,7 +1465,7 @@ function step6(){
     h += `<div class="note info">${esc(S.data.demoNote)}</div>`;
   }
   if(missing.length){
-    h += `<div class="note warn"><b>חסרים ${missing.length} שדות:</b>
+    h += `<div class="note warn"><b>${missing.length===1?"חסר שדה אחד":`חסרים ${missing.length} שדות`}:</b>
       <div class="miss-list">${missing.map(m=>
         `<button type="button" data-jump="${m.step}" data-path="${esc(m.path||"")}">${esc(m.label)}<span>שלב ${m.step} ←</span></button>`).join("")}</div></div>`;
   } else {
@@ -1506,7 +1506,7 @@ function step6(){
       <button class="btn g" id="dlPdf" disabled>הורד PDF</button>
       <div class="sp"></div>
       <button class="btn p" id="sendISign" disabled>שלח לחתימה ב־iSign</button>
-      ${missing.length?`<span style="font-size:13.5px;color:var(--warn);align-self:center">יש להשלים ${missing.length} שדות</span>`:""}
+      ${missing.length?`<span style="font-size:13.5px;color:var(--warn);align-self:center">יש להשלים ${missing.length===1?"שדה אחד":`${missing.length} שדות`}</span>`:""}
     </div>
 
     <div id="pdfArea" class="pv" style="margin-top:16px">לחץ «הפק את טופס ${esc(r.lender)}» כדי להטביע את הנתונים על גבי המסמך המקורי.</div>
@@ -2793,7 +2793,7 @@ function multiSection(){
         const miss=withRoute(k,dataFor(k),()=>collectMissing()).filter(m=>!/^sig\./.test(m.path||""));
         const notes=capNotes(k);
         stat = miss.length
-          ? `<span class="mstat warn">חסרים ${miss.length} פרטים שטופס זה דורש</span>
+          ? `<span class="mstat warn">${miss.length===1?"חסר פרט אחד":`חסרים ${miss.length} פרטים`} שטופס זה דורש</span>
              <button type="button" class="btn g" data-mview="${esc(k)}" data-mstep="${miss[0].step}" data-mpath="${esc(miss[0].path||"")}">השלם את הפרטים ←</button>`
           : `<span class="mstat ok">✓ כל הפרטים קיימים</span>
              <button type="button" class="ghost" data-mview="${esc(k)}" data-mstep="1">צפה ועדכן</button>`;
@@ -2834,7 +2834,7 @@ async function generateAll(){
   for(const k of keys){
     const miss=withRoute(k,dataFor(k),()=>collectMissing());
     if(miss.length){
-      box.innerHTML=`<div class="note warn" style="margin:0">טופס ${esc(ROUTES[k].lender)}: חסרים ${miss.length} פרטים (${esc(miss.slice(0,3).map(m=>m.label).join(" · "))}${miss.length>3?" …":""}). יש להשלים לפני ההפקה.</div>`;
+      box.innerHTML=`<div class="note warn" style="margin:0">טופס ${esc(ROUTES[k].lender)}: ${miss.length===1?"חסר פרט אחד":`חסרים ${miss.length} פרטים`} (${esc(miss.slice(0,3).map(m=>m.label).join(" · "))}${miss.length>3?" …":""}). יש להשלים לפני ההפקה.</div>`;
       return;
     }
   }
