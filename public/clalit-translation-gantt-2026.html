@@ -7,6 +7,7 @@
     <script>document.documentElement.lang = 'he';</script>
     <title>כללית - גאנט פרויקט תרגום</title>
     <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="data:,">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -204,10 +205,12 @@ function renderNeeds(){const rs=DATA.tasks.filter(t=>!isMs(t)&&(t.owner==='כל�
 let SIG='';
 function render(){
   const parts={gantt:renderProgress()+renderGantt(),ms:renderMs(),cards:renderCards(),needs:renderNeeds()};
-  const sig=JSON.stringify(parts);if(sig===SIG)return;SIG=sig;
-  const open=[...document.querySelectorAll('details.card[open]')].map(d=>d.id);
-  for(const k in parts)document.getElementById('x-'+k).innerHTML=parts[k];
-  open.forEach(id=>{const el=document.getElementById(id);if(el)el.open=true;});
+  const sig=JSON.stringify(parts);
+  if(sig!==SIG){SIG=sig;
+    const open=[...document.querySelectorAll('details.card[open]')].map(d=>d.id);
+    for(const k in parts)document.getElementById('x-'+k).innerHTML=parts[k];
+    open.forEach(id=>{const el=document.getElementById(id);if(el)el.open=true;});
+    applyOwn();bindGo();}
   const n=DATA.tasks.length,dn=DATA.tasks.filter(t=>status(t)==='done').length;
   document.getElementById('p-gantt').textContent=n+' משימות עד '+dmy(DATA.deadline);
   document.getElementById('p-ms').textContent=DATA.tasks.filter(isMs).length+' מועדים';
